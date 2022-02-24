@@ -2,6 +2,7 @@ from cohortextractor import (
     StudyDefinition,
     Measure,
     patients,
+    codelist_from_csv,
     filter_codes_by_category,
 )
 from codelists import *
@@ -12,7 +13,7 @@ study = StudyDefinition(
         "rate": "uniform",
         "incidence": 0.05,
     },
-    index_date="2018-03-01",
+    index_date="2020-03-01",
     population=patients.satisfying(
         """
         has_follow_up AND
@@ -26,6 +27,9 @@ study = StudyDefinition(
         has_follow_up=patients.registered_with_one_practice_between(
             "index_date - 3 months", "index_date"
         ),
+        died=patients.died_from_any_cause(
+            on_or_before="index_date"
+        ),
         age=patients.age_as_of(
             "index_date",
             return_expectations={
@@ -33,12 +37,7 @@ study = StudyDefinition(
                 "int": {"distribution": "population_ages"},
             },
         ),
-        sex=patients.sex(
-            return_expectations={
-                "rate": "universal",
-                "category": {"ratios": {"M": 0.49, "F": 0.5, "U": 0.01}},
-            }
-        ),
+        
         stp=patients.registered_practice_as_of(
             "index_date",
             returning="stp_code",
@@ -65,11 +64,16 @@ study = StudyDefinition(
             },
         ),
         household=patients.household_as_of(
-            "index_date",
+            "2020-02-01",
             returning="household_size",
         ),
     ),
-
+    sex=patients.sex(
+            return_expectations={
+                "rate": "universal",
+                "category": {"ratios": {"M": 0.49, "F": 0.5, "U": 0.01}},
+            }
+        ),
     MI=patients.satisfying(
         "mi_gp OR mi_hospital OR mi_ons",
         mi_gp=patients.with_these_clinical_events(
@@ -89,7 +93,7 @@ study = StudyDefinition(
             return_expectations={"incidence": 0.05},
         ),
     ),
-) 
+)
 
 measures = [
     Measure(

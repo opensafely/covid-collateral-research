@@ -6,15 +6,15 @@ expectations:
 actions:
 
   generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2020-03-01 to 2020-06-01 by month"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2020-03-01 to 2020-06-01 by month" --output-dir=output/measures --output-format=csv --skip-existing
     outputs:
       highly_sensitive:
-        cohort: output/input_measures*.csv
+        cohort: output/measures/input_*.csv
 
   calculate_measures:
-    run: cohortextractor:latest  generate_measures --study-definition study_definition
+    run: cohortextractor:latest  generate_measures --study-definition study_definition --skip-existing --output-dir=output/measures
     needs: [generate_study_population]
     outputs:
       moderately_sensitive:
-        measure: output/measure_*_rate.csv
+        measure: output/measures/measure_*.csv
 
