@@ -1,0 +1,26 @@
+
+. clear
+
+. import delimited using "./output/measures/input_2020-03-01.csv"
+(4 vars, 1,000 obs)
+
+. 
+. tab ethnicity, m
+
+  ethnicity |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |        199       19.90       19.90
+          2 |        199       19.90       39.80
+          3 |        189       18.90       58.70
+          4 |        201       20.10       78.80
+          5 |        212       21.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/lsh1401926/Documents/covid-collateral-research/logs/check.log
+  log type:  text
+ closed on:  25 Feb 2022, 14:37:00
+--------------------------------------------------------------------------------------------------------
