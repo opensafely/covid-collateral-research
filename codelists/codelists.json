@@ -11,6 +11,12 @@
       "url": "https://codelists.opensafely.org/codelist/opensafely/myocardial-infarction-2/2020-07-09/",
       "downloaded_at": "2022-02-24 10:59:07.014303Z",
       "sha": "392939dc703299be6e01daae092b1543ffc933fd"
+    },
+    "opensafely-ethnicity.csv": {
+      "id": "opensafely/ethnicity/2020-04-27",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/ethnicity/2020-04-27/",
+      "downloaded_at": "2022-02-25 09:19:27.445470Z",
+      "sha": "3d2f3998b71863a80b24d60f6f4282e14191ae13"
     }
   }
 }
