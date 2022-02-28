@@ -17,6 +17,66 @@
       "url": "https://codelists.opensafely.org/codelist/opensafely/ethnicity/2020-04-27/",
       "downloaded_at": "2022-02-25 09:19:27.445470Z",
       "sha": "3d2f3998b71863a80b24d60f6f4282e14191ae13"
+    },
+    "opensafely-alanine-aminotransferase-alt-tests.csv": {
+      "id": "opensafely/alanine-aminotransferase-alt-tests/2298df3e",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/alanine-aminotransferase-alt-tests/2298df3e/",
+      "downloaded_at": "2022-02-25 16:07:30.782689Z",
+      "sha": "0d231653e5ece343f6945309d21fc40c7f685ff2"
+    },
+    "opensafely-asthma-annual-review-qof.csv": {
+      "id": "opensafely/asthma-annual-review-qof/33eeb7da",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/asthma-annual-review-qof/33eeb7da/",
+      "downloaded_at": "2022-02-25 16:07:31.095929Z",
+      "sha": "6f6f0221706d28a49d74f3c3edc5c627d2cc618c"
+    },
+    "opensafely-cvd-risk-assessment-score-qof.csv": {
+      "id": "opensafely/cvd-risk-assessment-score-qof/1adf44a5",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/cvd-risk-assessment-score-qof/1adf44a5/",
+      "downloaded_at": "2022-02-25 16:07:31.338934Z",
+      "sha": "c341fab5432dd22087effcb036a98b7964b21be5"
+    },
+    "opensafely-cholesterol-tests.csv": {
+      "id": "opensafely/cholesterol-tests/09896c09",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/cholesterol-tests/09896c09/",
+      "downloaded_at": "2022-02-25 16:07:31.577484Z",
+      "sha": "e5f9e7e0b44c18830aea207f001d015153a56b8e"
+    },
+    "opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv": {
+      "id": "opensafely/chronic-obstructive-pulmonary-disease-copd-review-qof/01cfd170",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/chronic-obstructive-pulmonary-disease-copd-review-qof/01cfd170/",
+      "downloaded_at": "2022-02-25 16:07:31.891410Z",
+      "sha": "e2bd6c6bd876347a2546020c4ebfb4b8731d6b71"
+    },
+    "opensafely-glycated-haemoglobin-hba1c-tests.csv": {
+      "id": "opensafely/glycated-haemoglobin-hba1c-tests/2ab11f20",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/glycated-haemoglobin-hba1c-tests/2ab11f20/",
+      "downloaded_at": "2022-02-25 16:07:32.192184Z",
+      "sha": "fb9a968b5644c14c570bf2b8708381600f4bd1f5"
+    },
+    "opensafely-red-blood-cell-rbc-tests.csv": {
+      "id": "opensafely/red-blood-cell-rbc-tests/576a859e",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/red-blood-cell-rbc-tests/576a859e/",
+      "downloaded_at": "2022-02-25 16:07:32.484363Z",
+      "sha": "e111693c2b9ae4e688d859daa73491a978b0795b"
+    },
+    "opensafely-sodium-tests-numerical-value.csv": {
+      "id": "opensafely/sodium-tests-numerical-value/32bff605",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/sodium-tests-numerical-value/32bff605/",
+      "downloaded_at": "2022-02-25 16:07:32.742869Z",
+      "sha": "d2484bb0f583332cfe4a0ecd0c5a2d7727b16783"
+    },
+    "opensafely-systolic-blood-pressure-qof.csv": {
+      "id": "opensafely/systolic-blood-pressure-qof/3572b5fb",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/systolic-blood-pressure-qof/3572b5fb/",
+      "downloaded_at": "2022-02-25 16:07:32.991125Z",
+      "sha": "f2bc461e351499f4e5573a6f94e760b99979491e"
+    },
+    "opensafely-thyroid-stimulating-hormone-tsh-testing.csv": {
+      "id": "opensafely/thyroid-stimulating-hormone-tsh-testing/11a1abeb",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/thyroid-stimulating-hormone-tsh-testing/11a1abeb/",
+      "downloaded_at": "2022-02-25 16:07:33.311968Z",
+      "sha": "e7f3090ffa269fb1e3efdd5859c43a70e76efeec"
     }
   }
 }

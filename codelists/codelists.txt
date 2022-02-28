@@ -1,3 +1,13 @@
 opensafely/cardiovascular-secondary-care/20b63bd4/
 opensafely/myocardial-infarction-2/2020-07-09/
 opensafely/ethnicity/2020-04-27/
+opensafely/alanine-aminotransferase-alt-tests/2298df3e
+opensafely/asthma-annual-review-qof/33eeb7da
+opensafely/cvd-risk-assessment-score-qof/1adf44a5
+opensafely/cholesterol-tests/09896c09
+opensafely/chronic-obstructive-pulmonary-disease-copd-review-qof/01cfd170
+opensafely/glycated-haemoglobin-hba1c-tests/2ab11f20
+opensafely/red-blood-cell-rbc-tests/576a859e
+opensafely/sodium-tests-numerical-value/32bff605
+opensafely/systolic-blood-pressure-qof/3572b5fb
+opensafely/thyroid-stimulating-hormone-tsh-testing/11a1abeb

@@ -19,10 +19,10 @@ actions:
         measure: output/measures/measure_*.csv
 
   check:
-    run: stata-mp: analysis/check.do
+    run: stata-mp:latest analysis/check.do
     needs: [generate_study_population]
     outputs: 
-      moderately sensitive:
+      moderately_sensitive:
         log: logs/check.log
     
 

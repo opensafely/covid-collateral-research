@@ -45,7 +45,50 @@ study = StudyDefinition(
                "category": {"ratios": {"STP1": 0.3, "STP2": 0.2, "STP3": 0.5}},
             },
         ),
-        imd=patients.address_as_of(
+        household=patients.household_as_of(
+            "2020-02-01",
+            returning="household_size",
+        ),
+    ),
+    sex=patients.sex(
+            return_expectations={
+                "rate": "universal",
+                "category": {"ratios": {"M": 0.49, "F": 0.5, "U": 0.01}},
+            }
+        ),
+    ethnicity=patients.categorised_as(
+        {"0": "DEFAULT",
+            "1": "eth='1' OR (NOT eth AND ethnicity_sus='1')",
+            "2": "eth='2' OR (NOT eth AND ethnicity_sus='2')",
+            "3": "eth='3' OR (NOT eth AND ethnicity_sus='3')",
+            "4": "eth='4' OR (NOT eth AND ethnicity_sus='4')",
+            "5": "eth='5' OR (NOT eth AND ethnicity_sus='5')",
+            },
+        return_expectations={
+            "category": {"ratios": {"1": 0.2, "2": 0.2, "3": 0.2, "4": 0.2, "5": 0.2}},
+            "incidence": 1.0,
+            },
+        eth=patients.with_these_clinical_events(
+            ethnicity_codes,
+            returning="category",
+            find_last_match_in_period=True,
+            include_date_of_match=False,
+            return_expectations={
+                "category": {"ratios": {"1": 0.2, "2": 0.2, "3": 0.2, "4": 0.2, "5": 0.2}},
+                "incidence": 1.00,
+            },
+        ),
+        # fill missing ethnicity from SUS
+        ethnicity_sus=patients.with_ethnicity_from_sus(
+            returning="group_6",
+            use_most_frequent_code=True,
+            return_expectations={
+                "category": {"ratios": {"1": 0.2, "2": 0.2, "3": 0.2, "4": 0.2, "5": 0.2}},
+                "incidence": 1.00,
+            },
+        ),
+    ),
+    imd=patients.address_as_of(
             "index_date",
             returning="index_of_multiple_deprivation",
             round_to_nearest=100,
@@ -63,74 +106,137 @@ study = StudyDefinition(
                 },
             },
         ),
-        household=patients.household_as_of(
-            "2020-02-01",
-            returning="household_size",
+    # Clinical monitoring
+    # asthma
+    asthma=patients.with_these_clinical_events(
+        codelist=asthma_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
         ),
-    ),
-    sex=patients.sex(
-            return_expectations={
-                "rate": "universal",
-                "category": {"ratios": {"M": 0.49, "F": 0.5, "U": 0.01}},
-            }
+     # COPD
+    copd=patients.with_these_clinical_events(
+        codelist=copd_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
         ),
-    MI=patients.satisfying(
-        "mi_gp OR mi_hospital OR mi_ons",
-        mi_gp=patients.with_these_clinical_events(
-            mi_codes,
-            between=["index_date", "last_day_of_month(index_date)"],
-            return_expectations={"incidence": 0.05},
+     # CVD risk assessment
+    cvd_risk=patients.with_these_clinical_events(
+        codelist=qrisk_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
         ),
-        mi_hospital=patients.admitted_to_hospital(
-            with_these_diagnoses=filter_codes_by_category(
-            mi_codes_hospital, include=["1"]),
-            between=["index_date", "last_day_of_month(index_date)"],
-            return_expectations={"incidence": 0.05},
+     # Thyroid stimulating hormone
+    tsh=patients.with_these_clinical_events(
+        codelist=tsh_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
         ),
-        mi_ons=patients.with_these_codes_on_death_certificate(
-            filter_codes_by_category(mi_codes_hospital, include=["1"]),
-            between=["index_date", "last_day_of_month(index_date)"],
-            return_expectations={"incidence": 0.05},
+     # Liver function test - ALT
+    alt=patients.with_these_clinical_events(
+        codelist=alt_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
         ),
-    ),
-    ethnicity=patients.categorised_as(
-        {"0": "DEFAULT",
-            "1": "eth='1' OR (NOT eth AND ethnicity_sus='1')",
-            "2": "eth='2' OR (NOT eth AND ethnicity_sus='2')",
-            "3": "eth='3' OR (NOT eth AND ethnicity_sus='3')",
-            "4": "eth='4' OR (NOT eth AND ethnicity_sus='4')",
-            "5": "eth='5' OR (NOT eth AND ethnicity_sus='5')",
-            },
-        return_expectations={
-            "category": {"ratios": {"1": 0.2, "2": 0.2, "3": 0.2, "4": 0.2, "5": 0.2}},
-            "incidence": 0.9,
-            },
-        eth=patients.with_these_clinical_events(
-            ethnicity_codes,
-            returning="category",
-            find_last_match_in_period=True,
-            include_date_of_match=False,
-            return_expectations={
-                "category": {"ratios": {"1": 0.2, "2": 0.2, "3": 0.2, "4": 0.2, "5": 0.2}},
-                "incidence": 0.75,
-            },
+     # Cholesterol
+    cholesterol=patients.with_these_clinical_events(
+        codelist=cholesterol_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
         ),
-        # fill missing ethnicity from SUS
-        ethnicity_sus=patients.with_ethnicity_from_sus(
-            returning="group_6",
-            use_most_frequent_code=True,
-            return_expectations={
-                "category": {"ratios": {"1": 0.2, "2": 0.2, "3": 0.2, "4": 0.2, "5": 0.2}},
-                "incidence": 0.75,
-            },
+     # Hba1c
+    hba1c=patients.with_these_clinical_events(
+        codelist=hba1c_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
         ),
-    ),
+     # Full blood count - red blood cells
+    rbc=patients.with_these_clinical_events(
+        codelist=rbc_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+        ),
+     # sodium
+    sodium=patients.with_these_clinical_events(
+        codelist=sodium_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+        ),
+    # Systolic blood pressure
+    systolic_bp=patients.with_these_clinical_events(
+        codelist=systolic_bp_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+        ),
 )
 
 measures = [
     Measure(
-        id="MI_rate",
-        numerator="MI",
+        id="asthma_rate",
+        numerator="asthma",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="copd_rate",
+        numerator="copd",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="cvd_risk_rate",
+        numerator="cvd_risk",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="tsh_rate",
+        numerator="tsh",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="alt_rate",
+        numerator="alt",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="cholesterol_rate",
+        numerator="cholesterol",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="hba1c_rate",
+        numerator="hba1c",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="rbc_rate",
+        numerator="rbc",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="sodium_rate",
+        numerator="sodium",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="systolic_bp_rate",
+        numerator="systolic_bp",
         denominator="population",
         group_by=["ethnicity"],
     ),
