@@ -11,6 +11,12 @@ actions:
       highly_sensitive:
         cohort: output/measures/input_*.csv
 
+  generate_study_population_dm:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_dm --index-date-range "2020-03-01 to 2020-06-01 by month" --output-dir=output/measures --output-format=csv
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/dm_input_*.csv
+
   calculate_measures:
     run: cohortextractor:latest  generate_measures --study-definition study_definition --output-dir=output/measures
     needs: [generate_study_population]
@@ -19,8 +25,8 @@ actions:
         measure: output/measures/measure_*.csv
 
   check:
-    run: stata-mp:latest analysis/check.do
-    needs: [generate_study_population]
+    run: stata-mp:latest analysis/check.do --output_dir=output
+    needs: [calculate_measures]
     outputs: 
       moderately_sensitive:
         log: logs/check.log

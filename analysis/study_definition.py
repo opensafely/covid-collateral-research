@@ -2,8 +2,6 @@ from cohortextractor import (
     StudyDefinition,
     Measure,
     patients,
-    codelist_from_csv,
-    filter_codes_by_category,
 )
 from codelists import *
 
@@ -13,6 +11,7 @@ study = StudyDefinition(
         "rate": "uniform",
         "incidence": 0.05,
     },
+    # Update index date to 2018-03-01 when ready to run on full dataset
     index_date="2020-03-01",
     population=patients.satisfying(
         """
@@ -114,56 +113,56 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-     # COPD
+    # COPD
     copd=patients.with_these_clinical_events(
         codelist=copd_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-     # CVD risk assessment
+    # CVD risk assessment
     cvd_risk=patients.with_these_clinical_events(
         codelist=qrisk_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-     # Thyroid stimulating hormone
+    # Thyroid stimulating hormone
     tsh=patients.with_these_clinical_events(
         codelist=tsh_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-     # Liver function test - ALT
+    # Liver function test - ALT
     alt=patients.with_these_clinical_events(
         codelist=alt_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-     # Cholesterol
+    # Cholesterol
     cholesterol=patients.with_these_clinical_events(
         codelist=cholesterol_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-     # Hba1c
+    # Hba1c
     hba1c=patients.with_these_clinical_events(
         codelist=hba1c_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-     # Full blood count - red blood cells
+    # Full blood count - red blood cells
     rbc=patients.with_these_clinical_events(
         codelist=rbc_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-     # sodium
+    # sodium
     sodium=patients.with_these_clinical_events(
         codelist=sodium_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
@@ -241,4 +240,3 @@ measures = [
         group_by=["ethnicity"],
     ),
 ]
-

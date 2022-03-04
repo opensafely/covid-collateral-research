@@ -77,6 +77,90 @@
       "url": "https://codelists.opensafely.org/codelist/opensafely/thyroid-stimulating-hormone-tsh-testing/11a1abeb/",
       "downloaded_at": "2022-02-25 16:07:33.311968Z",
       "sha": "e7f3090ffa269fb1e3efdd5859c43a70e76efeec"
+    },
+    "opensafely-type-1-diabetes.csv": {
+      "id": "opensafely/type-1-diabetes/2020-06-29",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/type-1-diabetes/2020-06-29/",
+      "downloaded_at": "2022-03-04 15:15:40.304383Z",
+      "sha": "dc4ce0fbdb8500cc7dc6288e8eec9c783e31de57"
+    },
+    "opensafely-type-2-diabetes.csv": {
+      "id": "opensafely/type-2-diabetes/2020-06-29",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/type-2-diabetes/2020-06-29/",
+      "downloaded_at": "2022-03-04 15:15:40.511040Z",
+      "sha": "21a0fd8e041c19abd876970d75b389b6904dc901"
+    },
+    "opensafely-current-asthma.csv": {
+      "id": "opensafely/current-asthma/2020-05-06",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/current-asthma/2020-05-06/",
+      "downloaded_at": "2022-03-04 15:15:40.781379Z",
+      "sha": "1bd6c0cd0553edb334f7efc860d06c8f18fc6d50"
+    },
+    "opensafely-current-copd.csv": {
+      "id": "opensafely/current-copd/2020-05-06",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/current-copd/2020-05-06/",
+      "downloaded_at": "2022-03-04 15:15:40.995687Z",
+      "sha": "bab838b50e256ceef8b9d2f6ca1132491e522bda"
+    },
+    "opensafely-diabetic-ketoacidosis-secondary-care.csv": {
+      "id": "opensafely/diabetic-ketoacidosis-secondary-care/6e975569",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/diabetic-ketoacidosis-secondary-care/6e975569/",
+      "downloaded_at": "2022-03-04 15:15:41.223805Z",
+      "sha": "6176b35e183fe09e69c63d170b937445a143b0ee"
+    },
+    "opensafely-stroke-secondary-care.csv": {
+      "id": "opensafely/stroke-secondary-care/2020-10-05",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/stroke-secondary-care/2020-10-05/",
+      "downloaded_at": "2022-03-04 15:15:41.464012Z",
+      "sha": "04aeb4b87dcf27651e34c287fdffe023bce38591"
+    },
+    "opensafely-venous-thromboembolic-disease-hospital.csv": {
+      "id": "opensafely/venous-thromboembolic-disease-hospital/2020-10-01",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/venous-thromboembolic-disease-hospital/2020-10-01/",
+      "downloaded_at": "2022-03-04 15:15:41.684435Z",
+      "sha": "5dd9d60df2ad93e622d76e0d7d90f71d14168af1"
+    },
+    "user-emilyherrett-depression_icd10.csv": {
+      "id": "user/emilyherrett/depression_icd10/0aaf5048",
+      "url": "https://codelists.opensafely.org/codelist/user/emilyherrett/depression_icd10/0aaf5048/",
+      "downloaded_at": "2022-03-04 15:15:41.940865Z",
+      "sha": "0b364f07654123840f01c96d4645785ac195b47f"
+    },
+    "user-emilyherrett-anxiety_icd10.csv": {
+      "id": "user/emilyherrett/anxiety_icd10/719fdd12",
+      "url": "https://codelists.opensafely.org/codelist/user/emilyherrett/anxiety_icd10/719fdd12/",
+      "downloaded_at": "2022-03-04 15:15:42.266725Z",
+      "sha": "c744add743cfbbbba55b5c4ba159ca78f9afc6d0"
+    },
+    "user-emilyherrett-severe_mental_illness_icd10.csv": {
+      "id": "user/emilyherrett/severe_mental_illness_icd10/589069dd",
+      "url": "https://codelists.opensafely.org/codelist/user/emilyherrett/severe_mental_illness_icd10/589069dd/",
+      "downloaded_at": "2022-03-04 15:15:42.535363Z",
+      "sha": "373e66a5bd2bcd86c1834b8e83298ccef9b38853"
+    },
+    "user-emilyherrett-eating_disorder_icd10.csv": {
+      "id": "user/emilyherrett/eating_disorder_icd10/26718373",
+      "url": "https://codelists.opensafely.org/codelist/user/emilyherrett/eating_disorder_icd10/26718373/",
+      "downloaded_at": "2022-03-04 15:15:42.723236Z",
+      "sha": "9299c1d893aae0fe3fafde0355c3e23734ee739b"
+    },
+    "user-emilyherrett-ocd_icd10.csv": {
+      "id": "user/emilyherrett/ocd_icd10/3f80f6a8",
+      "url": "https://codelists.opensafely.org/codelist/user/emilyherrett/ocd_icd10/3f80f6a8/",
+      "downloaded_at": "2022-03-04 15:15:42.970551Z",
+      "sha": "4c6a7b1b8f935b517cb7000a0fbdc67fc6263099"
+    },
+    "user-emilyherrett-self_harm_icd10.csv": {
+      "id": "user/emilyherrett/self_harm_icd10/74529d08",
+      "url": "https://codelists.opensafely.org/codelist/user/emilyherrett/self_harm_icd10/74529d08/",
+      "downloaded_at": "2022-03-04 15:15:43.157532Z",
+      "sha": "158ab52c2cc75e6da56e27a82b39670e939753fb"
+    },
+    "user-hjforbes-suicide-icd-10.csv": {
+      "id": "user/hjforbes/suicide-icd-10/3b53a18e",
+      "url": "https://codelists.opensafely.org/codelist/user/hjforbes/suicide-icd-10/3b53a18e/",
+      "downloaded_at": "2022-03-04 15:15:43.357444Z",
+      "sha": "806be08bebc267e8abb26b8ceeefd713dacb1eb8"
     }
   }
 }

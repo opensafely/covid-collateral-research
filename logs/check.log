@@ -1,26 +1,70 @@
 
+. 
 . clear 
 
-. import delimited using "./output/measures/input_2020-03-01.csv"
-(15 vars, 1,000 obs)
+. import delimited using ./output/measures/measure_asthma_rate.csv
+(5 vars, 20 obs)
+
+. * generate rate per 100,000
+. gen rate = value*100000
+
+. * Format date
+. gen dateA = date(date, "YMD")
+
+. drop date
+
+. format dateA %dD/M/Y
+
+. tab dateA 
+
+      dateA |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  01mar2020 |          5       25.00       25.00
+  01apr2020 |          5       25.00       50.00
+  01may2020 |          5       25.00       75.00
+  01jun2020 |          5       25.00      100.00
+------------+-----------------------------------
+      Total |         20      100.00
+
+. * reshape dataset so column for each ethnicity
+. reshape wide value rate population asthma, i(dateA) j(ethnicity)
+(note: j = 1 2 3 4 5)
+
+Data                               long   ->   wide
+-----------------------------------------------------------------------------
+Number of obs.                       20   ->       4
+Number of variables                   6   ->      21
+j variable (5 values)         ethnicity   ->   (dropped)
+xij variables:
+                                  value   ->   value1 value2 ... value5
+                                   rate   ->   rate1 rate2 ... rate5
+                             population   ->   population1 population2 ... popu
+> lation5
+                                 asthma   ->   asthma1 asthma2 ... asthma5
+-----------------------------------------------------------------------------
+
+. rename value1 white
+
+. rename value2 mixed
+
+. rename value3 asian
+
+. rename value4 black
+
+. rename value5 other
 
 . 
-. tab ethnicity, m
+. * Generate line graph
+. line rate1 rate2 date, name(test) 
 
-  ethnicity |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          1 |        211       21.10       21.10
-          2 |        197       19.70       40.80
-          3 |        206       20.60       61.40
-          4 |        193       19.30       80.70
-          5 |        193       19.30      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
+. *|| line mixed date || line asian date || line black date || line other date
+. graph export ./output/line_ethnic_asthma.svg, name(test)
+(file ./output/line_ethnic_asthma.svg written in SVG format)
 
 . 
 . log close
       name:  <unnamed>
        log:  /workspace/logs/check.log
   log type:  text
- closed on:   1 Mar 2022, 14:30:19
+ closed on:   4 Mar 2022, 13:27:50
 -------------------------------------------------------------------------------
