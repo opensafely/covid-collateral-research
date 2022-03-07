@@ -14,7 +14,8 @@ all_dm_codelist = combine_codelists(
     t2dm_codelist
 )
 # Create ICD-10 codelist for type 1 and type 2 diabetes, contains only a 2 terms
-dm_icd_codes = codelist(["E10", "E11"], system="icd10", column="code")
+# Remove once codelist on opencodelists
+dm_icd_codes = codelist(["E10", "E11"], system="icd10")
 
 study = StudyDefinition(
     default_expectations={
@@ -60,7 +61,7 @@ study = StudyDefinition(
             "2020-02-01",
             returning="household_size",
         ),
-        has_diabetes=patients.eith_these_clinical_events(
+        has_diabetes=patients.with_these_clinical_events(
             all_dm_codelist,
             on_or_before="index_date",
             returning="binary_flag",
@@ -123,11 +124,65 @@ study = StudyDefinition(
                 },
             },
         ),
-    dm_admission = patients.admitted_to_hospital(
-        codelist=dm_icd_codes or dm_keto_codelist,
+    # Inpatient admission with primary code of diabetes
+    dm_admission_primary=patients.admitted_to_hospital(
+        with_these_primary_diagnoses=dm_icd_codes or dm_keto_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
     ),
-    )
-
+    # Inpatient admission with any code of diabetes
+    dm_admission_any=patients.admitted_to_hospital(
+        with_these_diagnoses=dm_icd_codes or dm_keto_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+     ),
+    # Emergency admission with code of diabetes
+    dm_admission_emergency=patients.attended_emergency_care(
+        with_these_diagnoses=dm_icd_codes or dm_keto_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.05},
+    ),
+)
+# Generate summary data by ethnicity for each outcome
+measures = [
+    Measure(
+        id="dm_primary_ethnicity_rate",
+        numerator="dm_admission_primary",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="dm_any_ethnicity_rate",
+        numerator="dm_admission_any",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="dm_emergency_ethnicity_rate",
+        numerator="dm_admission_emergency",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    # Generate summary data by IMD for each outcome
+    Measure(
+        id="dm_primary_imd_rate",
+        numerator="dm_admission_primary",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="dm_any_imd_rate",
+        numerator="dm_admission_any",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="dm_emergency_imd_rate",
+        numerator="dm_admission_emergency",
+        denominator="population",
+        group_by=["imd"],
+    ),
+]
