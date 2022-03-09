@@ -11,3 +11,33 @@ opensafely/red-blood-cell-rbc-tests/576a859e
 opensafely/sodium-tests-numerical-value/32bff605
 opensafely/systolic-blood-pressure-qof/3572b5fb
 opensafely/thyroid-stimulating-hormone-tsh-testing/11a1abeb
+opensafely/type-1-diabetes/2020-06-29
+opensafely/type-2-diabetes/2020-06-29
+opensafely/current-asthma/2020-05-06
+opensafely/current-copd/2020-05-06
+opensafely/diabetic-ketoacidosis-secondary-care/6e975569
+opensafely/stroke-secondary-care/2020-10-05
+opensafely/venous-thromboembolic-disease-hospital/2020-10-01
+
+# mental health outcomes - ICD - depression, anxiety, severe mental illness, OCD, self harm, eating disorder
+    # depression (based on HDR UK https://phenotypes.healthdatagateway.org/phenotypes/PH149/version/298/detail/#home)
+    user/emilyherrett/depression_icd10/0aaf5048
+    
+    # anxiety (based on HDR UK https://phenotypes.healthdatagateway.org/phenotypes/PH104/version/208/detail/#CodeLists)
+    user/emilyherrett/anxiety_icd10/719fdd12
+   
+    # Severe mental illness (based on HDR UK schizophrenia https://phenotypes.healthdatagateway.org/phenotypes/PH285/version/570/detail/#home)
+        # and based on psychotic disorders (based on terms in the CTV3 list https://www.opencodelists.org/codelist/opensafely/psychosis-schizophrenia-bipolar-affective-disease/2020-07-09/)
+        # and based on HDR UK bipolar disorder https://phenotypes.healthdatagateway.org/phenotypes/PH38/version/76/detail/#home
+    user/emilyherrett/severe_mental_illness_icd10/589069dd
+
+    # Eating disorder (based on HDR UK anorexia and bulimia https://phenotypes.healthdatagateway.org/phenotypes/PH159/version/318/detail/#home)
+        # and also based on other eating disorders in chapter F50 of ICD10 
+    user/emilyherrett/eating_disorder_icd10/26718373
+    
+    # OCD (based on HDR UK obsessive-compulsive disorder https://phenotypes.healthdatagateway.org/phenotypes/PH223/version/446/detail/#home)
+    user/emilyherrett/ocd_icd10/3f80f6a8
+
+    # self harm and suicide   (based on search for self-harm and self poisoning codes in ICD10, as in this list: https://suicideresearchpreventionelearning.com/?sfwd-topic=icd-10-codes-for-intentional-self-harm-x60%E2%88%92x84, and H Forbes suicide list) 
+    user/emilyherrett/self_harm_icd10/74529d08
+    user/hjforbes/suicide-icd-10/3b53a18e

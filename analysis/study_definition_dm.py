@@ -1,9 +1,21 @@
+# Defining study population for diabetes outcome where population needs to be people with type 1 
+# or type 2 diabetes at index 
 from cohortextractor import (
     StudyDefinition,
     Measure,
     patients,
+    codelist,
+    combine_codelists
 )
 from codelists import *
+# Combine type 1 and type 2 diabetes codelists
+all_dm_codelist = combine_codelists(
+    t1dm_codelist,
+    t2dm_codelist
+)
+# Create ICD-10 codelist for type 1 and type 2 diabetes, contains only a 2 terms
+# Remove once codelist on opencodelists
+dm_icd_codes = codelist(["E10", "E11"], system="icd10")
 
 study = StudyDefinition(
     default_expectations={
@@ -21,7 +33,8 @@ study = StudyDefinition(
         (sex = 'M' OR sex = 'F') AND
         (stp != 'missing') AND
         (imd != 'missing') AND
-        (household <=15) 
+        (household <=15) AND
+        has_diabetes
         """,
         has_follow_up=patients.registered_with_one_practice_between(
             "index_date - 3 months", "index_date"
@@ -48,6 +61,12 @@ study = StudyDefinition(
             "2020-02-01",
             returning="household_size",
         ),
+        has_diabetes=patients.with_these_clinical_events(
+            all_dm_codelist,
+            on_or_before="index_date",
+            returning="binary_flag",
+            return_expectations={"incidence":0.2,}
+        )
     ),
     sex=patients.sex(
             return_expectations={
@@ -105,138 +124,65 @@ study = StudyDefinition(
                 },
             },
         ),
-    # Clinical monitoring
-    # asthma
-    asthma=patients.with_these_clinical_events(
-        codelist=asthma_codelist,
+    # Inpatient admission with primary code of diabetes
+    dm_admission_primary=patients.admitted_to_hospital(
+        with_these_primary_diagnoses=dm_icd_codes or dm_keto_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
-        ),
-    # COPD
-    copd=patients.with_these_clinical_events(
-        codelist=copd_codelist,
+    ),
+    # Inpatient admission with any code of diabetes
+    dm_admission_any=patients.admitted_to_hospital(
+        with_these_diagnoses=dm_icd_codes or dm_keto_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
-        ),
-    # CVD risk assessment
-    cvd_risk=patients.with_these_clinical_events(
-        codelist=qrisk_codelist,
+     ),
+    # Emergency admission with code of diabetes
+    dm_admission_emergency=patients.attended_emergency_care(
+        with_these_diagnoses=dm_icd_codes or dm_keto_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Thyroid stimulating hormone
-    tsh=patients.with_these_clinical_events(
-        codelist=tsh_codelist,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Liver function test - ALT
-    alt=patients.with_these_clinical_events(
-        codelist=alt_codelist,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Cholesterol
-    cholesterol=patients.with_these_clinical_events(
-        codelist=cholesterol_codelist,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Hba1c
-    hba1c=patients.with_these_clinical_events(
-        codelist=hba1c_codelist,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Full blood count - red blood cells
-    rbc=patients.with_these_clinical_events(
-        codelist=rbc_codelist,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # sodium
-    sodium=patients.with_these_clinical_events(
-        codelist=sodium_codelist,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Systolic blood pressure
-    systolic_bp=patients.with_these_clinical_events(
-        codelist=systolic_bp_codelist,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
+        return_expectations={"incidence": 0.05},
+    ),
 )
-
+# Generate summary data by ethnicity for each outcome
 measures = [
     Measure(
-        id="asthma_rate",
-        numerator="asthma",
+        id="dm_primary_ethnicity_rate",
+        numerator="dm_admission_primary",
         denominator="population",
         group_by=["ethnicity"],
     ),
     Measure(
-        id="copd_rate",
-        numerator="copd",
+        id="dm_any_ethnicity_rate",
+        numerator="dm_admission_any",
         denominator="population",
         group_by=["ethnicity"],
     ),
     Measure(
-        id="cvd_risk_rate",
-        numerator="cvd_risk",
+        id="dm_emergency_ethnicity_rate",
+        numerator="dm_admission_emergency",
         denominator="population",
         group_by=["ethnicity"],
     ),
+    # Generate summary data by IMD for each outcome
     Measure(
-        id="tsh_rate",
-        numerator="tsh",
+        id="dm_primary_imd_rate",
+        numerator="dm_admission_primary",
         denominator="population",
-        group_by=["ethnicity"],
+        group_by=["imd"],
     ),
     Measure(
-        id="alt_rate",
-        numerator="alt",
+        id="dm_any_imd_rate",
+        numerator="dm_admission_any",
         denominator="population",
-        group_by=["ethnicity"],
+        group_by=["imd"],
     ),
     Measure(
-        id="cholesterol_rate",
-        numerator="cholesterol",
+        id="dm_emergency_imd_rate",
+        numerator="dm_admission_emergency",
         denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="hba1c_rate",
-        numerator="hba1c",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="rbc_rate",
-        numerator="rbc",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="sodium_rate",
-        numerator="sodium",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="systolic_bp_rate",
-        numerator="systolic_bp",
-        denominator="population",
-        group_by=["ethnicity"],
+        group_by=["imd"],
     ),
 ]
