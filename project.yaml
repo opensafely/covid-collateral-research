@@ -54,7 +54,7 @@ actions:
     outputs: 
       moderately_sensitive:
         log: logs/graphs_dm.log
-        output: output/graphs/line_*.eps
+        output: output/line_*.eps
 
   graphs_resp:
     run: stata-mp:latest analysis/graphs_resp.do 

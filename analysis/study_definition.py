@@ -180,14 +180,14 @@ study = StudyDefinition(
 
 measures = [
     Measure(
-        id="asthma_rate",
-        numerator="asthma",
+        id="asthma_review_rate",
+        numerator="asthma_review",
         denominator="population",
         group_by=["ethnicity"],
     ),
     Measure(
-        id="copd_rate",
-        numerator="copd",
+        id="copd_review_rate",
+        numerator="copd_review",
         denominator="population",
         group_by=["ethnicity"],
     ),
