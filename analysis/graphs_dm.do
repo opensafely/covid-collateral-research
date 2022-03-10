@@ -11,7 +11,7 @@ cap log using ./logs/graphs_dm.log, replace
 foreach v in hba1c systolic_bp {
     * Ethnicity
     clear 
-    import delimited using ./output/measures/measure_dm_`v'_ethnicity_rate.csv
+    import delimited using ./output/measures/dm/measure_dm_`v'_ethnicity_rate.csv
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -36,7 +36,7 @@ foreach v in hba1c systolic_bp {
     graph export ./output/line_ethnic_dm_`v'.eps, as(eps) replace
     * IMD
     clear 
-    import delimited using ./output/measures/measure_dm_`v'_imd_rate.csv
+    import delimited using ./output/measures/dm/measure_dm_`v'_imd_rate.csv
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -65,7 +65,7 @@ foreach v in hba1c systolic_bp {
 foreach v in primary any emergency {
     * Ethnicity - Type 1 DM
     clear 
-    import delimited using ./output/measures/measure_dm_t1_`v'_ethnicity_rate.csv
+    import delimited using ./output/measures/dm/measure_dm_t1_`v'_ethnicity_rate.csv
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -90,7 +90,7 @@ foreach v in primary any emergency {
     graph export ./output/line_ethnic_dm_t1_`v'.eps, as(eps) replace
     * IMD - type 1 DM
     clear 
-    import delimited using ./output/measures/measure_dm_t1_`v'_imd_rate.csv
+    import delimited using ./output/measures/dm/measure_dm_t1_`v'_imd_rate.csv
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -116,7 +116,7 @@ foreach v in primary any emergency {
 
     * Ethnicity - Type 2 DM
     clear 
-    import delimited using ./output/measures/measure_dm_t2_`v'_ethnicity_rate.csv
+    import delimited using ./output/measures/dm/measure_dm_t2_`v'_ethnicity_rate.csv
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -141,7 +141,7 @@ foreach v in primary any emergency {
     graph export ./output/line_ethnic_dm_t2_`v'.eps, as(eps) replace
     * IMD - type 2 DM
     clear 
-    import delimited using ./output/measures/measure_dm_t2_`v'_imd_rate.csv
+    import delimited using ./output/measures/dm/measure_dm_t2_`v'_imd_rate.csv
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -167,7 +167,7 @@ foreach v in primary any emergency {
 
     * Ethnicity - Ketoacidosis
     clear 
-    import delimited using ./output/measures/measure_dm_keto_`v'_ethnicity_rate.csv
+    import delimited using ./output/measures/dm/measure_dm_keto_`v'_ethnicity_rate.csv
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -192,7 +192,7 @@ foreach v in primary any emergency {
     graph export ./output/line_ethnic_dm_keto_`v'.eps, as(eps) replace
     * IMD - type 1 DM
     clear 
-    import delimited using ./output/measures/measure_dm_keto_`v'_imd_rate.csv
+    import delimited using ./output/measures/dm/measure_dm_keto_`v'_imd_rate.csv
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
