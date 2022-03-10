@@ -120,6 +120,24 @@
       "downloaded_at": "2022-03-04 15:15:41.684435Z",
       "sha": "5dd9d60df2ad93e622d76e0d7d90f71d14168af1"
     },
+    "opensafely-asthma-exacerbation-secondary-care.csv": {
+      "id": "opensafely/asthma-exacerbation-secondary-care/229001a8",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/asthma-exacerbation-secondary-care/229001a8/",
+      "downloaded_at": "2022-03-10 09:47:24.282699Z",
+      "sha": "4539261c8a45b1c365f436400026d5859c9a7896"
+    },
+    "opensafely-copd-exacerbation.csv": {
+      "id": "opensafely/copd-exacerbation/6858db5b",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/copd-exacerbation/6858db5b/",
+      "downloaded_at": "2022-03-10 09:47:24.482753Z",
+      "sha": "df8ebce026cf3cbbdde3e32a7698b243019b4175"
+    },
+    "opensafely-copd-secondary-care.csv": {
+      "id": "opensafely/copd-secondary-care/4f496826",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/copd-secondary-care/4f496826/",
+      "downloaded_at": "2022-03-10 09:47:24.696235Z",
+      "sha": "613038e1e0c5188c12ed778535c3826c523edcf8"
+    },
     "user-emilyherrett-depression_icd10.csv": {
       "id": "user/emilyherrett/depression_icd10/0aaf5048",
       "url": "https://codelists.opensafely.org/codelist/user/emilyherrett/depression_icd10/0aaf5048/",

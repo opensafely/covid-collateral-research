@@ -18,6 +18,11 @@ opensafely/current-copd/2020-05-06
 opensafely/diabetic-ketoacidosis-secondary-care/6e975569
 opensafely/stroke-secondary-care/2020-10-05
 opensafely/venous-thromboembolic-disease-hospital/2020-10-01
+opensafely/asthma-exacerbation-secondary-care/229001a8
+opensafely/copd-exacerbation/6858db5b
+opensafely/copd-secondary-care/4f496826
+
+
 
 # mental health outcomes - ICD - depression, anxiety, severe mental illness, OCD, self harm, eating disorder
     # depression (based on HDR UK https://phenotypes.healthdatagateway.org/phenotypes/PH149/version/298/detail/#home)

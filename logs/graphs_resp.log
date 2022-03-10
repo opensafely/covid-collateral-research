@@ -1,0 +1,568 @@
+
+. 
+. * Generates graphs for clinical monitoring measures
+. local outcomes "asthma copd"
+
+. local strata "monitoring exacerbation"
+
+. local other "review exacerbation"
+
+. forvalues i=1/2 {
+  2.     local this_outcome :word `i' of `outcomes'
+  3.     forvalues j=1/2 {
+  4.         local this_strata :word `j' of `strata'
+  5.         local this_other :word `j' of `other'
+  6.     * Ethnicity
+.     clear 
+  7.     import delimited using "./output/measures/resp/measure_`this_outcome'_
+> `this_strata'_ethnicity_rate.csv"
+  8.     * Generate rate per 100,000
+.     gen rate = value*100000 
+  9.     * Format date
+.     gen dateA = date(date, "YMD")
+ 10.     drop date
+ 11.     format dateA %dD/M/Y
+ 12.     tab dateA 
+ 13.     * reshape dataset so columns with rates for each ethnicity 
+.     reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i
+> (dateA) j(ethnicity)
+ 14.     describe
+ 15.     * Labelling ethnicity variables
+.     label var rate1 "Ethnicity - White"
+ 16.     label var rate2 "Ethnicity - Mixed"
+ 17.     label var rate3 "Ethnicity - Asian"
+ 18.     label var rate4 "Ethnicity - Black"
+ 19.     label var rate5 "Ethnicity - Other"
+ 20. 
+.     * Generate line graph
+.     graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, angle(45)
+>  format(%dM-CY)) ///
+>     ytitle("Rate per 100,000") 
+ 21. 
+.     graph export ./output/line_resp_ethnic_`this_outcome'_`this_strata'.eps, 
+> as(eps) replace
+ 22.     * IMD
+.     clear 
+ 23.     import delimited using "./output/measures/resp/measure_`this_outcome'_
+> `this_strata'_imd_rate.csv"
+ 24.     * Generate rate per 100,000
+.     gen rate = value*100000 
+ 25.     * Format date
+.     gen dateA = date(date, "YMD")
+ 26.     drop date
+ 27.     format dateA %dD/M/Y
+ 28.     tab dateA 
+ 29.     * reshape dataset so columns with rates for each ethnicity 
+.     reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i
+> (dateA) j(imd)
+ 30.     describe
+ 31.     * Labelling ethnicity variables
+.     label var rate1 "IMD - 1"
+ 32.     label var rate2 "IMD - 2"
+ 33.     label var rate3 "IMD - 3"
+ 34.     label var rate4 "IMD - 4"
+ 35.     label var rate5 "IMD - 5"
+ 36. 
+.     * Generate line graph
+.     graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, format(%d
+> M-CY)) ///
+>     ytitle("Rate per 100,000") 
+ 37. 
+.     graph export ./output/line_resp_imd_`this_outcome'_`this_strata'.eps, as(
+> eps) replace
+ 38.     }
+ 39. }
+(5 vars, 20 obs)
+
+      dateA |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  01mar2020 |          5       25.00       25.00
+  01apr2020 |          5       25.00       50.00
+  01may2020 |          5       25.00       75.00
+  01jun2020 |          5       25.00      100.00
+------------+-----------------------------------
+      Total |         20      100.00
+(note: j = 1 2 3 4 5)
+
+Data                               long   ->   wide
+-----------------------------------------------------------------------------
+Number of obs.                       20   ->       4
+Number of variables                   6   ->      21
+j variable (5 values)         ethnicity   ->   (dropped)
+xij variables:
+                                  value   ->   value1 value2 ... value5
+                                   rate   ->   rate1 rate2 ... rate5
+                             has_asthma   ->   has_asthma1 has_asthma2 ... has_
+> asthma5
+                          asthma_review   ->   asthma_review1 asthma_review2 ..
+> . asthma_review5
+-----------------------------------------------------------------------------
+
+Contains data
+  obs:             4                          
+ vars:            21                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dateA           float   %dD/M/Y               
+asthma_review1  byte    %8.0g                 1 asthma_review
+has_asthma1     byte    %8.0g                 1 has_asthma
+value1          float   %9.0g                 1 value
+rate1           float   %9.0g                 1 rate
+asthma_review2  byte    %8.0g                 2 asthma_review
+has_asthma2     byte    %8.0g                 2 has_asthma
+value2          float   %9.0g                 2 value
+rate2           float   %9.0g                 2 rate
+asthma_review3  byte    %8.0g                 3 asthma_review
+has_asthma3     byte    %8.0g                 3 has_asthma
+value3          float   %9.0g                 3 value
+rate3           float   %9.0g                 3 rate
+asthma_review4  byte    %8.0g                 4 asthma_review
+has_asthma4     byte    %8.0g                 4 has_asthma
+value4          float   %9.0g                 4 value
+rate4           float   %9.0g                 4 rate
+asthma_review5  byte    %8.0g                 5 asthma_review
+has_asthma5     byte    %8.0g                 5 has_asthma
+value5          float   %9.0g                 5 value
+rate5           float   %9.0g                 5 rate
+-------------------------------------------------------------------------------
+Sorted by: dateA
+(note: file ./output/line_resp_ethnic_asthma_monitoring.eps not found)
+(file ./output/line_resp_ethnic_asthma_monitoring.eps written in EPS format)
+(5 vars, 24 obs)
+
+      dateA |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  01mar2020 |          6       25.00       25.00
+  01apr2020 |          6       25.00       50.00
+  01may2020 |          6       25.00       75.00
+  01jun2020 |          6       25.00      100.00
+------------+-----------------------------------
+      Total |         24      100.00
+(note: j = 0 1 2 3 4 5)
+
+Data                               long   ->   wide
+-----------------------------------------------------------------------------
+Number of obs.                       24   ->       4
+Number of variables                   6   ->      25
+j variable (6 values)               imd   ->   (dropped)
+xij variables:
+                                  value   ->   value0 value1 ... value5
+                                   rate   ->   rate0 rate1 ... rate5
+                             has_asthma   ->   has_asthma0 has_asthma1 ... has_
+> asthma5
+                          asthma_review   ->   asthma_review0 asthma_review1 ..
+> . asthma_review5
+-----------------------------------------------------------------------------
+
+Contains data
+  obs:             4                          
+ vars:            25                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dateA           float   %dD/M/Y               
+asthma_review0  byte    %8.0g                 0 asthma_review
+has_asthma0     byte    %8.0g                 0 has_asthma
+value0          float   %9.0g                 0 value
+rate0           float   %9.0g                 0 rate
+asthma_review1  byte    %8.0g                 1 asthma_review
+has_asthma1     byte    %8.0g                 1 has_asthma
+value1          float   %9.0g                 1 value
+rate1           float   %9.0g                 1 rate
+asthma_review2  byte    %8.0g                 2 asthma_review
+has_asthma2     byte    %8.0g                 2 has_asthma
+value2          float   %9.0g                 2 value
+rate2           float   %9.0g                 2 rate
+asthma_review3  byte    %8.0g                 3 asthma_review
+has_asthma3     byte    %8.0g                 3 has_asthma
+value3          float   %9.0g                 3 value
+rate3           float   %9.0g                 3 rate
+asthma_review4  byte    %8.0g                 4 asthma_review
+has_asthma4     byte    %8.0g                 4 has_asthma
+value4          float   %9.0g                 4 value
+rate4           float   %9.0g                 4 rate
+asthma_review5  byte    %8.0g                 5 asthma_review
+has_asthma5     byte    %8.0g                 5 has_asthma
+value5          float   %9.0g                 5 value
+rate5           float   %9.0g                 5 rate
+-------------------------------------------------------------------------------
+Sorted by: dateA
+(note: file ./output/line_resp_imd_asthma_monitoring.eps not found)
+(file ./output/line_resp_imd_asthma_monitoring.eps written in EPS format)
+(5 vars, 20 obs)
+
+      dateA |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  01mar2020 |          5       25.00       25.00
+  01apr2020 |          5       25.00       50.00
+  01may2020 |          5       25.00       75.00
+  01jun2020 |          5       25.00      100.00
+------------+-----------------------------------
+      Total |         20      100.00
+(note: j = 1 2 3 4 5)
+
+Data                               long   ->   wide
+-----------------------------------------------------------------------------
+Number of obs.                       20   ->       4
+Number of variables                   6   ->      21
+j variable (5 values)         ethnicity   ->   (dropped)
+xij variables:
+                                  value   ->   value1 value2 ... value5
+                                   rate   ->   rate1 rate2 ... rate5
+                             has_asthma   ->   has_asthma1 has_asthma2 ... has_
+> asthma5
+                    asthma_exacerbation   ->   asthma_exacerbation1 asthma_exac
+> erbation2 ... asthma_exacerbation5
+-----------------------------------------------------------------------------
+
+Contains data
+  obs:             4                          
+ vars:            21                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dateA           float   %dD/M/Y               
+asthma_exacer~1 byte    %8.0g                 1 asthma_exacerbation
+has_asthma1     byte    %8.0g                 1 has_asthma
+value1          float   %9.0g                 1 value
+rate1           float   %9.0g                 1 rate
+asthma_exacer~2 byte    %8.0g                 2 asthma_exacerbation
+has_asthma2     byte    %8.0g                 2 has_asthma
+value2          float   %9.0g                 2 value
+rate2           float   %9.0g                 2 rate
+asthma_exacer~3 byte    %8.0g                 3 asthma_exacerbation
+has_asthma3     byte    %8.0g                 3 has_asthma
+value3          float   %9.0g                 3 value
+rate3           float   %9.0g                 3 rate
+asthma_exacer~4 byte    %8.0g                 4 asthma_exacerbation
+has_asthma4     byte    %8.0g                 4 has_asthma
+value4          float   %9.0g                 4 value
+rate4           float   %9.0g                 4 rate
+asthma_exacer~5 byte    %8.0g                 5 asthma_exacerbation
+has_asthma5     byte    %8.0g                 5 has_asthma
+value5          float   %9.0g                 5 value
+rate5           float   %9.0g                 5 rate
+-------------------------------------------------------------------------------
+Sorted by: dateA
+(note: file ./output/line_resp_ethnic_asthma_exacerbation.eps not found)
+(file ./output/line_resp_ethnic_asthma_exacerbation.eps written in EPS format)
+(5 vars, 24 obs)
+
+      dateA |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  01mar2020 |          6       25.00       25.00
+  01apr2020 |          6       25.00       50.00
+  01may2020 |          6       25.00       75.00
+  01jun2020 |          6       25.00      100.00
+------------+-----------------------------------
+      Total |         24      100.00
+(note: j = 0 1 2 3 4 5)
+
+Data                               long   ->   wide
+-----------------------------------------------------------------------------
+Number of obs.                       24   ->       4
+Number of variables                   6   ->      25
+j variable (6 values)               imd   ->   (dropped)
+xij variables:
+                                  value   ->   value0 value1 ... value5
+                                   rate   ->   rate0 rate1 ... rate5
+                             has_asthma   ->   has_asthma0 has_asthma1 ... has_
+> asthma5
+                    asthma_exacerbation   ->   asthma_exacerbation0 asthma_exac
+> erbation1 ... asthma_exacerbation5
+-----------------------------------------------------------------------------
+
+Contains data
+  obs:             4                          
+ vars:            25                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dateA           float   %dD/M/Y               
+asthma_exacer~0 byte    %8.0g                 0 asthma_exacerbation
+has_asthma0     byte    %8.0g                 0 has_asthma
+value0          float   %9.0g                 0 value
+rate0           float   %9.0g                 0 rate
+asthma_exacer~1 byte    %8.0g                 1 asthma_exacerbation
+has_asthma1     byte    %8.0g                 1 has_asthma
+value1          float   %9.0g                 1 value
+rate1           float   %9.0g                 1 rate
+asthma_exacer~2 byte    %8.0g                 2 asthma_exacerbation
+has_asthma2     byte    %8.0g                 2 has_asthma
+value2          float   %9.0g                 2 value
+rate2           float   %9.0g                 2 rate
+asthma_exacer~3 byte    %8.0g                 3 asthma_exacerbation
+has_asthma3     byte    %8.0g                 3 has_asthma
+value3          float   %9.0g                 3 value
+rate3           float   %9.0g                 3 rate
+asthma_exacer~4 byte    %8.0g                 4 asthma_exacerbation
+has_asthma4     byte    %8.0g                 4 has_asthma
+value4          float   %9.0g                 4 value
+rate4           float   %9.0g                 4 rate
+asthma_exacer~5 byte    %8.0g                 5 asthma_exacerbation
+has_asthma5     byte    %8.0g                 5 has_asthma
+value5          float   %9.0g                 5 value
+rate5           float   %9.0g                 5 rate
+-------------------------------------------------------------------------------
+Sorted by: dateA
+(note: file ./output/line_resp_imd_asthma_exacerbation.eps not found)
+(file ./output/line_resp_imd_asthma_exacerbation.eps written in EPS format)
+(5 vars, 20 obs)
+
+      dateA |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  01mar2020 |          5       25.00       25.00
+  01apr2020 |          5       25.00       50.00
+  01may2020 |          5       25.00       75.00
+  01jun2020 |          5       25.00      100.00
+------------+-----------------------------------
+      Total |         20      100.00
+(note: j = 1 2 3 4 5)
+
+Data                               long   ->   wide
+-----------------------------------------------------------------------------
+Number of obs.                       20   ->       4
+Number of variables                   6   ->      21
+j variable (5 values)         ethnicity   ->   (dropped)
+xij variables:
+                                  value   ->   value1 value2 ... value5
+                                   rate   ->   rate1 rate2 ... rate5
+                               has_copd   ->   has_copd1 has_copd2 ... has_copd
+> 5
+                            copd_review   ->   copd_review1 copd_review2 ... co
+> pd_review5
+-----------------------------------------------------------------------------
+
+Contains data
+  obs:             4                          
+ vars:            21                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dateA           float   %dD/M/Y               
+copd_review1    byte    %8.0g                 1 copd_review
+has_copd1       byte    %8.0g                 1 has_copd
+value1          float   %9.0g                 1 value
+rate1           float   %9.0g                 1 rate
+copd_review2    byte    %8.0g                 2 copd_review
+has_copd2       byte    %8.0g                 2 has_copd
+value2          float   %9.0g                 2 value
+rate2           float   %9.0g                 2 rate
+copd_review3    byte    %8.0g                 3 copd_review
+has_copd3       byte    %8.0g                 3 has_copd
+value3          float   %9.0g                 3 value
+rate3           float   %9.0g                 3 rate
+copd_review4    byte    %8.0g                 4 copd_review
+has_copd4       byte    %8.0g                 4 has_copd
+value4          float   %9.0g                 4 value
+rate4           float   %9.0g                 4 rate
+copd_review5    byte    %8.0g                 5 copd_review
+has_copd5       byte    %8.0g                 5 has_copd
+value5          float   %9.0g                 5 value
+rate5           float   %9.0g                 5 rate
+-------------------------------------------------------------------------------
+Sorted by: dateA
+(note: file ./output/line_resp_ethnic_copd_monitoring.eps not found)
+(file ./output/line_resp_ethnic_copd_monitoring.eps written in EPS format)
+(5 vars, 24 obs)
+
+      dateA |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  01mar2020 |          6       25.00       25.00
+  01apr2020 |          6       25.00       50.00
+  01may2020 |          6       25.00       75.00
+  01jun2020 |          6       25.00      100.00
+------------+-----------------------------------
+      Total |         24      100.00
+(note: j = 0 1 2 3 4 5)
+
+Data                               long   ->   wide
+-----------------------------------------------------------------------------
+Number of obs.                       24   ->       4
+Number of variables                   6   ->      25
+j variable (6 values)               imd   ->   (dropped)
+xij variables:
+                                  value   ->   value0 value1 ... value5
+                                   rate   ->   rate0 rate1 ... rate5
+                               has_copd   ->   has_copd0 has_copd1 ... has_copd
+> 5
+                            copd_review   ->   copd_review0 copd_review1 ... co
+> pd_review5
+-----------------------------------------------------------------------------
+
+Contains data
+  obs:             4                          
+ vars:            25                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dateA           float   %dD/M/Y               
+copd_review0    byte    %8.0g                 0 copd_review
+has_copd0       byte    %8.0g                 0 has_copd
+value0          float   %9.0g                 0 value
+rate0           float   %9.0g                 0 rate
+copd_review1    byte    %8.0g                 1 copd_review
+has_copd1       byte    %8.0g                 1 has_copd
+value1          float   %9.0g                 1 value
+rate1           float   %9.0g                 1 rate
+copd_review2    byte    %8.0g                 2 copd_review
+has_copd2       byte    %8.0g                 2 has_copd
+value2          float   %9.0g                 2 value
+rate2           float   %9.0g                 2 rate
+copd_review3    byte    %8.0g                 3 copd_review
+has_copd3       byte    %8.0g                 3 has_copd
+value3          float   %9.0g                 3 value
+rate3           float   %9.0g                 3 rate
+copd_review4    byte    %8.0g                 4 copd_review
+has_copd4       byte    %8.0g                 4 has_copd
+value4          float   %9.0g                 4 value
+rate4           float   %9.0g                 4 rate
+copd_review5    byte    %8.0g                 5 copd_review
+has_copd5       byte    %8.0g                 5 has_copd
+value5          float   %9.0g                 5 value
+rate5           float   %9.0g                 5 rate
+-------------------------------------------------------------------------------
+Sorted by: dateA
+(note: file ./output/line_resp_imd_copd_monitoring.eps not found)
+(file ./output/line_resp_imd_copd_monitoring.eps written in EPS format)
+(5 vars, 20 obs)
+
+      dateA |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  01mar2020 |          5       25.00       25.00
+  01apr2020 |          5       25.00       50.00
+  01may2020 |          5       25.00       75.00
+  01jun2020 |          5       25.00      100.00
+------------+-----------------------------------
+      Total |         20      100.00
+(note: j = 1 2 3 4 5)
+
+Data                               long   ->   wide
+-----------------------------------------------------------------------------
+Number of obs.                       20   ->       4
+Number of variables                   6   ->      21
+j variable (5 values)         ethnicity   ->   (dropped)
+xij variables:
+                                  value   ->   value1 value2 ... value5
+                                   rate   ->   rate1 rate2 ... rate5
+                               has_copd   ->   has_copd1 has_copd2 ... has_copd
+> 5
+                      copd_exacerbation   ->   copd_exacerbation1 copd_exacerba
+> tion2 ... copd_exacerbation5
+-----------------------------------------------------------------------------
+
+Contains data
+  obs:             4                          
+ vars:            21                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dateA           float   %dD/M/Y               
+copd_exacerba~1 byte    %8.0g                 1 copd_exacerbation
+has_copd1       byte    %8.0g                 1 has_copd
+value1          float   %9.0g                 1 value
+rate1           float   %9.0g                 1 rate
+copd_exacerba~2 byte    %8.0g                 2 copd_exacerbation
+has_copd2       byte    %8.0g                 2 has_copd
+value2          float   %9.0g                 2 value
+rate2           float   %9.0g                 2 rate
+copd_exacerba~3 byte    %8.0g                 3 copd_exacerbation
+has_copd3       byte    %8.0g                 3 has_copd
+value3          float   %9.0g                 3 value
+rate3           float   %9.0g                 3 rate
+copd_exacerba~4 byte    %8.0g                 4 copd_exacerbation
+has_copd4       byte    %8.0g                 4 has_copd
+value4          float   %9.0g                 4 value
+rate4           float   %9.0g                 4 rate
+copd_exacerba~5 byte    %8.0g                 5 copd_exacerbation
+has_copd5       byte    %8.0g                 5 has_copd
+value5          float   %9.0g                 5 value
+rate5           float   %9.0g                 5 rate
+-------------------------------------------------------------------------------
+Sorted by: dateA
+(note: file ./output/line_resp_ethnic_copd_exacerbation.eps not found)
+(file ./output/line_resp_ethnic_copd_exacerbation.eps written in EPS format)
+(5 vars, 24 obs)
+
+      dateA |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  01mar2020 |          6       25.00       25.00
+  01apr2020 |          6       25.00       50.00
+  01may2020 |          6       25.00       75.00
+  01jun2020 |          6       25.00      100.00
+------------+-----------------------------------
+      Total |         24      100.00
+(note: j = 0 1 2 3 4 5)
+
+Data                               long   ->   wide
+-----------------------------------------------------------------------------
+Number of obs.                       24   ->       4
+Number of variables                   6   ->      25
+j variable (6 values)               imd   ->   (dropped)
+xij variables:
+                                  value   ->   value0 value1 ... value5
+                                   rate   ->   rate0 rate1 ... rate5
+                               has_copd   ->   has_copd0 has_copd1 ... has_copd
+> 5
+                      copd_exacerbation   ->   copd_exacerbation0 copd_exacerba
+> tion1 ... copd_exacerbation5
+-----------------------------------------------------------------------------
+
+Contains data
+  obs:             4                          
+ vars:            25                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dateA           float   %dD/M/Y               
+copd_exacerba~0 byte    %8.0g                 0 copd_exacerbation
+has_copd0       byte    %8.0g                 0 has_copd
+value0          float   %9.0g                 0 value
+rate0           float   %9.0g                 0 rate
+copd_exacerba~1 byte    %8.0g                 1 copd_exacerbation
+has_copd1       byte    %8.0g                 1 has_copd
+value1          float   %9.0g                 1 value
+rate1           float   %9.0g                 1 rate
+copd_exacerba~2 byte    %8.0g                 2 copd_exacerbation
+has_copd2       byte    %8.0g                 2 has_copd
+value2          float   %9.0g                 2 value
+rate2           float   %9.0g                 2 rate
+copd_exacerba~3 byte    %8.0g                 3 copd_exacerbation
+has_copd3       byte    %8.0g                 3 has_copd
+value3          float   %9.0g                 3 value
+rate3           float   %9.0g                 3 rate
+copd_exacerba~4 byte    %8.0g                 4 copd_exacerbation
+has_copd4       byte    %8.0g                 4 has_copd
+value4          float   %9.0g                 4 value
+rate4           float   %9.0g                 4 rate
+copd_exacerba~5 byte    %8.0g                 5 copd_exacerbation
+has_copd5       byte    %8.0g                 5 has_copd
+value5          float   %9.0g                 5 value
+rate5           float   %9.0g                 5 rate
+-------------------------------------------------------------------------------
+Sorted by: dateA
+(note: file ./output/line_resp_imd_copd_exacerbation.eps not found)
+(file ./output/line_resp_imd_copd_exacerbation.eps written in EPS format)
+
+. 
+end of do-file
+
+. . file open output using "/tmp/tmp.BgRZpakreG", write text replace
+
+. . file write output "success" 
+
+. . file close output
+
+. 
+end of do-file
+
+

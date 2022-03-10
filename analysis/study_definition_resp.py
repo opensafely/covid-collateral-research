@@ -1,10 +1,13 @@
+# Defining study population for people with either COPD or asthma for
+# respiratory outcomes
 from cohortextractor import (
     StudyDefinition,
     Measure,
     patients,
+    codelist,
+    combine_codelists
 )
 from codelists import *
-
 study = StudyDefinition(
     default_expectations={
         "date": {"earliest": "1980-01-01", "latest": "today"},
@@ -21,22 +24,15 @@ study = StudyDefinition(
         (sex = 'M' OR sex = 'F') AND
         (stp != 'missing') AND
         (imd != 'missing') AND
-        (household <=15) 
+        (household <=15) AND
+        (has_asthma OR has_copd)
         """,
         has_follow_up=patients.registered_with_one_practice_between(
             "index_date - 3 months", "index_date"
         ),
         died=patients.died_from_any_cause(
             on_or_before="index_date"
-        ),
-        age=patients.age_as_of(
-            "index_date",
-            return_expectations={
-                "rate": "universal",
-                "int": {"distribution": "population_ages"},
-            },
-        ),
-        
+        ),      
         stp=patients.registered_practice_as_of(
             "index_date",
             returning="stp_code",
@@ -47,6 +43,28 @@ study = StudyDefinition(
         household=patients.household_as_of(
             "2020-02-01",
             returning="household_size",
+        ),
+     ),
+    age=patients.age_as_of(
+            "index_date",
+            return_expectations={
+                "rate": "universal",
+                "int": {"distribution": "population_ages"},
+            },
+        ), 
+    has_asthma=patients.with_these_clinical_events(
+        asthma_codes,
+        between=["index_date - 3 years", "index_date"],
+        returning="binary_flag",
+        return_expectations={"incidence":0.2,}
+    ),
+    has_copd=patients.satisfying(
+        """has_copd_code AND age>40""",
+        has_copd_code=patients.with_these_clinical_events(
+            copd_codes,
+            on_or_before="index_date",
+            returning="binary_flag",
+            return_expectations={"incidence":0.8,}
         ),
     ),
     sex=patients.sex(
@@ -105,138 +123,107 @@ study = StudyDefinition(
                 },
             },
         ),
-    # Clinical monitoring
-    # asthma
-    asthma_review=patients.with_these_clinical_events(
-        codelist=asthma_review_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # COPD
+    # Clinical monitoring - COPD review in the last 12 months
     copd_review=patients.with_these_clinical_events(
         codelist=copd_review_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
+        between=["index_date - 12 months", "index_date"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-    # CVD risk assessment
-    cvd_risk=patients.with_these_clinical_events(
-        codelist=qrisk_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
+    # Clinical monitoring - asthma review in the last 12 months
+    asthma_review=patients.with_these_clinical_events(
+        codelist=asthma_review_codes,
+        between=["index_date - 12 months", "index_date"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-    # Thyroid stimulating hormone
-    tsh=patients.with_these_clinical_events(
-        codelist=tsh_codes,
+    # Hospital admission - COPD exacerbation
+    copd_exacerbation=patients.satisfying(
+        """copd_exacerbation_hospital OR 
+        copd_hospital""",
+        copd_exacerbation_hospital=patients.admitted_to_hospital(
+            with_these_diagnoses=copd_exacerbation_icd_codes,
+            between=["index_date", "last_day_of_month(index_date)"],
+            returning="binary_flag",
+            return_expectations={"incidence": 0.1},
+        ),
+        copd_hospital=patients.admitted_to_hospital(
+            with_these_primary_diagnoses=copd_icd_codes,
+            between=["index_date", "last_day_of_month(index_date)"],
+            returning="binary_flag",
+            return_expectations={"incidence": 0.1},
+            )
+    ),
+    asthma_exacerbation=patients.admitted_to_hospital(
+        with_these_primary_diagnoses=asthma_exacerbation_icd_codes,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
-        ),
-    # Liver function test - ALT
-    alt=patients.with_these_clinical_events(
-        codelist=alt_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Cholesterol
-    cholesterol=patients.with_these_clinical_events(
-        codelist=cholesterol_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Hba1c
-    hba1c=patients.with_these_clinical_events(
-        codelist=hba1c_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Full blood count - red blood cells
-    rbc=patients.with_these_clinical_events(
-        codelist=rbc_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # sodium
-    sodium=patients.with_these_clinical_events(
-        codelist=sodium_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Systolic blood pressure
-    systolic_bp=patients.with_these_clinical_events(
-        codelist=systolic_bp_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
+    ),
 )
 
+# Generate measures
+
 measures = [
+   # Clinical monitoring - Asthma review in last 12 months in those with asthma
+    # by ethnicity
     Measure(
-        id="asthma_rate",
-        numerator="asthma",
-        denominator="population",
+        id="asthma_monitoring_ethnicity_rate",
+        numerator="asthma_review",
+        denominator="has_asthma",
         group_by=["ethnicity"],
     ),
+    # by IMD
     Measure(
-        id="copd_rate",
-        numerator="copd",
-        denominator="population",
+        id="asthma_monitoring_imd_rate",
+        numerator="asthma_review",
+        denominator="has_asthma",
+        group_by=["imd"],
+    ),
+    # Clinical monitoring - COPD review in last 12 months in those with COPD
+    # by ethnicity
+    Measure(
+        id="copd_monitoring_ethnicity_rate",
+        numerator="copd_review",
+        denominator="has_copd",
         group_by=["ethnicity"],
     ),
+    # by IMD
     Measure(
-        id="cvd_risk_rate",
-        numerator="cvd_risk",
-        denominator="population",
+        id="copd_monitoring_imd_rate",
+        numerator="copd_review",
+        denominator="has_copd",
+        group_by=["imd"],
+    ),
+    # Hospital admission for asthma in those with asthma
+    # by ethnicity
+    Measure(
+        id="asthma_exacerbation_ethnicity_rate",
+        numerator="asthma_exacerbation",
+        denominator="has_asthma",
         group_by=["ethnicity"],
     ),
+    # by IMD
     Measure(
-        id="tsh_rate",
-        numerator="tsh",
-        denominator="population",
+        id="asthma_exacerbation_imd_rate",
+        numerator="asthma_exacerbation",
+        denominator="has_asthma",
+        group_by=["imd"],
+    ),
+    # Hospital admission for copd in those with copd
+    # by ethnicity
+    Measure(
+        id="copd_exacerbation_ethnicity_rate",
+        numerator="copd_exacerbation",
+        denominator="has_copd",
         group_by=["ethnicity"],
     ),
+    # by IMD
     Measure(
-        id="alt_rate",
-        numerator="alt",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="cholesterol_rate",
-        numerator="cholesterol",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="hba1c_rate",
-        numerator="hba1c",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="rbc_rate",
-        numerator="rbc",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="sodium_rate",
-        numerator="sodium",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="systolic_bp_rate",
-        numerator="systolic_bp",
-        denominator="population",
-        group_by=["ethnicity"],
+        id="copd_exacerbation_imd_rate",
+        numerator="copd_exacerbation",
+        denominator="has_copd",
+        group_by=["imd"],
     ),
 ]
+

@@ -18,90 +18,105 @@ ethnicity_codes = codelist_from_csv(
     column="Code",
     category_column="Grouping_6",
 )
-asthma_codelist = codelist_from_csv(
+asthma_review_codes= codelist_from_csv(
     "codelists/opensafely-asthma-annual-review-qof.csv",
     system="snomed",
     column="code",)
 
-copd_codelist = codelist_from_csv(
+copd_review_codes= codelist_from_csv(
     "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
     system="snomed",
     column="code",)
 
-qrisk_codelist = codelist_from_csv(
+qrisk_codes= codelist_from_csv(
     "codelists/opensafely-cvd-risk-assessment-score-qof.csv",
     system="snomed",
     column="code",)
 
-tsh_codelist = codelist_from_csv(
+tsh_codes= codelist_from_csv(
     "codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
     system="snomed",
     column="code",)
 
-alt_codelist = codelist_from_csv(
+alt_codes= codelist_from_csv(
     "codelists/opensafely-alanine-aminotransferase-alt-tests.csv",
     system="snomed",
     column="code",)
 
-cholesterol_codelist = codelist_from_csv(
+cholesterol_codes= codelist_from_csv(
     "codelists/opensafely-cholesterol-tests.csv",
     system="snomed",
     column="code",)
 
-hba1c_codelist = codelist_from_csv(
+hba1c_codes= codelist_from_csv(
     "codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv",
     system="snomed",
     column="code",)
 
-rbc_codelist = codelist_from_csv(
+rbc_codes= codelist_from_csv(
     "codelists/opensafely-red-blood-cell-rbc-tests.csv",
     system="snomed",
     column="code",)
 
-sodium_codelist = codelist_from_csv(
+sodium_codes= codelist_from_csv(
     "codelists/opensafely-sodium-tests-numerical-value.csv",
     system="snomed",
     column="code",)
 
-systolic_bp_codelist = codelist_from_csv(
+systolic_bp_codes= codelist_from_csv(
     "codelists/opensafely-systolic-blood-pressure-qof.csv",
     system="snomed",
     column="code",)
 
-t1dm_codelist = codelist_from_csv(
+t1dm_codes= codelist_from_csv(
     "codelists/opensafely-type-1-diabetes.csv",
     system="ctv3",
     column="CTV3ID",)
 
-t2dm_codelist = codelist_from_csv(
+t2dm_codes= codelist_from_csv(
     "codelists/opensafely-type-2-diabetes.csv",
     system="ctv3",
     column="CTV3ID",)
 
-asthma_codelist = codelist_from_csv(
+asthma_codes = codelist_from_csv(
     "codelists/opensafely-current-asthma.csv",
     system="ctv3",
     column="CTV3ID",)
 
-copd_codelist = codelist_from_csv(
+copd_codes = codelist_from_csv(
     "codelists/opensafely-current-copd.csv",
     system="ctv3",
     column="CTV3ID",)
 
-dm_keto_codelist = codelist_from_csv(
+dm_keto_icd_codes = codelist_from_csv(
     "codelists/opensafely-diabetic-ketoacidosis-secondary-care.csv",
     system="icd10",
     column="icd10_code",)
 
-stroke_codelist = codelist_from_csv(
+stroke_icd_codes = codelist_from_csv(
     "codelists/opensafely-stroke-secondary-care.csv",
     system="icd10",
     column="icd",)
 
-vte_codelist = codelist_from_csv(
+vte_icd_codes = codelist_from_csv(
     "codelists/opensafely-venous-thromboembolic-disease-hospital.csv",
     system="icd10",
     column="ICD_code",)
+
+asthma_exacerbation_icd_codes = codelist_from_csv(
+    "codelists/opensafely-asthma-exacerbation-secondary-care.csv",
+    system="icd10",
+    column="code",)
+
+copd_icd_codes = codelist_from_csv(
+    "codelists/opensafely-copd-secondary-care.csv",
+    system="icd10",
+    column="code",)
+
+copd_exacerbation_icd_codes = codelist_from_csv(
+    "codelists/opensafely-copd-exacerbation.csv",
+    system="icd10",
+    column="code",)
 
 depression_icd_codes = codelist_from_csv(
     "codelists/user-emilyherrett-depression_icd10.csv",
@@ -138,7 +153,7 @@ self_harm_icd_codes = codelist_from_csv(
     column="code",
 )
 
-suicide_codes = codelist_from_csv(
+suicide_icd_codes = codelist_from_csv(
     "codelists/user-hjforbes-suicide-icd-10.csv",
     system="snomed",
     column="code",
