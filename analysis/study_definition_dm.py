@@ -158,7 +158,7 @@ study = StudyDefinition(
     ),
     # Ketoacidosis
     dm_keto_admission_primary=patients.admitted_to_hospital(
-        with_these_primary_diagnoses=dm_keto_codes,
+        with_these_primary_diagnoses=dm_keto_icd_codes,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
@@ -180,7 +180,7 @@ study = StudyDefinition(
     ),
     # Ketoacidosis
     dm_keto_admission_any=patients.admitted_to_hospital(
-        with_these_diagnoses=dm_keto_codes,
+        with_these_diagnoses=dm_keto_icd_codes,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
@@ -202,7 +202,7 @@ study = StudyDefinition(
     ),
     # Ketoacidosis
     dm_keto_admission_emergency=patients.attended_emergency_care(
-        with_these_diagnoses=dm_keto_codes,
+        with_these_diagnoses=dm_keto_icd_codes,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.05},
