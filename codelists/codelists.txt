@@ -21,6 +21,11 @@ opensafely/venous-thromboembolic-disease-hospital/2020-10-01
 opensafely/asthma-exacerbation-secondary-care/229001a8
 opensafely/copd-exacerbation/6858db5b
 opensafely/copd-secondary-care/4f496826
+primis-covid19-vacc-uptake/sev_mental/v1
+primis-covid19-vacc-uptake/chd_cov/v1.2.1
+opensafely/stroke-updated/2ddebf56
+opensafely/transient-ischaemic-attack/3526e2ac
+
 
 
 

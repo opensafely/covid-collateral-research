@@ -1,3 +1,5 @@
+# Creates study population with no restirctions but include indicators for
+# mental health and CVD where clinical monitoring is diagnosis specific
 from cohortextractor import (
     StudyDefinition,
     Measure,
@@ -87,6 +89,40 @@ study = StudyDefinition(
             },
         ),
     ),
+    # Flag for mental health subgroup for clinical monitoring
+    mh_group=patients.with_these_clinical_events(
+        severe_mental_illness_codes,
+        returning="binary_flag",
+        on_or_before="index_date",
+        return_expectations={"incidence": 0.2},
+    ),
+    # Flag for CVD subgroup (with CHD, stroke or TIA) for clinical monitoring
+    cvd_group=patients.satisfying(
+        """
+        has_chd OR
+        has_stroke OR
+        has_tia
+        """,
+        has_chd=patients.with_these_clinical_events(
+            chd_codes,
+            returning="binary_flag",
+            on_or_before="index_date",
+            return_expectations={"incidence": 0.1},
+        ),
+        has_stroke=patients.with_these_clinical_events(
+            stroke_codes,
+            returning="binary_flag",
+            on_or_before="index_date",
+            return_expectations={"incidence": 0.1},
+        ),
+        has_tia=patients.with_these_clinical_events(
+            tia_codes,
+            returning="binary_flag",
+            on_or_before="index_date",
+            return_expectations={"incidence": 0.1},
+        ),
+    ),
+
     imd=patients.address_as_of(
             "index_date",
             returning="index_of_multiple_deprivation",
@@ -105,138 +141,249 @@ study = StudyDefinition(
                 },
             },
         ),
+    
     # Clinical monitoring
-    # asthma
-    asthma_review=patients.with_these_clinical_events(
-        codelist=asthma_review_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # COPD
-    copd_review=patients.with_these_clinical_events(
-        codelist=copd_review_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # CVD risk assessment
-    cvd_risk=patients.with_these_clinical_events(
-        codelist=qrisk_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Thyroid stimulating hormone
-    tsh=patients.with_these_clinical_events(
-        codelist=tsh_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Liver function test - ALT
-    alt=patients.with_these_clinical_events(
-        codelist=alt_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Cholesterol
-    cholesterol=patients.with_these_clinical_events(
-        codelist=cholesterol_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Hba1c
-    hba1c=patients.with_these_clinical_events(
-        codelist=hba1c_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Full blood count - red blood cells
-    rbc=patients.with_these_clinical_events(
-        codelist=rbc_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # sodium
-    sodium=patients.with_these_clinical_events(
-        codelist=sodium_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-        ),
-    # Systolic blood pressure
+    # Systolic blood pressure - cvd population & mental health population
     systolic_bp=patients.with_these_clinical_events(
         codelist=systolic_bp_codes,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
+    
+    # Hospital admissions - CVD
+    # MI
+    mi_admission=patients.admitted_to_hospital(
+        with_these_diagnoses=mi_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+    ),
+    # Stroke
+    stroke_admission=patients.admitted_to_hospital(
+        with_these_diagnoses=stroke_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+    ),
+    # TIA
+    #tia_admission=patients.admitted_to_hospital(
+    #   with_these_diagnoses=tia_icd_codes,
+    #   between=["index_date", "last_day_of_month(index_date)"],
+    #   returning="binary_flag",
+    #   return_expectations={"incidence": 0.1},
+    #),
+    # Unstable angina
+
+    # Heart failure
+    heart_failure_admission=patients.admitted_to_hospital(
+        with_these_diagnoses=heart_failure_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+    ),
+    # VTE
+    vte_admission=patients.admitted_to_hospital(
+        with_these_diagnoses=vte_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+    ),
+    # Hospital admissions - mental health
+    depression_admission=patients.admitted_to_hospital(
+        with_these_diagnoses=depression_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+    ),
+    anxiety_admission=patients.admitted_to_hospital(
+        with_these_diagnoses=anxiety_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+    ),
+    severe_mental_illness_admission=patients.admitted_to_hospital(
+        with_these_diagnoses=severe_mental_illness_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+    ),
+    self_harm_admission=patients.admitted_to_hospital(
+        with_these_diagnoses=self_harm_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+    ),
+    eating_disorder_admission=patients.admitted_to_hospital(
+        with_these_diagnoses=eating_disorder_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+    ),
+    ocd_admission=patients.admitted_to_hospital(
+        with_these_diagnoses=ocd_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+    ),
 )
 
 measures = [
+    # Clinical monitoring
     Measure(
-        id="asthma_review_rate",
-        numerator="asthma_review",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="copd_review_rate",
-        numerator="copd_review",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="cvd_risk_rate",
-        numerator="cvd_risk",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="tsh_rate",
-        numerator="tsh",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="alt_rate",
-        numerator="alt",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="cholesterol_rate",
-        numerator="cholesterol",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="hba1c_rate",
-        numerator="hba1c",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="rbc_rate",
-        numerator="rbc",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="sodium_rate",
-        numerator="sodium",
-        denominator="population",
+        id="systolic_bp_rate",
+        numerator="systolic_bp",
+        denominator="cvd_group",
         group_by=["ethnicity"],
     ),
     Measure(
         id="systolic_bp_rate",
         numerator="systolic_bp",
+        denominator="cvd_group",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="systolic_bp_rate",
+        numerator="systolic_bp",
+        denominator="mh_group",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="systolic_bp_rate",
+        numerator="systolic_bp",
+        denominator="mh_group",
+        group_by=["imd"],
+    ),
+    # Hospital admissions for MI
+    Measure(
+        id="mi_admission_rate",
+        numerator="mi_admission",
         denominator="population",
         group_by=["ethnicity"],
+    ),
+    # Hospital admissions for MI
+    Measure(
+        id="mi_admission_rate",
+        numerator="mi_admission",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    # Hospital admissions for stroke
+    Measure(
+        id="stroke_admission_rate",
+        numerator="stroke_admission",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    # Hospital admissions for stroke
+    Measure(
+        id="stroke_admission_rate",
+        numerator="stroke_admission",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    # Hospital admissions for heart failure
+    Measure(
+        id="heart_failure_admission_rate",
+        numerator="heart_failure_admission",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="heart_failure_admission_rate",
+        numerator="heart_failure_admission",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    # Hospital admissions for VTE
+    Measure(
+        id="vte_admission_rate",
+        numerator="vte_admission",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="vte_admission_rate",
+        numerator="vte_admission",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    # Hospital admissions for depression
+    Measure(
+        id="depression_admission_rate",
+        numerator="depression_admission",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="depression_admission_rate",
+        numerator="depression_admission",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    # Hospital admissions for anxiety
+    Measure(
+        id="anxiety_admission_rate",
+        numerator="anxiety_admission",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="anxiety_admission_rate",
+        numerator="anxiety_admission",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    # Hospital admissions for severe mental illness
+    Measure(
+        id="severe_mental_illness_admission_rate",
+        numerator="severe_mental_illness_admission",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="severe_mental_illness_admission_rate",
+        numerator="severe_mental_illness_admission",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    # Hospital admissions for self harm
+    Measure(
+        id="self_harm_admission_rate",
+        numerator="self_harm_admission",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="self_harm_admission_rate",
+        numerator="self_harm_admission",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    # Hospital admissions for eating disorders
+    Measure(
+        id="eating_disorder_admission_rate",
+        numerator="eating_disorder_admission",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="eating_disorder_admission_rate",
+        numerator="eating_disorder_admission",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    # Hospital admissions for OCD
+    Measure(
+        id="ocd_admission_rate",
+        numerator="ocd_admission",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="ocd_admission_rate",
+        numerator="ocd_admission",
+        denominator="population",
+        group_by=["imd"],
     ),
 ]

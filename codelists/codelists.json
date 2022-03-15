@@ -138,6 +138,30 @@
       "downloaded_at": "2022-03-10 09:47:24.696235Z",
       "sha": "613038e1e0c5188c12ed778535c3826c523edcf8"
     },
+    "primis-covid19-vacc-uptake-sev_mental.csv": {
+      "id": "primis-covid19-vacc-uptake/sev_mental/v1",
+      "url": "https://codelists.opensafely.org/codelist/primis-covid19-vacc-uptake/sev_mental/v1/",
+      "downloaded_at": "2022-03-14 16:22:04.310030Z",
+      "sha": "c53c57d8149d59e2e0dac2990c96ddc1260639a5"
+    },
+    "primis-covid19-vacc-uptake-chd_cov.csv": {
+      "id": "primis-covid19-vacc-uptake/chd_cov/v1.2.1",
+      "url": "https://codelists.opensafely.org/codelist/primis-covid19-vacc-uptake/chd_cov/v1.2.1/",
+      "downloaded_at": "2022-03-14 16:22:04.844655Z",
+      "sha": "31d1504f602925d7c9ff9be3c838212d492086db"
+    },
+    "opensafely-stroke-updated.csv": {
+      "id": "opensafely/stroke-updated/2ddebf56",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/stroke-updated/2ddebf56/",
+      "downloaded_at": "2022-03-15 10:44:29.748290Z",
+      "sha": "e62a8af49698022220de1e1e438d6b6c611e666e"
+    },
+    "opensafely-transient-ischaemic-attack.csv": {
+      "id": "opensafely/transient-ischaemic-attack/3526e2ac",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/transient-ischaemic-attack/3526e2ac/",
+      "downloaded_at": "2022-03-15 10:44:30.036267Z",
+      "sha": "f2c674bcb3dc20b7f32c3265d67ee5e53e3f871b"
+    },
     "user-emilyherrett-depression_icd10.csv": {
       "id": "user/emilyherrett/depression_icd10/0aaf5048",
       "url": "https://codelists.opensafely.org/codelist/user/emilyherrett/depression_icd10/0aaf5048/",
