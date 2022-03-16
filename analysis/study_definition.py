@@ -226,7 +226,7 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
     ),
-)
+ )
 
 measures = [
     # Clinical monitoring

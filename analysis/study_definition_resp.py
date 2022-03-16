@@ -140,7 +140,8 @@ study = StudyDefinition(
     # Hospital admission - COPD exacerbation
     copd_exacerbation=patients.satisfying(
         """copd_exacerbation_hospital OR 
-        copd_hospital""",
+        copd_hospital OR 
+        (lrti_hospital AND copd_any)""",
         copd_exacerbation_hospital=patients.admitted_to_hospital(
             with_these_diagnoses=copd_exacerbation_icd_codes,
             between=["index_date", "last_day_of_month(index_date)"],
@@ -153,6 +154,18 @@ study = StudyDefinition(
             returning="binary_flag",
             return_expectations={"incidence": 0.1},
             )
+        lrti_hospital=patients.admitted_to_hospital(
+            with_these_primary_diagnoses=lrti_icd_codes,
+            between=["index_date", "last_day_of_month(index_date)"],
+            returning="binary_flag",
+            return_expectations={"incidence": 0.1},
+            )
+        copd_any=patients.admitted_to_hospital(
+            with_these_diagnoses=copd_icd_codes,
+            between=["index_date", "last_day_of_month(index_date)"],
+            returning="binary_flag",
+            return_expectations={"incidence": 0.1},
+        )
     ),
     asthma_exacerbation=patients.admitted_to_hospital(
         with_these_primary_diagnoses=asthma_exacerbation_icd_codes,

@@ -23,6 +23,13 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/measures/resp/input_resp_*.csv
+
+  # Generates study population for mortality
+  generate_study_population_mortality:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_mortality --index-date-range "2020-03-01 to 2020-06-01 by month" --output-dir=output/measures/mortality --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/mortality/input_mortality_*.csv
   
   # Generates summary measures for CV and mental health outcomes
   calculate_measures:
@@ -47,6 +54,14 @@ actions:
       moderately_sensitive:
         measure: output/measures/resp/measure_*.csv
 
+  # Generates summary measures for mortality outcomes  
+  calculate_measures_mortality:
+    run: cohortextractor:latest  generate_measures --study-definition study_definition_mortality --output-dir=output/measures/mortality
+    needs: [generate_study_population_mortality]
+    outputs:
+      moderately_sensitive:
+        measure: output/measures/mortality/measure_*.csv
+ 
   # Generates graphs for diabetes cohort
   graphs_dm:
     run: stata-mp:latest analysis/graphs_dm.do 
@@ -64,5 +79,5 @@ actions:
         log: logs/graphs_resp.log
         output: output/line_resp_*.eps
 
-    
+   
 

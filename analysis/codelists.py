@@ -4,10 +4,10 @@ from cohortextractor import codelist_from_csv
 # Ethnicity
 # Update to SNOMED when uploaded
 ethnicity_codes = codelist_from_csv(
-    "codelists/opensafely-ethnicity.csv",
-    system="ctv3",
+    "codelists/opensafely-ethnicity-with-categories-snomed.csv",
+    system="snomed",
     column="Code",
-    category_column="Grouping_6",
+    category_column="6_group",
 )
 # Diagnosis codes for GP records - update to SNOMED?
 # Diabetes - type 1 & 2
@@ -47,57 +47,25 @@ tia_codes = codelist_from_csv(
     system="ctv3",
     column="code",)
 # Clinical monitoring measures
-asthma_review_codes= codelist_from_csv(
+asthma_review_codes = codelist_from_csv(
     "codelists/opensafely-asthma-annual-review-qof.csv",
     system="snomed",
     column="code",)
 
-copd_review_codes= codelist_from_csv(
+copd_review_codes = codelist_from_csv(
     "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
     system="snomed",
     column="code",)
 
-qrisk_codes= codelist_from_csv(
-    "codelists/opensafely-cvd-risk-assessment-score-qof.csv",
-    system="snomed",
-    column="code",)
-
-tsh_codes= codelist_from_csv(
-    "codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
-    system="snomed",
-    column="code",)
-
-alt_codes= codelist_from_csv(
-    "codelists/opensafely-alanine-aminotransferase-alt-tests.csv",
-    system="snomed",
-    column="code",)
-
-cholesterol_codes= codelist_from_csv(
-    "codelists/opensafely-cholesterol-tests.csv",
-    system="snomed",
-    column="code",)
-
-hba1c_codes= codelist_from_csv(
+hba1c_codes = codelist_from_csv(
     "codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv",
     system="snomed",
     column="code",)
 
-rbc_codes= codelist_from_csv(
-    "codelists/opensafely-red-blood-cell-rbc-tests.csv",
-    system="snomed",
-    column="code",)
-
-sodium_codes= codelist_from_csv(
-    "codelists/opensafely-sodium-tests-numerical-value.csv",
-    system="snomed",
-    column="code",)
-
-systolic_bp_codes= codelist_from_csv(
+systolic_bp_codes = codelist_from_csv(
     "codelists/opensafely-systolic-blood-pressure-qof.csv",
     system="snomed",
     column="code",)
-
-
 
 # ICD codes for hospitalisations and deaths
 # Diabetes outcomes - DM or ketoacidosis
@@ -137,12 +105,16 @@ copd_icd_codes = codelist_from_csv(
     "codelists/opensafely-copd-secondary-care.csv",
     system="icd10",
     column="code",)
-
 copd_exacerbation_icd_codes = codelist_from_csv(
     "codelists/opensafely-copd-exacerbation.csv",
     system="icd10",
     column="code",)
-# Mental healht outcomes
+lrti_icd_codes = codelist_from_csv(
+    "codelists/opensafely-lower-respiratory-tract-infection-secondary-care.csv",
+    system="icd10",
+    column="code",)
+
+# Mental health outcomes
 depression_icd_codes = codelist_from_csv(
     "codelists/user-emilyherrett-depression_icd10.csv",
     system="icd10",

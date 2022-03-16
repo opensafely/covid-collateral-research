@@ -1,6 +1,6 @@
 opensafely/cardiovascular-secondary-care/20b63bd4/
 opensafely/myocardial-infarction-2/2020-07-09/
-opensafely/ethnicity/2020-04-27/
+opensafely/ethnicity-with-categories-snomed/5eb3345b/
 opensafely/alanine-aminotransferase-alt-tests/2298df3e
 opensafely/asthma-annual-review-qof/33eeb7da
 opensafely/cvd-risk-assessment-score-qof/1adf44a5
@@ -21,6 +21,7 @@ opensafely/venous-thromboembolic-disease-hospital/2020-10-01
 opensafely/asthma-exacerbation-secondary-care/229001a8
 opensafely/copd-exacerbation/6858db5b
 opensafely/copd-secondary-care/4f496826
+opensafely/lower-respiratory-tract-infection-secondary-care/21c94e19
 primis-covid19-vacc-uptake/sev_mental/v1
 primis-covid19-vacc-uptake/chd_cov/v1.2.1
 opensafely/stroke-updated/2ddebf56
@@ -48,6 +49,6 @@ opensafely/transient-ischaemic-attack/3526e2ac
     # OCD (based on HDR UK obsessive-compulsive disorder https://phenotypes.healthdatagateway.org/phenotypes/PH223/version/446/detail/#home)
     user/emilyherrett/ocd_icd10/3f80f6a8
 
-    # self harm and suicide   (based on search for self-harm and self poisoning codes in ICD10, as in this list: https://suicideresearchpreventionelearning.com/?sfwd-topic=icd-10-codes-for-intentional-self-harm-x60%E2%88%92x84, and H Forbes suicide list) 
+    # self harm  (based on search for self-harm and self poisoning codes in ICD10, as in this list: https://suicideresearchpreventionelearning.com/?sfwd-topic=icd-10-codes-for-intentional-self-harm-x60%E2%88%92x84, and H Forbes suicide list) 
     user/emilyherrett/self_harm_icd10/74529d08
-    user/hjforbes/suicide-icd-10/3b53a18e
+    
