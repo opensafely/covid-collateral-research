@@ -153,19 +153,19 @@ study = StudyDefinition(
             between=["index_date", "last_day_of_month(index_date)"],
             returning="binary_flag",
             return_expectations={"incidence": 0.1},
-            )
+            ),
         lrti_hospital=patients.admitted_to_hospital(
             with_these_primary_diagnoses=lrti_icd_codes,
             between=["index_date", "last_day_of_month(index_date)"],
             returning="binary_flag",
             return_expectations={"incidence": 0.1},
-            )
+            ),
         copd_any=patients.admitted_to_hospital(
             with_these_diagnoses=copd_icd_codes,
             between=["index_date", "last_day_of_month(index_date)"],
             returning="binary_flag",
             return_expectations={"incidence": 0.1},
-        )
+        ),
     ),
     asthma_exacerbation=patients.admitted_to_hospital(
         with_these_primary_diagnoses=asthma_exacerbation_icd_codes,
