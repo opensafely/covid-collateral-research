@@ -149,3 +149,28 @@ self_harm_icd_codes = codelist_from_csv(
     system="icd10",
     column="code",
 )
+
+# Snomed codes for emergecy care outcomes
+# CVD
+
+# Mental Health - severe mental illness referenced above
+anxiety_snomed_codes = codelist_from_csv(
+    "codelists/user-hjforbes-anxiety-symptoms-and-diagnoses.csv",
+    system="snomed",
+    column="code",
+)
+ocd_snomed_codes = codelist_from_csv(
+    "codelists/user-hjforbes-obsessive-compulsive-disorder-ocd.csv",
+    system="snomed",
+    column="code",
+)
+eating_disorder_snomed_codes = codelist_from_csv(
+    "codelists/user-hjforbes-diagnoses-eating-disorder.csv",
+    system="snomed",
+    column="code",
+)
+self_harm_snomed_codes = codelist_from_csv(
+    "codelists/user-hjforbes-undetermined-intent-self-harm-aged15-years.csv",
+    system="snomed",
+    column="code",
+)
