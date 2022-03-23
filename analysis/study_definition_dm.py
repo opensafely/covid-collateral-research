@@ -150,7 +150,7 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.1},
     ),
     # Type 2 DM
-    #t2dm_admission_primary=patients.admitted_to_hospital(
+    t2dm_admission_primary=patients.admitted_to_hospital(
         with_these_primary_diagnoses=t2dm_icd_codes,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
