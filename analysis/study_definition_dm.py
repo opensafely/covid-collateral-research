@@ -267,26 +267,26 @@ measures = [
         group_by=["ethnicity"],
     ),
     # Emergency admission with type 1 DM code
-    Measure(
-        id="dm_t1_emergency_ethnicity_rate",
-        numerator="t1dm_admission_emergency",
-        denominator="has_t1_diabetes",
-        group_by=["ethnicity"],
-    ),
+    #Measure(
+    #   id="dm_t1_emergency_ethnicity_rate",
+    #    numerator="t1dm_admission_emergency",
+    #    denominator="has_t1_diabetes",
+    #    group_by=["ethnicity"],
+    #),
     # Emergency admission with type 2 DM code
-    Measure(
-        id="dm_t2_emergency_ethnicity_rate",
-        numerator="t2dm_admission_emergency",
-        denominator="has_t2_diabetes",
-        group_by=["ethnicity"],
-    ),
+    #Measure(
+    #    id="dm_t2_emergency_ethnicity_rate",
+    #    numerator="t2dm_admission_emergency",
+    #    denominator="has_t2_diabetes",
+    #    group_by=["ethnicity"],
+    #),
     # Emergency admission with ketoacidosis code
-    Measure(
-        id="dm_keto_emergency_ethnicity_rate",
-        numerator="dm_keto_admission_emergency",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
+    #Measure(
+    #    id="dm_keto_emergency_ethnicity_rate",
+    #    numerator="dm_keto_admission_emergency",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
     # Generate summary data by IMD for each outcome
     # Clinical monitoring - HbA1c
     Measure(
@@ -345,24 +345,24 @@ measures = [
         group_by=["imd"],
     ),
     # Emergency admission coded with type 1 DM
-    Measure(
-        id="dm_t1_emergency_imd_rate",
-        numerator="t1dm_admission_emergency",
-        denominator="has_t1_diabetes",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="dm_t1_emergency_imd_rate",
+    #    numerator="t1dm_admission_emergency",
+    #    denominator="has_t1_diabetes",
+    #    group_by=["imd"],
+    #),
     # Emergency admission coded with type 2 DM
-    Measure(
-        id="dm_t2_emergency_imd_rate",
-        numerator="t2dm_admission_emergency",
-        denominator="has_t2_diabetes",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="dm_t2_emergency_imd_rate",
+    #    numerator="t2dm_admission_emergency",
+    #    denominator="has_t2_diabetes",
+    #    group_by=["imd"],
+    #),
     # Emergency admission coded with ketoacidosis
-    Measure(
-        id="dm_keto_emergency_imd_rate",
-        numerator="dm_keto_admission_emergency",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="dm_keto_emergency_imd_rate",
+    #    numerator="dm_keto_admission_emergency",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
 ]
