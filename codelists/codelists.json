@@ -162,6 +162,12 @@
       "downloaded_at": "2022-03-04 15:15:43.157532Z",
       "sha": "158ab52c2cc75e6da56e27a82b39670e939753fb"
     },
+    "user-hjforbes-suicide-icd-10.csv": {
+      "id": "user/hjforbes/suicide-icd-10/3b53a18e",
+      "url": "https://codelists.opensafely.org/codelist/user/hjforbes/suicide-icd-10/3b53a18e/",
+      "downloaded_at": "2022-03-22 12:48:07.594790Z",
+      "sha": "806be08bebc267e8abb26b8ceeefd713dacb1eb8"
+    },
     "user-hjforbes-anxiety-symptoms-and-diagnoses.csv": {
       "id": "user/hjforbes/anxiety-symptoms-and-diagnoses/3088a1b6",
       "url": "https://codelists.opensafely.org/codelist/user/hjforbes/anxiety-symptoms-and-diagnoses/3088a1b6/",

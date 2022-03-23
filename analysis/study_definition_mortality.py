@@ -1,5 +1,4 @@
 # Creates study population with no restirctions for mortality outcomes
-from math import comb
 from cohortextractor import (
     StudyDefinition,
     Measure,
@@ -7,11 +6,7 @@ from cohortextractor import (
     combine_codelists
 )
 from codelists import *
-# Combine CVD codelists - MI, stroke, heart failure and vte
-stroke_vte_codes = combine_codelists(
-    stroke_icd_codes,
-    vte_icd_codes
-)
+
 # Combine asthma and COPD codelists
 all_resp_codes = combine_codelists(
     asthma_exacerbation_icd_codes,
@@ -24,7 +19,8 @@ all_mh_codes = combine_codelists(
     severe_mental_illness_icd_codes,
     self_harm_icd_codes,
     eating_disorder_icd_codes,
-    ocd_icd_codes
+    ocd_icd_codes,
+    suicide_icd_codes
 )
 study = StudyDefinition(
     default_expectations={
@@ -132,28 +128,36 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
     ),
+    # Each CVD outcome
+    stroke_mortality = patients.with_these_codes_on_death_certificate(
+    stroke_icd_codes,
+    between=["index_date", "last_day_of_month(index_date)"],
+    returning="binary_flag",
+    ),
+    vte_mortality = patients.with_these_codes_on_death_certificate(
+    vte_icd_codes,
+    between=["index_date", "last_day_of_month(index_date)"],
+    returning="binary_flag",
+    ),
+    mi_mortality = patients.with_these_codes_on_death_certificate(
+    mi_icd_codes,
+    between=["index_date", "last_day_of_month(index_date)"],
+    returning="binary_flag",
+    ),
+    heart_failure_mortality = patients.with_these_codes_on_death_certificate(
+    heart_failure_icd_codes,
+    between=["index_date", "last_day_of_month(index_date)"],
+    returning="binary_flag",
+    ),
+
     # Mortality CVD
     cvd_mortality=patients.satisfying(
         """
-        stroke_vte_mortality OR
+        stroke_mortality OR
+        vte_mortality OR
         mi_mortality OR
         heart_failure_mortality
         """,
-        stroke_vte_mortality = patients.with_these_codes_on_death_certificate(
-        stroke_vte_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        ),
-        mi_mortality = patients.with_these_codes_on_death_certificate(
-        mi_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        ),
-        heart_failure_mortality = patients.with_these_codes_on_death_certificate(
-        heart_failure_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        ),
     ),
     # Mortality respiratory disease - asthma and COPD
     resp_mortality=patients.with_these_codes_on_death_certificate(
@@ -161,60 +165,155 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
     ),
-    # Mortality - mental health conditions
+    asthma_mortality=patients.with_these_codes_on_death_certificate(
+        asthma_exacerbation_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+    ),
+    copd_exac_mortality=patients.with_these_codes_on_death_certificate(
+        copd_exacerbation_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+        ),
+    copd_diag_mortality=patients.with_these_codes_on_death_certificate(
+        copd_icd_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+        ),
+    copd_mortality=patients.satisfying(
+        """copd_exac_mortality OR 
+        copd_diag_mortality """,
+        ),
+    # Mortality - mental health conditions - combined as unlikely to die 
+    # specifically of anxiety for example.. 
     mh_mortality=patients.with_these_codes_on_death_certificate(
         all_mh_codes,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
     ),
-)
 
+)
+# Currently rates all for general population - not any subpopulations..
 measures = [
     Measure(
-        id="dm_mortality_rate",
+        id="dm_mortality_ethnic_rate",
         numerator="dm_mortality",
         denominator="population",
         group_by=["ethnicity"],
     ),
     Measure(
-        id="cvd_mortality_rate",
+        id="cvd_mortality_ethnic_rate",
         numerator="cvd_mortality",
         denominator="population",
         group_by=["ethnicity"],
     ),
     Measure(
-        id="resp_mortality_rate",
+        id="resp_mortality_ethnic_rate",
         numerator="resp_mortality",
         denominator="population",
         group_by=["ethnicity"],
     ),
     Measure(
-        id="mh_mortality_rate",
+        id="mh_mortality_ethnic_rate",
         numerator="mh_mortality",
         denominator="population",
         group_by=["ethnicity"],
     ),
+        Measure(
+        id="mi_mortality_ethnic_rate",
+        numerator="mi_mortality",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
     Measure(
-        id="dm_mortality_rate",
+        id="stroke_mortality_ethnic_rate",
+        numerator="stroke_mortality",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="heart_failure_mortality_ethnic_rate",
+        numerator="heart_failure_mortality",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="vte_mortality_ethnic_rate",
+        numerator="vte_mortality",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="asthma_mortality_ethnic_rate",
+        numerator="asthma_mortality",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="copd_mortality_ethnic_rate",
+        numerator="copd_mortality",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="dm_mortality_imd_rate",
         numerator="dm_mortality",
         denominator="population",
         group_by=["imd"],
     ),
     Measure(
-        id="cvd_mortality_rate",
+        id="cvd_mortality_imd_rate",
         numerator="cvd_mortality",
         denominator="population",
         group_by=["imd"],
     ),
     Measure(
-        id="resp_mortality_rate",
+        id="resp_mortality_imd_rate",
         numerator="resp_mortality",
         denominator="population",
         group_by=["imd"],
     ),
     Measure(
-        id="mh_mortality_rate",
+        id="mh_mortality_imd_rate",
         numerator="mh_mortality",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="mi_mortality_imd_rate",
+        numerator="mi_mortality",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="stroke_mortality_imd_rate",
+        numerator="stroke_mortality",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="heart_failure_mortality_imd_rate",
+        numerator="heart_failure_mortality",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="vte_mortality_imd_rate",
+        numerator="vte_mortality",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="asthma_mortality_imd_rate",
+        numerator="asthma_mortality",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="copd_mortality_imd_rate",
+        numerator="copd_mortality",
         denominator="population",
         group_by=["imd"],
     ),

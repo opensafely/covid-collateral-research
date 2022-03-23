@@ -61,16 +61,24 @@ actions:
     outputs:
       moderately_sensitive:
         measure: output/measures/mortality/measure_*.csv
- 
-  # Generates graphs for diabetes cohort
+  
+  # Generates graphs for CVD & mental health outcomes
+  graphs_mh_cvd:
+    run: stata-mp:latest analysis/graphs_mh_cvd.do 
+    needs: [calculate_measures]
+    outputs: 
+      moderately_sensitive:
+        log: logs/graphs_mh_cvd.log
+        output: output/line_*.eps
+  # Generates graphs for diabetes outcomes
   graphs_dm:
     run: stata-mp:latest analysis/graphs_dm.do 
     needs: [calculate_measures_dm]
     outputs: 
       moderately_sensitive:
         log: logs/graphs_dm.log
-        output: output/line_*.eps
-
+        output: output/line_dm_*.eps
+  # Generate graphs for respiratory outcomes
   graphs_resp:
     run: stata-mp:latest analysis/graphs_resp.do 
     needs: [calculate_measures_resp]
@@ -78,6 +86,15 @@ actions:
       moderately_sensitive:
         log: logs/graphs_resp.log
         output: output/line_resp_*.eps
+
+  # Generate graphs for mortality
+  graphs_mortality:
+    run: stata-mp:latest analysis/graphs_mortality.do 
+    needs: [calculate_measures_mortality]
+    outputs: 
+      moderately_sensitive:
+        log: logs/graphs_mortality.log
+        output: output/line_mortality_*.eps
 
    
 

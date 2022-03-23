@@ -173,6 +173,10 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
     ),
+    # No need to do primary and any code for hospital admissions because 
+    # of the way asthma and copd exacerbation are defined
+   
+    # Emergency admissions - SNOMED codelists still to be defined
 )
 
 # Generate measures
@@ -239,4 +243,3 @@ measures = [
         group_by=["imd"],
     ),
 ]
-

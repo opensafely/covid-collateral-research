@@ -47,6 +47,7 @@ opensafely/lower-respiratory-tract-infection-secondary-care/21c94e19
 
     # self harm  (based on search for self-harm and self poisoning codes in ICD10, as in this list: https://suicideresearchpreventionelearning.com/?sfwd-topic=icd-10-codes-for-intentional-self-harm-x60%E2%88%92x84, and H Forbes suicide list) 
     user/emilyherrett/self_harm_icd10/74529d08
+    user/hjforbes/suicide-icd-10/3b53a18e
     
 # Emergency care outcomes - SNOMED
 # cvd

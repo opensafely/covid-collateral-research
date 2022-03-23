@@ -10,7 +10,7 @@ from cohortextractor import (
 from codelists import *
 
 # Create ICD-10 codelists for type 1 and type 2 diabetes
-# Remove once codelist on opencodelists
+# Remove once codelists are on opencodelists
 t1dm_icd_codes = codelist(["E10"], system="icd10")
 t2dm_icd_codes = codelist(["E11"], system="icd10")
 
@@ -141,7 +141,7 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-    # Inpatient admission with primary code of diabetes
+    # Inpatient admission with primary code of diabetes 
     # Type 1 DM
     t1dm_admission_primary=patients.admitted_to_hospital(
         with_these_primary_diagnoses=t1dm_icd_codes,
@@ -150,7 +150,7 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.1},
     ),
     # Type 2 DM
-    t2dm_admission_primary=patients.admitted_to_hospital(
+    #t2dm_admission_primary=patients.admitted_to_hospital(
         with_these_primary_diagnoses=t2dm_icd_codes,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
@@ -185,28 +185,28 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
     ),
-    # Emergency admission with code of diabetes
+    # Emergency admission with code of diabetes - codes need defining
     # Type 1 DM
-    t1dm_admission_emergency=patients.attended_emergency_care(
-        with_these_diagnoses=t1dm_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.05},
-    ),
+    #t1dm_admission_emergency=patients.attended_emergency_care(
+    #    with_these_diagnoses=t1dm_snomed_codes,
+    #    between=["index_date", "last_day_of_month(index_date)"],
+    #    returning="binary_flag",
+    #    return_expectations={"incidence": 0.05},
+    #),
     # Type 2 DM
-    t2dm_admission_emergency=patients.attended_emergency_care(
-        with_these_diagnoses=t2dm_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.05},
-    ),
+    #t2dm_admission_emergency=patients.attended_emergency_care(
+    #    with_these_diagnoses=t2dm_snomed_codes,
+    #    between=["index_date", "last_day_of_month(index_date)"],
+    #    returning="binary_flag",
+    #    return_expectations={"incidence": 0.05},
+    #),
     # Ketoacidosis
-    dm_keto_admission_emergency=patients.attended_emergency_care(
-        with_these_diagnoses=dm_keto_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.05},
-    ),
+    #dm_keto_admission_emergency=patients.attended_emergency_care(
+    #    with_these_diagnoses=dm_keto_snomed_codes,
+    #    between=["index_date", "last_day_of_month(index_date)"],
+    #    returning="binary_flag",
+    #    return_expectations={"incidence": 0.05},
+    #),
 )
 # Generate summary data by ethnicity for each outcome
 measures = [

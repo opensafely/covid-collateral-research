@@ -150,6 +150,12 @@ self_harm_icd_codes = codelist_from_csv(
     column="code",
 )
 
+suicide_icd_codes = codelist_from_csv(
+    "codelists/user-hjforbes-suicide-icd-10.csv",
+    system="icd10",
+    column="code",
+)
+
 # Snomed codes for emergecy care outcomes
 # CVD
 
