@@ -1,23 +1,30 @@
+# MI & VTE - ICD codes
 opensafely/cardiovascular-secondary-care/20b63bd4/
-opensafely/myocardial-infarction-2/2020-07-09/
-opensafely/ethnicity/2020-04-27/
-opensafely/alanine-aminotransferase-alt-tests/2298df3e
+# Ethnicity - SNOMED
+opensafely/ethnicity-with-categories-snomed/5eb3345b/
+# Clinical monitoring
 opensafely/asthma-annual-review-qof/33eeb7da
-opensafely/cvd-risk-assessment-score-qof/1adf44a5
-opensafely/cholesterol-tests/09896c09
 opensafely/chronic-obstructive-pulmonary-disease-copd-review-qof/01cfd170
 opensafely/glycated-haemoglobin-hba1c-tests/2ab11f20
-opensafely/red-blood-cell-rbc-tests/576a859e
-opensafely/sodium-tests-numerical-value/32bff605
 opensafely/systolic-blood-pressure-qof/3572b5fb
-opensafely/thyroid-stimulating-hormone-tsh-testing/11a1abeb
+# GP diagnoses
 opensafely/type-1-diabetes/2020-06-29
 opensafely/type-2-diabetes/2020-06-29
 opensafely/current-asthma/2020-05-06
 opensafely/current-copd/2020-05-06
+primis-covid19-vacc-uptake/sev_mental/v1
+primis-covid19-vacc-uptake/chd_cov/v1.2.1
+opensafely/stroke-updated/2ddebf56
+opensafely/transient-ischaemic-attack/3526e2ac
+
+# secondary care outcomes - ICD 10
 opensafely/diabetic-ketoacidosis-secondary-care/6e975569
 opensafely/stroke-secondary-care/2020-10-05
 opensafely/venous-thromboembolic-disease-hospital/2020-10-01
+opensafely/asthma-exacerbation-secondary-care/229001a8
+opensafely/copd-exacerbation/6858db5b
+opensafely/copd-secondary-care/35734162
+opensafely/lower-respiratory-tract-infection-secondary-care/21c94e19
 
 # mental health outcomes - ICD - depression, anxiety, severe mental illness, OCD, self harm, eating disorder
     # depression (based on HDR UK https://phenotypes.healthdatagateway.org/phenotypes/PH149/version/298/detail/#home)
@@ -38,6 +45,15 @@ opensafely/venous-thromboembolic-disease-hospital/2020-10-01
     # OCD (based on HDR UK obsessive-compulsive disorder https://phenotypes.healthdatagateway.org/phenotypes/PH223/version/446/detail/#home)
     user/emilyherrett/ocd_icd10/3f80f6a8
 
-    # self harm and suicide   (based on search for self-harm and self poisoning codes in ICD10, as in this list: https://suicideresearchpreventionelearning.com/?sfwd-topic=icd-10-codes-for-intentional-self-harm-x60%E2%88%92x84, and H Forbes suicide list) 
+    # self harm  (based on search for self-harm and self poisoning codes in ICD10, as in this list: https://suicideresearchpreventionelearning.com/?sfwd-topic=icd-10-codes-for-intentional-self-harm-x60%E2%88%92x84, and H Forbes suicide list) 
     user/emilyherrett/self_harm_icd10/74529d08
     user/hjforbes/suicide-icd-10/3b53a18e
+    
+# Emergency care outcomes - SNOMED
+# cvd
+
+# Mental health - one is above in diagnosis section (severe mental illness)
+user/hjforbes/anxiety-symptoms-and-diagnoses/3088a1b6
+user/hjforbes/obsessive-compulsive-disorder-ocd/17792e81
+user/hjforbes/undetermined-intent-self-harm-aged15-years/4d66c4bc
+user/hjforbes/diagnoses-eating-disorder/62a78820
