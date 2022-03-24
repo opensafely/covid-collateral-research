@@ -18,7 +18,7 @@ forvalues i=1/2 {
         local this_other :word `j' of `other'
     * Ethnicity
     clear 
-    import delimited using "./output/measures/resp/measure_`this_outcome'_`this_strata'_ethnicity_rate.csv"
+    import delimited using "./output/measures/resp/measure_`this_outcome'_`this_strata'_ethnicity_rate.csv", numericcols(4)
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -43,7 +43,7 @@ forvalues i=1/2 {
     graph export ./output/line_resp_ethnic_`this_outcome'_`this_strata'.eps, as(eps) replace
     * IMD
     clear 
-    import delimited using "./output/measures/resp/measure_`this_outcome'_`this_strata'_imd_rate.csv"
+    import delimited using "./output/measures/resp/measure_`this_outcome'_`this_strata'_imd_rate.csv", numericcols(4)
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
