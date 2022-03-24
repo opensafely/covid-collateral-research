@@ -126,27 +126,32 @@ study = StudyDefinition(
     keto_mortality=patients.with_these_codes_on_death_certificate(
         dm_keto_icd_codes,
         between=["index_date", "last_day_of_month(index_date)"],
+        match_only_underlying_cause=True,
         returning="binary_flag",
     ),
     # Each CVD outcome
     stroke_mortality = patients.with_these_codes_on_death_certificate(
     stroke_icd_codes,
     between=["index_date", "last_day_of_month(index_date)"],
+    match_only_underlying_cause=True,
     returning="binary_flag",
     ),
     vte_mortality = patients.with_these_codes_on_death_certificate(
     vte_icd_codes,
     between=["index_date", "last_day_of_month(index_date)"],
+    match_only_underlying_cause=True,
     returning="binary_flag",
     ),
     mi_mortality = patients.with_these_codes_on_death_certificate(
     mi_icd_codes,
     between=["index_date", "last_day_of_month(index_date)"],
+    match_only_underlying_cause=True,
     returning="binary_flag",
     ),
     heart_failure_mortality = patients.with_these_codes_on_death_certificate(
     heart_failure_icd_codes,
     between=["index_date", "last_day_of_month(index_date)"],
+    match_only_underlying_cause=True,
     returning="binary_flag",
     ),
 
@@ -163,22 +168,26 @@ study = StudyDefinition(
     resp_mortality=patients.with_these_codes_on_death_certificate(
         all_resp_codes,
         between=["index_date", "last_day_of_month(index_date)"],
+        match_only_underlying_cause=True,
         returning="binary_flag",
     ),
     asthma_mortality=patients.with_these_codes_on_death_certificate(
         asthma_exacerbation_icd_codes,
         between=["index_date", "last_day_of_month(index_date)"],
+        match_only_underlying_cause=True,
         returning="binary_flag",
     ),
     copd_exac_mortality=patients.with_these_codes_on_death_certificate(
         copd_exacerbation_icd_codes,
         between=["index_date", "last_day_of_month(index_date)"],
+        match_only_underlying_cause=True,
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
     copd_diag_mortality=patients.with_these_codes_on_death_certificate(
         copd_icd_codes,
         between=["index_date", "last_day_of_month(index_date)"],
+        match_only_underlying_cause=True,
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
@@ -191,6 +200,7 @@ study = StudyDefinition(
     mh_mortality=patients.with_these_codes_on_death_certificate(
         all_mh_codes,
         between=["index_date", "last_day_of_month(index_date)"],
+        match_only_underlying_cause=True,
         returning="binary_flag",
     ),
 
