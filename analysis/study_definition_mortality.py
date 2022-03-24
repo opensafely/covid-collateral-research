@@ -123,7 +123,7 @@ study = StudyDefinition(
             },
         ),
     # Mortality - Diabetes - currently only have DM keto codes
-    dm_mortality=patients.with_these_codes_on_death_certificate(
+    keto_mortality=patients.with_these_codes_on_death_certificate(
         dm_keto_icd_codes,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
@@ -198,8 +198,8 @@ study = StudyDefinition(
 # Currently rates all for general population - not any subpopulations..
 measures = [
     Measure(
-        id="dm_mortality_ethnic_rate",
-        numerator="dm_mortality",
+        id="keto_mortality_ethnic_rate",
+        numerator="keto_mortality",
         denominator="population",
         group_by=["ethnicity"],
     ),
@@ -258,8 +258,8 @@ measures = [
         group_by=["ethnicity"],
     ),
     Measure(
-        id="dm_mortality_imd_rate",
-        numerator="dm_mortality",
+        id="keto_mortality_imd_rate",
+        numerator="keto_mortality",
         denominator="population",
         group_by=["imd"],
     ),
