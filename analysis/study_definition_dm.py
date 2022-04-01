@@ -29,7 +29,7 @@ study = StudyDefinition(
         (NOT died) AND
         (sex = 'M' OR sex = 'F') AND
         (stp != 'missing') AND
-        (imd != 'missing') AND
+        (imd != 0) AND
         (household <=15) AND
         (has_t1_diabetes OR has_t2_diabetes)
         """,
