@@ -1,568 +1,312 @@
+2022-04-02T16:34:07.015116700Z 
+2022-04-02T16:34:07.015167700Z   ___  ____  ____  ____  ____ (R)
+2022-04-02T16:34:07.015177500Z  /__    /   ____/   /   ____/
+2022-04-02T16:34:07.015185400Z ___/   /   /___/   /   /___/   16.1   Copyright 1985-2019 StataCorp LLC
+2022-04-02T16:34:07.015192900Z   Statistics/Data Analysis            StataCorp
+2022-04-02T16:34:07.015200100Z                                       4905 Lakeway Drive
+2022-04-02T16:34:07.015207200Z                                       College Station, Texas 77845 USA
+2022-04-02T16:34:07.015214300Z                                       800-STATA-PC        http://www.stata.com
+2022-04-02T16:34:07.015221600Z                                       979-696-4600        stata@stata.com
+2022-04-02T16:34:07.015228800Z                                       979-696-4601 (fax)
+2022-04-02T16:34:07.015235700Z 
+2022-04-02T16:34:07.015242700Z 3-user Stata network license expires 11 May 2022:
+2022-04-02T16:34:07.015249900Z        Serial number:  501709312237
+2022-04-02T16:34:07.015257000Z          Licensed to:  The Bennett Institute
+2022-04-02T16:34:07.015264100Z                        Oxford University
+2022-04-02T16:34:07.017951800Z 
+2022-04-02T16:34:07.017971600Z Notes:
+2022-04-02T16:34:07.017980600Z       1.  Unicode is supported; see help unicode_advice.
+2022-04-02T16:34:07.017988200Z 
+2022-04-02T16:34:07.017995300Z . do "analysis/graphs_resp.wrapper.do" 
+2022-04-02T16:34:07.018002700Z 
+2022-04-02T16:34:07.018009800Z . . do "analysis/graphs_resp.do" 
+2022-04-02T16:34:07.018017200Z 
+2022-04-02T16:34:07.018024400Z . /* ==========================================================================
+2022-04-02T16:34:07.018031900Z > =
+2022-04-02T16:34:07.018039500Z > Do file name:   graphs_resp.do
+2022-04-02T16:34:07.018046600Z > Project:        COVID Collateral
+2022-04-02T16:34:07.018053700Z > Date:           10/03/2022
+2022-04-02T16:34:07.018061000Z > Author:         Ruth Costello
+2022-04-02T16:34:07.018068400Z > Description:    Generates line graphs of rates of each outcome and strata per
+2022-04-02T16:34:07.018075900Z >  month
+2022-04-02T16:34:07.018083100Z > =============================================================================
+2022-04-02T16:34:07.018090700Z > =*/
+2022-04-02T16:34:07.018097900Z . cap log using ./logs/graphs_resp.log, replace
+2022-04-02T16:34:07.018172400Z 
+2022-04-02T16:34:07.018186900Z . 
+2022-04-02T16:34:07.018194900Z . * Generates graphs for clinical monitoring measures
+2022-04-02T16:34:07.018202300Z . local outcomes "asthma copd"
+2022-04-02T16:34:07.018274800Z 
+2022-04-02T16:34:07.018289700Z . local strata "monitoring exacerbation"
+2022-04-02T16:34:07.018310600Z 
+2022-04-02T16:34:07.018318700Z . local other "review exacerbation"
+2022-04-02T16:34:07.018326300Z 
+2022-04-02T16:34:07.018333600Z . forvalues i=1/2 {
+2022-04-02T16:34:07.018340800Z   2.     local this_outcome :word `i' of `outcomes'
+2022-04-02T16:34:07.018348300Z   3.     forvalues j=1/2 {
+2022-04-02T16:34:07.018357500Z   4.         local this_strata :word `j' of `strata'
+2022-04-02T16:34:07.018365100Z   5.         local this_other :word `j' of `other'
+2022-04-02T16:34:07.018372300Z   6.     * Ethnicity
+2022-04-02T16:34:07.018379500Z .     clear 
+2022-04-02T16:34:07.018406300Z   7.     import delimited using "./output/measures/resp/measure_`this_outcome'_
+2022-04-02T16:34:07.018419700Z > `this_strata'_ethnicity_rate.csv", numericcols(4)
+2022-04-02T16:34:07.018427700Z   8.     * Generate rate per 100,000
+2022-04-02T16:34:07.018435000Z .     gen rate = value*100000 
+2022-04-02T16:34:07.018442300Z   9.     * Format date
+2022-04-02T16:34:07.018449600Z .     gen dateA = date(date, "YMD")
+2022-04-02T16:34:07.018457100Z  10.     drop date
+2022-04-02T16:34:07.018464300Z  11.     format dateA %dD/M/Y
+2022-04-02T16:34:07.018507000Z  12.     tab dateA 
+2022-04-02T16:34:07.018522200Z  13.     * reshape dataset so columns with rates for each ethnicity 
+2022-04-02T16:34:07.018530500Z .     reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i
+2022-04-02T16:34:07.018538300Z > (dateA) j(ethnicity)
+2022-04-02T16:34:07.018545800Z  14.     describe
+2022-04-02T16:34:07.018553400Z  15.     * Labelling ethnicity variables
+2022-04-02T16:34:07.018607500Z .     label var rate1 "Ethnicity - White"
+2022-04-02T16:34:07.018621100Z  16.     label var rate2 "Ethnicity - Mixed"
+2022-04-02T16:34:07.018628900Z  17.     label var rate3 "Ethnicity - Asian"
+2022-04-02T16:34:07.018636400Z  18.     label var rate4 "Ethnicity - Black"
+2022-04-02T16:34:07.018643700Z  19.     label var rate5 "Ethnicity - Other"
+2022-04-02T16:34:07.018651200Z  20. 
+2022-04-02T16:34:07.018658400Z .     * Generate line graph
+2022-04-02T16:34:07.018665700Z .     graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, angle(45)
+2022-04-02T16:34:07.018673000Z >  format(%dM-CY)) ///
+2022-04-02T16:34:07.018680400Z >     ytitle("Rate per 100,000") 
+2022-04-02T16:34:07.018688000Z  21. 
+2022-04-02T16:34:07.018697300Z .     graph export ./output/line_resp_ethnic_`this_outcome'_`this_strata'.eps, 
+2022-04-02T16:34:07.018705400Z > as(eps) replace
+2022-04-02T16:34:07.018712800Z  22.     * IMD
+2022-04-02T16:34:07.018719900Z .     clear 
+2022-04-02T16:34:07.018742500Z  23.     import delimited using "./output/measures/resp/measure_`this_outcome'_
+2022-04-02T16:34:07.018750800Z > `this_strata'_imd_rate.csv", numericcols(4)
+2022-04-02T16:34:07.018758200Z  24.     * Generate rate per 100,000
+2022-04-02T16:34:07.018765500Z .     gen rate = value*100000 
+2022-04-02T16:34:07.018772700Z  25.     * Format date
+2022-04-02T16:34:07.018779800Z .     gen dateA = date(date, "YMD")
+2022-04-02T16:34:07.018788400Z  26.     drop date
+2022-04-02T16:34:07.018795800Z  27.     format dateA %dD/M/Y
+2022-04-02T16:34:07.018803000Z  28.     tab dateA 
+2022-04-02T16:34:07.018810000Z  29.     * reshape dataset so columns with rates for each ethnicity 
+2022-04-02T16:34:07.018817300Z .     reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i
+2022-04-02T16:34:07.018824700Z > (dateA) j(imd)
+2022-04-02T16:34:07.018832000Z  30.     describe
+2022-04-02T16:34:07.018839900Z  31.     * Labelling ethnicity variables
+2022-04-02T16:34:07.018847600Z .     label var rate1 "IMD - 1"
+2022-04-02T16:34:07.018854900Z  32.     label var rate2 "IMD - 2"
+2022-04-02T16:34:07.018862200Z  33.     label var rate3 "IMD - 3"
+2022-04-02T16:34:07.018869400Z  34.     label var rate4 "IMD - 4"
+2022-04-02T16:34:07.018876500Z  35.     label var rate5 "IMD - 5"
+2022-04-02T16:34:07.018883500Z  36. 
+2022-04-02T16:34:07.018891400Z .     * Generate line graph
+2022-04-02T16:34:07.018898700Z .     graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, format(%d
+2022-04-02T16:34:07.018906000Z > M-CY)) ///
+2022-04-02T16:34:07.018912900Z >     ytitle("Rate per 100,000") 
+2022-04-02T16:34:07.018920000Z  37. 
+2022-04-02T16:34:07.018926900Z .     graph export ./output/line_resp_imd_`this_outcome'_`this_strata'.eps, as(
+2022-04-02T16:34:07.018934300Z > eps) replace
+2022-04-02T16:34:07.018941500Z  38.     }
+2022-04-02T16:34:07.018948700Z  39. }
+2022-04-02T16:34:07.488961100Z (5 vars, 282 obs)
+2022-04-02T16:34:07.489515000Z 
+2022-04-02T16:34:07.489535600Z       dateA |      Freq.     Percent        Cum.
+2022-04-02T16:34:07.489545300Z ------------+-----------------------------------
+2022-04-02T16:34:07.489553400Z   01mar2018 |          6        2.13        2.13
+2022-04-02T16:34:07.489561300Z   01apr2018 |          6        2.13        4.26
+2022-04-02T16:34:07.489569500Z   01may2018 |          6        2.13        6.38
+2022-04-02T16:34:07.489577300Z   01jun2018 |          6        2.13        8.51
+2022-04-02T16:34:07.489584700Z   01jul2018 |          6        2.13       10.64
+2022-04-02T16:34:07.489592600Z   01aug2018 |          6        2.13       12.77
+2022-04-02T16:34:07.489612300Z   01sep2018 |          6        2.13       14.89
+2022-04-02T16:34:07.489620800Z   01oct2018 |          6        2.13       17.02
+2022-04-02T16:34:07.489631700Z   01nov2018 |          6        2.13       19.15
+2022-04-02T16:34:07.489639500Z   01dec2018 |          6        2.13       21.28
+2022-04-02T16:34:07.489647000Z   01jan2019 |          6        2.13       23.40
+2022-04-02T16:34:07.489654500Z   01feb2019 |          6        2.13       25.53
+2022-04-02T16:34:07.489661500Z   01mar2019 |          6        2.13       27.66
+2022-04-02T16:34:07.489668800Z   01apr2019 |          6        2.13       29.79
+2022-04-02T16:34:07.489676400Z   01may2019 |          6        2.13       31.91
+2022-04-02T16:34:07.489684100Z   01jun2019 |          6        2.13       34.04
+2022-04-02T16:34:07.489691600Z   01jul2019 |          6        2.13       36.17
+2022-04-02T16:34:07.489698900Z   01aug2019 |          6        2.13       38.30
+2022-04-02T16:34:07.489707400Z   01sep2019 |          6        2.13       40.43
+2022-04-02T16:34:07.489715000Z   01oct2019 |          6        2.13       42.55
+2022-04-02T16:34:07.489722500Z   01nov2019 |          6        2.13       44.68
+2022-04-02T16:34:07.489729900Z   01dec2019 |          6        2.13       46.81
+2022-04-02T16:34:07.489737300Z   01jan2020 |          6        2.13       48.94
+2022-04-02T16:34:07.489744800Z   01feb2020 |          6        2.13       51.06
+2022-04-02T16:34:07.489752300Z   01mar2020 |          6        2.13       53.19
+2022-04-02T16:34:07.489759400Z   01apr2020 |          6        2.13       55.32
+2022-04-02T16:34:07.489767000Z   01may2020 |          6        2.13       57.45
+2022-04-02T16:34:07.489774300Z   01jun2020 |          6        2.13       59.57
+2022-04-02T16:34:07.489843000Z   01jul2020 |          6        2.13       61.70
+2022-04-02T16:34:07.489859800Z   01aug2020 |          6        2.13       63.83
+2022-04-02T16:34:07.489868300Z   01sep2020 |          6        2.13       65.96
+2022-04-02T16:34:07.489876400Z   01oct2020 |          6        2.13       68.09
+2022-04-02T16:34:07.489883900Z   01nov2020 |          6        2.13       70.21
+2022-04-02T16:34:07.489891400Z   01dec2020 |          6        2.13       72.34
+2022-04-02T16:34:07.489898900Z   01jan2021 |          6        2.13       74.47
+2022-04-02T16:34:07.489906600Z   01feb2021 |          6        2.13       76.60
+2022-04-02T16:34:07.489914100Z   01mar2021 |          6        2.13       78.72
+2022-04-02T16:34:07.489921500Z   01apr2021 |          6        2.13       80.85
+2022-04-02T16:34:07.489931200Z   01may2021 |          6        2.13       82.98
+2022-04-02T16:34:07.489938800Z   01jun2021 |          6        2.13       85.11
+2022-04-02T16:34:07.489946200Z   01jul2021 |          6        2.13       87.23
+2022-04-02T16:34:07.489966000Z   01aug2021 |          6        2.13       89.36
+2022-04-02T16:34:07.489974400Z   01sep2021 |          6        2.13       91.49
+2022-04-02T16:34:07.489981500Z   01oct2021 |          6        2.13       93.62
+2022-04-02T16:34:07.489988500Z   01nov2021 |          6        2.13       95.74
+2022-04-02T16:34:07.489995600Z   01dec2021 |          6        2.13       97.87
+2022-04-02T16:34:07.490002700Z   01jan2022 |          6        2.13      100.00
+2022-04-02T16:34:07.490009900Z ------------+-----------------------------------
+2022-04-02T16:34:07.490909000Z       Total |        282      100.00
+2022-04-02T16:34:07.498047000Z (note: j = 0 1 2 3 4 5)
+2022-04-02T16:34:07.515056500Z 
+2022-04-02T16:34:07.515075300Z Data                               long   ->   wide
+2022-04-02T16:34:07.515084000Z -----------------------------------------------------------------------------
+2022-04-02T16:34:07.515091500Z Number of obs.                      282   ->      47
+2022-04-02T16:34:07.515635000Z Number of variables                   6   ->      25
+2022-04-02T16:34:07.515651000Z j variable (6 values)         ethnicity   ->   (dropped)
+2022-04-02T16:34:07.515661500Z xij variables:
+2022-04-02T16:34:07.516248000Z                                   value   ->   value0 value1 ... value5
+2022-04-02T16:34:07.516814800Z                                    rate   ->   rate0 rate1 ... rate5
+2022-04-02T16:34:07.517394100Z                              has_asthma   ->   has_asthma0 has_asthma1 ... has_
+2022-04-02T16:34:07.517411000Z > asthma5
+2022-04-02T16:34:07.517996700Z                           asthma_review   ->   asthma_review0 asthma_review1 ..
+2022-04-02T16:34:07.518012100Z > . asthma_review5
+2022-04-02T16:34:07.518020300Z -----------------------------------------------------------------------------
+2022-04-02T16:34:07.518310900Z 
+2022-04-02T16:34:07.518327300Z Contains data
+2022-04-02T16:34:07.518335400Z   obs:            47                          
+2022-04-02T16:34:07.518343400Z  vars:            25                          
+2022-04-02T16:34:07.518350700Z -------------------------------------------------------------------------------
+2022-04-02T16:34:07.518358600Z               storage   display    value
+2022-04-02T16:34:07.518366400Z variable name   type    format     label      variable label
+2022-04-02T16:34:07.518374000Z -------------------------------------------------------------------------------
+2022-04-02T16:34:07.518381600Z dateA           float   %dD/M/Y               
+2022-04-02T16:34:07.518389000Z asthma_review0  long    %12.0g                0 asthma_review
+2022-04-02T16:34:07.518398400Z has_asthma0     long    %12.0g                0 has_asthma
+2022-04-02T16:34:07.518406000Z value0          float   %9.0g                 0 value
+2022-04-02T16:34:07.518422800Z rate0           float   %9.0g                 0 rate
+2022-04-02T16:34:07.518431100Z asthma_review1  long    %12.0g                1 asthma_review
+2022-04-02T16:34:07.518438300Z has_asthma1     long    %12.0g                1 has_asthma
+2022-04-02T16:34:07.518445700Z value1          float   %9.0g                 1 value
+2022-04-02T16:34:07.518452900Z rate1           float   %9.0g                 1 rate
+2022-04-02T16:34:07.518460200Z asthma_review2  long    %12.0g                2 asthma_review
+2022-04-02T16:34:07.518467600Z has_asthma2     long    %12.0g                2 has_asthma
+2022-04-02T16:34:07.518527500Z value2          float   %9.0g                 2 value
+2022-04-02T16:34:07.518545100Z rate2           float   %9.0g                 2 rate
+2022-04-02T16:34:07.518553100Z asthma_review3  long    %12.0g                3 asthma_review
+2022-04-02T16:34:07.518560500Z has_asthma3     long    %12.0g                3 has_asthma
+2022-04-02T16:34:07.518567900Z value3          float   %9.0g                 3 value
+2022-04-02T16:34:07.518575200Z rate3           float   %9.0g                 3 rate
+2022-04-02T16:34:07.518582500Z asthma_review4  long    %12.0g                4 asthma_review
+2022-04-02T16:34:07.518589600Z has_asthma4     long    %12.0g                4 has_asthma
+2022-04-02T16:34:07.518597000Z value4          float   %9.0g                 4 value
+2022-04-02T16:34:07.519663900Z rate4           float   %9.0g                 4 rate
+2022-04-02T16:34:07.519678300Z asthma_review5  long    %12.0g                5 asthma_review
+2022-04-02T16:34:07.519686000Z has_asthma5     long    %12.0g                5 has_asthma
+2022-04-02T16:34:07.519693500Z value5          float   %9.0g                 5 value
+2022-04-02T16:34:07.519700800Z rate5           float   %9.0g                 5 rate
+2022-04-02T16:34:07.519708300Z -------------------------------------------------------------------------------
+2022-04-02T16:34:07.519715600Z Sorted by: dateA
+2022-04-02T16:34:08.972082600Z (note: file ./output/line_resp_ethnic_asthma_monitoring.eps not found)
+2022-04-02T16:34:08.972121400Z (file ./output/line_resp_ethnic_asthma_monitoring.eps written in EPS format)
+2022-04-02T16:34:09.220167900Z (5 vars, 15,463 obs)
+2022-04-02T16:34:09.238266400Z 
+2022-04-02T16:34:09.238289500Z       dateA |      Freq.     Percent        Cum.
+2022-04-02T16:34:09.238298600Z ------------+-----------------------------------
+2022-04-02T16:34:09.238306300Z   01mar2018 |        329        2.13        2.13
+2022-04-02T16:34:09.238313700Z   01apr2018 |        329        2.13        4.26
+2022-04-02T16:34:09.238321300Z   01may2018 |        329        2.13        6.38
+2022-04-02T16:34:09.238328900Z   01jun2018 |        329        2.13        8.51
+2022-04-02T16:34:09.238336600Z   01jul2018 |        329        2.13       10.64
+2022-04-02T16:34:09.238363400Z   01aug2018 |        329        2.13       12.77
+2022-04-02T16:34:09.238373000Z   01sep2018 |        329        2.13       14.89
+2022-04-02T16:34:09.238380600Z   01oct2018 |        329        2.13       17.02
+2022-04-02T16:34:09.238388200Z   01nov2018 |        329        2.13       19.15
+2022-04-02T16:34:09.238395500Z   01dec2018 |        329        2.13       21.28
+2022-04-02T16:34:09.238402700Z   01jan2019 |        329        2.13       23.40
+2022-04-02T16:34:09.238409900Z   01feb2019 |        329        2.13       25.53
+2022-04-02T16:34:09.238417300Z   01mar2019 |        329        2.13       27.66
+2022-04-02T16:34:09.238424500Z   01apr2019 |        329        2.13       29.79
+2022-04-02T16:34:09.238431900Z   01may2019 |        329        2.13       31.91
+2022-04-02T16:34:09.238439200Z   01jun2019 |        329        2.13       34.04
+2022-04-02T16:34:09.238446700Z   01jul2019 |        329        2.13       36.17
+2022-04-02T16:34:09.238454100Z   01aug2019 |        329        2.13       38.30
+2022-04-02T16:34:09.238464600Z   01sep2019 |        329        2.13       40.43
+2022-04-02T16:34:09.238472400Z   01oct2019 |        329        2.13       42.55
+2022-04-02T16:34:09.238479800Z   01nov2019 |        329        2.13       44.68
+2022-04-02T16:34:09.238487100Z   01dec2019 |        329        2.13       46.81
+2022-04-02T16:34:09.238494700Z   01jan2020 |        329        2.13       48.94
+2022-04-02T16:34:09.238502300Z   01feb2020 |        329        2.13       51.06
+2022-04-02T16:34:09.238510300Z   01mar2020 |        329        2.13       53.19
+2022-04-02T16:34:09.238517500Z   01apr2020 |        329        2.13       55.32
+2022-04-02T16:34:09.238525300Z   01may2020 |        329        2.13       57.45
+2022-04-02T16:34:09.238532500Z   01jun2020 |        329        2.13       59.57
+2022-04-02T16:34:09.238541200Z   01jul2020 |        329        2.13       61.70
+2022-04-02T16:34:09.238548600Z   01aug2020 |        329        2.13       63.83
+2022-04-02T16:34:09.238556100Z   01sep2020 |        329        2.13       65.96
+2022-04-02T16:34:09.238563300Z   01oct2020 |        329        2.13       68.09
+2022-04-02T16:34:09.238570600Z   01nov2020 |        329        2.13       70.21
+2022-04-02T16:34:09.238578100Z   01dec2020 |        329        2.13       72.34
+2022-04-02T16:34:09.238585600Z   01jan2021 |        329        2.13       74.47
+2022-04-02T16:34:09.238593100Z   01feb2021 |        329        2.13       76.60
+2022-04-02T16:34:09.238600600Z   01mar2021 |        329        2.13       78.72
+2022-04-02T16:34:09.238607900Z   01apr2021 |        329        2.13       80.85
+2022-04-02T16:34:09.238654400Z   01may2021 |        329        2.13       82.98
+2022-04-02T16:34:09.238673600Z   01jun2021 |        329        2.13       85.11
+2022-04-02T16:34:09.238695700Z   01jul2021 |        329        2.13       87.23
+2022-04-02T16:34:09.238703900Z   01aug2021 |        329        2.13       89.36
+2022-04-02T16:34:09.238711200Z   01sep2021 |        329        2.13       91.49
+2022-04-02T16:34:09.238718400Z   01oct2021 |        329        2.13       93.62
+2022-04-02T16:34:09.238725400Z   01nov2021 |        329        2.13       95.74
+2022-04-02T16:34:09.238732500Z   01dec2021 |        329        2.13       97.87
+2022-04-02T16:34:09.238739700Z   01jan2022 |        329        2.13      100.00
+2022-04-02T16:34:09.238747100Z ------------+-----------------------------------
+2022-04-02T16:34:09.279495200Z       Total |     15,463      100.00
+2022-04-02T16:34:09.279512300Z (note: j = -1 100 200 300 400 500 600 700 800 900 1000 1100 1200 1300 1400 1500
+2022-04-02T16:34:09.279520300Z >  1600 1700 1800 1900 2000 2100 2200 2300 2400 2500 2600 2700 2800 2900 3000 3
+2022-04-02T16:34:09.279528500Z > 100 3200 3300 3400 3500 3600 3700 3800 3900 4000 4100 4200 4300 4400 4500 460
+2022-04-02T16:34:09.279535900Z > 0 4700 4800 4900 5000 5100 5200 5300 5400 5500 5600 5700 5800 5900 6000 6100 
+2022-04-02T16:34:09.279543300Z > 6200 6300 6400 6500 6600 6700 6800 6900 7000 7100 7200 7300 7400 7500 7600 77
+2022-04-02T16:34:09.279550500Z > 00 7800 7900 8000 8100 8200 8300 8400 8500 8600 8700 8800 8900 9000 9100 9200
+2022-04-02T16:34:09.279558100Z >  9300 9400 9500 9600 9700 9800 9900 10000 10100 10200 10300 10400 10500 10600
+2022-04-02T16:34:09.279565400Z >  10700 10800 10900 11000 11100 11200 11300 11400 11500 11600 11700 11800 1190
+2022-04-02T16:34:09.279572900Z > 0 12000 12100 12200 12300 12400 12500 12600 12700 12800 12900 13000 13100 132
+2022-04-02T16:34:09.279580300Z > 00 13300 13400 13500 13600 13700 13800 13900 14000 14100 14200 14300 14400 14
+2022-04-02T16:34:09.279587900Z > 500 14600 14700 14800 14900 15000 15100 15200 15300 15400 15500 15600 15700 1
+2022-04-02T16:34:09.279596200Z > 5800 15900 16000 16100 16200 16300 16400 16500 16600 16700 16800 16900 17000 
+2022-04-02T16:34:09.279603700Z > 17100 17200 17300 17400 17500 17600 17700 17800 17900 18000 18100 18200 18300
+2022-04-02T16:34:09.279611000Z >  18400 18500 18600 18700 18800 18900 19000 19100 19200 19300 19400 19500 1960
+2022-04-02T16:34:09.279618300Z > 0 19700 19800 19900 20000 20100 20200 20300 20400 20500 20600 20700 20800 209
+2022-04-02T16:34:09.279625600Z > 00 21000 21100 21200 21300 21400 21500 21600 21700 21800 21900 22000 22100 22
+2022-04-02T16:34:09.279632900Z > 200 22300 22400 22500 22600 22700 22800 22900 23000 23100 23200 23300 23400 2
+2022-04-02T16:34:09.279640300Z > 3500 23600 23700 23800 23900 24000 24100 24200 24300 24400 24500 24600 24700 
+2022-04-02T16:34:09.279647600Z > 24800 24900 25000 25100 25200 25300 25400 25500 25600 25700 25800 25900 26000
+2022-04-02T16:34:09.279655000Z >  26100 26200 26300 26400 26500 26600 26700 26800 26900 27000 27100 27200 2730
+2022-04-02T16:34:09.279672100Z > 0 27400 27500 27600 27700 27800 27900 28000 28100 28200 28300 28400 28500 286
+2022-04-02T16:34:09.279680400Z > 00 28700 28800 28900 29000 29100 29200 29300 29400 29500 29600 29700 29800 29
+2022-04-02T16:34:09.279687900Z > 900 30000 30100 30200 30300 30400 30500 30600 30700 30800 30900 31000 31100 3
+2022-04-02T16:34:09.279695100Z > 1200 31300 31400 31500 31600 31700 31800 31900 32000 32100 32200 32300 32400 
+2022-04-02T16:34:09.279702400Z > 32500 32600 32700 32800)
+2022-04-02T16:34:09.360143800Z value-1 invalid variable name
+2022-04-02T16:34:09.361201000Z r(198);
+2022-04-02T16:34:09.361225600Z 
+2022-04-02T16:34:09.361234400Z end of do-file
+2022-04-02T16:34:09.361242900Z r(198);
+2022-04-02T16:34:09.361250700Z 
+2022-04-02T16:34:09.361258700Z end of do-file
+2022-04-02T16:34:09.361266200Z 
+2022-04-02T16:34:09.361273600Z r(198);
+2022-04-02T16:34:09.361280800Z 
+2022-04-02T16:34:09.361288400Z 
+2022-04-02T16:34:09.661381100Z . 
 
-. 
-. * Generates graphs for clinical monitoring measures
-. local outcomes "asthma copd"
+id: swm5kbmgmygyrp6g
+commit: b8caf33b99e0542194e5b0f53cec43f055369f92
+docker_image_id: sha256:11980aa720220a1b39bf523f5a8a33270214c13876c30ee364e16265766f7f60
+exit_code: 1
 
-. local strata "monitoring exacerbation"
-
-. local other "review exacerbation"
-
-. forvalues i=1/2 {
-  2.     local this_outcome :word `i' of `outcomes'
-  3.     forvalues j=1/2 {
-  4.         local this_strata :word `j' of `strata'
-  5.         local this_other :word `j' of `other'
-  6.     * Ethnicity
-.     clear 
-  7.     import delimited using "./output/measures/resp/measure_`this_outcome'_
-> `this_strata'_ethnicity_rate.csv"
-  8.     * Generate rate per 100,000
-.     gen rate = value*100000 
-  9.     * Format date
-.     gen dateA = date(date, "YMD")
- 10.     drop date
- 11.     format dateA %dD/M/Y
- 12.     tab dateA 
- 13.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i
-> (dateA) j(ethnicity)
- 14.     describe
- 15.     * Labelling ethnicity variables
-.     label var rate1 "Ethnicity - White"
- 16.     label var rate2 "Ethnicity - Mixed"
- 17.     label var rate3 "Ethnicity - Asian"
- 18.     label var rate4 "Ethnicity - Black"
- 19.     label var rate5 "Ethnicity - Other"
- 20. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, angle(45)
->  format(%dM-CY)) ///
->     ytitle("Rate per 100,000") 
- 21. 
-.     graph export ./output/line_resp_ethnic_`this_outcome'_`this_strata'.eps, 
-> as(eps) replace
- 22.     * IMD
-.     clear 
- 23.     import delimited using "./output/measures/resp/measure_`this_outcome'_
-> `this_strata'_imd_rate.csv"
- 24.     * Generate rate per 100,000
-.     gen rate = value*100000 
- 25.     * Format date
-.     gen dateA = date(date, "YMD")
- 26.     drop date
- 27.     format dateA %dD/M/Y
- 28.     tab dateA 
- 29.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i
-> (dateA) j(imd)
- 30.     describe
- 31.     * Labelling ethnicity variables
-.     label var rate1 "IMD - 1"
- 32.     label var rate2 "IMD - 2"
- 33.     label var rate3 "IMD - 3"
- 34.     label var rate4 "IMD - 4"
- 35.     label var rate5 "IMD - 5"
- 36. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, format(%d
-> M-CY)) ///
->     ytitle("Rate per 100,000") 
- 37. 
-.     graph export ./output/line_resp_imd_`this_outcome'_`this_strata'.eps, as(
-> eps) replace
- 38.     }
- 39. }
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                             has_asthma   ->   has_asthma1 has_asthma2 ... has_
-> asthma5
-                          asthma_review   ->   asthma_review1 asthma_review2 ..
-> . asthma_review5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-asthma_review1  byte    %8.0g                 1 asthma_review
-has_asthma1     byte    %8.0g                 1 has_asthma
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-asthma_review2  byte    %8.0g                 2 asthma_review
-has_asthma2     byte    %8.0g                 2 has_asthma
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-asthma_review3  byte    %8.0g                 3 asthma_review
-has_asthma3     byte    %8.0g                 3 has_asthma
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-asthma_review4  byte    %8.0g                 4 asthma_review
-has_asthma4     byte    %8.0g                 4 has_asthma
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-asthma_review5  byte    %8.0g                 5 asthma_review
-has_asthma5     byte    %8.0g                 5 has_asthma
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_resp_ethnic_asthma_monitoring.eps not found)
-(file ./output/line_resp_ethnic_asthma_monitoring.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                             has_asthma   ->   has_asthma0 has_asthma1 ... has_
-> asthma5
-                          asthma_review   ->   asthma_review0 asthma_review1 ..
-> . asthma_review5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-asthma_review0  byte    %8.0g                 0 asthma_review
-has_asthma0     byte    %8.0g                 0 has_asthma
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-asthma_review1  byte    %8.0g                 1 asthma_review
-has_asthma1     byte    %8.0g                 1 has_asthma
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-asthma_review2  byte    %8.0g                 2 asthma_review
-has_asthma2     byte    %8.0g                 2 has_asthma
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-asthma_review3  byte    %8.0g                 3 asthma_review
-has_asthma3     byte    %8.0g                 3 has_asthma
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-asthma_review4  byte    %8.0g                 4 asthma_review
-has_asthma4     byte    %8.0g                 4 has_asthma
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-asthma_review5  byte    %8.0g                 5 asthma_review
-has_asthma5     byte    %8.0g                 5 has_asthma
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_resp_imd_asthma_monitoring.eps not found)
-(file ./output/line_resp_imd_asthma_monitoring.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                             has_asthma   ->   has_asthma1 has_asthma2 ... has_
-> asthma5
-                    asthma_exacerbation   ->   asthma_exacerbation1 asthma_exac
-> erbation2 ... asthma_exacerbation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-asthma_exacer~1 byte    %8.0g                 1 asthma_exacerbation
-has_asthma1     byte    %8.0g                 1 has_asthma
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-asthma_exacer~2 byte    %8.0g                 2 asthma_exacerbation
-has_asthma2     byte    %8.0g                 2 has_asthma
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-asthma_exacer~3 byte    %8.0g                 3 asthma_exacerbation
-has_asthma3     byte    %8.0g                 3 has_asthma
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-asthma_exacer~4 byte    %8.0g                 4 asthma_exacerbation
-has_asthma4     byte    %8.0g                 4 has_asthma
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-asthma_exacer~5 byte    %8.0g                 5 asthma_exacerbation
-has_asthma5     byte    %8.0g                 5 has_asthma
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_resp_ethnic_asthma_exacerbation.eps not found)
-(file ./output/line_resp_ethnic_asthma_exacerbation.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                             has_asthma   ->   has_asthma0 has_asthma1 ... has_
-> asthma5
-                    asthma_exacerbation   ->   asthma_exacerbation0 asthma_exac
-> erbation1 ... asthma_exacerbation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-asthma_exacer~0 byte    %8.0g                 0 asthma_exacerbation
-has_asthma0     byte    %8.0g                 0 has_asthma
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-asthma_exacer~1 byte    %8.0g                 1 asthma_exacerbation
-has_asthma1     byte    %8.0g                 1 has_asthma
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-asthma_exacer~2 byte    %8.0g                 2 asthma_exacerbation
-has_asthma2     byte    %8.0g                 2 has_asthma
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-asthma_exacer~3 byte    %8.0g                 3 asthma_exacerbation
-has_asthma3     byte    %8.0g                 3 has_asthma
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-asthma_exacer~4 byte    %8.0g                 4 asthma_exacerbation
-has_asthma4     byte    %8.0g                 4 has_asthma
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-asthma_exacer~5 byte    %8.0g                 5 asthma_exacerbation
-has_asthma5     byte    %8.0g                 5 has_asthma
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_resp_imd_asthma_exacerbation.eps not found)
-(file ./output/line_resp_imd_asthma_exacerbation.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                               has_copd   ->   has_copd1 has_copd2 ... has_copd
-> 5
-                            copd_review   ->   copd_review1 copd_review2 ... co
-> pd_review5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-copd_review1    byte    %8.0g                 1 copd_review
-has_copd1       byte    %8.0g                 1 has_copd
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-copd_review2    byte    %8.0g                 2 copd_review
-has_copd2       byte    %8.0g                 2 has_copd
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-copd_review3    byte    %8.0g                 3 copd_review
-has_copd3       byte    %8.0g                 3 has_copd
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-copd_review4    byte    %8.0g                 4 copd_review
-has_copd4       byte    %8.0g                 4 has_copd
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-copd_review5    byte    %8.0g                 5 copd_review
-has_copd5       byte    %8.0g                 5 has_copd
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_resp_ethnic_copd_monitoring.eps not found)
-(file ./output/line_resp_ethnic_copd_monitoring.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                               has_copd   ->   has_copd0 has_copd1 ... has_copd
-> 5
-                            copd_review   ->   copd_review0 copd_review1 ... co
-> pd_review5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-copd_review0    byte    %8.0g                 0 copd_review
-has_copd0       byte    %8.0g                 0 has_copd
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-copd_review1    byte    %8.0g                 1 copd_review
-has_copd1       byte    %8.0g                 1 has_copd
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-copd_review2    byte    %8.0g                 2 copd_review
-has_copd2       byte    %8.0g                 2 has_copd
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-copd_review3    byte    %8.0g                 3 copd_review
-has_copd3       byte    %8.0g                 3 has_copd
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-copd_review4    byte    %8.0g                 4 copd_review
-has_copd4       byte    %8.0g                 4 has_copd
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-copd_review5    byte    %8.0g                 5 copd_review
-has_copd5       byte    %8.0g                 5 has_copd
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_resp_imd_copd_monitoring.eps not found)
-(file ./output/line_resp_imd_copd_monitoring.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                               has_copd   ->   has_copd1 has_copd2 ... has_copd
-> 5
-                      copd_exacerbation   ->   copd_exacerbation1 copd_exacerba
-> tion2 ... copd_exacerbation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-copd_exacerba~1 byte    %8.0g                 1 copd_exacerbation
-has_copd1       byte    %8.0g                 1 has_copd
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-copd_exacerba~2 byte    %8.0g                 2 copd_exacerbation
-has_copd2       byte    %8.0g                 2 has_copd
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-copd_exacerba~3 byte    %8.0g                 3 copd_exacerbation
-has_copd3       byte    %8.0g                 3 has_copd
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-copd_exacerba~4 byte    %8.0g                 4 copd_exacerbation
-has_copd4       byte    %8.0g                 4 has_copd
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-copd_exacerba~5 byte    %8.0g                 5 copd_exacerbation
-has_copd5       byte    %8.0g                 5 has_copd
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_resp_ethnic_copd_exacerbation.eps not found)
-(file ./output/line_resp_ethnic_copd_exacerbation.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                               has_copd   ->   has_copd0 has_copd1 ... has_copd
-> 5
-                      copd_exacerbation   ->   copd_exacerbation0 copd_exacerba
-> tion1 ... copd_exacerbation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-copd_exacerba~0 byte    %8.0g                 0 copd_exacerbation
-has_copd0       byte    %8.0g                 0 has_copd
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-copd_exacerba~1 byte    %8.0g                 1 copd_exacerbation
-has_copd1       byte    %8.0g                 1 has_copd
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-copd_exacerba~2 byte    %8.0g                 2 copd_exacerbation
-has_copd2       byte    %8.0g                 2 has_copd
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-copd_exacerba~3 byte    %8.0g                 3 copd_exacerbation
-has_copd3       byte    %8.0g                 3 has_copd
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-copd_exacerba~4 byte    %8.0g                 4 copd_exacerbation
-has_copd4       byte    %8.0g                 4 has_copd
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-copd_exacerba~5 byte    %8.0g                 5 copd_exacerbation
-has_copd5       byte    %8.0g                 5 has_copd
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_resp_imd_copd_exacerbation.eps not found)
-(file ./output/line_resp_imd_copd_exacerbation.eps written in EPS format)
-
-. 
-end of do-file
-
-. . file open output using "/tmp/tmp.BgRZpakreG", write text replace
-
-. . file write output "success" 
-
-. . file close output
-
-. 
-end of do-file
-
-
+outputs:
+  logs/graphs_resp.log                           - moderately_sensitive
+  output/line_resp_ethnic_asthma_monitoring.eps  - moderately_sensitive

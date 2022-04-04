@@ -1,1200 +1,297 @@
+2022-04-02T17:14:00.756538700Z 
+2022-04-02T17:14:00.756599100Z   ___  ____  ____  ____  ____ (R)
+2022-04-02T17:14:00.756608900Z  /__    /   ____/   /   ____/
+2022-04-02T17:14:00.756616500Z ___/   /   /___/   /   /___/   16.1   Copyright 1985-2019 StataCorp LLC
+2022-04-02T17:14:00.756623600Z   Statistics/Data Analysis            StataCorp
+2022-04-02T17:14:00.756630700Z                                       4905 Lakeway Drive
+2022-04-02T17:14:00.756637900Z                                       College Station, Texas 77845 USA
+2022-04-02T17:14:00.756645100Z                                       800-STATA-PC        http://www.stata.com
+2022-04-02T17:14:00.756652500Z                                       979-696-4600        stata@stata.com
+2022-04-02T17:14:00.756659900Z                                       979-696-4601 (fax)
+2022-04-02T17:14:00.756667100Z 
+2022-04-02T17:14:00.756674300Z 3-user Stata network license expires 11 May 2022:
+2022-04-02T17:14:00.756681600Z        Serial number:  501709312237
+2022-04-02T17:14:00.756688900Z          Licensed to:  The Bennett Institute
+2022-04-02T17:14:00.756696200Z                        Oxford University
+2022-04-02T17:14:00.758985300Z 
+2022-04-02T17:14:00.759007800Z Notes:
+2022-04-02T17:14:00.759016700Z       1.  Unicode is supported; see help unicode_advice.
+2022-04-02T17:14:00.759024200Z 
+2022-04-02T17:14:00.759031200Z . do "analysis/graphs_dm.wrapper.do" 
+2022-04-02T17:14:00.759038600Z 
+2022-04-02T17:14:00.759045700Z . . do "analysis/graphs_dm.do" 
+2022-04-02T17:14:00.759165800Z 
+2022-04-02T17:14:00.759186100Z . /* ==========================================================================
+2022-04-02T17:14:00.759194900Z > =
+2022-04-02T17:14:00.759202600Z > Do file name:   graphs.do
+2022-04-02T17:14:00.759209900Z > Project:        COVID Collateral
+2022-04-02T17:14:00.759217200Z > Date:           07/03/2022
+2022-04-02T17:14:00.759224700Z > Author:         Ruth Costello
+2022-04-02T17:14:00.759232100Z > Description:    Generates line graphs of rates of each outcome and strata per
+2022-04-02T17:14:00.759239800Z >  month
+2022-04-02T17:14:00.759247100Z > =============================================================================
+2022-04-02T17:14:00.759254600Z > =*/
+2022-04-02T17:14:00.759261800Z . cap log using ./logs/graphs_dm.log, replace
+2022-04-02T17:14:00.759778000Z 
+2022-04-02T17:14:00.759794300Z . 
+2022-04-02T17:14:00.759802100Z . * Generates graphs for clinical monitoring measures
+2022-04-02T17:14:00.759809400Z . foreach v in hba1c systolic_bp {
+2022-04-02T17:14:00.759816700Z   2.     * Ethnicity
+2022-04-02T17:14:00.759823800Z .     clear 
+2022-04-02T17:14:00.759919600Z   3.     import delimited using ./output/measures/dm/measure_dm_`v'_ethnicity_r
+2022-04-02T17:14:00.759934900Z > ate.csv, numericcols(4)
+2022-04-02T17:14:00.759942900Z   4.     * Generate rate per 100,000
+2022-04-02T17:14:00.759950100Z .     gen rate = value*100000 
+2022-04-02T17:14:00.759957300Z   5.     * Format date
+2022-04-02T17:14:00.759964400Z .     gen dateA = date(date, "YMD")
+2022-04-02T17:14:00.759971800Z   6.     drop date
+2022-04-02T17:14:00.759979000Z   7.     format dateA %dD/M/Y
+2022-04-02T17:14:00.759987000Z   8.     tab dateA 
+2022-04-02T17:14:00.759994700Z   9.     * reshape dataset so columns with rates for each ethnicity 
+2022-04-02T17:14:00.760003000Z .     reshape wide value rate population `v', i(dateA) j(ethnicity)
+2022-04-02T17:14:00.760010500Z  10.     describe
+2022-04-02T17:14:00.760017500Z  11.     * Labelling ethnicity variables
+2022-04-02T17:14:00.760024900Z .     label var rate1 "Ethnicity - White"
+2022-04-02T17:14:00.760032400Z  12.     label var rate2 "Ethnicity - Mixed"
+2022-04-02T17:14:00.760039800Z  13.     label var rate3 "Ethnicity - Asian"
+2022-04-02T17:14:00.760047300Z  14.     label var rate4 "Ethnicity - Black"
+2022-04-02T17:14:00.760054900Z  15.     label var rate5 "Ethnicity - Other"
+2022-04-02T17:14:00.760062400Z  16. 
+2022-04-02T17:14:00.760070500Z .     * Generate line graph
+2022-04-02T17:14:00.760077900Z .     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) 
+2022-04-02T17:14:00.760085300Z > format(%dM-CY)) ///
+2022-04-02T17:14:00.760092600Z >     ytitle("Rate per 100,000") 
+2022-04-02T17:14:00.760100200Z  17. 
+2022-04-02T17:14:00.760107300Z .     graph export ./output/line_dm_ethnic_`v'.eps, as(eps) replace
+2022-04-02T17:14:00.760114600Z  18.     * IMD
+2022-04-02T17:14:00.760121700Z .     clear 
+2022-04-02T17:14:00.760129600Z  19.     import delimited using ./output/measures/dm/measure_dm_`v'_imd_rate.cs
+2022-04-02T17:14:00.760137100Z > v, numericcols(4)
+2022-04-02T17:14:00.760144500Z  20.     * Generate rate per 100,000
+2022-04-02T17:14:00.760151900Z .     gen rate = value*100000 
+2022-04-02T17:14:00.760159000Z  21.     * Format date
+2022-04-02T17:14:00.760166800Z .     gen dateA = date(date, "YMD")
+2022-04-02T17:14:00.760174400Z  22.     drop date
+2022-04-02T17:14:00.760181500Z  23.     format dateA %dD/M/Y
+2022-04-02T17:14:00.760188600Z  24.     tab dateA 
+2022-04-02T17:14:00.760260300Z  25.     * reshape dataset so columns with rates for each ethnicity 
+2022-04-02T17:14:00.760283200Z .     reshape wide value rate population `v', i(dateA) j(imd)
+2022-04-02T17:14:00.760303700Z  26.     describe
+2022-04-02T17:14:00.760312300Z  27.     * Labelling ethnicity variables
+2022-04-02T17:14:00.760319600Z .     label var rate1 "IMD - 1"
+2022-04-02T17:14:00.760326800Z  28.     label var rate2 "IMD - 2"
+2022-04-02T17:14:00.760334000Z  29.     label var rate3 "IMD - 3"
+2022-04-02T17:14:00.760341200Z  30.     label var rate4 "IMD - 4"
+2022-04-02T17:14:00.760350100Z  31.     label var rate5 "IMD - 5"
+2022-04-02T17:14:00.760357700Z  32. 
+2022-04-02T17:14:00.760364700Z .     * Generate line graph
+2022-04-02T17:14:00.760372000Z .     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM
+2022-04-02T17:14:00.760379200Z > -CY)) ///
+2022-04-02T17:14:00.760386400Z >     ytitle("Rate per 100,000") 
+2022-04-02T17:14:00.760393600Z  33. 
+2022-04-02T17:14:00.760401100Z .     graph export ./output/line_dm_imd_`v'.eps, as(eps) replace
+2022-04-02T17:14:00.760411300Z  34. 
+2022-04-02T17:14:00.760418900Z . }
+2022-04-02T17:14:01.119146300Z (5 vars, 282 obs)
+2022-04-02T17:14:01.119818500Z 
+2022-04-02T17:14:01.119839200Z       dateA |      Freq.     Percent        Cum.
+2022-04-02T17:14:01.119848500Z ------------+-----------------------------------
+2022-04-02T17:14:01.119855900Z   01mar2018 |          6        2.13        2.13
+2022-04-02T17:14:01.119863500Z   01apr2018 |          6        2.13        4.26
+2022-04-02T17:14:01.119870900Z   01may2018 |          6        2.13        6.38
+2022-04-02T17:14:01.119878500Z   01jun2018 |          6        2.13        8.51
+2022-04-02T17:14:01.119885900Z   01jul2018 |          6        2.13       10.64
+2022-04-02T17:14:01.119893300Z   01aug2018 |          6        2.13       12.77
+2022-04-02T17:14:01.119900900Z   01sep2018 |          6        2.13       14.89
+2022-04-02T17:14:01.119908400Z   01oct2018 |          6        2.13       17.02
+2022-04-02T17:14:01.119915800Z   01nov2018 |          6        2.13       19.15
+2022-04-02T17:14:01.119923300Z   01dec2018 |          6        2.13       21.28
+2022-04-02T17:14:01.119931100Z   01jan2019 |          6        2.13       23.40
+2022-04-02T17:14:01.119938900Z   01feb2019 |          6        2.13       25.53
+2022-04-02T17:14:01.119947000Z   01mar2019 |          6        2.13       27.66
+2022-04-02T17:14:01.119954600Z   01apr2019 |          6        2.13       29.79
+2022-04-02T17:14:01.119961800Z   01may2019 |          6        2.13       31.91
+2022-04-02T17:14:01.119969200Z   01jun2019 |          6        2.13       34.04
+2022-04-02T17:14:01.119976700Z   01jul2019 |          6        2.13       36.17
+2022-04-02T17:14:01.119984200Z   01aug2019 |          6        2.13       38.30
+2022-04-02T17:14:01.119994500Z   01sep2019 |          6        2.13       40.43
+2022-04-02T17:14:01.120014500Z   01oct2019 |          6        2.13       42.55
+2022-04-02T17:14:01.120022800Z   01nov2019 |          6        2.13       44.68
+2022-04-02T17:14:01.120033000Z   01dec2019 |          6        2.13       46.81
+2022-04-02T17:14:01.120040600Z   01jan2020 |          6        2.13       48.94
+2022-04-02T17:14:01.120047800Z   01feb2020 |          6        2.13       51.06
+2022-04-02T17:14:01.120055100Z   01mar2020 |          6        2.13       53.19
+2022-04-02T17:14:01.120062900Z   01apr2020 |          6        2.13       55.32
+2022-04-02T17:14:01.120070700Z   01may2020 |          6        2.13       57.45
+2022-04-02T17:14:01.120078100Z   01jun2020 |          6        2.13       59.57
+2022-04-02T17:14:01.120086800Z   01jul2020 |          6        2.13       61.70
+2022-04-02T17:14:01.120094300Z   01aug2020 |          6        2.13       63.83
+2022-04-02T17:14:01.120101700Z   01sep2020 |          6        2.13       65.96
+2022-04-02T17:14:01.120108700Z   01oct2020 |          6        2.13       68.09
+2022-04-02T17:14:01.120116000Z   01nov2020 |          6        2.13       70.21
+2022-04-02T17:14:01.120123200Z   01dec2020 |          6        2.13       72.34
+2022-04-02T17:14:01.120130400Z   01jan2021 |          6        2.13       74.47
+2022-04-02T17:14:01.120138300Z   01feb2021 |          6        2.13       76.60
+2022-04-02T17:14:01.120145400Z   01mar2021 |          6        2.13       78.72
+2022-04-02T17:14:01.120152700Z   01apr2021 |          6        2.13       80.85
+2022-04-02T17:14:01.120181900Z   01may2021 |          6        2.13       82.98
+2022-04-02T17:14:01.120199600Z   01jun2021 |          6        2.13       85.11
+2022-04-02T17:14:01.120207900Z   01jul2021 |          6        2.13       87.23
+2022-04-02T17:14:01.120215200Z   01aug2021 |          6        2.13       89.36
+2022-04-02T17:14:01.120222700Z   01sep2021 |          6        2.13       91.49
+2022-04-02T17:14:01.120230100Z   01oct2021 |          6        2.13       93.62
+2022-04-02T17:14:01.120237500Z   01nov2021 |          6        2.13       95.74
+2022-04-02T17:14:01.120248900Z   01dec2021 |          6        2.13       97.87
+2022-04-02T17:14:01.120256500Z   01jan2022 |          6        2.13      100.00
+2022-04-02T17:14:01.120263600Z ------------+-----------------------------------
+2022-04-02T17:14:01.120321200Z       Total |        282      100.00
+2022-04-02T17:14:01.125627700Z (note: j = 0 1 2 3 4 5)
+2022-04-02T17:14:01.149462700Z 
+2022-04-02T17:14:01.149509800Z Data                               long   ->   wide
+2022-04-02T17:14:01.149519500Z -----------------------------------------------------------------------------
+2022-04-02T17:14:01.149527400Z Number of obs.                      282   ->      47
+2022-04-02T17:14:01.149607100Z Number of variables                   6   ->      25
+2022-04-02T17:14:01.149630300Z j variable (6 values)         ethnicity   ->   (dropped)
+2022-04-02T17:14:01.149639300Z xij variables:
+2022-04-02T17:14:01.150235800Z                                   value   ->   value0 value1 ... value5
+2022-04-02T17:14:01.150849200Z                                    rate   ->   rate0 rate1 ... rate5
+2022-04-02T17:14:01.151449800Z                              population   ->   population0 population1 ... popu
+2022-04-02T17:14:01.151467900Z > lation5
+2022-04-02T17:14:01.152026800Z                                   hba1c   ->   hba1c0 hba1c1 ... hba1c5
+2022-04-02T17:14:01.152042500Z -----------------------------------------------------------------------------
+2022-04-02T17:14:01.152373800Z 
+2022-04-02T17:14:01.152387800Z Contains data
+2022-04-02T17:14:01.152395800Z   obs:            47                          
+2022-04-02T17:14:01.152404300Z  vars:            25                          
+2022-04-02T17:14:01.152412200Z -------------------------------------------------------------------------------
+2022-04-02T17:14:01.152444800Z               storage   display    value
+2022-04-02T17:14:01.152452800Z variable name   type    format     label      variable label
+2022-04-02T17:14:01.152460000Z -------------------------------------------------------------------------------
+2022-04-02T17:14:01.152467500Z dateA           float   %dD/M/Y               
+2022-04-02T17:14:01.152474900Z hba1c0          long    %12.0g                0 hba1c
+2022-04-02T17:14:01.152494600Z population0     long    %12.0g                0 population
+2022-04-02T17:14:01.152511400Z value0          float   %9.0g                 0 value
+2022-04-02T17:14:01.152519300Z rate0           float   %9.0g                 0 rate
+2022-04-02T17:14:01.152526800Z hba1c1          long    %12.0g                1 hba1c
+2022-04-02T17:14:01.152534400Z population1     long    %12.0g                1 population
+2022-04-02T17:14:01.152541800Z value1          float   %9.0g                 1 value
+2022-04-02T17:14:01.152549700Z rate1           float   %9.0g                 1 rate
+2022-04-02T17:14:01.152557200Z hba1c2          long    %12.0g                2 hba1c
+2022-04-02T17:14:01.152564600Z population2     long    %12.0g                2 population
+2022-04-02T17:14:01.152622400Z value2          float   %9.0g                 2 value
+2022-04-02T17:14:01.152638100Z rate2           float   %9.0g                 2 rate
+2022-04-02T17:14:01.152645900Z hba1c3          long    %12.0g                3 hba1c
+2022-04-02T17:14:01.152653200Z population3     long    %12.0g                3 population
+2022-04-02T17:14:01.152660600Z value3          float   %9.0g                 3 value
+2022-04-02T17:14:01.152667700Z rate3           float   %9.0g                 3 rate
+2022-04-02T17:14:01.152685500Z hba1c4          long    %12.0g                4 hba1c
+2022-04-02T17:14:01.152693700Z population4     long    %12.0g                4 population
+2022-04-02T17:14:01.152701100Z value4          float   %9.0g                 4 value
+2022-04-02T17:14:01.153016500Z rate4           float   %9.0g                 4 rate
+2022-04-02T17:14:01.153035000Z hba1c5          long    %12.0g                5 hba1c
+2022-04-02T17:14:01.153043000Z population5     long    %12.0g                5 population
+2022-04-02T17:14:01.153050600Z value5          float   %9.0g                 5 value
+2022-04-02T17:14:01.153057900Z rate5           float   %9.0g                 5 rate
+2022-04-02T17:14:01.153065100Z -------------------------------------------------------------------------------
+2022-04-02T17:14:01.153072300Z Sorted by: dateA
+2022-04-02T17:14:02.370061100Z (note: file ./output/line_dm_ethnic_hba1c.eps not found)
+2022-04-02T17:14:02.370095600Z (file ./output/line_dm_ethnic_hba1c.eps written in EPS format)
+2022-04-02T17:14:02.622922000Z (5 vars, 15,463 obs)
+2022-04-02T17:14:02.640930100Z 
+2022-04-02T17:14:02.640983100Z       dateA |      Freq.     Percent        Cum.
+2022-04-02T17:14:02.640991600Z ------------+-----------------------------------
+2022-04-02T17:14:02.640999200Z   01mar2018 |        329        2.13        2.13
+2022-04-02T17:14:02.641007000Z   01apr2018 |        329        2.13        4.26
+2022-04-02T17:14:02.641015100Z   01may2018 |        329        2.13        6.38
+2022-04-02T17:14:02.641022900Z   01jun2018 |        329        2.13        8.51
+2022-04-02T17:14:02.641030100Z   01jul2018 |        329        2.13       10.64
+2022-04-02T17:14:02.641037500Z   01aug2018 |        329        2.13       12.77
+2022-04-02T17:14:02.641044800Z   01sep2018 |        329        2.13       14.89
+2022-04-02T17:14:02.641053200Z   01oct2018 |        329        2.13       17.02
+2022-04-02T17:14:02.641060700Z   01nov2018 |        329        2.13       19.15
+2022-04-02T17:14:02.641068000Z   01dec2018 |        329        2.13       21.28
+2022-04-02T17:14:02.641075300Z   01jan2019 |        329        2.13       23.40
+2022-04-02T17:14:02.641082500Z   01feb2019 |        329        2.13       25.53
+2022-04-02T17:14:02.641090000Z   01mar2019 |        329        2.13       27.66
+2022-04-02T17:14:02.641097500Z   01apr2019 |        329        2.13       29.79
+2022-04-02T17:14:02.641104900Z   01may2019 |        329        2.13       31.91
+2022-04-02T17:14:02.641112300Z   01jun2019 |        329        2.13       34.04
+2022-04-02T17:14:02.641119700Z   01jul2019 |        329        2.13       36.17
+2022-04-02T17:14:02.641127100Z   01aug2019 |        329        2.13       38.30
+2022-04-02T17:14:02.641138300Z   01sep2019 |        329        2.13       40.43
+2022-04-02T17:14:02.641164000Z   01oct2019 |        329        2.13       42.55
+2022-04-02T17:14:02.641172200Z   01nov2019 |        329        2.13       44.68
+2022-04-02T17:14:02.641179700Z   01dec2019 |        329        2.13       46.81
+2022-04-02T17:14:02.641186900Z   01jan2020 |        329        2.13       48.94
+2022-04-02T17:14:02.641194400Z   01feb2020 |        329        2.13       51.06
+2022-04-02T17:14:02.641201700Z   01mar2020 |        329        2.13       53.19
+2022-04-02T17:14:02.641209000Z   01apr2020 |        329        2.13       55.32
+2022-04-02T17:14:02.641216300Z   01may2020 |        329        2.13       57.45
+2022-04-02T17:14:02.641223600Z   01jun2020 |        329        2.13       59.57
+2022-04-02T17:14:02.641230800Z   01jul2020 |        329        2.13       61.70
+2022-04-02T17:14:02.641237900Z   01aug2020 |        329        2.13       63.83
+2022-04-02T17:14:02.641244800Z   01sep2020 |        329        2.13       65.96
+2022-04-02T17:14:02.641252100Z   01oct2020 |        329        2.13       68.09
+2022-04-02T17:14:02.641259000Z   01nov2020 |        329        2.13       70.21
+2022-04-02T17:14:02.641266400Z   01dec2020 |        329        2.13       72.34
+2022-04-02T17:14:02.641273500Z   01jan2021 |        329        2.13       74.47
+2022-04-02T17:14:02.641280500Z   01feb2021 |        329        2.13       76.60
+2022-04-02T17:14:02.641287600Z   01mar2021 |        329        2.13       78.72
+2022-04-02T17:14:02.641294900Z   01apr2021 |        329        2.13       80.85
+2022-04-02T17:14:02.641304300Z   01may2021 |        329        2.13       82.98
+2022-04-02T17:14:02.641312000Z   01jun2021 |        329        2.13       85.11
+2022-04-02T17:14:02.641319200Z   01jul2021 |        329        2.13       87.23
+2022-04-02T17:14:02.641326500Z   01aug2021 |        329        2.13       89.36
+2022-04-02T17:14:02.641333800Z   01sep2021 |        329        2.13       91.49
+2022-04-02T17:14:02.641341000Z   01oct2021 |        329        2.13       93.62
+2022-04-02T17:14:02.641348200Z   01nov2021 |        329        2.13       95.74
+2022-04-02T17:14:02.641355400Z   01dec2021 |        329        2.13       97.87
+2022-04-02T17:14:02.641362600Z   01jan2022 |        329        2.13      100.00
+2022-04-02T17:14:02.641369600Z ------------+-----------------------------------
+2022-04-02T17:14:02.682547800Z       Total |     15,463      100.00
+2022-04-02T17:14:02.682618100Z (note: j = -1 100 200 300 400 500 600 700 800 900 1000 1100 1200 1300 1400 1500
+2022-04-02T17:14:02.682628600Z >  1600 1700 1800 1900 2000 2100 2200 2300 2400 2500 2600 2700 2800 2900 3000 3
+2022-04-02T17:14:02.682637000Z > 100 3200 3300 3400 3500 3600 3700 3800 3900 4000 4100 4200 4300 4400 4500 460
+2022-04-02T17:14:02.682644400Z > 0 4700 4800 4900 5000 5100 5200 5300 5400 5500 5600 5700 5800 5900 6000 6100 
+2022-04-02T17:14:02.682669700Z > 6200 6300 6400 6500 6600 6700 6800 6900 7000 7100 7200 7300 7400 7500 7600 77
+2022-04-02T17:14:02.682678000Z > 00 7800 7900 8000 8100 8200 8300 8400 8500 8600 8700 8800 8900 9000 9100 9200
+2022-04-02T17:14:02.682685300Z >  9300 9400 9500 9600 9700 9800 9900 10000 10100 10200 10300 10400 10500 10600
+2022-04-02T17:14:02.682692600Z >  10700 10800 10900 11000 11100 11200 11300 11400 11500 11600 11700 11800 1190
+2022-04-02T17:14:02.682700000Z > 0 12000 12100 12200 12300 12400 12500 12600 12700 12800 12900 13000 13100 132
+2022-04-02T17:14:02.682707600Z > 00 13300 13400 13500 13600 13700 13800 13900 14000 14100 14200 14300 14400 14
+2022-04-02T17:14:02.682714900Z > 500 14600 14700 14800 14900 15000 15100 15200 15300 15400 15500 15600 15700 1
+2022-04-02T17:14:02.682722100Z > 5800 15900 16000 16100 16200 16300 16400 16500 16600 16700 16800 16900 17000 
+2022-04-02T17:14:02.682729500Z > 17100 17200 17300 17400 17500 17600 17700 17800 17900 18000 18100 18200 18300
+2022-04-02T17:14:02.682736900Z >  18400 18500 18600 18700 18800 18900 19000 19100 19200 19300 19400 19500 1960
+2022-04-02T17:14:02.682744200Z > 0 19700 19800 19900 20000 20100 20200 20300 20400 20500 20600 20700 20800 209
+2022-04-02T17:14:02.682751500Z > 00 21000 21100 21200 21300 21400 21500 21600 21700 21800 21900 22000 22100 22
+2022-04-02T17:14:02.682758900Z > 200 22300 22400 22500 22600 22700 22800 22900 23000 23100 23200 23300 23400 2
+2022-04-02T17:14:02.682766300Z > 3500 23600 23700 23800 23900 24000 24100 24200 24300 24400 24500 24600 24700 
+2022-04-02T17:14:02.682773600Z > 24800 24900 25000 25100 25200 25300 25400 25500 25600 25700 25800 25900 26000
+2022-04-02T17:14:02.682780800Z >  26100 26200 26300 26400 26500 26600 26700 26800 26900 27000 27100 27200 2730
+2022-04-02T17:14:02.682788100Z > 0 27400 27500 27600 27700 27800 27900 28000 28100 28200 28300 28400 28500 286
+2022-04-02T17:14:02.682795400Z > 00 28700 28800 28900 29000 29100 29200 29300 29400 29500 29600 29700 29800 29
+2022-04-02T17:14:02.682802800Z > 900 30000 30100 30200 30300 30400 30500 30600 30700 30800 30900 31000 31100 3
+2022-04-02T17:14:02.682810100Z > 1200 31300 31400 31500 31600 31700 31800 31900 32000 32100 32200 32300 32400 
+2022-04-02T17:14:02.682817700Z > 32500 32600 32700 32800)
+2022-04-02T17:14:02.781651700Z value-1 invalid variable name
+2022-04-02T17:14:02.782631600Z r(198);
+2022-04-02T17:14:02.782650500Z 
+2022-04-02T17:14:02.782658500Z end of do-file
+2022-04-02T17:14:02.782665700Z r(198);
+2022-04-02T17:14:02.782673000Z 
+2022-04-02T17:14:02.782680000Z end of do-file
+2022-04-02T17:14:02.782687300Z 
+2022-04-02T17:14:02.782699600Z r(198);
+2022-04-02T17:14:02.782706900Z 
+2022-04-02T17:14:02.782714300Z 
+2022-04-02T17:14:03.116784500Z . 
 
-. 
-. * Generates graphs for clinical monitoring measures
-. foreach v in hba1c systolic_bp {
-  2.     * Ethnicity
-.     clear 
-  3.     import delimited using ./output/measures/dm/measure_dm_`v'_ethnicity_r
-> ate.csv
-  4.     * Generate rate per 100,000
-.     gen rate = value*100000 
-  5.     * Format date
-.     gen dateA = date(date, "YMD")
-  6.     drop date
-  7.     format dateA %dD/M/Y
-  8.     tab dateA 
-  9.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate population `v', i(dateA) j(ethnicity)
- 10.     describe
- 11.     * Labelling ethnicity variables
-.     label var rate1 "Ethnicity - White"
- 12.     label var rate2 "Ethnicity - Mixed"
- 13.     label var rate3 "Ethnicity - Asian"
- 14.     label var rate4 "Ethnicity - Black"
- 15.     label var rate5 "Ethnicity - Other"
- 16. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) 
-> format(%dM-CY)) ///
->     ytitle("Rate per 100,000") 
- 17. 
-.     graph export ./output/line_ethnic_dm_`v'.eps, as(eps) replace
- 18.     * IMD
-.     clear 
- 19.     import delimited using ./output/measures/dm/measure_dm_`v'_imd_rate.cs
-> v
- 20.     * Generate rate per 100,000
-.     gen rate = value*100000 
- 21.     * Format date
-.     gen dateA = date(date, "YMD")
- 22.     drop date
- 23.     format dateA %dD/M/Y
- 24.     tab dateA 
- 25.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate population `v', i(dateA) j(imd)
- 26.     describe
- 27.     * Labelling ethnicity variables
-.     label var rate1 "IMD - 1"
- 28.     label var rate2 "IMD - 2"
- 29.     label var rate3 "IMD - 3"
- 30.     label var rate4 "IMD - 4"
- 31.     label var rate5 "IMD - 5"
- 32. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM
-> -CY)) ///
->     ytitle("Rate per 100,000") 
- 33. 
-.     graph export ./output/line_imd_dm_`v'.eps, as(eps) replace
- 34. 
-. }
-(5 vars, 20 obs)
+id: dignqimc5xnfg4aq
+commit: b8caf33b99e0542194e5b0f53cec43f055369f92
+docker_image_id: sha256:11980aa720220a1b39bf523f5a8a33270214c13876c30ee364e16265766f7f60
+exit_code: 1
 
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                             population   ->   population1 population2 ... popu
-> lation5
-                                  hba1c   ->   hba1c1 hba1c2 ... hba1c5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-hba1c1          byte    %8.0g                 1 hba1c
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-hba1c2          byte    %8.0g                 2 hba1c
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-hba1c3          byte    %8.0g                 3 hba1c
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-hba1c4          byte    %8.0g                 4 hba1c
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-hba1c5          byte    %8.0g                 5 hba1c
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_ethnic_dm_hba1c.eps not found)
-(file ./output/line_ethnic_dm_hba1c.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                             population   ->   population0 population1 ... popu
-> lation5
-                                  hba1c   ->   hba1c0 hba1c1 ... hba1c5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-hba1c0          byte    %8.0g                 0 hba1c
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-hba1c1          byte    %8.0g                 1 hba1c
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-hba1c2          byte    %8.0g                 2 hba1c
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-hba1c3          byte    %8.0g                 3 hba1c
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-hba1c4          byte    %8.0g                 4 hba1c
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-hba1c5          byte    %8.0g                 5 hba1c
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_imd_dm_hba1c.eps not found)
-(file ./output/line_imd_dm_hba1c.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                             population   ->   population1 population2 ... popu
-> lation5
-                            systolic_bp   ->   systolic_bp1 systolic_bp2 ... sy
-> stolic_bp5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-systolic_bp1    byte    %8.0g                 1 systolic_bp
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-systolic_bp2    byte    %8.0g                 2 systolic_bp
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-systolic_bp3    byte    %8.0g                 3 systolic_bp
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-systolic_bp4    byte    %8.0g                 4 systolic_bp
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-systolic_bp5    byte    %8.0g                 5 systolic_bp
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_ethnic_dm_systolic_bp.eps not found)
-(file ./output/line_ethnic_dm_systolic_bp.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                             population   ->   population0 population1 ... popu
-> lation5
-                            systolic_bp   ->   systolic_bp0 systolic_bp1 ... sy
-> stolic_bp5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-systolic_bp0    byte    %8.0g                 0 systolic_bp
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-systolic_bp1    byte    %8.0g                 1 systolic_bp
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-systolic_bp2    byte    %8.0g                 2 systolic_bp
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-systolic_bp3    byte    %8.0g                 3 systolic_bp
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-systolic_bp4    byte    %8.0g                 4 systolic_bp
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-systolic_bp5    byte    %8.0g                 5 systolic_bp
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_imd_dm_systolic_bp.eps not found)
-(file ./output/line_imd_dm_systolic_bp.eps written in EPS format)
-
-. * Generates graphs for DM hospital admissions
-. foreach v in primary any /*emergency*/ {
-  2.     * Ethnicity - Type 1 DM
-.     clear 
-  3.     import delimited using ./output/measures/dm/measure_dm_t1_`v'_ethnicit
-> y_rate.csv
-  4.     * Generate rate per 100,000
-.     gen rate = value*100000 
-  5.     * Format date
-.     gen dateA = date(date, "YMD")
-  6.     drop date
-  7.     format dateA %dD/M/Y
-  8.     tab dateA 
-  9.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate has_t1_diabetes t1dm_admission_`v', i(dateA) j(et
-> hnicity)
- 10.     describe
- 11.     * Labelling ethnicity variables
-.     label var rate1 "Ethnicity - White"
- 12.     label var rate2 "Ethnicity - Mixed"
- 13.     label var rate3 "Ethnicity - Asian"
- 14.     label var rate4 "Ethnicity - Black"
- 15.     label var rate5 "Ethnicity - Other"
- 16. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) 
-> format(%dM-CY)) ///
->     ytitle("Rate per 100,000") 
- 17. 
-.     graph export ./output/line_ethnic_dm_t1_`v'.eps, as(eps) replace
- 18.     * IMD - type 1 DM
-.     clear 
- 19.     import delimited using ./output/measures/dm/measure_dm_t1_`v'_imd_rate
-> .csv
- 20.     * Generate rate per 100,000
-.     gen rate = value*100000 
- 21.     * Format date
-.     gen dateA = date(date, "YMD")
- 22.     drop date
- 23.     format dateA %dD/M/Y
- 24.     tab dateA 
- 25.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate has_t1_diabetes t1dm_admission_`v', i(dateA) j(im
-> d)
- 26.     describe
- 27.     * Labelling ethnicity variables
-.     label var rate1 "IMD - 1"
- 28.     label var rate2 "IMD - 2"
- 29.     label var rate3 "IMD - 3"
- 30.     label var rate4 "IMD - 4"
- 31.     label var rate5 "IMD - 5"
- 32. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM
-> -CY)) ///
->     ytitle("Rate per 100,000") 
- 33. 
-.     graph export ./output/line_imd_dm_t1_`v'.eps, as(eps) replace
- 34. 
-.     * Ethnicity - Type 2 DM
-.     clear 
- 35.     import delimited using ./output/measures/dm/measure_dm_t2_`v'_ethnicit
-> y_rate.csv
- 36.     * Generate rate per 100,000
-.     gen rate = value*100000 
- 37.     * Format date
-.     gen dateA = date(date, "YMD")
- 38.     drop date
- 39.     format dateA %dD/M/Y
- 40.     tab dateA 
- 41.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate has_t2_diabetes t2dm_admission_`v', i(dateA) j(et
-> hnicity)
- 42.     describe
- 43.     * Labelling ethnicity variables
-.     label var rate1 "Ethnicity - White"
- 44.     label var rate2 "Ethnicity - Mixed"
- 45.     label var rate3 "Ethnicity - Asian"
- 46.     label var rate4 "Ethnicity - Black"
- 47.     label var rate5 "Ethnicity - Other"
- 48. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) 
-> format(%dM-CY)) ///
->     ytitle("Rate per 100,000") 
- 49. 
-.     graph export ./output/line_ethnic_dm_t2_`v'.eps, as(eps) replace
- 50.     * IMD - type 2 DM
-.     clear 
- 51.     import delimited using ./output/measures/dm/measure_dm_t2_`v'_imd_rate
-> .csv
- 52.     * Generate rate per 100,000
-.     gen rate = value*100000 
- 53.     * Format date
-.     gen dateA = date(date, "YMD")
- 54.     drop date
- 55.     format dateA %dD/M/Y
- 56.     tab dateA 
- 57.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate has_t2_diabetes t2dm_admission_`v', i(dateA) j(im
-> d)
- 58.     describe
- 59.     * Labelling ethnicity variables
-.     label var rate1 "IMD - 1"
- 60.     label var rate2 "IMD - 2"
- 61.     label var rate3 "IMD - 3"
- 62.     label var rate4 "IMD - 4"
- 63.     label var rate5 "IMD - 5"
- 64. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM
-> -CY)) ///
->     ytitle("Rate per 100,000") 
- 65. 
-.     graph export ./output/line_imd_dm_t2_`v'.eps, as(eps) replace
- 66. 
-.     * Ethnicity - Ketoacidosis
-.     clear 
- 67.     import delimited using ./output/measures/dm/measure_dm_keto_`v'_ethnic
-> ity_rate.csv
- 68.     * Generate rate per 100,000
-.     gen rate = value*100000 
- 69.     * Format date
-.     gen dateA = date(date, "YMD")
- 70.     drop date
- 71.     format dateA %dD/M/Y
- 72.     tab dateA 
- 73.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate population dm_keto_admission_`v', i(dateA) j(ethn
-> icity)
- 74.     describe
- 75.     * Labelling ethnicity variables
-.     label var rate1 "Ethnicity - White"
- 76.     label var rate2 "Ethnicity - Mixed"
- 77.     label var rate3 "Ethnicity - Asian"
- 78.     label var rate4 "Ethnicity - Black"
- 79.     label var rate5 "Ethnicity - Other"
- 80. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) 
-> format(%dM-CY)) ///
->     ytitle("Rate per 100,000") 
- 81. 
-.     graph export ./output/line_ethnic_dm_keto_`v'.eps, as(eps) replace
- 82.     * IMD - type 1 DM
-.     clear 
- 83.     import delimited using ./output/measures/dm/measure_dm_keto_`v'_imd_ra
-> te.csv
- 84.     * Generate rate per 100,000
-.     gen rate = value*100000 
- 85.     * Format date
-.     gen dateA = date(date, "YMD")
- 86.     drop date
- 87.     format dateA %dD/M/Y
- 88.     tab dateA 
- 89.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate population dm_keto_admission_`v', i(dateA) j(imd)
- 90.     describe
- 91.     * Labelling ethnicity variables
-.     label var rate1 "IMD - 1"
- 92.     label var rate2 "IMD - 2"
- 93.     label var rate3 "IMD - 3"
- 94.     label var rate4 "IMD - 4"
- 95.     label var rate5 "IMD - 5"
- 96. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM
-> -CY)) ///
->     ytitle("Rate per 100,000") 
- 97. 
-.     graph export ./output/line_imd_dm_keto_`v'.eps, as(eps) replace
- 98. 
-. }
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                        has_t1_diabetes   ->   has_t1_diabetes1 has_t1_diabetes
-> 2 ... has_t1_diabetes5
-                 t1dm_admission_primary   ->   t1dm_admission_primary1 t1dm_adm
-> ission_primary2 ... t1dm_admission_primary5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-t1dm_admissio~1 byte    %8.0g                 1 t1dm_admission_primary
-has_t1_diabet~1 byte    %8.0g                 1 has_t1_diabetes
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-t1dm_admissio~2 byte    %8.0g                 2 t1dm_admission_primary
-has_t1_diabet~2 byte    %8.0g                 2 has_t1_diabetes
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-t1dm_admissio~3 byte    %8.0g                 3 t1dm_admission_primary
-has_t1_diabet~3 byte    %8.0g                 3 has_t1_diabetes
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-t1dm_admissio~4 byte    %8.0g                 4 t1dm_admission_primary
-has_t1_diabet~4 byte    %8.0g                 4 has_t1_diabetes
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-t1dm_admissio~5 byte    %8.0g                 5 t1dm_admission_primary
-has_t1_diabet~5 byte    %8.0g                 5 has_t1_diabetes
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_ethnic_dm_t1_primary.eps not found)
-(file ./output/line_ethnic_dm_t1_primary.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                        has_t1_diabetes   ->   has_t1_diabetes0 has_t1_diabetes
-> 1 ... has_t1_diabetes5
-                 t1dm_admission_primary   ->   t1dm_admission_primary0 t1dm_adm
-> ission_primary1 ... t1dm_admission_primary5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-t1dm_admissio~0 byte    %8.0g                 0 t1dm_admission_primary
-has_t1_diabet~0 byte    %8.0g                 0 has_t1_diabetes
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-t1dm_admissio~1 byte    %8.0g                 1 t1dm_admission_primary
-has_t1_diabet~1 byte    %8.0g                 1 has_t1_diabetes
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-t1dm_admissio~2 byte    %8.0g                 2 t1dm_admission_primary
-has_t1_diabet~2 byte    %8.0g                 2 has_t1_diabetes
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-t1dm_admissio~3 byte    %8.0g                 3 t1dm_admission_primary
-has_t1_diabet~3 byte    %8.0g                 3 has_t1_diabetes
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-t1dm_admissio~4 byte    %8.0g                 4 t1dm_admission_primary
-has_t1_diabet~4 byte    %8.0g                 4 has_t1_diabetes
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-t1dm_admissio~5 byte    %8.0g                 5 t1dm_admission_primary
-has_t1_diabet~5 byte    %8.0g                 5 has_t1_diabetes
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_imd_dm_t1_primary.eps not found)
-(file ./output/line_imd_dm_t1_primary.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                        has_t2_diabetes   ->   has_t2_diabetes1 has_t2_diabetes
-> 2 ... has_t2_diabetes5
-                 t2dm_admission_primary   ->   t2dm_admission_primary1 t2dm_adm
-> ission_primary2 ... t2dm_admission_primary5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-t2dm_admissio~1 byte    %8.0g                 1 t2dm_admission_primary
-has_t2_diabet~1 int     %8.0g                 1 has_t2_diabetes
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-t2dm_admissio~2 byte    %8.0g                 2 t2dm_admission_primary
-has_t2_diabet~2 int     %8.0g                 2 has_t2_diabetes
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-t2dm_admissio~3 byte    %8.0g                 3 t2dm_admission_primary
-has_t2_diabet~3 int     %8.0g                 3 has_t2_diabetes
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-t2dm_admissio~4 byte    %8.0g                 4 t2dm_admission_primary
-has_t2_diabet~4 int     %8.0g                 4 has_t2_diabetes
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-t2dm_admissio~5 byte    %8.0g                 5 t2dm_admission_primary
-has_t2_diabet~5 int     %8.0g                 5 has_t2_diabetes
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_ethnic_dm_t2_primary.eps not found)
-(file ./output/line_ethnic_dm_t2_primary.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                        has_t2_diabetes   ->   has_t2_diabetes0 has_t2_diabetes
-> 1 ... has_t2_diabetes5
-                 t2dm_admission_primary   ->   t2dm_admission_primary0 t2dm_adm
-> ission_primary1 ... t2dm_admission_primary5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-t2dm_admissio~0 byte    %8.0g                 0 t2dm_admission_primary
-has_t2_diabet~0 int     %8.0g                 0 has_t2_diabetes
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-t2dm_admissio~1 byte    %8.0g                 1 t2dm_admission_primary
-has_t2_diabet~1 int     %8.0g                 1 has_t2_diabetes
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-t2dm_admissio~2 byte    %8.0g                 2 t2dm_admission_primary
-has_t2_diabet~2 int     %8.0g                 2 has_t2_diabetes
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-t2dm_admissio~3 byte    %8.0g                 3 t2dm_admission_primary
-has_t2_diabet~3 int     %8.0g                 3 has_t2_diabetes
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-t2dm_admissio~4 byte    %8.0g                 4 t2dm_admission_primary
-has_t2_diabet~4 int     %8.0g                 4 has_t2_diabetes
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-t2dm_admissio~5 byte    %8.0g                 5 t2dm_admission_primary
-has_t2_diabet~5 int     %8.0g                 5 has_t2_diabetes
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_imd_dm_t2_primary.eps not found)
-(file ./output/line_imd_dm_t2_primary.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                             population   ->   population1 population2 ... popu
-> lation5
-              dm_keto_admission_primary   ->   dm_keto_admission_primary1 dm_ke
-> to_admission_primary2 ... dm_keto_admission_primary5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-dm_keto_admis~1 byte    %8.0g                 1 dm_keto_admission_primary
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-dm_keto_admis~2 byte    %8.0g                 2 dm_keto_admission_primary
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-dm_keto_admis~3 byte    %8.0g                 3 dm_keto_admission_primary
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-dm_keto_admis~4 byte    %8.0g                 4 dm_keto_admission_primary
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-dm_keto_admis~5 byte    %8.0g                 5 dm_keto_admission_primary
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_ethnic_dm_keto_primary.eps not found)
-(file ./output/line_ethnic_dm_keto_primary.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                             population   ->   population0 population1 ... popu
-> lation5
-              dm_keto_admission_primary   ->   dm_keto_admission_primary0 dm_ke
-> to_admission_primary1 ... dm_keto_admission_primary5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-dm_keto_admis~0 byte    %8.0g                 0 dm_keto_admission_primary
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-dm_keto_admis~1 byte    %8.0g                 1 dm_keto_admission_primary
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-dm_keto_admis~2 byte    %8.0g                 2 dm_keto_admission_primary
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-dm_keto_admis~3 byte    %8.0g                 3 dm_keto_admission_primary
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-dm_keto_admis~4 byte    %8.0g                 4 dm_keto_admission_primary
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-dm_keto_admis~5 byte    %8.0g                 5 dm_keto_admission_primary
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_imd_dm_keto_primary.eps not found)
-(file ./output/line_imd_dm_keto_primary.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                        has_t1_diabetes   ->   has_t1_diabetes1 has_t1_diabetes
-> 2 ... has_t1_diabetes5
-                     t1dm_admission_any   ->   t1dm_admission_any1 t1dm_admissi
-> on_any2 ... t1dm_admission_any5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-t1dm_admissio~1 byte    %8.0g                 1 t1dm_admission_any
-has_t1_diabet~1 byte    %8.0g                 1 has_t1_diabetes
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-t1dm_admissio~2 byte    %8.0g                 2 t1dm_admission_any
-has_t1_diabet~2 byte    %8.0g                 2 has_t1_diabetes
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-t1dm_admissio~3 byte    %8.0g                 3 t1dm_admission_any
-has_t1_diabet~3 byte    %8.0g                 3 has_t1_diabetes
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-t1dm_admissio~4 byte    %8.0g                 4 t1dm_admission_any
-has_t1_diabet~4 byte    %8.0g                 4 has_t1_diabetes
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-t1dm_admissio~5 byte    %8.0g                 5 t1dm_admission_any
-has_t1_diabet~5 byte    %8.0g                 5 has_t1_diabetes
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_ethnic_dm_t1_any.eps not found)
-(file ./output/line_ethnic_dm_t1_any.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                        has_t1_diabetes   ->   has_t1_diabetes0 has_t1_diabetes
-> 1 ... has_t1_diabetes5
-                     t1dm_admission_any   ->   t1dm_admission_any0 t1dm_admissi
-> on_any1 ... t1dm_admission_any5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-t1dm_admissio~0 byte    %8.0g                 0 t1dm_admission_any
-has_t1_diabet~0 byte    %8.0g                 0 has_t1_diabetes
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-t1dm_admissio~1 byte    %8.0g                 1 t1dm_admission_any
-has_t1_diabet~1 byte    %8.0g                 1 has_t1_diabetes
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-t1dm_admissio~2 byte    %8.0g                 2 t1dm_admission_any
-has_t1_diabet~2 byte    %8.0g                 2 has_t1_diabetes
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-t1dm_admissio~3 byte    %8.0g                 3 t1dm_admission_any
-has_t1_diabet~3 byte    %8.0g                 3 has_t1_diabetes
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-t1dm_admissio~4 byte    %8.0g                 4 t1dm_admission_any
-has_t1_diabet~4 byte    %8.0g                 4 has_t1_diabetes
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-t1dm_admissio~5 byte    %8.0g                 5 t1dm_admission_any
-has_t1_diabet~5 byte    %8.0g                 5 has_t1_diabetes
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_imd_dm_t1_any.eps not found)
-(file ./output/line_imd_dm_t1_any.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                        has_t2_diabetes   ->   has_t2_diabetes1 has_t2_diabetes
-> 2 ... has_t2_diabetes5
-                     t2dm_admission_any   ->   t2dm_admission_any1 t2dm_admissi
-> on_any2 ... t2dm_admission_any5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-t2dm_admissio~1 byte    %8.0g                 1 t2dm_admission_any
-has_t2_diabet~1 int     %8.0g                 1 has_t2_diabetes
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-t2dm_admissio~2 byte    %8.0g                 2 t2dm_admission_any
-has_t2_diabet~2 int     %8.0g                 2 has_t2_diabetes
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-t2dm_admissio~3 byte    %8.0g                 3 t2dm_admission_any
-has_t2_diabet~3 int     %8.0g                 3 has_t2_diabetes
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-t2dm_admissio~4 byte    %8.0g                 4 t2dm_admission_any
-has_t2_diabet~4 int     %8.0g                 4 has_t2_diabetes
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-t2dm_admissio~5 byte    %8.0g                 5 t2dm_admission_any
-has_t2_diabet~5 int     %8.0g                 5 has_t2_diabetes
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_ethnic_dm_t2_any.eps not found)
-(file ./output/line_ethnic_dm_t2_any.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                        has_t2_diabetes   ->   has_t2_diabetes0 has_t2_diabetes
-> 1 ... has_t2_diabetes5
-                     t2dm_admission_any   ->   t2dm_admission_any0 t2dm_admissi
-> on_any1 ... t2dm_admission_any5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-t2dm_admissio~0 byte    %8.0g                 0 t2dm_admission_any
-has_t2_diabet~0 int     %8.0g                 0 has_t2_diabetes
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-t2dm_admissio~1 byte    %8.0g                 1 t2dm_admission_any
-has_t2_diabet~1 int     %8.0g                 1 has_t2_diabetes
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-t2dm_admissio~2 byte    %8.0g                 2 t2dm_admission_any
-has_t2_diabet~2 int     %8.0g                 2 has_t2_diabetes
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-t2dm_admissio~3 byte    %8.0g                 3 t2dm_admission_any
-has_t2_diabet~3 int     %8.0g                 3 has_t2_diabetes
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-t2dm_admissio~4 byte    %8.0g                 4 t2dm_admission_any
-has_t2_diabet~4 int     %8.0g                 4 has_t2_diabetes
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-t2dm_admissio~5 byte    %8.0g                 5 t2dm_admission_any
-has_t2_diabet~5 int     %8.0g                 5 has_t2_diabetes
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_imd_dm_t2_any.eps not found)
-(file ./output/line_imd_dm_t2_any.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                             population   ->   population1 population2 ... popu
-> lation5
-                  dm_keto_admission_any   ->   dm_keto_admission_any1 dm_keto_a
-> dmission_any2 ... dm_keto_admission_any5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-dm_keto_admis~1 byte    %8.0g                 1 dm_keto_admission_any
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-dm_keto_admis~2 byte    %8.0g                 2 dm_keto_admission_any
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-dm_keto_admis~3 byte    %8.0g                 3 dm_keto_admission_any
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-dm_keto_admis~4 byte    %8.0g                 4 dm_keto_admission_any
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-dm_keto_admis~5 byte    %8.0g                 5 dm_keto_admission_any
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_ethnic_dm_keto_any.eps not found)
-(file ./output/line_ethnic_dm_keto_any.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                             population   ->   population0 population1 ... popu
-> lation5
-                  dm_keto_admission_any   ->   dm_keto_admission_any0 dm_keto_a
-> dmission_any1 ... dm_keto_admission_any5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-dm_keto_admis~0 byte    %8.0g                 0 dm_keto_admission_any
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-dm_keto_admis~1 byte    %8.0g                 1 dm_keto_admission_any
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-dm_keto_admis~2 byte    %8.0g                 2 dm_keto_admission_any
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-dm_keto_admis~3 byte    %8.0g                 3 dm_keto_admission_any
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-dm_keto_admis~4 byte    %8.0g                 4 dm_keto_admission_any
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-dm_keto_admis~5 byte    %8.0g                 5 dm_keto_admission_any
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_imd_dm_keto_any.eps not found)
-(file ./output/line_imd_dm_keto_any.eps written in EPS format)
-
-. 
-. log close
-      name:  <unnamed>
-       log:  /workspace/logs/graphs_dm.log
-  log type:  text
- closed on:  21 Mar 2022, 15:36:06
--------------------------------------------------------------------------------
+outputs:
+  logs/graphs_dm.log               - moderately_sensitive
+  output/line_dm_ethnic_hba1c.eps  - moderately_sensitive

@@ -1,1160 +1,304 @@
+2022-04-03T19:13:57.616197300Z 
+2022-04-03T19:13:57.616250300Z   ___  ____  ____  ____  ____ (R)
+2022-04-03T19:13:57.616259700Z  /__    /   ____/   /   ____/
+2022-04-03T19:13:57.616267100Z ___/   /   /___/   /   /___/   16.1   Copyright 1985-2019 StataCorp LLC
+2022-04-03T19:13:57.616274200Z   Statistics/Data Analysis            StataCorp
+2022-04-03T19:13:57.616281300Z                                       4905 Lakeway Drive
+2022-04-03T19:13:57.616288500Z                                       College Station, Texas 77845 USA
+2022-04-03T19:13:57.616295600Z                                       800-STATA-PC        http://www.stata.com
+2022-04-03T19:13:57.616302600Z                                       979-696-4600        stata@stata.com
+2022-04-03T19:13:57.616309800Z                                       979-696-4601 (fax)
+2022-04-03T19:13:57.616317000Z 
+2022-04-03T19:13:57.616323900Z 3-user Stata network license expires 11 May 2022:
+2022-04-03T19:13:57.616330900Z        Serial number:  501709312237
+2022-04-03T19:13:57.616337800Z          Licensed to:  The Bennett Institute
+2022-04-03T19:13:57.616344800Z                        Oxford University
+2022-04-03T19:13:57.617362900Z 
+2022-04-03T19:13:57.617432300Z Notes:
+2022-04-03T19:13:57.617446800Z       1.  Unicode is supported; see help unicode_advice.
+2022-04-03T19:13:57.617454900Z 
+2022-04-03T19:13:57.617462000Z . do "analysis/graphs_mortality.wrapper.do" 
+2022-04-03T19:13:57.617511200Z 
+2022-04-03T19:13:57.617526100Z . . do "analysis/graphs_mortality.do" 
+2022-04-03T19:13:57.617534200Z 
+2022-04-03T19:13:57.617541400Z . /* ==========================================================================
+2022-04-03T19:13:57.617548800Z > =
+2022-04-03T19:13:57.617556600Z > Do file name:   graphs_mortality.do
+2022-04-03T19:13:57.617563800Z > Project:        COVID Collateral
+2022-04-03T19:13:57.617571500Z > Date:           23/03/2022
+2022-04-03T19:13:57.617578900Z > Author:         Ruth Costello
+2022-04-03T19:13:57.617625300Z > Description:    Generates line graphs of rates of each outcome and strata per
+2022-04-03T19:13:57.617642300Z >  month
+2022-04-03T19:13:57.617650000Z > =============================================================================
+2022-04-03T19:13:57.617657600Z > =*/
+2022-04-03T19:13:57.617664800Z . cap log using ./logs/graphs_mortality.log, replace
+2022-04-03T19:13:57.617677100Z 
+2022-04-03T19:13:57.617684900Z . 
+2022-04-03T19:13:57.617692000Z . * Generates graphs for ethnicity - to include DM once defined
+2022-04-03T19:13:57.617699300Z . local groups "resp asthma copd cvd mi stroke heart_failure vte mh"
+2022-04-03T19:13:57.617727900Z 
+2022-04-03T19:13:57.617799200Z . forvalues i=1/9 {
+2022-04-03T19:13:57.617812300Z   2.     local this_group :word `i' of `groups'
+2022-04-03T19:13:57.617820000Z   3. * Ethnicity
+2022-04-03T19:13:57.617827200Z .     clear 
+2022-04-03T19:13:57.617834300Z   4.     import delimited using ./output/measures/mortality/measure_`this_group
+2022-04-03T19:13:57.617841800Z > '_mortality_ethnic_rate.csv, numericcols(4)
+2022-04-03T19:13:57.617849400Z   5.     * Generate rate per 100,000
+2022-04-03T19:13:57.617856600Z .     gen rate = value*100000 
+2022-04-03T19:13:57.617863900Z   6.     * Format date
+2022-04-03T19:13:57.617871200Z .     gen dateA = date(date, "YMD")
+2022-04-03T19:13:57.617878800Z   7.     drop date
+2022-04-03T19:13:57.617886300Z   8.     format dateA %dD/M/Y
+2022-04-03T19:13:57.617942500Z   9.     tab dateA 
+2022-04-03T19:13:57.617954800Z  10.     * reshape dataset so columns with rates for each ethnicity 
+2022-04-03T19:13:57.617962700Z .     reshape wide value rate `this_group'_mortality population, i(dateA) j(eth
+2022-04-03T19:13:57.617970300Z > nicity)
+2022-04-03T19:13:57.617977500Z  11.     describe
+2022-04-03T19:13:57.617984700Z  12.     * Labelling ethnicity variables
+2022-04-03T19:13:57.617991900Z .     label var rate1 "Ethnicity - White"
+2022-04-03T19:13:57.618028400Z  13.     label var rate2 "Ethnicity - Mixed"
+2022-04-03T19:13:57.618087300Z  14.     label var rate3 "Ethnicity - Asian"
+2022-04-03T19:13:57.618100000Z  15.     label var rate4 "Ethnicity - Black"
+2022-04-03T19:13:57.618107700Z  16.     label var rate5 "Ethnicity - Other"
+2022-04-03T19:13:57.618114900Z  17. 
+2022-04-03T19:13:57.618122200Z .     * Generate line graph
+2022-04-03T19:13:57.618129400Z .     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) 
+2022-04-03T19:13:57.618136900Z > format(%dM-CY)) ///
+2022-04-03T19:13:57.618144200Z >     ytitle("Rate per 100,000") 
+2022-04-03T19:13:57.618154700Z  18. 
+2022-04-03T19:13:57.618162100Z .     graph export ./output/line_mortality_`this_group'_ethnic.eps, as(eps) rep
+2022-04-03T19:13:57.618169300Z > lace
+2022-04-03T19:13:57.618176300Z  19.     * IMD
+2022-04-03T19:13:57.618183800Z .     clear 
+2022-04-03T19:13:57.618191000Z  20.     import delimited using ./output/measures/mortality/measure_`this_group
+2022-04-03T19:13:57.618198400Z > '_mortality_imd_rate.csv, numericcols(4)
+2022-04-03T19:13:57.618205700Z  21.     * Generate rate per 100,000
+2022-04-03T19:13:57.618263700Z .     gen rate = value*100000 
+2022-04-03T19:13:57.618276400Z  22.     * Format date
+2022-04-03T19:13:57.618284200Z .     gen dateA = date(date, "YMD")
+2022-04-03T19:13:57.618300800Z  23.     drop date
+2022-04-03T19:13:57.618308800Z  24.     format dateA %dD/M/Y
+2022-04-03T19:13:57.618315900Z  25.     tab dateA 
+2022-04-03T19:13:57.618323000Z  26.     * reshape dataset so columns with rates for each level of IMD
+2022-04-03T19:13:57.618330300Z .     reshape wide value rate `this_group'_mortality population, i(dateA) j(imd
+2022-04-03T19:13:57.618337800Z > )
+2022-04-03T19:13:57.618344900Z  27.     describe
+2022-04-03T19:13:57.618352000Z  28.     * Labelling IMD variables
+2022-04-03T19:13:57.618411000Z .     label var rate1 "IMD - 1"
+2022-04-03T19:13:57.618419500Z  29.     label var rate2 "IMD - 2"
+2022-04-03T19:13:57.618426900Z  30.     label var rate3 "IMD - 3"
+2022-04-03T19:13:57.618434300Z  31.     label var rate4 "IMD - 4"
+2022-04-03T19:13:57.618441600Z  32.     label var rate5 "IMD - 5"
+2022-04-03T19:13:57.618497600Z  33. 
+2022-04-03T19:13:57.618505200Z .     * Generate line graph
+2022-04-03T19:13:57.618561700Z .     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM
+2022-04-03T19:13:57.618573400Z > -CY)) ///
+2022-04-03T19:13:57.618627800Z >     ytitle("Rate per 100,000") 
+2022-04-03T19:13:57.618638200Z  34.     * save graph
+2022-04-03T19:13:57.618645400Z .     graph export ./output/line_mortality_`this_group'_imd.eps, as(eps) replac
+2022-04-03T19:13:57.618694800Z > e
+2022-04-03T19:13:57.618711300Z  35. }
+2022-04-03T19:13:58.059647300Z (5 vars, 282 obs)
+2022-04-03T19:13:58.060302600Z 
+2022-04-03T19:13:58.060320300Z       dateA |      Freq.     Percent        Cum.
+2022-04-03T19:13:58.060329400Z ------------+-----------------------------------
+2022-04-03T19:13:58.060336900Z   01mar2018 |          6        2.13        2.13
+2022-04-03T19:13:58.060344500Z   01apr2018 |          6        2.13        4.26
+2022-04-03T19:13:58.060352000Z   01may2018 |          6        2.13        6.38
+2022-04-03T19:13:58.060359300Z   01jun2018 |          6        2.13        8.51
+2022-04-03T19:13:58.060367000Z   01jul2018 |          6        2.13       10.64
+2022-04-03T19:13:58.060374700Z   01aug2018 |          6        2.13       12.77
+2022-04-03T19:13:58.060386000Z   01sep2018 |          6        2.13       14.89
+2022-04-03T19:13:58.060393600Z   01oct2018 |          6        2.13       17.02
+2022-04-03T19:13:58.060401100Z   01nov2018 |          6        2.13       19.15
+2022-04-03T19:13:58.060408500Z   01dec2018 |          6        2.13       21.28
+2022-04-03T19:13:58.060415900Z   01jan2019 |          6        2.13       23.40
+2022-04-03T19:13:58.060423500Z   01feb2019 |          6        2.13       25.53
+2022-04-03T19:13:58.060431400Z   01mar2019 |          6        2.13       27.66
+2022-04-03T19:13:58.060455500Z   01apr2019 |          6        2.13       29.79
+2022-04-03T19:13:58.060463700Z   01may2019 |          6        2.13       31.91
+2022-04-03T19:13:58.060471200Z   01jun2019 |          6        2.13       34.04
+2022-04-03T19:13:58.060478200Z   01jul2019 |          6        2.13       36.17
+2022-04-03T19:13:58.060485300Z   01aug2019 |          6        2.13       38.30
+2022-04-03T19:13:58.060539400Z   01sep2019 |          6        2.13       40.43
+2022-04-03T19:13:58.060566800Z   01oct2019 |          6        2.13       42.55
+2022-04-03T19:13:58.060576000Z   01nov2019 |          6        2.13       44.68
+2022-04-03T19:13:58.060583600Z   01dec2019 |          6        2.13       46.81
+2022-04-03T19:13:58.060590800Z   01jan2020 |          6        2.13       48.94
+2022-04-03T19:13:58.060598200Z   01feb2020 |          6        2.13       51.06
+2022-04-03T19:13:58.060606000Z   01mar2020 |          6        2.13       53.19
+2022-04-03T19:13:58.060613600Z   01apr2020 |          6        2.13       55.32
+2022-04-03T19:13:58.060621400Z   01may2020 |          6        2.13       57.45
+2022-04-03T19:13:58.060629100Z   01jun2020 |          6        2.13       59.57
+2022-04-03T19:13:58.060640900Z   01jul2020 |          6        2.13       61.70
+2022-04-03T19:13:58.060703600Z   01aug2020 |          6        2.13       63.83
+2022-04-03T19:13:58.060716800Z   01sep2020 |          6        2.13       65.96
+2022-04-03T19:13:58.060724600Z   01oct2020 |          6        2.13       68.09
+2022-04-03T19:13:58.060780100Z   01nov2020 |          6        2.13       70.21
+2022-04-03T19:13:58.060791900Z   01dec2020 |          6        2.13       72.34
+2022-04-03T19:13:58.060836600Z   01jan2021 |          6        2.13       74.47
+2022-04-03T19:13:58.060848200Z   01feb2021 |          6        2.13       76.60
+2022-04-03T19:13:58.060855500Z   01mar2021 |          6        2.13       78.72
+2022-04-03T19:13:58.060862900Z   01apr2021 |          6        2.13       80.85
+2022-04-03T19:13:58.060872800Z   01may2021 |          6        2.13       82.98
+2022-04-03T19:13:58.060880200Z   01jun2021 |          6        2.13       85.11
+2022-04-03T19:13:58.060887300Z   01jul2021 |          6        2.13       87.23
+2022-04-03T19:13:58.060894600Z   01aug2021 |          6        2.13       89.36
+2022-04-03T19:13:58.060901700Z   01sep2021 |          6        2.13       91.49
+2022-04-03T19:13:58.060908800Z   01oct2021 |          6        2.13       93.62
+2022-04-03T19:13:58.060915800Z   01nov2021 |          6        2.13       95.74
+2022-04-03T19:13:58.060922800Z   01dec2021 |          6        2.13       97.87
+2022-04-03T19:13:58.060929800Z   01jan2022 |          6        2.13      100.00
+2022-04-03T19:13:58.060936700Z ------------+-----------------------------------
+2022-04-03T19:13:58.061506800Z       Total |        282      100.00
+2022-04-03T19:13:58.068201400Z (note: j = 0 1 2 3 4 5)
+2022-04-03T19:13:58.083301200Z 
+2022-04-03T19:13:58.083324900Z Data                               long   ->   wide
+2022-04-03T19:13:58.083334300Z -----------------------------------------------------------------------------
+2022-04-03T19:13:58.083342000Z Number of obs.                      282   ->      47
+2022-04-03T19:13:58.083759300Z Number of variables                   6   ->      25
+2022-04-03T19:13:58.083779100Z j variable (6 values)         ethnicity   ->   (dropped)
+2022-04-03T19:13:58.083788300Z xij variables:
+2022-04-03T19:13:58.084402300Z                                   value   ->   value0 value1 ... value5
+2022-04-03T19:13:58.084933300Z                                    rate   ->   rate0 rate1 ... rate5
+2022-04-03T19:13:58.085565500Z                          resp_mortality   ->   resp_mortality0 resp_mortality1 
+2022-04-03T19:13:58.085582300Z > ... resp_mortality5
+2022-04-03T19:13:58.086135800Z                              population   ->   population0 population1 ... popu
+2022-04-03T19:13:58.086152800Z > lation5
+2022-04-03T19:13:58.086185500Z -----------------------------------------------------------------------------
+2022-04-03T19:13:58.086475800Z 
+2022-04-03T19:13:58.086489500Z Contains data
+2022-04-03T19:13:58.086497300Z   obs:            47                          
+2022-04-03T19:13:58.086504900Z  vars:            25                          
+2022-04-03T19:13:58.086512600Z -------------------------------------------------------------------------------
+2022-04-03T19:13:58.086520100Z               storage   display    value
+2022-04-03T19:13:58.086527700Z variable name   type    format     label      variable label
+2022-04-03T19:13:58.086535500Z -------------------------------------------------------------------------------
+2022-04-03T19:13:58.086543200Z dateA           float   %dD/M/Y               
+2022-04-03T19:13:58.086550900Z resp_mortality0 int     %8.0g                 0 resp_mortality
+2022-04-03T19:13:58.086582900Z population0     long    %12.0g                0 population
+2022-04-03T19:13:58.086593900Z value0          float   %9.0g                 0 value
+2022-04-03T19:13:58.086602400Z rate0           float   %9.0g                 0 rate
+2022-04-03T19:13:58.086609700Z resp_mortality1 int     %8.0g                 1 resp_mortality
+2022-04-03T19:13:58.086617000Z population1     long    %12.0g                1 population
+2022-04-03T19:13:58.086624400Z value1          float   %9.0g                 1 value
+2022-04-03T19:13:58.086631900Z rate1           float   %9.0g                 1 rate
+2022-04-03T19:13:58.086639400Z resp_mortality2 int     %8.0g                 2 resp_mortality
+2022-04-03T19:13:58.086658500Z population2     long    %12.0g                2 population
+2022-04-03T19:13:58.086691800Z value2          float   %9.0g                 2 value
+2022-04-03T19:13:58.086703100Z rate2           float   %9.0g                 2 rate
+2022-04-03T19:13:58.086710700Z resp_mortality3 int     %8.0g                 3 resp_mortality
+2022-04-03T19:13:58.086718000Z population3     long    %12.0g                3 population
+2022-04-03T19:13:58.086725300Z value3          float   %9.0g                 3 value
+2022-04-03T19:13:58.086732600Z rate3           float   %9.0g                 3 rate
+2022-04-03T19:13:58.086740200Z resp_mortality4 int     %8.0g                 4 resp_mortality
+2022-04-03T19:13:58.086747400Z population4     long    %12.0g                4 population
+2022-04-03T19:13:58.087316000Z value4          float   %9.0g                 4 value
+2022-04-03T19:13:58.087331600Z rate4           float   %9.0g                 4 rate
+2022-04-03T19:13:58.087339500Z resp_mortality5 int     %8.0g                 5 resp_mortality
+2022-04-03T19:13:58.087347000Z population5     long    %12.0g                5 population
+2022-04-03T19:13:58.087354500Z value5          float   %9.0g                 5 value
+2022-04-03T19:13:58.087362300Z rate5           float   %9.0g                 5 rate
+2022-04-03T19:13:58.087369800Z -------------------------------------------------------------------------------
+2022-04-03T19:13:58.087377400Z Sorted by: dateA
+2022-04-03T19:13:59.513502600Z (note: file ./output/line_mortality_resp_ethnic.eps not found)
+2022-04-03T19:13:59.513546600Z (file ./output/line_mortality_resp_ethnic.eps written in EPS format)
+2022-04-03T19:13:59.716775600Z (5 vars, 15,463 obs)
+2022-04-03T19:13:59.733404800Z 
+2022-04-03T19:13:59.733430300Z       dateA |      Freq.     Percent        Cum.
+2022-04-03T19:13:59.733439100Z ------------+-----------------------------------
+2022-04-03T19:13:59.733446700Z   01mar2018 |        329        2.13        2.13
+2022-04-03T19:13:59.733454000Z   01apr2018 |        329        2.13        4.26
+2022-04-03T19:13:59.733461500Z   01may2018 |        329        2.13        6.38
+2022-04-03T19:13:59.733468900Z   01jun2018 |        329        2.13        8.51
+2022-04-03T19:13:59.733476500Z   01jul2018 |        329        2.13       10.64
+2022-04-03T19:13:59.733483900Z   01aug2018 |        329        2.13       12.77
+2022-04-03T19:13:59.733491500Z   01sep2018 |        329        2.13       14.89
+2022-04-03T19:13:59.733499000Z   01oct2018 |        329        2.13       17.02
+2022-04-03T19:13:59.733506500Z   01nov2018 |        329        2.13       19.15
+2022-04-03T19:13:59.733514200Z   01dec2018 |        329        2.13       21.28
+2022-04-03T19:13:59.733522200Z   01jan2019 |        329        2.13       23.40
+2022-04-03T19:13:59.733544900Z   01feb2019 |        329        2.13       25.53
+2022-04-03T19:13:59.733553000Z   01mar2019 |        329        2.13       27.66
+2022-04-03T19:13:59.733560400Z   01apr2019 |        329        2.13       29.79
+2022-04-03T19:13:59.733568000Z   01may2019 |        329        2.13       31.91
+2022-04-03T19:13:59.733575300Z   01jun2019 |        329        2.13       34.04
+2022-04-03T19:13:59.733582800Z   01jul2019 |        329        2.13       36.17
+2022-04-03T19:13:59.733590200Z   01aug2019 |        329        2.13       38.30
+2022-04-03T19:13:59.733600800Z   01sep2019 |        329        2.13       40.43
+2022-04-03T19:13:59.733608500Z   01oct2019 |        329        2.13       42.55
+2022-04-03T19:13:59.733615500Z   01nov2019 |        329        2.13       44.68
+2022-04-03T19:13:59.733622800Z   01dec2019 |        329        2.13       46.81
+2022-04-03T19:13:59.733630100Z   01jan2020 |        329        2.13       48.94
+2022-04-03T19:13:59.733637300Z   01feb2020 |        329        2.13       51.06
+2022-04-03T19:13:59.733644700Z   01mar2020 |        329        2.13       53.19
+2022-04-03T19:13:59.733652000Z   01apr2020 |        329        2.13       55.32
+2022-04-03T19:13:59.733659400Z   01may2020 |        329        2.13       57.45
+2022-04-03T19:13:59.733666800Z   01jun2020 |        329        2.13       59.57
+2022-04-03T19:13:59.733675200Z   01jul2020 |        329        2.13       61.70
+2022-04-03T19:13:59.733683000Z   01aug2020 |        329        2.13       63.83
+2022-04-03T19:13:59.733690200Z   01sep2020 |        329        2.13       65.96
+2022-04-03T19:13:59.733697600Z   01oct2020 |        329        2.13       68.09
+2022-04-03T19:13:59.733704900Z   01nov2020 |        329        2.13       70.21
+2022-04-03T19:13:59.733712200Z   01dec2020 |        329        2.13       72.34
+2022-04-03T19:13:59.733719400Z   01jan2021 |        329        2.13       74.47
+2022-04-03T19:13:59.733727000Z   01feb2021 |        329        2.13       76.60
+2022-04-03T19:13:59.733734300Z   01mar2021 |        329        2.13       78.72
+2022-04-03T19:13:59.733741700Z   01apr2021 |        329        2.13       80.85
+2022-04-03T19:13:59.733749800Z   01may2021 |        329        2.13       82.98
+2022-04-03T19:13:59.733757400Z   01jun2021 |        329        2.13       85.11
+2022-04-03T19:13:59.733764400Z   01jul2021 |        329        2.13       87.23
+2022-04-03T19:13:59.733771600Z   01aug2021 |        329        2.13       89.36
+2022-04-03T19:13:59.733778700Z   01sep2021 |        329        2.13       91.49
+2022-04-03T19:13:59.733785900Z   01oct2021 |        329        2.13       93.62
+2022-04-03T19:13:59.733792900Z   01nov2021 |        329        2.13       95.74
+2022-04-03T19:13:59.733800100Z   01dec2021 |        329        2.13       97.87
+2022-04-03T19:13:59.733814600Z   01jan2022 |        329        2.13      100.00
+2022-04-03T19:13:59.733822400Z ------------+-----------------------------------
+2022-04-03T19:13:59.772343600Z       Total |     15,463      100.00
+2022-04-03T19:13:59.772362600Z (note: j = -1 100 200 300 400 500 600 700 800 900 1000 1100 1200 1300 1400 1500
+2022-04-03T19:13:59.772371000Z >  1600 1700 1800 1900 2000 2100 2200 2300 2400 2500 2600 2700 2800 2900 3000 3
+2022-04-03T19:13:59.772379200Z > 100 3200 3300 3400 3500 3600 3700 3800 3900 4000 4100 4200 4300 4400 4500 460
+2022-04-03T19:13:59.772386400Z > 0 4700 4800 4900 5000 5100 5200 5300 5400 5500 5600 5700 5800 5900 6000 6100 
+2022-04-03T19:13:59.772393600Z > 6200 6300 6400 6500 6600 6700 6800 6900 7000 7100 7200 7300 7400 7500 7600 77
+2022-04-03T19:13:59.772400700Z > 00 7800 7900 8000 8100 8200 8300 8400 8500 8600 8700 8800 8900 9000 9100 9200
+2022-04-03T19:13:59.772408200Z >  9300 9400 9500 9600 9700 9800 9900 10000 10100 10200 10300 10400 10500 10600
+2022-04-03T19:13:59.772416000Z >  10700 10800 10900 11000 11100 11200 11300 11400 11500 11600 11700 11800 1190
+2022-04-03T19:13:59.772423600Z > 0 12000 12100 12200 12300 12400 12500 12600 12700 12800 12900 13000 13100 132
+2022-04-03T19:13:59.772431000Z > 00 13300 13400 13500 13600 13700 13800 13900 14000 14100 14200 14300 14400 14
+2022-04-03T19:13:59.772438300Z > 500 14600 14700 14800 14900 15000 15100 15200 15300 15400 15500 15600 15700 1
+2022-04-03T19:13:59.772445300Z > 5800 15900 16000 16100 16200 16300 16400 16500 16600 16700 16800 16900 17000 
+2022-04-03T19:13:59.772452500Z > 17100 17200 17300 17400 17500 17600 17700 17800 17900 18000 18100 18200 18300
+2022-04-03T19:13:59.772459700Z >  18400 18500 18600 18700 18800 18900 19000 19100 19200 19300 19400 19500 1960
+2022-04-03T19:13:59.772466800Z > 0 19700 19800 19900 20000 20100 20200 20300 20400 20500 20600 20700 20800 209
+2022-04-03T19:13:59.772473900Z > 00 21000 21100 21200 21300 21400 21500 21600 21700 21800 21900 22000 22100 22
+2022-04-03T19:13:59.772481100Z > 200 22300 22400 22500 22600 22700 22800 22900 23000 23100 23200 23300 23400 2
+2022-04-03T19:13:59.772488300Z > 3500 23600 23700 23800 23900 24000 24100 24200 24300 24400 24500 24600 24700 
+2022-04-03T19:13:59.772495500Z > 24800 24900 25000 25100 25200 25300 25400 25500 25600 25700 25800 25900 26000
+2022-04-03T19:13:59.772502700Z >  26100 26200 26300 26400 26500 26600 26700 26800 26900 27000 27100 27200 2730
+2022-04-03T19:13:59.772510000Z > 0 27400 27500 27600 27700 27800 27900 28000 28100 28200 28300 28400 28500 286
+2022-04-03T19:13:59.772517400Z > 00 28700 28800 28900 29000 29100 29200 29300 29400 29500 29600 29700 29800 29
+2022-04-03T19:13:59.772524700Z > 900 30000 30100 30200 30300 30400 30500 30600 30700 30800 30900 31000 31100 3
+2022-04-03T19:13:59.772532000Z > 1200 31300 31400 31500 31600 31700 31800 31900 32000 32100 32200 32300 32400 
+2022-04-03T19:13:59.772539500Z > 32500 32600 32700 32800)
+2022-04-03T19:13:59.839838600Z value-1 invalid variable name
+2022-04-03T19:13:59.840834700Z r(198);
+2022-04-03T19:13:59.840852100Z 
+2022-04-03T19:13:59.840860200Z end of do-file
+2022-04-03T19:13:59.840867400Z r(198);
+2022-04-03T19:13:59.840874600Z 
+2022-04-03T19:13:59.840881500Z end of do-file
+2022-04-03T19:13:59.840888800Z 
+2022-04-03T19:13:59.840895800Z r(198);
+2022-04-03T19:13:59.840903100Z 
+2022-04-03T19:13:59.840910200Z 
+2022-04-03T19:14:00.331559000Z . 
 
-. 
-. * Generates graphs for ethnicity - to include DM once defined
-. local groups "resp asthma copd cvd mi stroke heart_failure vte mh"
+id: lsunfte6v5fngmhe
+commit: b8caf33b99e0542194e5b0f53cec43f055369f92
+docker_image_id: sha256:11980aa720220a1b39bf523f5a8a33270214c13876c30ee364e16265766f7f60
+exit_code: 1
 
-. forvalues i=1/9 {
-  2.     local this_group :word `i' of `groups'
-  3. * Ethnicity
-.     clear 
-  4.     import delimited using ./output/measures/mortality/measure_`this_group
-> '_mortality_ethnic_rate.csv, numericcols(4)
-  5.     * Generate rate per 100,000
-.     gen rate = value*100000 
-  6.     * Format date
-.     gen dateA = date(date, "YMD")
-  7.     drop date
-  8.     format dateA %dD/M/Y
-  9.     tab dateA 
- 10.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate `this_group'_mortality population, i(dateA) j(eth
-> nicity)
- 11.     describe
- 12.     * Labelling ethnicity variables
-.     label var rate1 "Ethnicity - White"
- 13.     label var rate2 "Ethnicity - Mixed"
- 14.     label var rate3 "Ethnicity - Asian"
- 15.     label var rate4 "Ethnicity - Black"
- 16.     label var rate5 "Ethnicity - Other"
- 17. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) 
-> format(%dM-CY)) ///
->     ytitle("Rate per 100,000") 
- 18. 
-.     graph export ./output/line_mortality_`this_group'_ethnic.eps, as(eps) rep
-> lace
- 19.     * IMD
-.     clear 
- 20.     import delimited using ./output/measures/mortality/measure_`this_group
-> '_mortality_imd_rate.csv, numericcols(4)
- 21.     * Generate rate per 100,000
-.     gen rate = value*100000 
- 22.     * Format date
-.     gen dateA = date(date, "YMD")
- 23.     drop date
- 24.     format dateA %dD/M/Y
- 25.     tab dateA 
- 26.     * reshape dataset so columns with rates for each level of IMD
-.     reshape wide value rate `this_group'_mortality population, i(dateA) j(imd
-> )
- 27.     describe
- 28.     * Labelling IMD variables
-.     label var rate1 "IMD - 1"
- 29.     label var rate2 "IMD - 2"
- 30.     label var rate3 "IMD - 3"
- 31.     label var rate4 "IMD - 4"
- 32.     label var rate5 "IMD - 5"
- 33. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM
-> -CY)) ///
->     ytitle("Rate per 100,000") 
- 34.     * save graph
-.     graph export ./output/line_mortality_`this_group'_imd.eps, as(eps) replac
-> e
- 35. }
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                         resp_mortality   ->   resp_mortality1 resp_mortality2 
-> ... resp_mortality5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-resp_mortality1 byte    %8.0g                 1 resp_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-resp_mortality2 byte    %8.0g                 2 resp_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-resp_mortality3 byte    %8.0g                 3 resp_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-resp_mortality4 byte    %8.0g                 4 resp_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-resp_mortality5 byte    %8.0g                 5 resp_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_resp_ethnic.eps not found)
-(file ./output/line_mortality_resp_ethnic.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                         resp_mortality   ->   resp_mortality0 resp_mortality1 
-> ... resp_mortality5
-                             population   ->   population0 population1 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-resp_mortality0 byte    %8.0g                 0 resp_mortality
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-resp_mortality1 byte    %8.0g                 1 resp_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-resp_mortality2 byte    %8.0g                 2 resp_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-resp_mortality3 byte    %8.0g                 3 resp_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-resp_mortality4 byte    %8.0g                 4 resp_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-resp_mortality5 byte    %8.0g                 5 resp_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_resp_imd.eps not found)
-(file ./output/line_mortality_resp_imd.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                       asthma_mortality   ->   asthma_mortality1 asthma_mortali
-> ty2 ... asthma_mortality5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-asthma_mortal~1 byte    %8.0g                 1 asthma_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-asthma_mortal~2 byte    %8.0g                 2 asthma_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-asthma_mortal~3 byte    %8.0g                 3 asthma_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-asthma_mortal~4 byte    %8.0g                 4 asthma_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-asthma_mortal~5 byte    %8.0g                 5 asthma_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_asthma_ethnic.eps not found)
-(file ./output/line_mortality_asthma_ethnic.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                       asthma_mortality   ->   asthma_mortality0 asthma_mortali
-> ty1 ... asthma_mortality5
-                             population   ->   population0 population1 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-asthma_mortal~0 byte    %8.0g                 0 asthma_mortality
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-asthma_mortal~1 byte    %8.0g                 1 asthma_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-asthma_mortal~2 byte    %8.0g                 2 asthma_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-asthma_mortal~3 byte    %8.0g                 3 asthma_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-asthma_mortal~4 byte    %8.0g                 4 asthma_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-asthma_mortal~5 byte    %8.0g                 5 asthma_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_asthma_imd.eps not found)
-(file ./output/line_mortality_asthma_imd.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                         copd_mortality   ->   copd_mortality1 copd_mortality2 
-> ... copd_mortality5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-copd_mortality1 byte    %8.0g                 1 copd_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-copd_mortality2 byte    %8.0g                 2 copd_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-copd_mortality3 byte    %8.0g                 3 copd_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-copd_mortality4 byte    %8.0g                 4 copd_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-copd_mortality5 byte    %8.0g                 5 copd_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_copd_ethnic.eps not found)
-(file ./output/line_mortality_copd_ethnic.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                         copd_mortality   ->   copd_mortality0 copd_mortality1 
-> ... copd_mortality5
-                             population   ->   population0 population1 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-copd_mortality0 byte    %8.0g                 0 copd_mortality
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-copd_mortality1 byte    %8.0g                 1 copd_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-copd_mortality2 byte    %8.0g                 2 copd_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-copd_mortality3 byte    %8.0g                 3 copd_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-copd_mortality4 byte    %8.0g                 4 copd_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-copd_mortality5 byte    %8.0g                 5 copd_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_copd_imd.eps not found)
-(file ./output/line_mortality_copd_imd.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                          cvd_mortality   ->   cvd_mortality1 cvd_mortality2 ..
-> . cvd_mortality5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-cvd_mortality1  byte    %8.0g                 1 cvd_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-cvd_mortality2  byte    %8.0g                 2 cvd_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-cvd_mortality3  byte    %8.0g                 3 cvd_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-cvd_mortality4  byte    %8.0g                 4 cvd_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-cvd_mortality5  byte    %8.0g                 5 cvd_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_cvd_ethnic.eps not found)
-(file ./output/line_mortality_cvd_ethnic.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                          cvd_mortality   ->   cvd_mortality0 cvd_mortality1 ..
-> . cvd_mortality5
-                             population   ->   population0 population1 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-cvd_mortality0  byte    %8.0g                 0 cvd_mortality
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-cvd_mortality1  byte    %8.0g                 1 cvd_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-cvd_mortality2  byte    %8.0g                 2 cvd_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-cvd_mortality3  byte    %8.0g                 3 cvd_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-cvd_mortality4  byte    %8.0g                 4 cvd_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-cvd_mortality5  byte    %8.0g                 5 cvd_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_cvd_imd.eps not found)
-(file ./output/line_mortality_cvd_imd.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                           mi_mortality   ->   mi_mortality1 mi_mortality2 ... 
-> mi_mortality5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-mi_mortality1   byte    %8.0g                 1 mi_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-mi_mortality2   byte    %8.0g                 2 mi_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-mi_mortality3   byte    %8.0g                 3 mi_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-mi_mortality4   byte    %8.0g                 4 mi_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-mi_mortality5   byte    %8.0g                 5 mi_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_mi_ethnic.eps not found)
-(file ./output/line_mortality_mi_ethnic.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                           mi_mortality   ->   mi_mortality0 mi_mortality1 ... 
-> mi_mortality5
-                             population   ->   population0 population1 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-mi_mortality0   byte    %8.0g                 0 mi_mortality
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-mi_mortality1   byte    %8.0g                 1 mi_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-mi_mortality2   byte    %8.0g                 2 mi_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-mi_mortality3   byte    %8.0g                 3 mi_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-mi_mortality4   byte    %8.0g                 4 mi_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-mi_mortality5   byte    %8.0g                 5 mi_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_mi_imd.eps not found)
-(file ./output/line_mortality_mi_imd.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                       stroke_mortality   ->   stroke_mortality1 stroke_mortali
-> ty2 ... stroke_mortality5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-stroke_mortal~1 byte    %8.0g                 1 stroke_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-stroke_mortal~2 byte    %8.0g                 2 stroke_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-stroke_mortal~3 byte    %8.0g                 3 stroke_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-stroke_mortal~4 byte    %8.0g                 4 stroke_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-stroke_mortal~5 byte    %8.0g                 5 stroke_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_stroke_ethnic.eps not found)
-(file ./output/line_mortality_stroke_ethnic.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                       stroke_mortality   ->   stroke_mortality0 stroke_mortali
-> ty1 ... stroke_mortality5
-                             population   ->   population0 population1 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-stroke_mortal~0 byte    %8.0g                 0 stroke_mortality
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-stroke_mortal~1 byte    %8.0g                 1 stroke_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-stroke_mortal~2 byte    %8.0g                 2 stroke_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-stroke_mortal~3 byte    %8.0g                 3 stroke_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-stroke_mortal~4 byte    %8.0g                 4 stroke_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-stroke_mortal~5 byte    %8.0g                 5 stroke_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_stroke_imd.eps not found)
-(file ./output/line_mortality_stroke_imd.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                heart_failure_mortality   ->   heart_failure_mortality1 heart_f
-> ailure_mortality2 ... heart_failure_mortality5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-heart_failure~1 byte    %8.0g                 1 heart_failure_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-heart_failure~2 byte    %8.0g                 2 heart_failure_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-heart_failure~3 byte    %8.0g                 3 heart_failure_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-heart_failure~4 byte    %8.0g                 4 heart_failure_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-heart_failure~5 byte    %8.0g                 5 heart_failure_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_heart_failure_ethnic.eps not found)
-(file ./output/line_mortality_heart_failure_ethnic.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                heart_failure_mortality   ->   heart_failure_mortality0 heart_f
-> ailure_mortality1 ... heart_failure_mortality5
-                             population   ->   population0 population1 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-heart_failure~0 byte    %8.0g                 0 heart_failure_mortality
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-heart_failure~1 byte    %8.0g                 1 heart_failure_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-heart_failure~2 byte    %8.0g                 2 heart_failure_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-heart_failure~3 byte    %8.0g                 3 heart_failure_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-heart_failure~4 byte    %8.0g                 4 heart_failure_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-heart_failure~5 byte    %8.0g                 5 heart_failure_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_heart_failure_imd.eps not found)
-(file ./output/line_mortality_heart_failure_imd.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                          vte_mortality   ->   vte_mortality1 vte_mortality2 ..
-> . vte_mortality5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-vte_mortality1  byte    %8.0g                 1 vte_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-vte_mortality2  byte    %8.0g                 2 vte_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-vte_mortality3  byte    %8.0g                 3 vte_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-vte_mortality4  byte    %8.0g                 4 vte_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-vte_mortality5  byte    %8.0g                 5 vte_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_vte_ethnic.eps not found)
-(file ./output/line_mortality_vte_ethnic.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                          vte_mortality   ->   vte_mortality0 vte_mortality1 ..
-> . vte_mortality5
-                             population   ->   population0 population1 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-vte_mortality0  byte    %8.0g                 0 vte_mortality
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-vte_mortality1  byte    %8.0g                 1 vte_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-vte_mortality2  byte    %8.0g                 2 vte_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-vte_mortality3  byte    %8.0g                 3 vte_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-vte_mortality4  byte    %8.0g                 4 vte_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-vte_mortality5  byte    %8.0g                 5 vte_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_vte_imd.eps not found)
-(file ./output/line_mortality_vte_imd.eps written in EPS format)
-(5 vars, 20 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          5       25.00       25.00
-  01apr2020 |          5       25.00       50.00
-  01may2020 |          5       25.00       75.00
-  01jun2020 |          5       25.00      100.00
-------------+-----------------------------------
-      Total |         20      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       20   ->       4
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                           mh_mortality   ->   mh_mortality1 mh_mortality2 ... 
-> mh_mortality5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-mh_mortality1   byte    %8.0g                 1 mh_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-mh_mortality2   byte    %8.0g                 2 mh_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-mh_mortality3   byte    %8.0g                 3 mh_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-mh_mortality4   byte    %8.0g                 4 mh_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-mh_mortality5   byte    %8.0g                 5 mh_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_mh_ethnic.eps not found)
-(file ./output/line_mortality_mh_ethnic.eps written in EPS format)
-(5 vars, 24 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2020 |          6       25.00       25.00
-  01apr2020 |          6       25.00       50.00
-  01may2020 |          6       25.00       75.00
-  01jun2020 |          6       25.00      100.00
-------------+-----------------------------------
-      Total |         24      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                       24   ->       4
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                           mh_mortality   ->   mh_mortality0 mh_mortality1 ... 
-> mh_mortality5
-                             population   ->   population0 population1 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:             4                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-mh_mortality0   byte    %8.0g                 0 mh_mortality
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-mh_mortality1   byte    %8.0g                 1 mh_mortality
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-mh_mortality2   byte    %8.0g                 2 mh_mortality
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-mh_mortality3   byte    %8.0g                 3 mh_mortality
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-mh_mortality4   byte    %8.0g                 4 mh_mortality
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-mh_mortality5   byte    %8.0g                 5 mh_mortality
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/line_mortality_mh_imd.eps not found)
-(file ./output/line_mortality_mh_imd.eps written in EPS format)
-
-. 
-end of do-file
-
-. . file open output using "/tmp/tmp.EQB6TLnnFy", write text replace
-
-. . file write output "success" 
-
-. . file close output
-
-. 
-end of do-file
-
-
+outputs:
+  logs/graphs_mortality.log              - moderately_sensitive
+  output/line_mortality_resp_ethnic.eps  - moderately_sensitive
