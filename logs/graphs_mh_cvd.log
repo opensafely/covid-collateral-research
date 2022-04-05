@@ -1572,10 +1572,9 @@ Sorted by: dateA
 (file ./output/line_ocd_admission_imd.eps written in EPS format)
 
 . * Hospital admissions - primary diagnosis
-. local groups "mi stroke heart_failure vte depression anxiety smi self_harm ea
-> ting_dis ocd"
+. local groups "mi stroke heart_failure vte"
 
-. forvalues i=1/10 {
+. forvalues i=1/4 {
   2.     local this_group :word `i' of `groups'
   3. * Ethnicity
 .     clear 
@@ -2121,6 +2120,88 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/line_vte_primary_admission_imd.eps not found)
 (file ./output/line_vte_primary_admission_imd.eps written in EPS format)
+
+. * Mental health measures - 3 monthly rates for primary admissions
+. local groups "depression anxiety smi self_harm eating_dis ocd"
+
+. forvalues i=1/6 {
+  2.     local this_group :word `i' of `groups'
+  3. * Ethnicity
+.     clear 
+  4.     import delimited using ./output/measures/measure_`this_group'_primary_
+> admission_ethnicity_rate.csv, numericcols(4)
+  5.     * Generate rate per 100,000
+.     gen rate = value*100000 
+  6.     * Format date
+.     gen dateA = date(date, "YMD")
+  7.     drop date
+  8.     format dateA %dD/M/Y
+  9.     tab dateA 
+ 10.     * Collapse at 3 monthly intervals
+.     gen quarter = qofd(dateA)
+ 11.     collapse (sum) value rate `this_group'_primary_admission population (m
+> in) dateA,  by(quarter ethnicity)
+ 12.     drop quarter
+ 13.     * Outputing file 
+.     export delimited using ./output/measures/measure_`this_group'_primary_adm
+> ission_ethnicity_rate_collapse.csv
+ 14.     * reshape dataset so columns with rates for each ethnicity 
+.     reshape wide value rate `this_group'_primary_admission population, i(date
+> A) j(ethnicity)
+ 15.     describe
+ 16.     * Labelling ethnicity variables
+.     label var rate1 "Ethnicity - White"
+ 17.     label var rate2 "Ethnicity - Mixed"
+ 18.     label var rate3 "Ethnicity - Asian"
+ 19.     label var rate4 "Ethnicity - Black"
+ 20.     label var rate5 "Ethnicity - Other"
+ 21. 
+.     * Generate line graph
+.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) 
+> format(%dM-CY)) ///
+>     ytitle("Rate per 100,000") 
+ 22. 
+.     graph export ./output/line_`this_group'_primary_admission_ethnicity.eps, 
+> as(eps) replace
+ 23.     * IMD
+.     clear 
+ 24.     import delimited using ./output/measures/measure_`this_group'_primary_
+> admission_imd_rate.csv, numericcols(4)
+ 25.     * Generate rate per 100,000
+.     gen rate = value*100000 
+ 26.     * Format date
+.     gen dateA = date(date, "YMD")
+ 27.     drop date
+ 28.     format dateA %dD/M/Y
+ 29.     tab dateA 
+ 30.     * Collapse at 3 monthly intervals
+.     gen quarter = qofd(dateA)
+ 31.     collapse (sum) value rate `this_group'_primary_admission population (m
+> in) dateA,  by(quarter imd)
+ 32.     drop quarter
+ 33.     * Outputing file 
+.     export delimited using ./output/measures/measure_`this_group'_primary_adm
+> ission_imd_rate_collapse.csv
+ 34.     * reshape dataset so columns with rates for each ethnicity 
+.     reshape wide value rate `this_group'_primary_admission population, i(date
+> A) j(imd)
+ 35.     describe
+ 36.     * Labelling ethnicity variables
+.     label var rate1 "IMD - 1"
+ 37.     label var rate2 "IMD - 2"
+ 38.     label var rate3 "IMD - 3"
+ 39.     label var rate4 "IMD - 4"
+ 40.     label var rate5 "IMD - 5"
+ 41. 
+.     * Generate line graph
+.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM
+> -CY)) ///
+>     ytitle("Rate per 100,000") 
+ 42. 
+.     graph export ./output/line_`this_group'_primary_admission_imd.eps, as(eps
+> ) replace
+ 43. 
+. }
 (5 vars, 20 obs)
 
       dateA |      Freq.     Percent        Cum.
@@ -2131,11 +2212,13 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
+file ./output/measures/measure_depression_primary_admission_ethnicity_rate_coll
+> apse.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                       10   ->       2
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -2148,33 +2231,33 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-depression_pr~1 byte    %8.0g                 1 depression_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-depression_pr~2 byte    %8.0g                 2 depression_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-depression_pr~3 byte    %8.0g                 3 depression_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-depression_pr~4 byte    %8.0g                 4 depression_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-depression_pr~5 byte    %8.0g                 5 depression_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+depression_pr~1 double  %8.0g                 1 depression_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+depression_pr~2 double  %8.0g                 2 depression_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+depression_pr~3 double  %8.0g                 3 depression_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+depression_pr~4 double  %8.0g                 4 depression_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+depression_pr~5 double  %8.0g                 5 depression_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_depression_primary_admission_ethnicity.eps not found)
@@ -2190,11 +2273,13 @@ Sorted by: dateA
   01jun2020 |          6       25.00      100.00
 ------------+-----------------------------------
       Total |         24      100.00
+file ./output/measures/measure_depression_primary_admission_imd_rate_collapse.c
+> sv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                       12   ->       2
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -2207,37 +2292,37 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-depression_pr~0 byte    %8.0g                 0 depression_primary_admission
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-depression_pr~1 byte    %8.0g                 1 depression_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-depression_pr~2 byte    %8.0g                 2 depression_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-depression_pr~3 byte    %8.0g                 3 depression_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-depression_pr~4 byte    %8.0g                 4 depression_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-depression_pr~5 byte    %8.0g                 5 depression_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value0          double  %9.0g                 0 value
+rate0           double  %9.0g                 0 rate
+depression_pr~0 double  %8.0g                 0 depression_primary_admission
+population0     double  %8.0g                 0 population
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+depression_pr~1 double  %8.0g                 1 depression_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+depression_pr~2 double  %8.0g                 2 depression_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+depression_pr~3 double  %8.0g                 3 depression_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+depression_pr~4 double  %8.0g                 4 depression_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+depression_pr~5 double  %8.0g                 5 depression_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_depression_primary_admission_imd.eps not found)
@@ -2252,11 +2337,13 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
+file ./output/measures/measure_anxiety_primary_admission_ethnicity_rate_collaps
+> e.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                       10   ->       2
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -2269,33 +2356,33 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-anxiety_prima~1 byte    %8.0g                 1 anxiety_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-anxiety_prima~2 byte    %8.0g                 2 anxiety_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-anxiety_prima~3 byte    %8.0g                 3 anxiety_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-anxiety_prima~4 byte    %8.0g                 4 anxiety_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-anxiety_prima~5 byte    %8.0g                 5 anxiety_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+anxiety_prima~1 double  %8.0g                 1 anxiety_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+anxiety_prima~2 double  %8.0g                 2 anxiety_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+anxiety_prima~3 double  %8.0g                 3 anxiety_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+anxiety_prima~4 double  %8.0g                 4 anxiety_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+anxiety_prima~5 double  %8.0g                 5 anxiety_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_anxiety_primary_admission_ethnicity.eps not found)
@@ -2311,11 +2398,13 @@ Sorted by: dateA
   01jun2020 |          6       25.00      100.00
 ------------+-----------------------------------
       Total |         24      100.00
+file ./output/measures/measure_anxiety_primary_admission_imd_rate_collapse.csv 
+> saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                       12   ->       2
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -2328,37 +2417,37 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-anxiety_prima~0 byte    %8.0g                 0 anxiety_primary_admission
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-anxiety_prima~1 byte    %8.0g                 1 anxiety_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-anxiety_prima~2 byte    %8.0g                 2 anxiety_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-anxiety_prima~3 byte    %8.0g                 3 anxiety_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-anxiety_prima~4 byte    %8.0g                 4 anxiety_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-anxiety_prima~5 byte    %8.0g                 5 anxiety_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value0          double  %9.0g                 0 value
+rate0           double  %9.0g                 0 rate
+anxiety_prima~0 double  %8.0g                 0 anxiety_primary_admission
+population0     double  %8.0g                 0 population
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+anxiety_prima~1 double  %8.0g                 1 anxiety_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+anxiety_prima~2 double  %8.0g                 2 anxiety_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+anxiety_prima~3 double  %8.0g                 3 anxiety_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+anxiety_prima~4 double  %8.0g                 4 anxiety_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+anxiety_prima~5 double  %8.0g                 5 anxiety_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_anxiety_primary_admission_imd.eps not found)
@@ -2373,11 +2462,13 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
+file ./output/measures/measure_smi_primary_admission_ethnicity_rate_collapse.cs
+> v saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                       10   ->       2
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -2390,33 +2481,33 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-smi_primary_a~1 byte    %8.0g                 1 smi_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-smi_primary_a~2 byte    %8.0g                 2 smi_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-smi_primary_a~3 byte    %8.0g                 3 smi_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-smi_primary_a~4 byte    %8.0g                 4 smi_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-smi_primary_a~5 byte    %8.0g                 5 smi_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+smi_primary_a~1 double  %8.0g                 1 smi_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+smi_primary_a~2 double  %8.0g                 2 smi_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+smi_primary_a~3 double  %8.0g                 3 smi_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+smi_primary_a~4 double  %8.0g                 4 smi_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+smi_primary_a~5 double  %8.0g                 5 smi_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_smi_primary_admission_ethnicity.eps not found)
@@ -2431,11 +2522,13 @@ Sorted by: dateA
   01jun2020 |          6       25.00      100.00
 ------------+-----------------------------------
       Total |         24      100.00
+file ./output/measures/measure_smi_primary_admission_imd_rate_collapse.csv save
+> d
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                       12   ->       2
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -2448,37 +2541,37 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-smi_primary_a~0 byte    %8.0g                 0 smi_primary_admission
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-smi_primary_a~1 byte    %8.0g                 1 smi_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-smi_primary_a~2 byte    %8.0g                 2 smi_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-smi_primary_a~3 byte    %8.0g                 3 smi_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-smi_primary_a~4 byte    %8.0g                 4 smi_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-smi_primary_a~5 byte    %8.0g                 5 smi_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value0          double  %9.0g                 0 value
+rate0           double  %9.0g                 0 rate
+smi_primary_a~0 double  %8.0g                 0 smi_primary_admission
+population0     double  %8.0g                 0 population
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+smi_primary_a~1 double  %8.0g                 1 smi_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+smi_primary_a~2 double  %8.0g                 2 smi_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+smi_primary_a~3 double  %8.0g                 3 smi_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+smi_primary_a~4 double  %8.0g                 4 smi_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+smi_primary_a~5 double  %8.0g                 5 smi_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_smi_primary_admission_imd.eps not found)
@@ -2493,11 +2586,13 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
+file ./output/measures/measure_self_harm_primary_admission_ethnicity_rate_colla
+> pse.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                       10   ->       2
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -2510,33 +2605,33 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-self_harm_pri~1 byte    %8.0g                 1 self_harm_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-self_harm_pri~2 byte    %8.0g                 2 self_harm_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-self_harm_pri~3 byte    %8.0g                 3 self_harm_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-self_harm_pri~4 byte    %8.0g                 4 self_harm_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-self_harm_pri~5 byte    %8.0g                 5 self_harm_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+self_harm_pri~1 double  %8.0g                 1 self_harm_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+self_harm_pri~2 double  %8.0g                 2 self_harm_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+self_harm_pri~3 double  %8.0g                 3 self_harm_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+self_harm_pri~4 double  %8.0g                 4 self_harm_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+self_harm_pri~5 double  %8.0g                 5 self_harm_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_self_harm_primary_admission_ethnicity.eps not found)
@@ -2552,11 +2647,13 @@ Sorted by: dateA
   01jun2020 |          6       25.00      100.00
 ------------+-----------------------------------
       Total |         24      100.00
+file ./output/measures/measure_self_harm_primary_admission_imd_rate_collapse.cs
+> v saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                       12   ->       2
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -2569,37 +2666,37 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-self_harm_pri~0 byte    %8.0g                 0 self_harm_primary_admission
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-self_harm_pri~1 byte    %8.0g                 1 self_harm_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-self_harm_pri~2 byte    %8.0g                 2 self_harm_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-self_harm_pri~3 byte    %8.0g                 3 self_harm_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-self_harm_pri~4 byte    %8.0g                 4 self_harm_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-self_harm_pri~5 byte    %8.0g                 5 self_harm_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value0          double  %9.0g                 0 value
+rate0           double  %9.0g                 0 rate
+self_harm_pri~0 double  %8.0g                 0 self_harm_primary_admission
+population0     double  %8.0g                 0 population
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+self_harm_pri~1 double  %8.0g                 1 self_harm_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+self_harm_pri~2 double  %8.0g                 2 self_harm_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+self_harm_pri~3 double  %8.0g                 3 self_harm_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+self_harm_pri~4 double  %8.0g                 4 self_harm_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+self_harm_pri~5 double  %8.0g                 5 self_harm_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_self_harm_primary_admission_imd.eps not found)
@@ -2614,11 +2711,13 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
+file ./output/measures/measure_eating_dis_primary_admission_ethnicity_rate_coll
+> apse.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                       10   ->       2
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -2631,33 +2730,33 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-eating_dis_pr~1 byte    %8.0g                 1 eating_dis_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-eating_dis_pr~2 byte    %8.0g                 2 eating_dis_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-eating_dis_pr~3 byte    %8.0g                 3 eating_dis_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-eating_dis_pr~4 byte    %8.0g                 4 eating_dis_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-eating_dis_pr~5 byte    %8.0g                 5 eating_dis_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+eating_dis_pr~1 double  %8.0g                 1 eating_dis_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+eating_dis_pr~2 double  %8.0g                 2 eating_dis_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+eating_dis_pr~3 double  %8.0g                 3 eating_dis_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+eating_dis_pr~4 double  %8.0g                 4 eating_dis_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+eating_dis_pr~5 double  %8.0g                 5 eating_dis_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_eating_dis_primary_admission_ethnicity.eps not found)
@@ -2673,11 +2772,13 @@ Sorted by: dateA
   01jun2020 |          6       25.00      100.00
 ------------+-----------------------------------
       Total |         24      100.00
+file ./output/measures/measure_eating_dis_primary_admission_imd_rate_collapse.c
+> sv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                       12   ->       2
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -2690,37 +2791,37 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-eating_dis_pr~0 byte    %8.0g                 0 eating_dis_primary_admission
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-eating_dis_pr~1 byte    %8.0g                 1 eating_dis_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-eating_dis_pr~2 byte    %8.0g                 2 eating_dis_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-eating_dis_pr~3 byte    %8.0g                 3 eating_dis_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-eating_dis_pr~4 byte    %8.0g                 4 eating_dis_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-eating_dis_pr~5 byte    %8.0g                 5 eating_dis_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value0          double  %9.0g                 0 value
+rate0           double  %9.0g                 0 rate
+eating_dis_pr~0 double  %8.0g                 0 eating_dis_primary_admission
+population0     double  %8.0g                 0 population
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+eating_dis_pr~1 double  %8.0g                 1 eating_dis_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+eating_dis_pr~2 double  %8.0g                 2 eating_dis_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+eating_dis_pr~3 double  %8.0g                 3 eating_dis_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+eating_dis_pr~4 double  %8.0g                 4 eating_dis_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+eating_dis_pr~5 double  %8.0g                 5 eating_dis_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_eating_dis_primary_admission_imd.eps not found)
@@ -2735,11 +2836,13 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
+file ./output/measures/measure_ocd_primary_admission_ethnicity_rate_collapse.cs
+> v saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                       10   ->       2
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -2752,33 +2855,33 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-ocd_primary_a~1 byte    %8.0g                 1 ocd_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-ocd_primary_a~2 byte    %8.0g                 2 ocd_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-ocd_primary_a~3 byte    %8.0g                 3 ocd_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-ocd_primary_a~4 byte    %8.0g                 4 ocd_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-ocd_primary_a~5 byte    %8.0g                 5 ocd_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+ocd_primary_a~1 double  %8.0g                 1 ocd_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+ocd_primary_a~2 double  %8.0g                 2 ocd_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+ocd_primary_a~3 double  %8.0g                 3 ocd_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+ocd_primary_a~4 double  %8.0g                 4 ocd_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+ocd_primary_a~5 double  %8.0g                 5 ocd_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_ocd_primary_admission_ethnicity.eps not found)
@@ -2793,11 +2896,13 @@ Sorted by: dateA
   01jun2020 |          6       25.00      100.00
 ------------+-----------------------------------
       Total |         24      100.00
+file ./output/measures/measure_ocd_primary_admission_imd_rate_collapse.csv save
+> d
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                       12   ->       2
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -2810,43 +2915,44 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-ocd_primary_a~0 byte    %8.0g                 0 ocd_primary_admission
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-ocd_primary_a~1 byte    %8.0g                 1 ocd_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-ocd_primary_a~2 byte    %8.0g                 2 ocd_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-ocd_primary_a~3 byte    %8.0g                 3 ocd_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-ocd_primary_a~4 byte    %8.0g                 4 ocd_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-ocd_primary_a~5 byte    %8.0g                 5 ocd_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value0          double  %9.0g                 0 value
+rate0           double  %9.0g                 0 rate
+ocd_primary_a~0 double  %8.0g                 0 ocd_primary_admission
+population0     double  %8.0g                 0 population
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+ocd_primary_a~1 double  %8.0g                 1 ocd_primary_admission
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+ocd_primary_a~2 double  %8.0g                 2 ocd_primary_admission
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+ocd_primary_a~3 double  %8.0g                 3 ocd_primary_admission
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+ocd_primary_a~4 double  %8.0g                 4 ocd_primary_admission
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+ocd_primary_a~5 double  %8.0g                 5 ocd_primary_admission
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_ocd_primary_admission_imd.eps not found)
 (file ./output/line_ocd_primary_admission_imd.eps written in EPS format)
 
-. * Emergency admissions
+. 
+. * Emergency admissions - collapsed to 3 monthly
 . local groups "anxiety smi self_harm eating_dis ocd"
 
 . forvalues i=1/5 {
@@ -2862,54 +2968,70 @@ Sorted by: dateA
   7.     drop date
   8.     format dateA %dD/M/Y
   9.     tab dateA 
- 10.     * reshape dataset so columns with rates for each ethnicity 
+ 10.     * Collapse at 3 monthly intervals
+.     gen quarter = qofd(dateA)
+ 11.     collapse (sum) value rate `this_group'_emergency population (min) date
+> A,  by(quarter ethnicity)
+ 12.     drop quarter
+ 13.     * Outputing file 
+.     export delimited using ./output/measures/measure_`this_group'_emergency_e
+> thnicity_rate_collapse.csv
+ 14.     * reshape dataset so columns with rates for each ethnicity 
 .     reshape wide value rate `this_group'_emergency population, i(dateA) j(eth
 > nicity)
- 11.     describe
- 12.     * Labelling ethnicity variables
+ 15.     describe
+ 16.     * Labelling ethnicity variables
 .     label var rate1 "Ethnicity - White"
- 13.     label var rate2 "Ethnicity - Mixed"
- 14.     label var rate3 "Ethnicity - Asian"
- 15.     label var rate4 "Ethnicity - Black"
- 16.     label var rate5 "Ethnicity - Other"
- 17. 
+ 17.     label var rate2 "Ethnicity - Mixed"
+ 18.     label var rate3 "Ethnicity - Asian"
+ 19.     label var rate4 "Ethnicity - Black"
+ 20.     label var rate5 "Ethnicity - Other"
+ 21. 
 .     * Generate line graph
 .     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) 
 > format(%dM-CY)) ///
 >     ytitle("Rate per 100,000") 
- 18. 
+ 22. 
 .     graph export ./output/line_`this_group'_emergency_ethnicity.eps, as(eps) 
 > replace
- 19.     * IMD
+ 23.     * IMD
 .     clear 
- 20.     import delimited using ./output/measures/measure_`this_group'_emergenc
+ 24.     import delimited using ./output/measures/measure_`this_group'_emergenc
 > y_imd_rate.csv, numericcols(4)
- 21.     * Generate rate per 100,000
+ 25.     * Generate rate per 100,000
 .     gen rate = value*100000 
- 22.     * Format date
+ 26.     * Format date
 .     gen dateA = date(date, "YMD")
- 23.     drop date
- 24.     format dateA %dD/M/Y
- 25.     tab dateA 
- 26.     * reshape dataset so columns with rates for each ethnicity 
+ 27.     drop date
+ 28.     format dateA %dD/M/Y
+ 29.     tab dateA 
+ 30.     * Collapse at 3 monthly intervals
+.     gen quarter = qofd(dateA)
+ 31.     collapse (sum) value rate `this_group'_emergency population (min) date
+> A,  by(quarter imd)
+ 32.     drop quarter
+ 33.     * Outputing file 
+.     export delimited using ./output/measures/measure_`this_group'_emergency_i
+> md_rate_collapse.csv
+ 34.     * reshape dataset so columns with rates for each ethnicity 
 .     reshape wide value rate `this_group'_emergency population, i(dateA) j(imd
 > )
- 27.     describe
- 28.     * Labelling ethnicity variables
+ 35.     describe
+ 36.     * Labelling ethnicity variables
 .     label var rate1 "IMD - 1"
- 29.     label var rate2 "IMD - 2"
- 30.     label var rate3 "IMD - 3"
- 31.     label var rate4 "IMD - 4"
- 32.     label var rate5 "IMD - 5"
- 33. 
+ 37.     label var rate2 "IMD - 2"
+ 38.     label var rate3 "IMD - 3"
+ 39.     label var rate4 "IMD - 4"
+ 40.     label var rate5 "IMD - 5"
+ 41. 
 .     * Generate line graph
 .     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM
 > -CY)) ///
 >     ytitle("Rate per 100,000") 
- 34. 
+ 42. 
 .     graph export ./output/line_`this_group'_emergency_imd.eps, as(eps) replac
 > e
- 35. 
+ 43. 
 . }
 (5 vars, 20 obs)
 
@@ -2921,11 +3043,13 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
+file ./output/measures/measure_anxiety_emergency_ethnicity_rate_collapse.csv sa
+> ved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                       10   ->       2
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -2938,33 +3062,33 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-anxiety_emerg~1 byte    %8.0g                 1 anxiety_emergency
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-anxiety_emerg~2 byte    %8.0g                 2 anxiety_emergency
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-anxiety_emerg~3 byte    %8.0g                 3 anxiety_emergency
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-anxiety_emerg~4 byte    %8.0g                 4 anxiety_emergency
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-anxiety_emerg~5 byte    %8.0g                 5 anxiety_emergency
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+anxiety_emerg~1 double  %8.0g                 1 anxiety_emergency
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+anxiety_emerg~2 double  %8.0g                 2 anxiety_emergency
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+anxiety_emerg~3 double  %8.0g                 3 anxiety_emergency
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+anxiety_emerg~4 double  %8.0g                 4 anxiety_emergency
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+anxiety_emerg~5 double  %8.0g                 5 anxiety_emergency
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_anxiety_emergency_ethnicity.eps not found)
@@ -2979,11 +3103,12 @@ Sorted by: dateA
   01jun2020 |          6       25.00      100.00
 ------------+-----------------------------------
       Total |         24      100.00
+file ./output/measures/measure_anxiety_emergency_imd_rate_collapse.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                       12   ->       2
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -2996,37 +3121,37 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-anxiety_emerg~0 byte    %8.0g                 0 anxiety_emergency
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-anxiety_emerg~1 byte    %8.0g                 1 anxiety_emergency
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-anxiety_emerg~2 byte    %8.0g                 2 anxiety_emergency
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-anxiety_emerg~3 byte    %8.0g                 3 anxiety_emergency
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-anxiety_emerg~4 byte    %8.0g                 4 anxiety_emergency
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-anxiety_emerg~5 byte    %8.0g                 5 anxiety_emergency
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value0          double  %9.0g                 0 value
+rate0           double  %9.0g                 0 rate
+anxiety_emerg~0 double  %8.0g                 0 anxiety_emergency
+population0     double  %8.0g                 0 population
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+anxiety_emerg~1 double  %8.0g                 1 anxiety_emergency
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+anxiety_emerg~2 double  %8.0g                 2 anxiety_emergency
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+anxiety_emerg~3 double  %8.0g                 3 anxiety_emergency
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+anxiety_emerg~4 double  %8.0g                 4 anxiety_emergency
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+anxiety_emerg~5 double  %8.0g                 5 anxiety_emergency
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_anxiety_emergency_imd.eps not found)
@@ -3041,11 +3166,12 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
+file ./output/measures/measure_smi_emergency_ethnicity_rate_collapse.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                       10   ->       2
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -3058,33 +3184,33 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-smi_emergency1  byte    %8.0g                 1 smi_emergency
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-smi_emergency2  byte    %8.0g                 2 smi_emergency
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-smi_emergency3  byte    %8.0g                 3 smi_emergency
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-smi_emergency4  byte    %8.0g                 4 smi_emergency
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-smi_emergency5  byte    %8.0g                 5 smi_emergency
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+smi_emergency1  double  %8.0g                 1 smi_emergency
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+smi_emergency2  double  %8.0g                 2 smi_emergency
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+smi_emergency3  double  %8.0g                 3 smi_emergency
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+smi_emergency4  double  %8.0g                 4 smi_emergency
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+smi_emergency5  double  %8.0g                 5 smi_emergency
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_smi_emergency_ethnicity.eps not found)
@@ -3099,11 +3225,12 @@ Sorted by: dateA
   01jun2020 |          6       25.00      100.00
 ------------+-----------------------------------
       Total |         24      100.00
+file ./output/measures/measure_smi_emergency_imd_rate_collapse.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                       12   ->       2
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -3116,37 +3243,37 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-smi_emergency0  byte    %8.0g                 0 smi_emergency
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-smi_emergency1  byte    %8.0g                 1 smi_emergency
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-smi_emergency2  byte    %8.0g                 2 smi_emergency
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-smi_emergency3  byte    %8.0g                 3 smi_emergency
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-smi_emergency4  byte    %8.0g                 4 smi_emergency
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-smi_emergency5  byte    %8.0g                 5 smi_emergency
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value0          double  %9.0g                 0 value
+rate0           double  %9.0g                 0 rate
+smi_emergency0  double  %8.0g                 0 smi_emergency
+population0     double  %8.0g                 0 population
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+smi_emergency1  double  %8.0g                 1 smi_emergency
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+smi_emergency2  double  %8.0g                 2 smi_emergency
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+smi_emergency3  double  %8.0g                 3 smi_emergency
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+smi_emergency4  double  %8.0g                 4 smi_emergency
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+smi_emergency5  double  %8.0g                 5 smi_emergency
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_smi_emergency_imd.eps not found)
@@ -3161,11 +3288,13 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
+file ./output/measures/measure_self_harm_emergency_ethnicity_rate_collapse.csv 
+> saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                       10   ->       2
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -3178,33 +3307,33 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-self_harm_eme~1 byte    %8.0g                 1 self_harm_emergency
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-self_harm_eme~2 byte    %8.0g                 2 self_harm_emergency
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-self_harm_eme~3 byte    %8.0g                 3 self_harm_emergency
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-self_harm_eme~4 byte    %8.0g                 4 self_harm_emergency
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-self_harm_eme~5 byte    %8.0g                 5 self_harm_emergency
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+self_harm_eme~1 double  %8.0g                 1 self_harm_emergency
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+self_harm_eme~2 double  %8.0g                 2 self_harm_emergency
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+self_harm_eme~3 double  %8.0g                 3 self_harm_emergency
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+self_harm_eme~4 double  %8.0g                 4 self_harm_emergency
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+self_harm_eme~5 double  %8.0g                 5 self_harm_emergency
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_self_harm_emergency_ethnicity.eps not found)
@@ -3219,11 +3348,12 @@ Sorted by: dateA
   01jun2020 |          6       25.00      100.00
 ------------+-----------------------------------
       Total |         24      100.00
+file ./output/measures/measure_self_harm_emergency_imd_rate_collapse.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                       12   ->       2
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -3236,37 +3366,37 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-self_harm_eme~0 byte    %8.0g                 0 self_harm_emergency
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-self_harm_eme~1 byte    %8.0g                 1 self_harm_emergency
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-self_harm_eme~2 byte    %8.0g                 2 self_harm_emergency
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-self_harm_eme~3 byte    %8.0g                 3 self_harm_emergency
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-self_harm_eme~4 byte    %8.0g                 4 self_harm_emergency
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-self_harm_eme~5 byte    %8.0g                 5 self_harm_emergency
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value0          double  %9.0g                 0 value
+rate0           double  %9.0g                 0 rate
+self_harm_eme~0 double  %8.0g                 0 self_harm_emergency
+population0     double  %8.0g                 0 population
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+self_harm_eme~1 double  %8.0g                 1 self_harm_emergency
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+self_harm_eme~2 double  %8.0g                 2 self_harm_emergency
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+self_harm_eme~3 double  %8.0g                 3 self_harm_emergency
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+self_harm_eme~4 double  %8.0g                 4 self_harm_emergency
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+self_harm_eme~5 double  %8.0g                 5 self_harm_emergency
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_self_harm_emergency_imd.eps not found)
@@ -3281,11 +3411,13 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
+file ./output/measures/measure_eating_dis_emergency_ethnicity_rate_collapse.csv
+>  saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                       10   ->       2
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -3298,33 +3430,33 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-eating_dis_em~1 byte    %8.0g                 1 eating_dis_emergency
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-eating_dis_em~2 byte    %8.0g                 2 eating_dis_emergency
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-eating_dis_em~3 byte    %8.0g                 3 eating_dis_emergency
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-eating_dis_em~4 byte    %8.0g                 4 eating_dis_emergency
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-eating_dis_em~5 byte    %8.0g                 5 eating_dis_emergency
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+eating_dis_em~1 double  %8.0g                 1 eating_dis_emergency
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+eating_dis_em~2 double  %8.0g                 2 eating_dis_emergency
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+eating_dis_em~3 double  %8.0g                 3 eating_dis_emergency
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+eating_dis_em~4 double  %8.0g                 4 eating_dis_emergency
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+eating_dis_em~5 double  %8.0g                 5 eating_dis_emergency
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_eating_dis_emergency_ethnicity.eps not found)
@@ -3339,11 +3471,12 @@ Sorted by: dateA
   01jun2020 |          6       25.00      100.00
 ------------+-----------------------------------
       Total |         24      100.00
+file ./output/measures/measure_eating_dis_emergency_imd_rate_collapse.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                       12   ->       2
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -3356,37 +3489,37 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-eating_dis_em~0 byte    %8.0g                 0 eating_dis_emergency
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-eating_dis_em~1 byte    %8.0g                 1 eating_dis_emergency
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-eating_dis_em~2 byte    %8.0g                 2 eating_dis_emergency
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-eating_dis_em~3 byte    %8.0g                 3 eating_dis_emergency
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-eating_dis_em~4 byte    %8.0g                 4 eating_dis_emergency
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-eating_dis_em~5 byte    %8.0g                 5 eating_dis_emergency
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value0          double  %9.0g                 0 value
+rate0           double  %9.0g                 0 rate
+eating_dis_em~0 double  %8.0g                 0 eating_dis_emergency
+population0     double  %8.0g                 0 population
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+eating_dis_em~1 double  %8.0g                 1 eating_dis_emergency
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+eating_dis_em~2 double  %8.0g                 2 eating_dis_emergency
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+eating_dis_em~3 double  %8.0g                 3 eating_dis_emergency
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+eating_dis_em~4 double  %8.0g                 4 eating_dis_emergency
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+eating_dis_em~5 double  %8.0g                 5 eating_dis_emergency
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_eating_dis_emergency_imd.eps not found)
@@ -3401,11 +3534,12 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
+file ./output/measures/measure_ocd_emergency_ethnicity_rate_collapse.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                       10   ->       2
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -3418,33 +3552,33 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-ocd_emergency1  byte    %8.0g                 1 ocd_emergency
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-ocd_emergency2  byte    %8.0g                 2 ocd_emergency
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-ocd_emergency3  byte    %8.0g                 3 ocd_emergency
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-ocd_emergency4  byte    %8.0g                 4 ocd_emergency
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-ocd_emergency5  byte    %8.0g                 5 ocd_emergency
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+ocd_emergency1  double  %8.0g                 1 ocd_emergency
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+ocd_emergency2  double  %8.0g                 2 ocd_emergency
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+ocd_emergency3  double  %8.0g                 3 ocd_emergency
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+ocd_emergency4  double  %8.0g                 4 ocd_emergency
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+ocd_emergency5  double  %8.0g                 5 ocd_emergency
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_ocd_emergency_ethnicity.eps not found)
@@ -3459,11 +3593,12 @@ Sorted by: dateA
   01jun2020 |          6       25.00      100.00
 ------------+-----------------------------------
       Total |         24      100.00
+file ./output/measures/measure_ocd_emergency_imd_rate_collapse.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                       12   ->       2
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -3476,37 +3611,37 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:             2                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-ocd_emergency0  byte    %8.0g                 0 ocd_emergency
-population0     int     %8.0g                 0 population
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-ocd_emergency1  byte    %8.0g                 1 ocd_emergency
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-ocd_emergency2  byte    %8.0g                 2 ocd_emergency
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-ocd_emergency3  byte    %8.0g                 3 ocd_emergency
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-ocd_emergency4  byte    %8.0g                 4 ocd_emergency
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-ocd_emergency5  byte    %8.0g                 5 ocd_emergency
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
+dateA           float   %dD/M/Y               (min) dateA
+value0          double  %9.0g                 0 value
+rate0           double  %9.0g                 0 rate
+ocd_emergency0  double  %8.0g                 0 ocd_emergency
+population0     double  %8.0g                 0 population
+value1          double  %9.0g                 1 value
+rate1           double  %9.0g                 1 rate
+ocd_emergency1  double  %8.0g                 1 ocd_emergency
+population1     double  %8.0g                 1 population
+value2          double  %9.0g                 2 value
+rate2           double  %9.0g                 2 rate
+ocd_emergency2  double  %8.0g                 2 ocd_emergency
+population2     double  %8.0g                 2 population
+value3          double  %9.0g                 3 value
+rate3           double  %9.0g                 3 rate
+ocd_emergency3  double  %8.0g                 3 ocd_emergency
+population3     double  %8.0g                 3 population
+value4          double  %9.0g                 4 value
+rate4           double  %9.0g                 4 rate
+ocd_emergency4  double  %8.0g                 4 ocd_emergency
+population4     double  %8.0g                 4 population
+value5          double  %9.0g                 5 value
+rate5           double  %9.0g                 5 rate
+ocd_emergency5  double  %8.0g                 5 ocd_emergency
+population5     double  %8.0g                 5 population
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/line_ocd_emergency_imd.eps not found)
@@ -3584,7 +3719,7 @@ Sorted by: dateA
 
 end of do-file
 
-. . file open output using "/tmp/tmp.R5OwOgvEgK", write text replace
+. . file open output using "/tmp/tmp.Fsn5IKzK6e", write text replace
 
 . . file write output "success" 
 
