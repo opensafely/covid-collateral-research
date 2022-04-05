@@ -120,8 +120,8 @@ forvalues i=1/10 {
 
 }
 * Hospital admissions - primary diagnosis
-local groups "mi stroke heart_failure vte depression anxiety smi self_harm eating_dis ocd"
-forvalues i=1/10 {
+local groups "mi stroke heart_failure vte"
+forvalues i=1/4 {
     local this_group :word `i' of `groups'
 * Ethnicity
     clear 
@@ -175,7 +175,76 @@ forvalues i=1/10 {
     graph export ./output/line_`this_group'_primary_admission_imd.eps, as(eps) replace
 
 }
-* Emergency admissions
+* Mental health measures - 3 monthly rates for primary admissions
+local groups "depression anxiety smi self_harm eating_dis ocd"
+forvalues i=1/6 {
+    local this_group :word `i' of `groups'
+* Ethnicity
+    clear 
+    import delimited using ./output/measures/measure_`this_group'_primary_admission_ethnicity_rate.csv, numericcols(4)
+    * Generate rate per 100,000
+    gen rate = value*100000 
+    * Format date
+    gen dateA = date(date, "YMD")
+    drop date
+    format dateA %dD/M/Y
+    tab dateA 
+    * Collapse at 3 monthly intervals
+    gen quarter = qofd(dateA)
+    collapse (sum) value rate `this_group'_primary_admission population (min) dateA,  by(quarter ethnicity)
+    drop quarter
+    * Outputing file 
+    export delimited using ./output/measures/measure_`this_group'_primary_admission_ethnicity_rate_collapse.csv
+    * reshape dataset so columns with rates for each ethnicity 
+    reshape wide value rate `this_group'_primary_admission population, i(dateA) j(ethnicity)
+    describe
+    * Labelling ethnicity variables
+    label var rate1 "Ethnicity - White"
+    label var rate2 "Ethnicity - Mixed"
+    label var rate3 "Ethnicity - Asian"
+    label var rate4 "Ethnicity - Black"
+    label var rate5 "Ethnicity - Other"
+
+    * Generate line graph
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
+    ytitle("Rate per 100,000") 
+
+    graph export ./output/line_`this_group'_primary_admission_ethnicity.eps, as(eps) replace
+    * IMD
+    clear 
+    import delimited using ./output/measures/measure_`this_group'_primary_admission_imd_rate.csv, numericcols(4)
+    * Generate rate per 100,000
+    gen rate = value*100000 
+    * Format date
+    gen dateA = date(date, "YMD")
+    drop date
+    format dateA %dD/M/Y
+    tab dateA 
+    * Collapse at 3 monthly intervals
+    gen quarter = qofd(dateA)
+    collapse (sum) value rate `this_group'_primary_admission population (min) dateA,  by(quarter imd)
+    drop quarter
+    * Outputing file 
+    export delimited using ./output/measures/measure_`this_group'_primary_admission_imd_rate_collapse.csv
+    * reshape dataset so columns with rates for each ethnicity 
+    reshape wide value rate `this_group'_primary_admission population, i(dateA) j(imd)
+    describe
+    * Labelling ethnicity variables
+    label var rate1 "IMD - 1"
+    label var rate2 "IMD - 2"
+    label var rate3 "IMD - 3"
+    label var rate4 "IMD - 4"
+    label var rate5 "IMD - 5"
+
+    * Generate line graph
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
+    ytitle("Rate per 100,000") 
+
+    graph export ./output/line_`this_group'_primary_admission_imd.eps, as(eps) replace
+
+}
+
+* Emergency admissions - collapsed to 3 monthly
 local groups "anxiety smi self_harm eating_dis ocd"
 forvalues i=1/5 {
     local this_group :word `i' of `groups'
@@ -189,6 +258,12 @@ forvalues i=1/5 {
     drop date
     format dateA %dD/M/Y
     tab dateA 
+    * Collapse at 3 monthly intervals
+    gen quarter = qofd(dateA)
+    collapse (sum) value rate `this_group'_emergency population (min) dateA,  by(quarter ethnicity)
+    drop quarter
+    * Outputing file 
+    export delimited using ./output/measures/measure_`this_group'_emergency_ethnicity_rate_collapse.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `this_group'_emergency population, i(dateA) j(ethnicity)
     describe
@@ -214,6 +289,12 @@ forvalues i=1/5 {
     drop date
     format dateA %dD/M/Y
     tab dateA 
+    * Collapse at 3 monthly intervals
+    gen quarter = qofd(dateA)
+    collapse (sum) value rate `this_group'_emergency population (min) dateA,  by(quarter imd)
+    drop quarter
+    * Outputing file 
+    export delimited using ./output/measures/measure_`this_group'_emergency_imd_rate_collapse.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `this_group'_emergency population, i(dateA) j(imd)
     describe
