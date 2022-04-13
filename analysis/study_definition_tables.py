@@ -11,7 +11,6 @@ study = StudyDefinition(
         "rate": "uniform",
         "incidence": 0.05,
     },
-    # Update index date to 2018-03-01 when ready to run on full dataset
     index_date="2019-01-01",
     population=patients.satisfying(
         """

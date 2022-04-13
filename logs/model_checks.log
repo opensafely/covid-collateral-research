@@ -77,7 +77,7 @@
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.oiof9QBweL", write text replace
+. . file open output using "/tmp/tmp.BBQoYVkK3f", write text replace
 
 . . file write output "success" 
 

@@ -127,7 +127,7 @@ actions:
     outputs:
       moderately_sensitive: 
         log: logs/model_checks.log
-        output: output/graphs/checks_*
+        output: output/graphs/checks_*.eps
 
   time_series:
     run: stata-mp:latest analysis/time_series.do
