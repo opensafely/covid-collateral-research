@@ -1,0 +1,107 @@
+
+. 
+. foreach x in asthma copd {
+  2.         import delimited ./output/measures/resp/measure_`x'_exacerbation_e
+> thnicity_rate.csv, clear      //get csv
+  3.         putexcel set ./output/measures/resp/tsreg_tables, sheet(`x'_ethnic
+> ity) modify                   //open xlsx
+  4.         *Format time
+.         gen temp_date=date(date, "YMD")
+  5.         format temp_date %td
+  6.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+  7.         gen month=mofd(temp_date)
+  8.         format month %tm
+  9.         drop temp_date
+ 10.         *Value to rate per 100k
+.         gen rate = value*100000
+ 11.         *Run time series with EWH-robust SE and 1 Lag
+.         tsset ethnicity month
+ 12.         newey rate i.ethnicity##i.postcovid, lag(1) force
+ 13.         *Export results
+.         putexcel E1=("Number of obs") G1=(e(N))
+ 14.         putexcel E2=("F") G2=(e(F))
+ 15.         putexcel E3=("Prob > F") G3=(Ftail(e(df_m), e(df_r), e(F)))
+ 16.         matrix a = r(table)'
+ 17.         putexcel A6 = matrix(a), rownames
+ 18.         putexcel save
+ 19. 
+. }
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,        10) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |  -4060.152          .        .       .            .           .
+          3  |   2625.477          .        .       .            .           .
+          4  |  -5274.727          .        .       .            .           .
+          5  |   1203.008          .        .       .            .           .
+             |
+ 1.postcovid |  -9835.982          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |    22192.3          .        .       .            .           .
+        3 1  |   21522.08          .        .       .            .           .
+        4 1  |    14897.5          .        .       .            .           .
+        5 1  |   428.7461          .        .       .            .           .
+             |
+       _cons |   51428.57          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/measures/resp/tsreg_tables.xlsx saved
+file ./output/measures/resp/tsreg_tables.xlsx saved
+file ./output/measures/resp/tsreg_tables.xlsx saved
+file ./output/measures/resp/tsreg_tables.xlsx saved
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,        10) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |  -27272.73          .        .       .            .           .
+          3  |   109090.9          .        .       .            .           .
+          4  |  -30909.09          .        .       .            .           .
+          5  |   75757.56          .        .       .            .           .
+             |
+ 1.postcovid |  -673.4036          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |   37037.04          .        .       .            .           .
+        3 1  |  -119839.4          .        .       .            .           .
+        4 1  |   63148.15          .        .       .            .           .
+        5 1  |  -44564.68          .        .       .            .           .
+             |
+       _cons |   90909.09          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/measures/resp/tsreg_tables.xlsx saved
+file ./output/measures/resp/tsreg_tables.xlsx saved
+file ./output/measures/resp/tsreg_tables.xlsx saved
+file ./output/measures/resp/tsreg_tables.xlsx saved
+
+. 
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/tsreg.log
+  log type:  text
+ closed on:  13 Apr 2022, 09:26:40
+-------------------------------------------------------------------------------

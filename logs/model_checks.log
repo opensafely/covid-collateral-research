@@ -1,0 +1,89 @@
+
+. local a "asthma copd"
+
+. local b "ethnicity imd"
+
+. forvalues i=1/2 {
+  2.     local c: word `i' of `a' 
+  3.     local d: word `i' of `b'
+  4.         import delimited "./output/measures/resp/measure_`c'_exacerbation_
+> `d'_rate.csv", clear  //get csv
+  5.         gen temp_date=date(date, "YMD")
+  6.         format temp_date %td
+  7.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+  8.         gen month=mofd(temp_date)
+  9.         format month %tm
+ 10.         drop temp_date
+ 11.         *Value to rate per 100k
+.         gen rate = value*100000
+ 12.         label variable rate "Rate of `c' exacerbation per 100,000"
+ 13.         *Set time series
+.         tsset `d' month 
+ 14.         *Kernel density plots to check for normality and extreme values
+.         kdensity rate if `d'==1, normal name(kd_`d'_1_`x')
+ 15.         kdensity rate if `d'==2, normal name(kd_`d'_2_`x')
+ 16.     kdensity rate if `d'==3, normal name(kd_`d'_3_`x')
+ 17.     kdensity rate if `d'==4, normal name(kd_`d'_4_`x')
+ 18.     kdensity rate if `d'==5, normal name(kd_`d'_5_`x')
+ 19.         *Autoregression plots by ethnicity
+.     ac rate if `d'==1, name(ac_`d'_1_`x')
+ 20.         ac rate if `d'==2, name(ac_`d'_2_`x')
+ 21.     ac rate if `d'==3, name(ac_`d'_3_`x')
+ 22.     ac rate if `d'==4, name(ac_`d'_4_`x')
+ 23.     ac rate if `d'==5, name(ac_`d'_5_`x')
+ 24.         /*Partial autoregression plots by ethnicity
+>         pac rate if `d'==1, name(pac_`d'_1_`x')
+>         pac rate if `d'==2, name(pac_`d'_2_`x')
+>     pac rate if `d'==3, name(pac_`d'_3_`x')
+>     pac rate if `d'==4, name(pac_`d'_4_`x')
+>     pac rate if `d'==5, name(pac_`d'_5_`x')*/
+.         *Combine Graphs
+.         graph combine kd_`d'_1_`x' kd_`d'_2_`x' kd_`d'_3_`x' kd_`d'_4_`x' kd_
+> `d'_5_`x', altshrink
+ 25.         graph export ./output/graphs/checks_kd_`d'.eps, as(eps) replace
+ 26.         graph combine ac_`d'_1_`x' ac_`d'_2_`x' ac_`d'_3_`x' ac_`d'_4_`x' 
+> ac_`d'_5_`x', altshrink
+ 27.         graph export ./output/graphs/checks_ac_`d'.eps, as(eps) replace
+ 28.     /*graph combine pac_`d'*', altshrink
+>         graph export .output/graphs/checks_pac_`d'.eps, as(eps) replace*/
+. }
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/graphs/checks_kd_ethnicity.eps not found)
+(file ./output/graphs/checks_kd_ethnicity.eps written in EPS format)
+(note: file ./output/graphs/checks_ac_ethnicity.eps not found)
+(file ./output/graphs/checks_ac_ethnicity.eps written in EPS format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(note: file ./output/graphs/checks_kd_imd.eps not found)
+(file ./output/graphs/checks_kd_imd.eps written in EPS format)
+(note: file ./output/graphs/checks_ac_imd.eps not found)
+(file ./output/graphs/checks_ac_imd.eps written in EPS format)
+
+. 
+end of do-file
+
+. . file open output using "/tmp/tmp.oiof9QBweL", write text replace
+
+. . file write output "success" 
+
+. . file close output
+
+. 
+end of do-file
+
+

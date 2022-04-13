@@ -128,5 +128,12 @@ actions:
       moderately_sensitive: 
         log: logs/model_checks.log
         output: output/graphs/checks_*
-   
+
+  time_series:
+    run: stata-mp:latest analysis/time_series.do
+    needs: [calculate_measures_resp]
+    outputs:
+      moderately_sensitive:
+        log: logs/tsreg.log
+        output: output/measures/resp/tsreg_tables.xlsx
 
