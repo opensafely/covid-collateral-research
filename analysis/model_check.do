@@ -8,6 +8,7 @@ Description:    Run model checks before time-series
 
 *Log file
 cap log using ./logs/model_checks.log, replace
+cap mkdir ./output/time_series
 local a "asthma copd"
 local b "ethnicity imd"
 forvalues i=1/2 {
@@ -45,9 +46,9 @@ forvalues i=1/2 {
     pac rate if `d'==5, name(pac_`d'_5_`x')*/
 	*Combine Graphs
 	graph combine kd_`d'_1_`x' kd_`d'_2_`x' kd_`d'_3_`x' kd_`d'_4_`x' kd_`d'_5_`x', altshrink
-	graph export ./output/graphs/checks_kd_`d'.eps, as(eps) replace
+	graph export ./output/time_series/checks_kd_`d'.eps, as(eps) replace
 	graph combine ac_`d'_1_`x' ac_`d'_2_`x' ac_`d'_3_`x' ac_`d'_4_`x' ac_`d'_5_`x', altshrink
-	graph export ./output/graphs/checks_ac_`d'.eps, as(eps) replace
+	graph export ./output/time_series/checks_ac_`d'.eps, as(eps) replace
     /*graph combine pac_`d'*', altshrink
 	graph export .output/graphs/checks_pac_`d'.eps, as(eps) replace*/
 }

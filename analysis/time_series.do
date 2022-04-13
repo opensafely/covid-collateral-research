@@ -8,10 +8,11 @@ Description:    Run time series after model checks
 
 *Log file
 cap log using ./logs/tsreg.log, replace
+cap mkdir ./output/time_series
 
 foreach x in asthma copd {
 	import delimited ./output/measures/resp/measure_`x'_exacerbation_ethnicity_rate.csv, clear	//get csv
-	putexcel set ./output/measures/resp/tsreg_tables, sheet(`x'_ethnicity) modify			//open xlsx
+	putexcel set ./output/time_series/tsreg_tables, sheet(`x'_ethnicity) modify			//open xlsx
 	*Format time
 	gen temp_date=date(date, "YMD")
 	format temp_date %td

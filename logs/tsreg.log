@@ -1,10 +1,12 @@
 
+. cap mkdir ./output/time_series
+
 . 
 . foreach x in asthma copd {
   2.         import delimited ./output/measures/resp/measure_`x'_exacerbation_e
 > thnicity_rate.csv, clear      //get csv
-  3.         putexcel set ./output/measures/resp/tsreg_tables, sheet(`x'_ethnic
-> ity) modify                   //open xlsx
+  3.         putexcel set ./output/time_series/tsreg_tables, sheet(`x'_ethnicit
+> y) modify                     //open xlsx
   4.         *Format time
 .         gen temp_date=date(date, "YMD")
   5.         format temp_date %td
@@ -57,10 +59,10 @@ maximum lag: 1                                  F(  0,        10) =          .
              |
        _cons |   51428.57          .        .       .            .           .
 ------------------------------------------------------------------------------
-file ./output/measures/resp/tsreg_tables.xlsx saved
-file ./output/measures/resp/tsreg_tables.xlsx saved
-file ./output/measures/resp/tsreg_tables.xlsx saved
-file ./output/measures/resp/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
         time variable:  month, 2020m3 to 2020m6
@@ -92,10 +94,10 @@ maximum lag: 1                                  F(  0,        10) =          .
              |
        _cons |   90909.09          .        .       .            .           .
 ------------------------------------------------------------------------------
-file ./output/measures/resp/tsreg_tables.xlsx saved
-file ./output/measures/resp/tsreg_tables.xlsx saved
-file ./output/measures/resp/tsreg_tables.xlsx saved
-file ./output/measures/resp/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
 
 . 
 . 
@@ -103,5 +105,5 @@ file ./output/measures/resp/tsreg_tables.xlsx saved
       name:  <unnamed>
        log:  /workspace/logs/tsreg.log
   log type:  text
- closed on:  13 Apr 2022, 09:26:40
+ closed on:  13 Apr 2022, 13:04:53
 -------------------------------------------------------------------------------

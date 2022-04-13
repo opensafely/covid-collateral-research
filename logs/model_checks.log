@@ -1,4 +1,6 @@
 
+. cap mkdir ./output/time_series
+
 . local a "asthma copd"
 
 . local b "ethnicity imd"
@@ -40,10 +42,12 @@
 .         *Combine Graphs
 .         graph combine kd_`d'_1_`x' kd_`d'_2_`x' kd_`d'_3_`x' kd_`d'_4_`x' kd_
 > `d'_5_`x', altshrink
- 25.         graph export ./output/graphs/checks_kd_`d'.eps, as(eps) replace
+ 25.         graph export ./output/time_series/checks_kd_`d'.eps, as(eps) repla
+> ce
  26.         graph combine ac_`d'_1_`x' ac_`d'_2_`x' ac_`d'_3_`x' ac_`d'_4_`x' 
 > ac_`d'_5_`x', altshrink
- 27.         graph export ./output/graphs/checks_ac_`d'.eps, as(eps) replace
+ 27.         graph export ./output/time_series/checks_ac_`d'.eps, as(eps) repla
+> ce
  28.     /*graph combine pac_`d'*', altshrink
 >         graph export .output/graphs/checks_pac_`d'.eps, as(eps) replace*/
 . }
@@ -56,10 +60,10 @@
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/graphs/checks_kd_ethnicity.eps not found)
-(file ./output/graphs/checks_kd_ethnicity.eps written in EPS format)
-(note: file ./output/graphs/checks_ac_ethnicity.eps not found)
-(file ./output/graphs/checks_ac_ethnicity.eps written in EPS format)
+(note: file ./output/time_series/checks_kd_ethnicity.eps not found)
+(file ./output/time_series/checks_kd_ethnicity.eps written in EPS format)
+(note: file ./output/time_series/checks_ac_ethnicity.eps not found)
+(file ./output/time_series/checks_ac_ethnicity.eps written in EPS format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
         time variable:  month, 2020m3 to 2020m6
@@ -69,15 +73,15 @@
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/graphs/checks_kd_imd.eps not found)
-(file ./output/graphs/checks_kd_imd.eps written in EPS format)
-(note: file ./output/graphs/checks_ac_imd.eps not found)
-(file ./output/graphs/checks_ac_imd.eps written in EPS format)
+(note: file ./output/time_series/checks_kd_imd.eps not found)
+(file ./output/time_series/checks_kd_imd.eps written in EPS format)
+(note: file ./output/time_series/checks_ac_imd.eps not found)
+(file ./output/time_series/checks_ac_imd.eps written in EPS format)
 
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.BBQoYVkK3f", write text replace
+. . file open output using "/tmp/tmp.3WpsU6JaLq", write text replace
 
 . . file write output "success" 
 
