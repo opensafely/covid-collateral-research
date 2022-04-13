@@ -14,7 +14,7 @@ local b "ethnicity imd"
 forvalues i=1/2 {
     local c: word `i' of `a' 
     local d: word `i' of `b'
-	import delimited "./output/measures/resp/measure_`c'_exacerbation_`d'_rate.csv", clear	//get csv
+	import delimited "./output/measures/resp/measure_`c'_exacerbation_`d'_rate.csv", numericcols(4) clear	//get csv
 	gen temp_date=date(date, "YMD")
 	format temp_date %td
 	gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
