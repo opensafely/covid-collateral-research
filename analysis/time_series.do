@@ -19,12 +19,19 @@ foreach x in asthma copd {
 	gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
 	gen month=mofd(temp_date)
 	format month %tm
+	*Define Seasons
+	gen season=4
+	replace season = 1 if inrange(month(temp_date),3,5)
+	replace season = 2 if inrange(month(temp_date),6,8)
+	replace season = 3 if inrange(month(temp_date),9,11)
+	label define seasonlab 1 "Spring" 2 "Summer" 3 "Autumn" 4 "Winter"
+	label values season seasonlab
 	drop temp_date
 	*Value to rate per 100k
 	gen rate = value*100000
 	*Run time series with EWH-robust SE and 1 Lag
 	tsset ethnicity month
-	newey rate i.ethnicity##i.postcovid, lag(1) force
+	newey rate i.ethnicity##i.postcovid i.season, lag(1) force
 	*Export results
 	putexcel E1=("Number of obs") G1=(e(N))
 	putexcel E2=("F") G2=(e(F))
