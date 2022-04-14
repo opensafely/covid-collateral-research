@@ -71,7 +71,7 @@ forvalues i=1/9 {
 
 * Adding three monthly graphs for MH and asthma
 * Generates graphs for ethnicity - to include DM once defined
-local groups "asthma vte mh"
+local groups "asthma keto mh"
 forvalues i=1/3 {
     local this_group :word `i' of `groups'
      * IMD
