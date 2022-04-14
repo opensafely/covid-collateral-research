@@ -2,7 +2,6 @@
 from cohortextractor import codelist_from_csv
 
 # Ethnicity
-# Update to SNOMED when uploaded
 ethnicity_codes = codelist_from_csv(
     "codelists/opensafely-ethnicity-with-categories-snomed.csv",
     system="snomed",
