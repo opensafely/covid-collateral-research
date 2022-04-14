@@ -31,6 +31,23 @@ actions:
       highly_sensitive:
         cohort: output/measures/mortality/input_mortality_*.csv
   
+  # Generates study populations for baseline tables at 3 timepoints
+  generate_study_population_tables_2019:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_tables --index-date-range "2019-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/tables/input_tables_2019-01-01.csv
+  generate_study_population_tables_2020:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_tables --index-date-range "2020-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/tables/input_tables_2020-01-01.csv
+  generate_study_population_tables_2021:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_tables --index-date-range "2021-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/tables/input_tables_2021-01-01.csv
+  
   # Generates summary measures for CV and mental health outcomes
   calculate_measures:
     run: cohortextractor:latest  generate_measures --study-definition study_definition --output-dir=output/measures
@@ -71,7 +88,7 @@ actions:
         log: logs/graphs_mh_cvd.log
         output: output/line_*.eps
       highly_sensitive:
-        output: output/measures/measure_*
+        output: output/measures/collapse_measure_*
   # Generates graphs for diabetes outcomes
   graphs_dm:
     run: stata-mp:latest analysis/graphs_dm.do 
@@ -80,6 +97,8 @@ actions:
       moderately_sensitive:
         log: logs/graphs_dm.log
         output: output/line_dm_*.eps
+      highly_sensitive:
+        output: output/measures/dm/collapse_measure_*
   # Generate graphs for respiratory outcomes
   graphs_resp:
     run: stata-mp:latest analysis/graphs_resp.do 
@@ -88,6 +107,8 @@ actions:
       moderately_sensitive:
         log: logs/graphs_resp.log
         output: output/line_resp_*.eps
+      highly_sensitive:
+        output: output/measures/resp/collapse_measure_*
 
   # Generate graphs for mortality
   graphs_mortality:
@@ -97,6 +118,8 @@ actions:
       moderately_sensitive:
         log: logs/graphs_mortality.log
         output: output/line_mortality_*.eps
+      highly_sensitive:
+        output: output/measures/mortality/collapse_measure_*
 
    
 

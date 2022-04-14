@@ -194,7 +194,7 @@ forvalues i=1/6 {
     collapse (sum) value rate `this_group'_primary_admission population (min) dateA,  by(quarter ethnicity)
     drop quarter
     * Outputing file 
-    export delimited using ./output/measures/measure_`this_group'_primary_admission_ethnicity_rate_collapse.csv
+    export delimited using ./output/measures/collapse_measure_`this_group'_primary_admission_ethnicity_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `this_group'_primary_admission population, i(dateA) j(ethnicity)
     describe
@@ -225,7 +225,7 @@ forvalues i=1/6 {
     collapse (sum) value rate `this_group'_primary_admission population (min) dateA,  by(quarter imd)
     drop quarter
     * Outputing file 
-    export delimited using ./output/measures/measure_`this_group'_primary_admission_imd_rate_collapse.csv
+    export delimited using ./output/measures/collapse_measure_`this_group'_primary_admission_imd_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `this_group'_primary_admission population, i(dateA) j(imd)
     describe
@@ -263,7 +263,7 @@ forvalues i=1/5 {
     collapse (sum) value rate `this_group'_emergency population (min) dateA,  by(quarter ethnicity)
     drop quarter
     * Outputing file 
-    export delimited using ./output/measures/measure_`this_group'_emergency_ethnicity_rate_collapse.csv
+    export delimited using ./output/measures/collapse_measure_`this_group'_emergency_ethnicity_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `this_group'_emergency population, i(dateA) j(ethnicity)
     describe
@@ -294,7 +294,7 @@ forvalues i=1/5 {
     collapse (sum) value rate `this_group'_emergency population (min) dateA,  by(quarter imd)
     drop quarter
     * Outputing file 
-    export delimited using ./output/measures/measure_`this_group'_emergency_imd_rate_collapse.csv
+    export delimited using ./output/measures/collapse_measure_`this_group'_emergency_imd_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `this_group'_emergency population, i(dateA) j(imd)
     describe
