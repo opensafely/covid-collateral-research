@@ -8,7 +8,7 @@ Description:    Generates line graphs of rates of each outcome and strata per mo
 cap log using ./logs/graphs_mortality.log, replace
 
 * Generates graphs for ethnicity - to include DM once defined
-local groups "resp asthma copd cvd mi stroke heart_failure vte mh"
+local groups "resp asthma copd cvd mi stroke heart_failure vte mh keto"
 forvalues i=1/9 {
     local this_group :word `i' of `groups'
 * Ethnicity
