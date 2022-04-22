@@ -86,7 +86,8 @@ actions:
       moderately_sensitive:
         log: logs/graphs_resp.log
         output: output/line_resp_*.eps
-
+      highly_sensitive:
+        output: output/measures/resp/collapse_measure*
   # Generate graphs for mortality
   graphs_mortality:
     run: stata-mp:latest analysis/graphs_mortality.do 
@@ -121,16 +122,48 @@ actions:
         output: output/measures/tables/table*
       
   # Running analysis scripts
-  model_checks:
-    run: stata-mp:latest analysis/model_check.do
-    needs: [calculate_measures_resp]
+  model_checks_dm:
+    run: stata-mp:latest analysis/model_check_dm.do
+    needs: [calculate_measures_dm]
     outputs:
       moderately_sensitive: 
-        log: logs/model_checks.log
-        output: output/time_series/checks_*.eps
+        log: logs/model_checks_dm.log
+        output: output/time_series/dm_*.eps
 
-  time_series:
-    run: stata-mp:latest analysis/time_series.do
+  model_checks_resp:
+    run: stata-mp:latest analysis/model_check_resp.do
+    needs: [calculate_measures_resp, graphs_resp]
+    outputs:
+      moderately_sensitive: 
+        log: logs/model_checks_resp.log
+        output: output/time_series/resp_*.eps
+
+  model_checks_cvd:
+    run: stata-mp:latest analysis/model_check_cvd.do
+    needs: [calculate_measures]
+    outputs:
+      moderately_sensitive: 
+        log: logs/model_checks_cvd.log
+        output: output/time_series/cvd_*.eps
+
+  model_checks_mh:
+    run: stata-mp:latest analysis/model_check_mh.do
+    needs: [calculate_measures]
+    outputs:
+      moderately_sensitive: 
+        log: logs/model_checks_mh.log
+        output: output/time_series/mh_*.eps
+
+  model_checks_mortality:
+    run: stata-mp:latest analysis/model_check_mortality.do
+    needs: [calculate_measures_mortality, graphs_mortality]
+    outputs:
+      moderately_sensitive: 
+        log: logs/model_checks_mortality.log
+        output: output/time_series/mortality_*.eps
+  
+  time_series_resp:
+    run: stata-mp:latest analysis/time_series_resp.do
     needs: [calculate_measures_resp]
     outputs:
       moderately_sensitive:

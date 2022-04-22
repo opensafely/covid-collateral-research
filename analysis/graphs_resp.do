@@ -68,3 +68,36 @@ forvalues i=1/2 {
     graph export ./output/line_resp_imd_`this_outcome'_`this_strata'.eps, as(eps) replace
     }
 }
+
+* Adding three monthly intervals for asthma exacerbation for ethnicity
+* Ethnicity
+    clear 
+    import delimited using "./output/measures/resp/measure_asthma_exacerbation_ethnicity_rate.csv", numericcols(4)
+    * Generate rate per 100,000
+    gen rate = value*100000 
+    * Format date
+    gen dateA = date(date, "YMD")
+    drop date
+    format dateA %dD/M/Y
+    tab dateA 
+    * Collapse at 3 monthly intervals
+    gen quarter = qofd(dateA)
+    collapse (sum) value rate has_asthma asthma_exacerbation (min) dateA,  by(quarter ethnicity)
+    drop quarter
+    * Outputing file 
+    export delimited using ./output/measures/resp/collapse_measure_asthma_exacerbation_ethnicity_rate.csv 
+    * reshape dataset so columns with rates for each ethnicity 
+    reshape wide value rate has_asthma asthma_exacerbation, i(dateA) j(ethnicity)
+    describe
+    * Labelling ethnicity variables
+    label var rate1 "Ethnicity - White"
+    label var rate2 "Ethnicity - Mixed"
+    label var rate3 "Ethnicity - Asian"
+    label var rate4 "Ethnicity - Black"
+    label var rate5 "Ethnicity - Other"
+
+    * Generate line graph
+    graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, angle(45) format(%dM-CY)) ///
+    ytitle("Rate per 100,000") 
+
+    graph export ./output/line_resp_ethnic_asthma_exacerbation_collapse.eps, as(eps) replace

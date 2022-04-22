@@ -1,55 +1,64 @@
 
 . cap mkdir ./output/time_series
 
+. 
+. *Respiratory outcomes:
+. *Clinical monitoring for asthma & copd and hospital admissions for copd & ast
+> hma exacerbation
 . local a "asthma copd"
 
 . local b "ethnicity imd"
 
+. local c "exacerbation monitoring"
+
 . forvalues i=1/2 {
-  2.     local c: word `i' of `a' 
-  3.     local d: word `i' of `b'
-  4.         import delimited "./output/measures/resp/measure_`c'_exacerbation_
-> `d'_rate.csv", clear  //get csv
-  5.         gen temp_date=date(date, "YMD")
-  6.         format temp_date %td
-  7.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
-  8.         gen month=mofd(temp_date)
-  9.         format month %tm
- 10.         drop temp_date
- 11.         *Value to rate per 100k
+  2.     local d: word `i' of `a' 
+  3.     local e: word `i' of `b'
+  4.         local f: word `i' of `c'
+  5.         import delimited "./output/measures/resp/measure_`d'_`f'_`e'_rate.
+> csv", numericcols(4) clear    //get csv
+  6.         gen temp_date=date(date, "YMD")
+  7.         format temp_date %td
+  8.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+  9.         gen month=mofd(temp_date)
+ 10.         format month %tm
+ 11.         drop temp_date
+ 12.         *Value to rate per 100k
 .         gen rate = value*100000
- 12.         label variable rate "Rate of `c' exacerbation per 100,000"
- 13.         *Set time series
-.         tsset `d' month 
- 14.         *Kernel density plots to check for normality and extreme values
-.         kdensity rate if `d'==1, normal name(kd_`d'_1_`x')
- 15.         kdensity rate if `d'==2, normal name(kd_`d'_2_`x')
- 16.     kdensity rate if `d'==3, normal name(kd_`d'_3_`x')
- 17.     kdensity rate if `d'==4, normal name(kd_`d'_4_`x')
- 18.     kdensity rate if `d'==5, normal name(kd_`d'_5_`x')
- 19.         *Autoregression plots by ethnicity
-.     ac rate if `d'==1, name(ac_`d'_1_`x')
- 20.         ac rate if `d'==2, name(ac_`d'_2_`x')
- 21.     ac rate if `d'==3, name(ac_`d'_3_`x')
- 22.     ac rate if `d'==4, name(ac_`d'_4_`x')
- 23.     ac rate if `d'==5, name(ac_`d'_5_`x')
- 24.         /*Partial autoregression plots by ethnicity
->         pac rate if `d'==1, name(pac_`d'_1_`x')
->         pac rate if `d'==2, name(pac_`d'_2_`x')
->     pac rate if `d'==3, name(pac_`d'_3_`x')
->     pac rate if `d'==4, name(pac_`d'_4_`x')
->     pac rate if `d'==5, name(pac_`d'_5_`x')*/
+ 13.         label variable rate "Rate of `d' `f'' per 100,000"
+ 14.         *Set time series
+.         tsset `e' month 
+ 15.         *Kernel density plots to check for normality and extreme values
+.         kdensity rate if `e'==1, normal name(kd_`e'_1, replace)
+ 16.         kdensity rate if `e'==2, normal name(kd_`e'_2, replace)
+ 17.     kdensity rate if `e'==3, normal name(kd_`e'_3, replace)
+ 18.     kdensity rate if `e'==4, normal name(kd_`e'_4, replace)
+ 19.     kdensity rate if `e'==5, normal name(kd_`e'_5, replace)
+ 20.         *Autoregression plots by ethnicity
+.     ac rate if `e'==1, name(ac_`e'_1, replace)
+ 21.         ac rate if `e'==2, name(ac_`e'_2, replace)
+ 22.     ac rate if `e'==3, name(ac_`e'_3, replace)
+ 23.     ac rate if `e'==4, name(ac_`e'_4, replace)
+ 24.     ac rate if `e'==5, name(ac_`e'_5, replace)
+ 25.         /*Partial autoregression plots by ethnicity
+>         pac rate if `e'==1, name(pac_`e'_1, replace)
+>         pac rate if `e'==2, name(pac_`e'_2, replace)
+>     pac rate if `e'==3, name(pac_`e'_3, replace)
+>     pac rate if `e'==4, name(pac_`e'_4, replace)
+>     pac rate if `e'==5, name(pac_`e'_5, replace)*/
 .         *Combine Graphs
-.         graph combine kd_`d'_1_`x' kd_`d'_2_`x' kd_`d'_3_`x' kd_`d'_4_`x' kd_
-> `d'_5_`x', altshrink
- 25.         graph export ./output/time_series/checks_kd_`d'.eps, as(eps) repla
-> ce
- 26.         graph combine ac_`d'_1_`x' ac_`d'_2_`x' ac_`d'_3_`x' ac_`d'_4_`x' 
-> ac_`d'_5_`x', altshrink
- 27.         graph export ./output/time_series/checks_ac_`d'.eps, as(eps) repla
-> ce
- 28.     /*graph combine pac_`d'*', altshrink
->         graph export .output/graphs/checks_pac_`d'.eps, as(eps) replace*/
+.         graph combine kd_`e'_1 kd_`e'_2 kd_`e'_3 kd_`e'_4 kd_`e'_5, altshrink
+ 26.         graph export ./output/time_series/checks_kd_`d'_`f'_`e'.eps, as(ep
+> s) replace
+ 27.         graph combine ac_`e'_1 ac_`e'_2 ac_`e'_3 ac_`e'_4 ac_`e'_5, altshr
+> ink
+ 28.         graph export ./output/time_series/checks_ac_`d'_`f'_`e'.eps, as(ep
+> s) replace
+ 29.     /*
+>         graph combine pac_`e'_1 pac_`e'_2 pac_`e'_3 pac_`e'_4 pac_`e'_5, alts
+> hrink
+>         graph export ./output/time_series/checks_pac_`d'_`f'_`e'.eps, as(eps)
+>  replace*/
 . }
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
@@ -60,10 +69,14 @@
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/checks_kd_ethnicity.eps not found)
-(file ./output/time_series/checks_kd_ethnicity.eps written in EPS format)
-(note: file ./output/time_series/checks_ac_ethnicity.eps not found)
-(file ./output/time_series/checks_ac_ethnicity.eps written in EPS format)
+(note: file ./output/time_series/checks_kd_asthma_exacerbation_ethnicity.eps no
+> t found)
+(file ./output/time_series/checks_kd_asthma_exacerbation_ethnicity.eps written 
+> in EPS format)
+(note: file ./output/time_series/checks_ac_asthma_exacerbation_ethnicity.eps no
+> t found)
+(file ./output/time_series/checks_ac_asthma_exacerbation_ethnicity.eps written 
+> in EPS format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
         time variable:  month, 2020m3 to 2020m6
@@ -73,21 +86,300 @@
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/checks_kd_imd.eps not found)
-(file ./output/time_series/checks_kd_imd.eps written in EPS format)
-(note: file ./output/time_series/checks_ac_imd.eps not found)
-(file ./output/time_series/checks_ac_imd.eps written in EPS format)
+(note: file ./output/time_series/checks_kd_copd_monitoring_imd.eps not found)
+(file ./output/time_series/checks_kd_copd_monitoring_imd.eps written in EPS for
+> mat)
+(note: file ./output/time_series/checks_ac_copd_monitoring_imd.eps not found)
+(file ./output/time_series/checks_ac_copd_monitoring_imd.eps written in EPS for
+> mat)
 
 . 
-end of do-file
+. * Diabetes outcomes
+. * Clinical monitoring: hba1c and BP measurement, hospital admissions: t1, t2 
+> & keto both primary and any code
+. local a "hba1c systolic_bp t1_primary t2_primary keto_primary t1_any t2_any k
+> eto_any"
 
-. . file open output using "/tmp/tmp.3WpsU6JaLq", write text replace
-
-. . file write output "success" 
-
-. . file close output
+. forvalues i=1/8 {
+  2.     local c: word `i' of `a' 
+  3.         local b "ethnicity imd"
+  4.         forvalues i=1/2 {
+  5.         local d: word `i' of `b'
+  6.         import delimited "./output/measures/dm/measure_dm_`c'_`d'_rate.csv
+> ", numericcols(4) clear       //get csv
+  7.         gen temp_date=date(date, "YMD")
+  8.         format temp_date %td
+  9.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+ 10.         gen month=mofd(temp_date)
+ 11.         format month %tm
+ 12.         drop temp_date
+ 13.         *Value to rate per 100k
+.         gen rate = value*100000
+ 14.         label variable rate "Rate of `c' exacerbation per 100,000"
+ 15.         *Set time series
+.         tsset `d' month 
+ 16.         *Kernel density plots to check for normality and extreme values
+.         kdensity rate if `d'==1, normal name(kd_`d'_1_`c')
+ 17.         kdensity rate if `d'==2, normal name(kd_`d'_2_`c')
+ 18.     kdensity rate if `d'==3, normal name(kd_`d'_3_`c')
+ 19.     kdensity rate if `d'==4, normal name(kd_`d'_4_`c')
+ 20.     kdensity rate if `d'==5, normal name(kd_`d'_5_`c')
+ 21.         *Autoregression plots by ethnicity
+.     ac rate if `d'==1, name(ac_`d'_1_`c')
+ 22.         ac rate if `d'==2, name(ac_`d'_2_`c')
+ 23.     ac rate if `d'==3, name(ac_`d'_3_`c')
+ 24.     ac rate if `d'==4, name(ac_`d'_4_`c')
+ 25.     ac rate if `d'==5, name(ac_`d'_5_`c')
+ 26.         /*Partial autoregression plots by ethnicity
+>         pac rate if `d'==1, name(pac_`d'_1_`c')
+>         pac rate if `d'==2, name(pac_`d'_2_`c')
+>     pac rate if `d'==3, name(pac_`d'_3_`c')
+>     pac rate if `d'==4, name(pac_`d'_4_`c')
+>     pac rate if `d'==5, name(pac_`d'_5_`c')*/
+.         *Combine Graphs
+.         graph combine kd_`d'_1_`c' kd_`d'_2_`c' kd_`d'_3_`c' kd_`d'_4_`c' kd_
+> `d'_5_`c', altshrink
+ 27.         graph export ./output/time_series/checks_kd_`d'_`f'_`d'.eps, as(ep
+> s) replace
+ 28.         graph combine ac_`d'_1_`c' ac_`d'_2_`c' ac_`d'_3_`c' ac_`d'_4_`c' 
+> ac_`d'_5_`c', altshrink
+ 29.         graph export ./output/time_series/checks_ac_`d'_`f'_`d'.eps, as(ep
+> s) replace
+ 30.     /*graph combine pac_`d'*', altshrink
+>         graph export .output/graphs/checks_pac_`d'_`f'_`d'.eps, as(eps) repla
+> ce*/
+.         }
+ 31. }
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/checks_kd_ethnicity_monitoring_ethnicity.eps n
+> ot found)
+(file ./output/time_series/checks_kd_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(note: file ./output/time_series/checks_ac_ethnicity_monitoring_ethnicity.eps n
+> ot found)
+(file ./output/time_series/checks_ac_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(note: file ./output/time_series/checks_kd_imd_monitoring_imd.eps not found)
+(file ./output/time_series/checks_kd_imd_monitoring_imd.eps written in EPS form
+> at)
+(note: file ./output/time_series/checks_ac_imd_monitoring_imd.eps not found)
+(file ./output/time_series/checks_ac_imd_monitoring_imd.eps written in EPS form
+> at)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/checks_kd_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(file ./output/time_series/checks_ac_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/checks_kd_imd_monitoring_imd.eps written in EPS form
+> at)
+(file ./output/time_series/checks_ac_imd_monitoring_imd.eps written in EPS form
+> at)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/checks_kd_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(file ./output/time_series/checks_ac_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/checks_kd_imd_monitoring_imd.eps written in EPS form
+> at)
+(file ./output/time_series/checks_ac_imd_monitoring_imd.eps written in EPS form
+> at)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/checks_kd_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(file ./output/time_series/checks_ac_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/checks_kd_imd_monitoring_imd.eps written in EPS form
+> at)
+(file ./output/time_series/checks_ac_imd_monitoring_imd.eps written in EPS form
+> at)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/checks_kd_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(file ./output/time_series/checks_ac_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/checks_kd_imd_monitoring_imd.eps written in EPS form
+> at)
+(file ./output/time_series/checks_ac_imd_monitoring_imd.eps written in EPS form
+> at)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/checks_kd_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(file ./output/time_series/checks_ac_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/checks_kd_imd_monitoring_imd.eps written in EPS form
+> at)
+(file ./output/time_series/checks_ac_imd_monitoring_imd.eps written in EPS form
+> at)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/checks_kd_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(file ./output/time_series/checks_ac_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/checks_kd_imd_monitoring_imd.eps written in EPS form
+> at)
+(file ./output/time_series/checks_ac_imd_monitoring_imd.eps written in EPS form
+> at)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/checks_kd_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(file ./output/time_series/checks_ac_ethnicity_monitoring_ethnicity.eps written
+>  in EPS format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/checks_kd_imd_monitoring_imd.eps written in EPS form
+> at)
+(file ./output/time_series/checks_ac_imd_monitoring_imd.eps written in EPS form
+> at)
 
 . 
+. * CVD outcomes
+. * Clinical monitoring: BP measurement
+. * Hospital admissions: any code and primary code for MI, stroke, heart failur
+> e and vte
+. local a "systolic_bp_cvd mi_admission stroke_admission heart_failure_admissio
+> n vte_admission mi_primary_admission"///
+invalid syntax
+r(198);
+
 end of do-file
+r(198);
+
+end of do-file
+
+r(198);
 
 

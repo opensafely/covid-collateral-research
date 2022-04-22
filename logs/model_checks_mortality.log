@@ -1,0 +1,228 @@
+
+. cap mkdir ./output/time_series
+
+. 
+. * Mortality outcomes - DM outcomes not currently included
+. * cvd, resp, mh, mi, stroke, heart failure, vte, asthma, copd
+. foreach c in cvd resp mh mi stroke heart_failure vte asthma copd {
+  2.         import delimited "./output/measures/mortality/collapse_measure_`c'
+> _mortality_ethnic_rate.csv", numericcols(4) clear     //get csv
+  3.         gen temp_date=date(datea, "DM20Y")
+  4.         format temp_date %td
+  5.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+  6.         gen quarter=qofd(temp_date)
+  7.         *format month %tm
+.         drop temp_date
+  8.         *Set time series
+.         tsset ethnicity quarter 
+  9.         *Kernel density plots to check for normality and extreme values
+.         kdensity rate if ethnicity==1, normal name(kd_ethnicity_1_`c')
+ 10.         kdensity rate if ethnicity==2, normal name(kd_ethnicity_2_`c')
+ 11.     kdensity rate if ethnicity==3, normal name(kd_ethnicity_3_`c')
+ 12.     kdensity rate if ethnicity==4, normal name(kd_ethnicity_4_`c')
+ 13.     kdensity rate if ethnicity==5, normal name(kd_ethnicity_5_`c')
+ 14.         *Autoregression plots by ethnicity
+.     ac rate if ethnicity==1, name(ac_ethnicity_1_`c')
+ 15.         ac rate if ethnicity==2, name(ac_ethnicity_2_`c')
+ 16.     ac rate if ethnicity==3, name(ac_ethnicity_3_`c')
+ 17.     ac rate if ethnicity==4, name(ac_ethnicity_4_`c')
+ 18.     ac rate if ethnicity==5, name(ac_ethnicity_5_`c')
+ 19.         /*Partial autoregression plots by ethnicity
+>         pac rate if ethnicity==1, name(pac_ethnicity_1_`c')
+>         pac rate if ethnicity==2, name(pac_ethnicity_2_`c')
+>     pac rate if ethnicity==3, name(pac_ethnicity_3_`c')
+>     pac rate if ethnicity==4, name(pac_ethnicity_4_`c')
+>     pac rate if ethnicity==5, name(pac_ethnicity_5_`c')*/
+.         *Combine Graphs
+.         graph combine kd_ethnicity_1_`c' kd_ethnicity_2_`c' kd_ethnicity_3_`c
+> ' kd_ethnicity_4_`c' kd_ethnicity_5_`c', altshrink
+ 20.         graph export ./output/time_series/checks_kd_`c'_ethnicity.svg, as(
+> svg) replace
+ 21.         graph combine ac_ethnicity_1_`c' ac_ethnicity_2_`c' ac_ethnicity_3
+> _`c' ac_ethnicity_4_`c' ac_ethnicity_5_`c', altshrink
+ 22.         graph export ./output/time_series/checks_ac_`c'_ethnicity.svg, as(
+> svg) replace
+ 23.     /*graph combine pac_ethnicity*', altshrink
+>         graph export .output/graphs/checks_pac_`c'_ethnicity.svg, as(svg) rep
+> lace*/
+.         }
+(6 vars, 10 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  quarter, 240 to 241
+                delta:  1 unit
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(note: file ./output/time_series/checks_kd_cvd_ethnicity.svg not found)
+(file ./output/time_series/checks_kd_cvd_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/checks_ac_cvd_ethnicity.svg not found)
+(file ./output/time_series/checks_ac_cvd_ethnicity.svg written in SVG format)
+(6 vars, 10 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  quarter, 240 to 241
+                delta:  1 unit
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(note: file ./output/time_series/checks_kd_resp_ethnicity.svg not found)
+(file ./output/time_series/checks_kd_resp_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/checks_ac_resp_ethnicity.svg not found)
+(file ./output/time_series/checks_ac_resp_ethnicity.svg written in SVG format)
+(6 vars, 10 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  quarter, 240 to 241
+                delta:  1 unit
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(note: file ./output/time_series/checks_kd_mh_ethnicity.svg not found)
+(file ./output/time_series/checks_kd_mh_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/checks_ac_mh_ethnicity.svg not found)
+(file ./output/time_series/checks_ac_mh_ethnicity.svg written in SVG format)
+(6 vars, 10 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  quarter, 240 to 241
+                delta:  1 unit
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(note: file ./output/time_series/checks_kd_mi_ethnicity.svg not found)
+(file ./output/time_series/checks_kd_mi_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/checks_ac_mi_ethnicity.svg not found)
+(file ./output/time_series/checks_ac_mi_ethnicity.svg written in SVG format)
+(6 vars, 10 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  quarter, 240 to 241
+                delta:  1 unit
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(note: file ./output/time_series/checks_kd_stroke_ethnicity.svg not found)
+(file ./output/time_series/checks_kd_stroke_ethnicity.svg written in SVG format
+> )
+(note: file ./output/time_series/checks_ac_stroke_ethnicity.svg not found)
+(file ./output/time_series/checks_ac_stroke_ethnicity.svg written in SVG format
+> )
+(6 vars, 10 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  quarter, 240 to 241
+                delta:  1 unit
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(note: file ./output/time_series/checks_kd_heart_failure_ethnicity.svg not foun
+> d)
+(file ./output/time_series/checks_kd_heart_failure_ethnicity.svg written in SVG
+>  format)
+(note: file ./output/time_series/checks_ac_heart_failure_ethnicity.svg not foun
+> d)
+(file ./output/time_series/checks_ac_heart_failure_ethnicity.svg written in SVG
+>  format)
+(6 vars, 10 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  quarter, 240 to 241
+                delta:  1 unit
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(note: file ./output/time_series/checks_kd_vte_ethnicity.svg not found)
+(file ./output/time_series/checks_kd_vte_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/checks_ac_vte_ethnicity.svg not found)
+(file ./output/time_series/checks_ac_vte_ethnicity.svg written in SVG format)
+(6 vars, 10 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  quarter, 240 to 241
+                delta:  1 unit
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(note: file ./output/time_series/checks_kd_asthma_ethnicity.svg not found)
+(file ./output/time_series/checks_kd_asthma_ethnicity.svg written in SVG format
+> )
+(note: file ./output/time_series/checks_ac_asthma_ethnicity.svg not found)
+(file ./output/time_series/checks_ac_asthma_ethnicity.svg written in SVG format
+> )
+(6 vars, 10 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  quarter, 240 to 241
+                delta:  1 unit
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(n() set to 10)
+(note: file ./output/time_series/checks_kd_copd_ethnicity.svg not found)
+(file ./output/time_series/checks_kd_copd_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/checks_ac_copd_ethnicity.svg not found)
+(file ./output/time_series/checks_ac_copd_ethnicity.svg written in SVG format)
+
+. 
+. * IMD
+. foreach c in cvd resp mh mi stroke heart_failure vte asthma copd {
+  2.         import delimited "./output/measures/mortality/measure_`c'_mortalit
+> y_imd_rate.csv", numericcols(4) clear //get csv
+  3.         gen temp_date=date(date, "YMD")
+  4.         format temp_date %td
+  5.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+  6.         gen quarter=qofd(temp_date)
+  7.         *format month %tm
+.         drop temp_date
+  8.         *Set time series
+.         tsset imd quarter 
+  9.         *Kernel density plots to check for normality and extreme values
+.         kdensity rate if imd==1, normal name(kd_imd_1_`c')
+ 10.         kdensity rate if imd==2, normal name(kd_imd_2_`c')
+ 11.     kdensity rate if imd==3, normal name(kd_imd_3_`c')
+ 12.     kdensity rate if imd==4, normal name(kd_imd_4_`c')
+ 13.     kdensity rate if imd==5, normal name(kd_imd_5_`c')
+ 14.         *Autoregression plots by imd
+.     ac rate if imd==1, name(ac_imd_1_`c')
+ 15.         ac rate if imd==2, name(ac_imd_2_`c')
+ 16.     ac rate if imd==3, name(ac_imd_3_`c')
+ 17.     ac rate if imd==4, name(ac_imd_4_`c')
+ 18.     ac rate if imd==5, name(ac_imd_5_`c')
+ 19.         /*Partial autoregression plots by imd
+>         pac rate if imd==1, name(pac_imd_1_`c')
+>         pac rate if imd==2, name(pac_imd_2_`c')
+>     pac rate if imd==3, name(pac_imd_3_`c')
+>     pac rate if imd==4, name(pac_imd_4_`c')
+>     pac rate if imd==5, name(pac_imd_5_`c')*/
+.         *Combine Graphs
+.         graph combine kd_imd_1_`c' kd_imd_2_`c' kd_imd_3_`c' kd_imd_4_`c' kd_
+> imd_5_`c', altshrink
+ 20.         graph export ./output/time_series/checks_kd_`c'_imd.svg, as(svg) r
+> eplace
+ 21.         graph combine ac_imd_1_`c' ac_imd_2_`c' ac_imd_3_`c' ac_imd_4_`c' 
+> ac_imd_5_`c', altshrink
+ 22.         graph export ./output/time_series/checks_ac_`c'_imd.svg, as(svg) r
+> eplace
+ 23.     /*graph combine pac_imd*', altshrink
+>         graph export .output/graphs/checks_pac_`c'_imd.svg, as(svg) replace*/
+.         }
+file ./output/measures/mortality/measure_cvd_mortality_imd_rate.csv not found
+r(601);
+
+end of do-file
+r(601);
+
+end of do-file
+
+r(601);
+
+
