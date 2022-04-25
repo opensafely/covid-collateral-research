@@ -41,7 +41,7 @@ foreach var in hba1c systolic_bp t1_primary t2_primary keto_primary t1_any t2_an
 	matrix a = r(table)'
 	putexcel A6 = matrix(a), rownames
 	putexcel save
-
+	}
 }
 
 log close

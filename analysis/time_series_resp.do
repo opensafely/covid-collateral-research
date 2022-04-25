@@ -40,7 +40,7 @@ foreach var in asthma_monitoring copd_monitoring copd_exacerbation {
 	matrix a = r(table)'
 	putexcel A6 = matrix(a), rownames
 	putexcel save
-
+	}
 }
 
 * Time series analysis for asthma exacerbation by IMD

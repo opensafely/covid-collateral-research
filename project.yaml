@@ -113,14 +113,7 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/measures/tables/input_tables_2021-01-01.csv
-  # Create baseline tables
-  bl_tables:
-    run: r:latest analysis/baseline_tables.r
-    needs: [generate_study_population_tables_2019]
-    outputs:
-      highly_sensitive:
-        output: output/measures/tables/table*
-      
+        
   # Running analysis scripts
   model_checks_dm:
     run: stata-mp:latest analysis/model_check_dm.do
