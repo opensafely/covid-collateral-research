@@ -73,6 +73,12 @@ foreach v in primary any /*emergency*/ {
     drop date
     format dateA %dD/M/Y
     tab dateA 
+    * Collapse at 3 monthly intervals
+    gen quarter = qofd(dateA)
+    collapse (sum) value rate has_t1_diabetes t1dm_admission_`v' (min) dateA,  by(quarter ethnicity)
+    drop quarter
+    * Outputing file 
+    export delimited using ./output/measures/dm/collapse_measure_dm_t1_`v'_ethnicity_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate has_t1_diabetes t1dm_admission_`v', i(dateA) j(ethnicity)
     describe
@@ -123,7 +129,13 @@ foreach v in primary any /*emergency*/ {
     gen dateA = date(date, "YMD")
     drop date
     format dateA %dD/M/Y
-    tab dateA 
+    tab dateA
+    * Collapse at 3 monthly intervals
+    gen quarter = qofd(dateA)
+    collapse (sum) value rate has_t2_diabetes t2dm_admission_`v' (min) dateA,  by(quarter ethnicity)
+    drop quarter
+    * Outputing file 
+    export delimited using ./output/measures/dm/collapse_measure_dm_t2_`v'_ethnicity_rate.csv 
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate has_t2_diabetes t2dm_admission_`v', i(dateA) j(ethnicity)
     describe
@@ -175,6 +187,12 @@ foreach v in primary any /*emergency*/ {
     drop date
     format dateA %dD/M/Y
     tab dateA 
+    * Collapse at 3 monthly intervals
+    gen quarter = qofd(dateA)
+    collapse (sum) value rate population dm_keto_admission_`v' (min) dateA,  by(quarter ethnicity)
+    drop quarter
+    * Outputing file 
+    export delimited using ./output/measures/dm/collapse_measure_dm_keto_`v'_ethnicity_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate population dm_keto_admission_`v', i(dateA) j(ethnicity)
     describe

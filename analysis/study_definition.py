@@ -22,7 +22,7 @@ study = StudyDefinition(
         (NOT died) AND
         (sex = 'M' OR sex = 'F') AND
         (stp != 'missing') AND
-        (imd != 'missing') AND
+        (imd != 0) AND
         (household <=15) 
         """,
         has_follow_up=patients.registered_with_one_practice_between(
@@ -123,24 +123,34 @@ study = StudyDefinition(
         ),
     ),
 
-    imd=patients.address_as_of(
+    imd=patients.categorised_as(
+        {
+            "0": "DEFAULT",
+            "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
+            "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
+            "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
+            "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
+            "5": """index_of_multiple_deprivation >= 32844*4/5 AND index_of_multiple_deprivation < 32844""",
+        },
+        index_of_multiple_deprivation=patients.address_as_of(
             "index_date",
             returning="index_of_multiple_deprivation",
             round_to_nearest=100,
-            return_expectations={
-                "rate": "universal",
-                "category": {
-                    "ratios": {
-                        "0": 0.05,
-                        "1": 0.19,
-                        "2": 0.19,
-                        "3": 0.19,
-                        "4": 0.19,
-                        "5": 0.19,
-                    }
-                },
-            },
         ),
+        return_expectations={
+            "rate": "universal",
+            "category": {
+                "ratios": {
+                    "0": 0.05,
+                    "1": 0.19,
+                    "2": 0.19,
+                    "3": 0.19,
+                    "4": 0.19,
+                    "5": 0.19,
+                }
+            },
+        },
+    ),
     
     # Clinical monitoring
     # Systolic blood pressure - cvd population & mental health population
