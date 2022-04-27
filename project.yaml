@@ -120,23 +120,6 @@ actions:
         output: output/line_mortality_*.eps
       highly_sensitive:
         output: output/measures/mortality/collapse_measure_*
-
-  # Running study definition for baseline tables
-  generate_study_population_tables_2019:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_tables --index-date-range "2019-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing
-    outputs:
-      highly_sensitive:
-        cohort: output/measures/tables/input_tables_2019-01-01.csv
-  generate_study_population_tables_2020:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_tables --index-date-range "2020-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing
-    outputs:
-      highly_sensitive:
-        cohort: output/measures/tables/input_tables_2020-01-01.csv
-  generate_study_population_tables_2021:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_tables --index-date-range "2021-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing
-    outputs:
-      highly_sensitive:
-        cohort: output/measures/tables/input_tables_2021-01-01.csv
         
   # Running analysis scripts
   model_checks_dm:
