@@ -1,0 +1,65 @@
+
+. cap mkdir ./output/time_series
+
+. 
+. * Mortality outcomes - DM outcomes not currently included
+. * cvd, resp, mh, mi, stroke, heart failure, vte, asthma, copd
+. foreach c in cvd resp mh mi stroke heart_failure vte asthma copd {
+  2.         import delimited "./output/measures/mortality/measure_`c'_mortalit
+> y_ethnic_rate.csv", numericcols(4) clear      //get csv
+  3.         gen temp_date=date(date, "DM20Y")
+  4.         format temp_date %td
+  5.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+  6.         gen quarter=qofd(temp_date)
+  7.         *format month %tm
+.         drop temp_date
+  8.         *Set time series
+.         tsset ethnicity quarter 
+  9.         *Kernel density plots to check for normality and extreme values
+.         kdensity rate if ethnicity==1, normal name(kd_ethnicity_1_`c')
+ 10.         kdensity rate if ethnicity==2, normal name(kd_ethnicity_2_`c')
+ 11.     kdensity rate if ethnicity==3, normal name(kd_ethnicity_3_`c')
+ 12.     kdensity rate if ethnicity==4, normal name(kd_ethnicity_4_`c')
+ 13.     kdensity rate if ethnicity==5, normal name(kd_ethnicity_5_`c')
+ 14.         *Autoregression plots by ethnicity
+.     ac rate if ethnicity==1, name(ac_ethnicity_1_`c')
+ 15.         ac rate if ethnicity==2, name(ac_ethnicity_2_`c')
+ 16.     ac rate if ethnicity==3, name(ac_ethnicity_3_`c')
+ 17.     ac rate if ethnicity==4, name(ac_ethnicity_4_`c')
+ 18.     ac rate if ethnicity==5, name(ac_ethnicity_5_`c')
+ 19.         /*Partial autoregression plots by ethnicity
+>         pac rate if ethnicity==1, name(pac_ethnicity_1_`c')
+>         pac rate if ethnicity==2, name(pac_ethnicity_2_`c')
+>     pac rate if ethnicity==3, name(pac_ethnicity_3_`c')
+>     pac rate if ethnicity==4, name(pac_ethnicity_4_`c')
+>     pac rate if ethnicity==5, name(pac_ethnicity_5_`c')*/
+.         *Combine Graphs
+.         graph combine kd_ethnicity_1_`c' kd_ethnicity_2_`c' kd_ethnicity_3_`c
+> ' kd_ethnicity_4_`c' kd_ethnicity_5_`c', altshrink
+ 20.         graph export ./output/time_series/checks_kd_`c'_ethnicity.svg, as(
+> svg) replace
+ 21.         graph combine ac_ethnicity_1_`c' ac_ethnicity_2_`c' ac_ethnicity_3
+> _`c' ac_ethnicity_4_`c' ac_ethnicity_5_`c', altshrink
+ 22.         graph export ./output/time_series/checks_ac_`c'_ethnicity.svg, as(
+> svg) replace
+ 23.     /*graph combine pac_ethnicity*', altshrink
+>         graph export .output/graphs/checks_pac_`c'_ethnicity.svg, as(svg) rep
+> lace*/
+.         }
+(5 vars, 235 obs)
+(235 missing values generated)
+(235 missing values generated)
+       panel variable:  ethnicity (weakly balanced)
+        time variable:  quarter, . to .
+                delta:  1 unit
+variable rate not found
+r(111);
+
+end of do-file
+r(111);
+
+end of do-file
+
+r(111);
+
+

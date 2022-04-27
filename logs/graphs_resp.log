@@ -592,9 +592,9 @@ Sorted by: dateA
 .     drop quarter
 
 .     * Outputing file 
-.     export delimited using ./output/measures/resp/measure_asthma_exacerbation
-> _ethnicity_rate_collapse.csv 
-file ./output/measures/resp/measure_asthma_exacerbation_ethnicity_rate_collapse
+.     export delimited using ./output/measures/resp/collapse_measure_asthma_exa
+> cerbation_ethnicity_rate.csv 
+file ./output/measures/resp/collapse_measure_asthma_exacerbation_ethnicity_rate
 > .csv saved
 
 .     * reshape dataset so columns with rates for each ethnicity 
@@ -677,7 +677,7 @@ Sorted by: dateA
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.Ji6YAgnpj9", write text replace
+. . file open output using "/tmp/tmp.KBQOl7BWS8", write text replace
 
 . . file write output "success" 
 

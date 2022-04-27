@@ -26,7 +26,7 @@ actions:
 
   # Generates study population for mortality
   generate_study_population_mortality:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_mortality --index-date-range "2019-02-01 to 2022-01-31 by month" --output-dir=output/measures/mortality --output-format=csv --skip-existing
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_mortality --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures/mortality --output-format=csv --skip-existing
     outputs:
       highly_sensitive:
         cohort: output/measures/mortality/input_mortality_*.csv
@@ -121,5 +121,69 @@ actions:
       highly_sensitive:
         output: output/measures/mortality/collapse_measure_*
 
-   
+  # Running study definition for baseline tables
+  generate_study_population_tables_2019:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_tables --index-date-range "2019-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/tables/input_tables_2019-01-01.csv
+  generate_study_population_tables_2020:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_tables --index-date-range "2020-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/tables/input_tables_2020-01-01.csv
+  generate_study_population_tables_2021:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_tables --index-date-range "2021-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/tables/input_tables_2021-01-01.csv
+        
+  # Running analysis scripts
+  model_checks_dm:
+    run: stata-mp:latest analysis/model_check_dm.do
+    needs: [calculate_measures_dm]
+    outputs:
+      moderately_sensitive: 
+        log: logs/model_checks_dm.log
+        output: output/time_series/dm_*.eps
+
+  model_checks_resp:
+    run: stata-mp:latest analysis/model_check_resp.do
+    needs: [calculate_measures_resp, graphs_resp]
+    outputs:
+      moderately_sensitive: 
+        log: logs/model_checks_resp.log
+        output: output/time_series/resp_*.eps
+
+  model_checks_cvd:
+    run: stata-mp:latest analysis/model_check_cvd.do
+    needs: [calculate_measures]
+    outputs:
+      moderately_sensitive: 
+        log: logs/model_checks_cvd.log
+        output: output/time_series/cvd_*.eps
+
+  model_checks_mh:
+    run: stata-mp:latest analysis/model_check_mh.do
+    needs: [calculate_measures]
+    outputs:
+      moderately_sensitive: 
+        log: logs/model_checks_mh.log
+        output: output/time_series/mh_*.eps
+
+  model_checks_mortality:
+    run: stata-mp:latest analysis/model_check_mortality.do
+    needs: [calculate_measures_mortality, graphs_mortality]
+    outputs:
+      moderately_sensitive: 
+        log: logs/model_checks_mortality.log
+        output: output/time_series/mortality_*.eps
+  
+  time_series_resp:
+    run: stata-mp:latest analysis/time_series_resp.do
+    needs: [calculate_measures_resp]
+    outputs:
+      moderately_sensitive:
+        log: logs/tsreg.log
+        output: output/time_series/tsreg_tables.xlsx
 

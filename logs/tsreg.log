@@ -1,0 +1,126 @@
+
+. cap mkdir ./output/time_series
+
+. 
+. foreach x in asthma copd {
+  2.         import delimited ./output/measures/resp/measure_`x'_exacerbation_e
+> thnicity_rate.csv, numericcols(4) clear       //get csv
+  3.         putexcel set ./output/time_series/tsreg_tables, sheet(`x'_ethnicit
+> y) modify                     //open xlsx
+  4.         *Format time
+.         gen temp_date=date(date, "YMD")
+  5.         format temp_date %td
+  6.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+  7.         gen month=mofd(temp_date)
+  8.         format month %tm
+  9.         *Define Seasons
+.         gen season=4
+ 10.         replace season = 1 if inrange(month(temp_date),3,5)
+ 11.         replace season = 2 if inrange(month(temp_date),6,8)
+ 12.         replace season = 3 if inrange(month(temp_date),9,11)
+ 13.         label define seasonlab 1 "Spring" 2 "Summer" 3 "Autumn" 4 "Winter"
+ 14.         label values season seasonlab
+ 15.         drop temp_date
+ 16.         *Value to rate per 100k
+.         gen rate = value*100000
+ 17.         *Run time series with EWH-robust SE and 1 Lag
+.         tsset ethnicity month
+ 18.         newey rate i.ethnicity##i.postcovid i.season, lag(1) force
+ 19.         *Export results
+.         putexcel E1=("Number of obs") G1=(e(N))
+ 20.         putexcel E2=("F") G2=(e(F))
+ 21.         putexcel E3=("Prob > F") G3=(Ftail(e(df_m), e(df_r), e(F)))
+ 22.         matrix a = r(table)'
+ 23.         putexcel A6 = matrix(a), rownames
+ 24.         putexcel save
+ 25. 
+. }
+(5 vars, 20 obs)
+(15 real changes made)
+(5 real changes made)
+(0 real changes made)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,         9) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |  -4060.152          .        .       .            .           .
+          3  |   2625.477          .        .       .            .           .
+          4  |  -5274.727          .        .       .            .           .
+          5  |   1203.008          .        .       .            .           .
+             |
+ 1.postcovid |  -10028.27          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |    22192.3          .        .       .            .           .
+        3 1  |   21522.08          .        .       .            .           .
+        4 1  |    14897.5          .        .       .            .           .
+        5 1  |   428.7461          .        .       .            .           .
+             |
+      season |
+     Summer  |   576.8715          .        .       .            .           .
+       _cons |   51428.57          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+(5 vars, 20 obs)
+(15 real changes made)
+(5 real changes made)
+(0 real changes made)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,         9) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |  -27272.73          .        .       .            .           .
+          3  |   109090.9          .        .       .            .           .
+          4  |  -30909.09          .        .       .            .           .
+          5  |   75757.56          .        .       .            .           .
+             |
+ 1.postcovid |  -1214.632          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |   37037.04          .        .       .            .           .
+        3 1  |  -119839.4          .        .       .            .           .
+        4 1  |   63148.15          .        .       .            .           .
+        5 1  |  -44564.68          .        .       .            .           .
+             |
+      season |
+     Summer  |   1623.684          .        .       .            .           .
+       _cons |   90909.09          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+file ./output/time_series/tsreg_tables.xlsx saved
+
+. 
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/tsreg.log
+  log type:  text
+ closed on:  14 Apr 2022, 08:05:53
+-------------------------------------------------------------------------------
