@@ -48,6 +48,14 @@ actions:
       highly_sensitive:
         cohort: output/measures/tables/input_tables_2021-01-01.csv
   
+  # Generates baseline tables
+  create_baseline_tables:
+    run: stata-mp:latest analysis/baseline_tables.do
+    needs: [generate_study_population_tables_2019, generate_study_population_tables_2020, generate_study_population_tables_2021]
+    outputs:
+      highly_sensitive:
+        output: output/measures/tables/baseline_table_*.xlsx
+
   # Generates summary measures for CV and mental health outcomes
   calculate_measures:
     run: cohortextractor:latest  generate_measures --study-definition study_definition --output-dir=output/measures
