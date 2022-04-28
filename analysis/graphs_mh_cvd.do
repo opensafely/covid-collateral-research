@@ -8,34 +8,32 @@ Description:    Generates line graphs of rates of each outcome and strata per mo
 cap log using ./logs/graphs_mh_cvd.log, replace
 
 * Generates graphs for clinical monitoring measures
-local groups "cvd mh"
-forvalues i=1/2 {
-    local this_group :word `i' of `groups'
+foreach this_group in cvd mh {
+    foreach strata in ethnicity imd {
 * Ethnicity
-    clear 
-    import delimited using ./output/measures/measure_systolic_bp_`this_group'_ethnicity_rate.csv, numericcols(4)
-    * Generate rate per 100,000
-    gen rate = value*100000 
-    * Format date
-    gen dateA = date(date, "YMD")
-    drop date
-    format dateA %dD/M/Y
-    tab dateA 
-    * reshape dataset so columns with rates for each ethnicity 
-    reshape wide value rate `this_group'_group systolic_bp, i(dateA) j(ethnicity)
-    describe
-    * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+        import delimited using ./output/measures/measure_systolic_bp_`this_group'_ethnicity_rate.csv, numericcols(4) clear
+        * Generate rate per 100,000
+        gen rate = value*100000 
+        * Format date
+        gen dateA = date(date, "YMD")
+        drop date
+        format dateA %dD/M/Y
+        tab dateA 
+        * reshape dataset so columns with rates for each ethnicity 
+        reshape wide value rate `this_group'_group systolic_bp, i(dateA) j(ethnicity)
+        describe
+        * Labelling ethnicity variables
+        label var rate1 "Ethnicity - White"
+        label var rate2 "Ethnicity - Mixed"
+        label var rate3 "Ethnicity - Asian"
+        label var rate4 "Ethnicity - Black"
+        label var rate5 "Ethnicity - Other"
 
-    * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+        * Generate line graph
+        graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
+        ytitle("Rate per 100,000") 
 
-    graph export ./output/line_bp_`this_group'_ethnic.eps, as(eps) replace
+        graph export ./output/line_bp_`this_group'_ethnic.eps, as(eps) replace
     * IMD
     clear 
     import delimited using ./output/measures/measure_systolic_bp_`this_group'_imd_rate.csv, numericcols(4)

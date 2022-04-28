@@ -124,7 +124,7 @@ actions:
   # Running analysis scripts
   model_checks_dm:
     run: stata-mp:latest analysis/model_check_dm.do
-    needs: [calculate_measures_dm]
+    needs: [calculate_measures_dm, graphs_dm]
     outputs:
       moderately_sensitive: 
         log: logs/model_checks_dm.log
@@ -167,6 +167,13 @@ actions:
     needs: [calculate_measures_resp]
     outputs:
       moderately_sensitive:
-        log: logs/tsreg.log
+        log: logs/tsreg_resp.log
         output: output/time_series/tsreg_tables.xlsx
 
+  time_series_dm:
+    run: stata-mp:latest analysis/time_series_dm.do
+    needs: [calculate_measures_dm, graphs_dm]
+    outputs:
+      moderately_sensitive:
+        log: logs/tsreg_dm.log
+        output: output/time_series/tsreg_tables_dm.xlsx

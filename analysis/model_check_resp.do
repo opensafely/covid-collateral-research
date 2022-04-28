@@ -53,8 +53,8 @@ foreach var in asthma_monitoring copd_monitoring copd_exacerbation {
 		/*
 		graph combine pac_`strata'_1 pac_`strata'_2 pac_`strata'_3 pac_`strata'_4 pac_`strata'_5, altshrink
 		graph export ./output/time_series/resp_pac_`var'_`strata'.eps, as(eps) replace*/
-		}
-	}	
+	}
+}	
 
 * Asthma exacerbation - IMD
 import delimited "./output/measures/resp/measure_asthma_exacerbation_imd_rate.csv", numericcols(4) clear	//get csv
