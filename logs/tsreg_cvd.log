@@ -1,0 +1,804 @@
+
+. cap mkdir ./output/time_series
+
+. * Time series analysis CVD outcomes
+. * Clinical monitoring: BP measurement
+. * Hospital admissions: any code and primary code for MI, stroke, heart failur
+> e and vte
+. local a "systolic_bp_cvd mi_admission stroke_admission heart_failure_admissio
+> n vte_admission mi_primary_admission stroke_primary_admission heart_failure_p
+> rimary_admission vte_primary_admission"
+
+. local z "bp_cvd mi_admit stroke_admit hf_admit vte_admit mi_pri stroke_pri hf
+> _pri vte_pri"
+
+. forvalues i=1/9 {
+  2.     local c: word `i' of `a' 
+  3.     local e: word `i' of `z'
+  4.         local b "ethnicity imd"
+  5.         forvalues i=1/2 {
+  6.         local d: word `i' of `b'
+  7.                 import delimited "./output/measures/measure_`c'_`d'_rate.c
+> sv", numericcols(4) clear     //get csv
+  8.         putexcel set ./output/time_series/tsreg_tables_cvd, sheet(`e'_`d')
+>  modify                       //open xlsx
+  9.         *Format time
+.         gen temp_date=date(date, "YMD")
+ 10.         format temp_date %td
+ 11.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+ 12.         gen month=mofd(temp_date)
+ 13.         format month %tm
+ 14.         *Define Seasons
+.         gen season=4
+ 15.         replace season = 1 if inrange(month(temp_date),3,5)
+ 16.         replace season = 2 if inrange(month(temp_date),6,8)
+ 17.         replace season = 3 if inrange(month(temp_date),9,11)
+ 18.         label define seasonlab 1 "Spring" 2 "Summer" 3 "Autumn" 4 "Winter"
+ 19.         label values season seasonlab
+ 20.         drop temp_date
+ 21.         *Value to rate per 100k
+.         gen rate = value*100000
+ 22.         *Run time series with EWH-robust SE and 1 Lag
+.         tsset `d' month
+ 23.         newey rate i.`d'##i.postcovid i.season, lag(1) force
+ 24.         *Export results
+.         putexcel E1=("Number of obs") G1=(e(N))
+ 25.         putexcel E2=("F") G2=(e(F))
+ 26.         putexcel E3=("Prob > F") G3=(Ftail(e(df_m), e(df_r), e(F)))
+ 27.         matrix a = r(table)'
+ 28.         putexcel A6 = matrix(a), rownames
+ 29.         putexcel save
+ 30.         }
+ 31.     }
+(5 vars, 20 obs)
+(15 real changes made)
+(5 real changes made)
+(0 real changes made)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,         9) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |  -138333.3          .        .       .            .           .
+          3  |  -48076.92          .        .       .            .           .
+          4  |   91666.69          .        .       .            .           .
+          5  |     112500          .        .       .            .           .
+             |
+ 1.postcovid |  -80303.41          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |   156840.8          .        .       .            .           .
+        3 1  |   99143.27          .        .       .            .           .
+        4 1  |   78566.32          .        .       .            .           .
+        5 1  |   9201.255          .        .       .            .           .
+             |
+      season |
+     Summer  |  -7288.791          .        .       .            .           .
+       _cons |     225000          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 24 obs)
+(18 real changes made)
+(6 real changes made)
+(0 real changes made)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         24
+maximum lag: 1                                  F(  0,        11) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         imd |
+          1  |   83333.34          .        .       .            .           .
+          2  |   95833.34          .        .       .            .           .
+          3  |   43333.33          .        .       .            .           .
+          4  |  -30303.02          .        .       .            .           .
+          5  |  -4166.656          .        .       .            .           .
+             |
+ 1.postcovid |  -34451.86          .        .       .            .           .
+             |
+         imd#|
+   postcovid |
+        1 1  |   86678.88          .        .       .            .           .
+        2 1  |  -67718.87          .        .       .            .           .
+        3 1  |   18427.13          .        .       .            .           .
+        4 1  |   133131.3          .        .       .            .           .
+        5 1  |   221160.1          .        .       .            .           .
+             |
+      season |
+     Summer  |   70022.27          .        .       .            .           .
+       _cons |   166666.7          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 20 obs)
+(15 real changes made)
+(5 real changes made)
+(0 real changes made)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,         9) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |   113.0713          .        .       .            .           .
+          3  |   1360.843          .        .       .            .           .
+          4  |   3428.402          .        .       .            .           .
+          5  |    7921.93          .        .       .            .           .
+             |
+ 1.postcovid |    3186.86          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |  -875.3057          .        .       .            .           .
+        3 1  |  -3810.046          .        .       .            .           .
+        4 1  |  -3177.592          .        .       .            .           .
+        5 1  |  -8152.629          .        .       .            .           .
+             |
+      season |
+     Summer  |   -33.3603          .        .       .            .           .
+       _cons |   7462.687          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 24 obs)
+(18 real changes made)
+(6 real changes made)
+(0 real changes made)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         24
+maximum lag: 1                                  F(  0,        11) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         imd |
+          1  |   998.1846          .        .       .            .           .
+          2  |   3973.013          .        .       .            .           .
+          3  |   3466.143          .        .       .            .           .
+          4  |   3741.746          .        .       .            .           .
+          5  |   4333.395          .        .       .            .           .
+             |
+ 1.postcovid |   3142.851          .        .       .            .           .
+             |
+         imd#|
+   postcovid |
+        1 1  |  -3299.926          .        .       .            .           .
+        2 1  |  -3295.744          .        .       .            .           .
+        3 1  |  -2435.744          .        .       .            .           .
+        4 1  |  -4026.493          .        .       .            .           .
+        5 1  |  -3403.395          .        .       .            .           .
+             |
+      season |
+     Summer  |   37.63481          .        .       .            .           .
+       _cons |   6896.552          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 20 obs)
+(15 real changes made)
+(5 real changes made)
+(0 real changes made)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,         9) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |   2208.654          .        .       .            .           .
+          3  |   -7535.85          .        .       .            .           .
+          4  |  -5507.117          .        .       .            .           .
+          5  |  -1155.759          .        .       .            .           .
+             |
+ 1.postcovid |  -2324.576          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |  -2374.986          .        .       .            .           .
+        3 1  |   6261.286          .        .       .            .           .
+        4 1  |   6547.196          .        .       .            .           .
+        5 1  |    967.776          .        .       .            .           .
+             |
+      season |
+     Summer  |   74.64844          .        .       .            .           .
+       _cons |   12437.81          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 24 obs)
+(18 real changes made)
+(6 real changes made)
+(0 real changes made)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         24
+maximum lag: 1                                  F(  0,        11) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         imd |
+          1  |  -5372.051          .        .       .            .           .
+          2  |  -2923.539          .        .       .            .           .
+          3  |  -3948.544          .        .       .            .           .
+          4  |  -6346.295          .        .       .            .           .
+          5  |  -1493.638          .        .       .            .           .
+             |
+ 1.postcovid |  -4363.814          .        .       .            .           .
+             |
+         imd#|
+   postcovid |
+        1 1  |   4896.165          .        .       .            .           .
+        2 1  |   4914.899          .        .       .            .           .
+        3 1  |   2898.182          .        .       .            .           .
+        4 1  |   8451.947          .        .       .            .           .
+        5 1  |   3243.478          .        .       .            .           .
+             |
+      season |
+     Summer  |    -632.96          .        .       .            .           .
+       _cons |    13793.1          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 20 obs)
+(15 real changes made)
+(5 real changes made)
+(0 real changes made)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,         9) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |  -4341.928          .        .       .            .           .
+          3  |  -5099.503          .        .       .            .           .
+          4  |  -3531.847          .        .       .            .           .
+          5  |  -4202.067          .        .       .            .           .
+             |
+ 1.postcovid |   -4361.22          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |   3463.683          .        .       .            .           .
+        3 1  |   6907.215          .        .       .            .           .
+        4 1  |   4114.481          .        .       .            .           .
+        5 1  |   7153.571          .        .       .            .           .
+             |
+      season |
+     Summer  |   36.20283          .        .       .            .           .
+       _cons |   13432.84          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 24 obs)
+(18 real changes made)
+(6 real changes made)
+(0 real changes made)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         24
+maximum lag: 1                                  F(  0,        11) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         imd |
+          1  |   7749.547          .        .       .            .           .
+          2  |   10775.86          .        .       .            .           .
+          3  |   5529.748          .        .       .            .           .
+          4  |   9446.075          .        .       .            .           .
+          5  |   10575.33          .        .       .            .           .
+             |
+ 1.postcovid |   8390.372          .        .       .            .           .
+             |
+         imd#|
+   postcovid |
+        1 1  |  -8105.335          .        .       .            .           .
+        2 1  |  -10857.05          .        .       .            .           .
+        3 1  |  -6998.859          .        .       .            .           .
+        4 1  |  -10496.11          .        .       .            .           .
+        5 1  |  -8547.141          .        .       .            .           .
+             |
+      season |
+     Summer  |   141.2602          .        .       .            .           .
+       _cons |   1724.138          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 20 obs)
+(15 real changes made)
+(5 real changes made)
+(0 real changes made)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,         9) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |   5163.575          .        .       .            .           .
+          3  |   3811.823          .        .       .            .           .
+          4  |   458.1055          .        .       .            .           .
+          5  |   3306.544          .        .       .            .           .
+             |
+ 1.postcovid |   655.1505          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |  -4528.674          .        .       .            .           .
+        3 1  |  -374.9875          .        .       .            .           .
+        4 1  |   1650.901          .        .       .            .           .
+        5 1  |  -195.4878          .        .       .            .           .
+             |
+      season |
+     Summer  |  -47.70488          .        .       .            .           .
+       _cons |   7462.687          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 24 obs)
+(18 real changes made)
+(6 real changes made)
+(0 real changes made)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         24
+maximum lag: 1                                  F(  0,        11) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         imd |
+          1  |  -725.9531          .        .       .            .           .
+          2  |   4966.267          .        .       .            .           .
+          3  |    2260.14          .        .       .            .           .
+          4  |   2017.608          .        .       .            .           .
+          5  |  -1134.059          .        .       .            .           .
+             |
+ 1.postcovid |   1145.982          .        .       .            .           .
+             |
+         imd#|
+   postcovid |
+        1 1  |   865.7965          .        .       .            .           .
+        2 1  |  -3865.889          .        .       .            .           .
+        3 1  |  -3891.427          .        .       .            .           .
+        4 1  |  -1912.857          .        .       .            .           .
+        5 1  |   3216.291          .        .       .            .           .
+             |
+      season |
+     Summer  |  -175.3407          .        .       .            .           .
+       _cons |   8620.689          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 20 obs)
+(15 real changes made)
+(5 real changes made)
+(0 real changes made)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,         9) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |   1680.987          .        .       .            .           .
+          3  |  -3592.333          .        .       .            .           .
+          4  |  -2034.383          .        .       .            .           .
+          5  |  -688.8643          .        .       .            .           .
+             |
+ 1.postcovid |  -3042.888          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |    510.731          .        .       .            .           .
+        3 1  |    6515.59          .        .       .            .           .
+        4 1  |    3470.27          .        .       .            .           .
+        5 1  |   4446.023          .        .       .            .           .
+             |
+      season |
+     Summer  |   118.7523          .        .       .            .           .
+       _cons |   10945.27          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 24 obs)
+(18 real changes made)
+(6 real changes made)
+(0 real changes made)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         24
+maximum lag: 1                                  F(  0,        11) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         imd |
+          1  |   2196.007          .        .       .            .           .
+          2  |    5697.15          .        .       .            .           .
+          3  |   1045.202          .        .       .            .           .
+          4  |   10785.03          .        .       .            .           .
+          5  |   6057.532          .        .       .            .           .
+             |
+ 1.postcovid |   4445.723          .        .       .            .           .
+             |
+         imd#|
+   postcovid |
+        1 1  |  -1681.568          .        .       .            .           .
+        2 1  |  -4718.465          .        .       .            .           .
+        3 1  |  -2507.418          .        .       .            .           .
+        4 1  |  -10207.35          .        .       .            .           .
+        5 1  |  -5914.725          .        .       .            .           .
+             |
+      season |
+     Summer  |   314.5893          .        .       .            .           .
+       _cons |   5172.414          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 20 obs)
+(15 real changes made)
+(5 real changes made)
+(0 real changes made)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,         9) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |  -376.9028          .        .       .            .           .
+          3  |   365.8184          .        .       .            .           .
+          4  |   2433.378          .        .       .            .           .
+          5  |   5388.443          .        .       .            .           .
+             |
+ 1.postcovid |   1151.943          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |    520.585          .        .       .            .           .
+        3 1  |   44.12874          .        .       .            .           .
+        4 1  |  -1968.284          .        .       .            .           .
+        5 1  |  -4419.266          .        .       .            .           .
+             |
+      season |
+     Summer  |   39.62124          .        .       .            .           .
+       _cons |   8457.711          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 24 obs)
+(18 real changes made)
+(6 real changes made)
+(0 real changes made)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         24
+maximum lag: 1                                  F(  0,        11) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         imd |
+          1  |  -2450.092          .        .       .            .           .
+          2  |   2155.172          .        .       .            .           .
+          3  |    536.001          .        .       .            .           .
+          4  |  -770.3594          .        .       .            .           .
+          5  |  -1253.919          .        .       .            .           .
+             |
+ 1.postcovid |   2761.179          .        .       .            .           .
+             |
+         imd#|
+   postcovid |
+        1 1  |    -690.84          .        .       .            .           .
+        2 1  |  -5819.308          .        .       .            .           .
+        3 1  |  -5642.782          .        .       .            .           .
+        4 1  |  -1629.785          .        .       .            .           .
+        5 1  |   688.8294          .        .       .            .           .
+             |
+      season |
+     Summer  |  -763.5229          .        .       .            .           .
+       _cons |   10344.83          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 20 obs)
+(15 real changes made)
+(5 real changes made)
+(0 real changes made)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,         9) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |   625.6597          .        .       .            .           .
+          3  |     4784.9          .        .       .            .           .
+          4  |    3920.99          .        .       .            .           .
+          5  |   757.7505          .        .       .            .           .
+             |
+ 1.postcovid |   111.8103          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |   2692.243          .        .       .            .           .
+        3 1  |  -3545.848          .        .       .            .           .
+        4 1  |  -2329.855          .        .       .            .           .
+        5 1  |   2522.396          .        .       .            .           .
+             |
+      season |
+     Summer  |   104.9335          .        .       .            .           .
+       _cons |   7960.199          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 24 obs)
+(18 real changes made)
+(6 real changes made)
+(0 real changes made)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         24
+maximum lag: 1                                  F(  0,        11) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         imd |
+          1  |  -6569.872          .        .       .            .           .
+          2  |  -7365.067          .        .       .            .           .
+          3  |  -4118.277          .        .       .            .           .
+          4  |  -5942.772          .        .       .            .           .
+          5  |  -5356.813          .        .       .            .           .
+             |
+ 1.postcovid |   -5986.51          .        .       .            .           .
+             |
+         imd#|
+   postcovid |
+        1 1  |   6364.964          .        .       .            .           .
+        2 1  |   9310.884          .        .       .            .           .
+        3 1  |   5001.412          .        .       .            .           .
+        4 1  |   5534.627          .        .       .            .           .
+        5 1  |   6431.843          .        .       .            .           .
+             |
+      season |
+     Summer  |  -235.0653          .        .       .            .           .
+       _cons |   15517.24          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 20 obs)
+(15 real changes made)
+(5 real changes made)
+(0 real changes made)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         20
+maximum lag: 1                                  F(  0,         9) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   ethnicity |
+          2  |  -1861.903          .        .       .            .           .
+          3  |  -153.6436          .        .       .            .           .
+          4  |   443.3271          .        .       .            .           .
+          5  |  -704.1719          .        .       .            .           .
+             |
+ 1.postcovid |  -1838.661          .        .       .            .           .
+             |
+   ethnicity#|
+   postcovid |
+        2 1  |   2918.409          .        .       .            .           .
+        3 1  |   1238.308          .        .       .            .           .
+        4 1  |   3420.473          .        .       .            .           .
+        5 1  |   1551.115          .        .       .            .           .
+             |
+      season |
+     Summer  |   9.741846          .        .       .            .           .
+       _cons |   10447.76          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+(5 vars, 24 obs)
+(18 real changes made)
+(6 real changes made)
+(0 real changes made)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2020m3 to 2020m6
+                delta:  1 month
+Warning:  variance matrix is nonsymmetric or highly singular
+
+Regression with Newey-West standard errors      Number of obs     =         24
+maximum lag: 1                                  F(  0,        11) =          .
+                                                Prob > F          =          .
+
+------------------------------------------------------------------------------
+             |             Newey-West
+        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         imd |
+          1  |  -4174.229          .        .       .            .           .
+          2  |  -3373.312          .        .       .            .           .
+          3  |  -151.8662          .        .       .            .           .
+          4  |   2824.652          .        .       .            .           .
+          5  |  -6186.612          .        .       .            .           .
+             |
+ 1.postcovid |  -3541.669          .        .       .            .           .
+             |
+         imd#|
+   postcovid |
+        1 1  |   7483.308          .        .       .            .           .
+        2 1  |   5107.361          .        .       .            .           .
+        3 1  |   525.8133          .        .       .            .           .
+        4 1  |   442.0534          .        .       .            .           .
+        5 1  |   5286.625          .        .       .            .           .
+             |
+      season |
+     Summer  |  -339.2598          .        .       .            .           .
+       _cons |   12068.96          .        .       .            .           .
+------------------------------------------------------------------------------
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+file ./output/time_series/tsreg_tables_cvd.xlsx saved
+
+. 
+end of do-file
+
+. . file open output using "/tmp/tmp.xPoeethYio", write text replace
+
+. . file write output "success" 
+
+. . file close output
+
+. 
+end of do-file
+
+

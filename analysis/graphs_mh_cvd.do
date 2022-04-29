@@ -59,7 +59,7 @@ foreach this_group in cvd mh {
     ytitle("Rate per 100,000") 
 
     graph export ./output/line_bp_`this_group'_imd.eps, as(eps) replace
-
+    }
 }
 * Hospital admission graphs
 local groups "mi stroke heart_failure vte depression anxiety smi self_harm eating_dis ocd"

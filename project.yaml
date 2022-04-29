@@ -125,9 +125,9 @@ actions:
     outputs: 
       moderately_sensitive:
         log: logs/graphs_mortality.log
-        output: output/line_mortality_*.eps
+        output: output/graphs/mortality/line_mortality_*.eps
       highly_sensitive:
-        output: output/measures/mortality/collapse_measure_*
+        output: output/measures/mortality/collapsed/collapse_measure_*
         
   # Running analysis scripts
   model_checks_dm:
@@ -148,7 +148,7 @@ actions:
 
   model_checks_cvd:
     run: stata-mp:latest analysis/model_check_cvd.do
-    needs: [calculate_measures]
+    needs: [calculate_measures, graphs_mh_cvd]
     outputs:
       moderately_sensitive: 
         log: logs/model_checks_cvd.log
@@ -156,7 +156,7 @@ actions:
 
   model_checks_mh:
     run: stata-mp:latest analysis/model_check_mh.do
-    needs: [calculate_measures]
+    needs: [calculate_measures, graphs_mh_cvd]
     outputs:
       moderately_sensitive: 
         log: logs/model_checks_mh.log
@@ -176,7 +176,7 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_resp.log
-        output: output/time_series/tsreg_tables.xlsx
+        output: output/time_series/tsreg_tables_resp.xlsx
 
   time_series_dm:
     run: stata-mp:latest analysis/time_series_dm.do
@@ -185,3 +185,19 @@ actions:
       moderately_sensitive:
         log: logs/tsreg_dm.log
         output: output/time_series/tsreg_tables_dm.xlsx
+
+  time_series_cvd:
+    run: stata-mp:latest analysis/time_series_cvd.do
+    needs: [calculate_measures, graphs_mh_cvd]
+    outputs:
+      moderately_sensitive:
+        log: logs/tsreg_cvd.log
+        output: output/time_series/tsreg_tables_cvd.xlsx
+
+  time_series_mh:
+    run: stata-mp:latest analysis/time_series_mh.do
+    needs: [calculate_measures, graphs_mh_cvd]
+    outputs:
+      moderately_sensitive:
+        log: logs/tsreg_mh.log
+        output: output/time_series/tsreg_tables_mh.xlsx
