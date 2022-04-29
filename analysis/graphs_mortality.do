@@ -31,15 +31,16 @@ forvalues i=1/9 {
     reshape wide value rate `b'_mortality population, i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
 
     graph export ./output/graphs/mortality/line_mortality_`b'_ethnic.eps, as(eps) replace
     * IMD
@@ -68,8 +69,9 @@ forvalues i=1/9 {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) angle(0)) ///
+    yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
     * save graph
     graph export ./output/graphs/mortality/line_mortality_`b'_imd.eps, as(eps) replace
 }
