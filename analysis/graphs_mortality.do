@@ -27,7 +27,7 @@ forvalues i=1/9 {
     format quarter %tq
     collapse (sum) value rate population `b'_mortality (min) dateA,  by(quarter ethnicity)
     * Outputing file 
-    export delimited using "./output/measures/mortality/collapsed/collapse_measure_`b'_mortality_ethnic_rate.csv", replace 
+    export delimited using "./output//collapsed/collapse_measure_`b'_mortality_ethnic_rate.csv", replace 
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `b'_mortality population, i(dateA) j(ethnicity)
     describe
@@ -58,7 +58,7 @@ forvalues i=1/9 {
     gen quarter = qofd(dateA)
     collapse (sum) value rate population `b'_mortality (min) dateA,  by(quarter imd)
     * Outputing file 
-    export delimited using "./output/measures/mortality/collapsed/collapse_measure_`b'_mortality_imd_rate.csv", replace 
+    export delimited using "./output/collapsed/collapse_measure_`b'_mortality_imd_rate.csv", replace 
     * reshape dataset so columns with rates for each level of IMD
     reshape wide value rate `b'_mortality population, i(dateA) j(imd)
     describe

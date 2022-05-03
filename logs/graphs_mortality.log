@@ -1,5 +1,5 @@
 
-. cap mkdir ./output/measures/mortality/collapsed
+. cap mkdir ./output/collapsed
 
 . cap mkdir ./output/graphs
 
@@ -25,8 +25,8 @@
  11.     collapse (sum) value rate population `b'_mortality (min) dateA,  by(qu
 > arter ethnicity)
  12.     * Outputing file 
-.     export delimited using "./output/measures/mortality/collapsed/collapse_me
-> asure_`b'_mortality_ethnic_rate.csv", replace 
+.     export delimited using "./output//collapsed/collapse_measure_`b'_mortalit
+> y_ethnic_rate.csv", replace 
  13.     * reshape dataset so columns with rates for each ethnicity 
 .     reshape wide value rate `b'_mortality population, i(dateA) j(ethnicity)
  14.     describe
@@ -63,8 +63,8 @@
  30.     collapse (sum) value rate population `b'_mortality (min) dateA,  by(qu
 > arter imd)
  31.     * Outputing file 
-.     export delimited using "./output/measures/mortality/collapsed/collapse_me
-> asure_`b'_mortality_imd_rate.csv", replace 
+.     export delimited using "./output/collapsed/collapse_measure_`b'_mortality
+> _imd_rate.csv", replace 
  32.     * reshape dataset so columns with rates for each level of IMD
 .     reshape wide value rate `b'_mortality population, i(dateA) j(imd)
  33.     describe
@@ -87,10 +87,9 @@
 > e
  41. }
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_resp_mortali
-> ty_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_resp_mortality_ethn
-> ic_rate.csv saved
+(note: file ./output//collapsed/collapse_measure_resp_mortality_ethnic_rate.csv
+>  not found)
+file ./output//collapsed/collapse_measure_resp_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -194,10 +193,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-(note: file ./output/measures/mortality/collapsed/collapse_measure_resp_mortali
-> ty_imd_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_resp_mortality_imd_
-> rate.csv saved
+(note: file ./output/collapsed/collapse_measure_resp_mortality_imd_rate.csv not
+>  found)
+file ./output/collapsed/collapse_measure_resp_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -253,10 +251,10 @@ Sorted by: dateA
 (note: file ./output/graphs/line_mortality_resp_imd.svg not found)
 (file ./output/graphs/line_mortality_resp_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_asthma_morta
-> lity_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_asthma_mortality_et
-> hnic_rate.csv saved
+(note: file ./output//collapsed/collapse_measure_asthma_mortality_ethnic_rate.c
+> sv not found)
+file ./output//collapsed/collapse_measure_asthma_mortality_ethnic_rate.csv save
+> d
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -360,10 +358,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-(note: file ./output/measures/mortality/collapsed/collapse_measure_asthma_morta
-> lity_imd_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_asthma_mortality_im
-> d_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_asthma_mortality_imd_rate.csv n
+> ot found)
+file ./output/collapsed/collapse_measure_asthma_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -419,10 +416,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_mortality_asthma_imd.svg not found)
 (file ./output/graphs/line_mortality_asthma_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_copd_mortali
-> ty_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_copd_mortality_ethn
-> ic_rate.csv saved
+(note: file ./output//collapsed/collapse_measure_copd_mortality_ethnic_rate.csv
+>  not found)
+file ./output//collapsed/collapse_measure_copd_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -526,10 +522,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-(note: file ./output/measures/mortality/collapsed/collapse_measure_copd_mortali
-> ty_imd_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_copd_mortality_imd_
-> rate.csv saved
+(note: file ./output/collapsed/collapse_measure_copd_mortality_imd_rate.csv not
+>  found)
+file ./output/collapsed/collapse_measure_copd_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -585,10 +580,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_mortality_copd_imd.svg not found)
 (file ./output/graphs/line_mortality_copd_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_cvd_mortalit
-> y_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_cvd_mortality_ethni
-> c_rate.csv saved
+(note: file ./output//collapsed/collapse_measure_cvd_mortality_ethnic_rate.csv 
+> not found)
+file ./output//collapsed/collapse_measure_cvd_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -692,10 +686,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-(note: file ./output/measures/mortality/collapsed/collapse_measure_cvd_mortalit
-> y_imd_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_cvd_mortality_imd_r
-> ate.csv saved
+(note: file ./output/collapsed/collapse_measure_cvd_mortality_imd_rate.csv not 
+> found)
+file ./output/collapsed/collapse_measure_cvd_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -751,10 +744,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_mortality_cvd_imd.svg not found)
 (file ./output/graphs/line_mortality_cvd_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_mi_mortality
-> _ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_mi_mortality_ethnic
-> _rate.csv saved
+(note: file ./output//collapsed/collapse_measure_mi_mortality_ethnic_rate.csv n
+> ot found)
+file ./output//collapsed/collapse_measure_mi_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -858,10 +850,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-(note: file ./output/measures/mortality/collapsed/collapse_measure_mi_mortality
-> _imd_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_mi_mortality_imd_ra
-> te.csv saved
+(note: file ./output/collapsed/collapse_measure_mi_mortality_imd_rate.csv not f
+> ound)
+file ./output/collapsed/collapse_measure_mi_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -917,10 +908,10 @@ Sorted by: dateA
 (note: file ./output/graphs/line_mortality_mi_imd.svg not found)
 (file ./output/graphs/line_mortality_mi_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_stroke_morta
-> lity_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_stroke_mortality_et
-> hnic_rate.csv saved
+(note: file ./output//collapsed/collapse_measure_stroke_mortality_ethnic_rate.c
+> sv not found)
+file ./output//collapsed/collapse_measure_stroke_mortality_ethnic_rate.csv save
+> d
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1024,10 +1015,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-(note: file ./output/measures/mortality/collapsed/collapse_measure_stroke_morta
-> lity_imd_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_stroke_mortality_im
-> d_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_stroke_mortality_imd_rate.csv n
+> ot found)
+file ./output/collapsed/collapse_measure_stroke_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1083,10 +1073,10 @@ Sorted by: dateA
 (note: file ./output/graphs/line_mortality_stroke_imd.svg not found)
 (file ./output/graphs/line_mortality_stroke_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_heart_failur
-> e_mortality_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_heart_failure_morta
-> lity_ethnic_rate.csv saved
+(note: file ./output//collapsed/collapse_measure_heart_failure_mortality_ethnic
+> _rate.csv not found)
+file ./output//collapsed/collapse_measure_heart_failure_mortality_ethnic_rate.c
+> sv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1191,10 +1181,10 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-(note: file ./output/measures/mortality/collapsed/collapse_measure_heart_failur
-> e_mortality_imd_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_heart_failure_morta
-> lity_imd_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_heart_failure_mortality_imd_rat
+> e.csv not found)
+file ./output/collapsed/collapse_measure_heart_failure_mortality_imd_rate.csv s
+> aved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1251,10 +1241,9 @@ Sorted by: dateA
 (file ./output/graphs/line_mortality_heart_failure_imd.svg written in SVG forma
 > t)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_vte_mortalit
-> y_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_vte_mortality_ethni
-> c_rate.csv saved
+(note: file ./output//collapsed/collapse_measure_vte_mortality_ethnic_rate.csv 
+> not found)
+file ./output//collapsed/collapse_measure_vte_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1358,10 +1347,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-(note: file ./output/measures/mortality/collapsed/collapse_measure_vte_mortalit
-> y_imd_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_vte_mortality_imd_r
-> ate.csv saved
+(note: file ./output/collapsed/collapse_measure_vte_mortality_imd_rate.csv not 
+> found)
+file ./output/collapsed/collapse_measure_vte_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1417,10 +1405,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_mortality_vte_imd.svg not found)
 (file ./output/graphs/line_mortality_vte_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_mh_mortality
-> _ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_mh_mortality_ethnic
-> _rate.csv saved
+(note: file ./output//collapsed/collapse_measure_mh_mortality_ethnic_rate.csv n
+> ot found)
+file ./output//collapsed/collapse_measure_mh_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1524,10 +1511,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-(note: file ./output/measures/mortality/collapsed/collapse_measure_mh_mortality
-> _imd_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_mh_mortality_imd_ra
-> te.csv saved
+(note: file ./output/collapsed/collapse_measure_mh_mortality_imd_rate.csv not f
+> ound)
+file ./output/collapsed/collapse_measure_mh_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1586,7 +1572,7 @@ Sorted by: dateA
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.sQPZPt5BMk", write text replace
+. . file open output using "/tmp/tmp.Ie8o5isPAC", write text replace
 
 . . file write output "success" 
 
