@@ -6,7 +6,7 @@ Author:         Ruth Costello
 Description:    Generates line graphs of rates of each outcome and strata per month
 ==============================================================================*/
 cap log using ./logs/graphs_mortality.log, replace
-cap mkdir ./output/measures/mortality/collapsed
+cap mkdir ./output/collapsed
 cap mkdir ./output/graphs
 
 * Generates graphs for ethnicity - to include DM once defined
