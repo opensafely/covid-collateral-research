@@ -119,7 +119,7 @@ actions:
         log: logs/graphs_mortality.log
         output: output/graphs/line_mortality_*.svg
       highly_sensitive:
-        output: output/measures/mortality/collapsed/collapse_measure_*
+        output: output/collapsed/collapse_measure_*
         
   # Running analysis scripts
   model_checks_dm:
