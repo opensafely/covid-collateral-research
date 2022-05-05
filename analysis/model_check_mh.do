@@ -58,7 +58,7 @@ forvalues i=1/7 {
 		graph combine ac_`d'_1_`e' ac_`d'_2_`e' ac_`d'_3_`e' ac_`d'_4_`e' ac_`d'_5_`e', altshrink
 		graph export ./output/time_series/mh_ac_`c'_`d'.svg, as(svg) replace
 		graph combine pac_`d'_1_`e' pac_`d'_2_`e' pac_`d'_3_`e' pac_`d'_4_`e' pac_`d'_5_`e', altshrink
-		graph export .output/graphs/mh_pac_`c'_`d'.svg, as(svg) replace
+		graph export ./output/graphs/mh_pac_`c'_`d'.svg, as(svg) replace
 		}
 	}
 
@@ -104,7 +104,7 @@ forvalues i=1/11 {
 	graph combine ac_ethnic_1_`d' ac_ethnic_2_`d' ac_ethnic_3_`d' ac_ethnic_4_`d' ac_ethnic_5_`d', altshrink
 	graph export ./output/time_series/mh_ac_`c'_ethnic.svg, as(svg) replace
     graph combine pac_ethnic_1_`d' pac_ethnic_2_`d' pac_ethnic_3_`d' pac_ethnic_4_`d' pac_ethnic_5_`d', altshrink
-	graph export .output/graphs/checks_pac_`c'_ethnicity.svg, as(svg) replace
+	graph export ./output/graphs/checks_pac_`c'_ethnicity.svg, as(svg) replace
 	}
 
 * Primary and emergency admissions by IMD
@@ -149,7 +149,7 @@ forvalues i=1/11 {
 	graph combine ac_imd_1_`d' ac_imd_2_`d' ac_imd_3_`d' ac_imd_4_`d' ac_imd_5_`d', altshrink
 	graph export ./output/time_series/mh_ac_`c'_imd.svg, as(svg) replace
 	graph combine pac_imd_1_`d' pac_imd_2_`d' pac_imd_3_`d' pac_imd_4_`d' pac_imd_5_`d', altshrink
-	graph export .output/graphs/mh_pac_`c'_imd.svg, as(svg) replace
+	graph export ./output/graphs/mh_pac_`c'_imd.svg, as(svg) replace
 	}
 
 

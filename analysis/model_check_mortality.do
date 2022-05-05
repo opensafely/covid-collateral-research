@@ -49,7 +49,7 @@ foreach c in cvd resp mh mi stroke heart_failure vte asthma copd all_cause {
 	graph combine ac_ethnicity_1_`c' ac_ethnicity_2_`c' ac_ethnicity_3_`c' ac_ethnicity_4_`c' ac_ethnicity_5_`c', altshrink
 	graph export ./output/time_series/mortality_ac_`c'_ethnicity.svg, as(svg) replace
     graph combine pac_ethnicity_1_`c' pac_ethnicity_2_`c' pac_ethnicity_3_`c' pac_ethnicity_4_`c' pac_ethnicity_5_`c', altshrink
-	graph export .output/time_series/mortality_pac_`c'_ethnicity.svg, as(svg) replace
+	graph export ./output/time_series/mortality_pac_`c'_ethnicity.svg, as(svg) replace
 	}
 
 * IMD
@@ -90,7 +90,7 @@ foreach c in cvd resp mh mi stroke heart_failure vte asthma copd all_cause {
 	graph combine ac_imd_1_`c' ac_imd_2_`c' ac_imd_3_`c' ac_imd_4_`c' ac_imd_5_`c', altshrink
 	graph export ./output/time_series/mortality_ac_`c'_imd.svg, as(svg) replace
     graph combine pac_imd_1_`c' pac_imd_2_`c' pac_imd_3_`c' pac_imd_4_`c' pac_imd_5_`c', altshrink
-	graph export .output/time_series/mortality_pac_`c'_imd.svg, as(svg) replace
+	graph export ./output/time_series/mortality_pac_`c'_imd.svg, as(svg) replace
 	}
 
 
