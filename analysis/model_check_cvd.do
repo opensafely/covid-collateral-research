@@ -53,11 +53,11 @@ forvalues i=1/9 {
 		pac rate if `d'==5, name(pac_`d'_5_`e')*/
 		*Combine Graphs
 		graph combine kd_`d'_1_`e' kd_`d'_2_`e' kd_`d'_3_`e' kd_`d'_4_`e' kd_`d'_5_`e', altshrink
-		graph export ./output/time_series/cvd_kd_`d'_`c'.eps, as(eps) replace
+		graph export ./output/time_series/cvd_kd_`d'_`c'.svg, as(svg) replace
 		graph combine ac_`d'_1_`e' ac_`d'_2_`e' ac_`d'_3_`e' ac_`d'_4_`e' ac_`d'_5_`e', altshrink
-		graph export ./output/time_series/cvd_ac_`d'_`c'.eps, as(eps) replace
+		graph export ./output/time_series/cvd_ac_`d'_`c'.svg, as(svg) replace
 		/*graph combine pac_`d'*', altshrink
-		graph export .output/graphs/cvd_pac_`d'_`c'.eps, as(eps) replace*/
+		graph export .output/graphs/cvd_pac_`d'_`c'.svg, as(svg) replace*/
 		}
 	}
 log close

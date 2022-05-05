@@ -5,15 +5,14 @@ Date:     		24/03/2022
 Author:         Ruth Costello (based on code by Dominik Piehlmaier)
 Description:    Run model checks before time-series
 ==============================================================================*/
-* NOTE: Will need updating to use 3-monthly files for keto, t1 & t2 primary and any admissions
-* created in graphs_dm.do - check data first
+
 *Log file
 cap log using ./logs/model_checks_dm.log, replace
 cap mkdir ./output/time_series
 * Diabetes outcomes
 * Clinical monitoring: hba1c and BP measurement, hospital admissions: t1, t2 & keto both primary and any code
-local a "hba1c systolic_bp t1_primary t2_primary keto_primary t1_any t2_any keto_any"
-forvalues i=1/8 {
+local a "hba1c systolic_bp t1_primary t2_primary keto_primary t1_any t2_any keto_any t1_primary t1_any t2_primary t2_any keto_primary keto_any"
+forvalues i=1/14 {
     local c: word `i' of `a' 
 	local b "ethnicity imd"
 	forvalues i=1/2 {
@@ -50,15 +49,15 @@ forvalues i=1/8 {
 		pac rate if `d'==5, name(pac_`d'_5_`c', replace)*/
 		*Combine Graphs
 		graph combine kd_`d'_1_`c' kd_`d'_2_`c' kd_`d'_3_`c' kd_`d'_4_`c' kd_`d'_5_`c', altshrink
-		graph export ./output/time_series/dm_kd_`c'_`d'.eps, as(eps) replace
+		graph export ./output/time_series/dm_kd_`c'_`d'.svg, as(svg) replace
 		graph combine ac_`d'_1_`c' ac_`d'_2_`c' ac_`d'_3_`c' ac_`d'_4_`c' ac_`d'_5_`c', altshrink
-		graph export ./output/time_series/dm_ac_`c'_`d'.eps, as(eps) replace
+		graph export ./output/time_series/dm_ac_`c'_`d'.svg, as(svg) replace
 		/*graph combine pac_`d'*', altshrink
-		graph export .output/graphs/dm_pac_`c'_`d'.eps, as(eps) replace*/
+		graph export .output/graphs/dm_pac_`c'_`d'.svg, as(svg) replace*/
 		}
 	}
 
-foreach var in t1_primary t1_any t2_primary t2_any keto_primary keto_any {
+/*foreach var in t1_primary t1_any t2_primary t2_any keto_primary keto_any {
 	import delimited "./output/measures/dm/collapse_measure_dm_`var'_ethnicity_rate.csv", numericcols(2) clear	//get csv
 	gen temp_date=date(datea, "DM20Y")
 	format temp_date %td
@@ -89,11 +88,11 @@ foreach var in t1_primary t1_any t2_primary t2_any keto_primary keto_any {
 	pac rate if ethnicity==5, name(pac_ethnicity_5_`var', replace)*/
 	*Combine Graphs
 	graph combine kd_ethnicity_1_`var' kd_ethnicity_2_`var' kd_ethnicity_3_`var' kd_ethnicity_4_`var' kd_ethnicity_5_`var', altshrink
-	graph export ./output/time_series/dm_kd_`var'_ethnicity.eps, as(eps) replace
+	graph export ./output/time_series/dm_kd_`var'_ethnicity.svg, as(svg) replace
 	graph combine ac_ethnicity_1_`var' ac_ethnicity_2_`var' ac_ethnicity_3_`var' ac_ethnicity_4_`var' ac_ethnicity_5_`var', altshrink
-	graph export ./output/time_series/dm_ac_`var'_ethnicity.eps, as(eps) replace
+	graph export ./output/time_series/dm_ac_`var'_ethnicity.svg, as(svg) replace
 	*graph combine pac_ethnicity*', altshrink
-	*graph export .output/graphs/dm_pac_`var'_ethnicity.eps, as(eps) replace
+	*graph export .output/graphs/dm_pac_`var'_ethnicity.svg, as(svg) replace
 	}
 
 foreach var in t1_primary t1_any t2_primary t2_any keto_primary keto_any {
@@ -129,11 +128,11 @@ foreach var in t1_primary t1_any t2_primary t2_any keto_primary keto_any {
 	pac rate if imd==5, name(pac_imd_5_`var', replace)*/
 	*Combine Graphs
 	graph combine kd_imd_1_`var' kd_imd_2_`var' kd_imd_3_`var' kd_imd_4_`var' kd_imd_5_`var', altshrink
-	graph export ./output/time_series/dm_kd_`var'_imd.eps, as(eps) replace
+	graph export ./output/time_series/dm_kd_`var'_imd.svg, as(svg) replace
 	graph combine ac_imd_1_`var' ac_imd_2_`var' ac_imd_3_`var' ac_imd_4_`var' ac_imd_5_`var', altshrink
-	graph export ./output/time_series/dm_ac_`var'_imd.eps, as(eps) replace
+	graph export ./output/time_series/dm_ac_`var'_imd.svg, as(svg) replace
 	*graph combine pac_imd*', altshrink
-	*graph export .output/graphs/dm_pac_`var'_imd.eps, as(eps) replace
-	}
+	*graph export .output/graphs/dm_pac_`var'_imd.svg, as(svg) replace
+	}*/
 
 log close

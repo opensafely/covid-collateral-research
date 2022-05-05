@@ -51,19 +51,19 @@ common_variables = dict(
             ),
         ),
         imd=patients.categorised_as(
-        {
+            {
             "0": "DEFAULT",
             "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
             "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
             "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
             "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
             "5": """index_of_multiple_deprivation >= 32844*4/5 AND index_of_multiple_deprivation < 32844""",
-        },
+            },
         index_of_multiple_deprivation=patients.address_as_of(
             "index_date",
             returning="index_of_multiple_deprivation",
             round_to_nearest=100,
-        ),
+            ),
         return_expectations={
             "rate": "universal",
             "category": {
@@ -74,17 +74,59 @@ common_variables = dict(
                     "3": 0.19,
                     "4": 0.19,
                     "5": 0.19,
-                }
+                    }
+                },
             },
-        },
-    ),
+        ),
+        region=patients.registered_practice_as_of(
+        "index_date",
+        returning="nuts1_region_name",
+        return_expectations={
+            "rate": "universal",
+            "category": {
+                "ratios": {
+                    "North East": 0.1,
+                    "North West": 0.1,
+                    "Yorkshire and the Humber": 0.1,
+                    "East Midlands": 0.1,
+                    "West Midlands": 0.1,
+                    "East of England": 0.1,
+                    "London": 0.2,
+                    "South East": 0.2,
+                    },
+                },
+            },
+        ),
+    ### PRIMIS overall flag for shielded group
+    shielded=patients.satisfying(
+            """ severely_clinically_vulnerable
+            AND NOT less_vulnerable""", 
+        return_expectations={
+            "incidence": 0.01,
+                },
+
+            ### SHIELDED GROUP - first flag all patients with "high risk" codes
+        severely_clinically_vulnerable=patients.with_these_clinical_events(
+            high_risk_codes, # note no date limits set
+            find_last_match_in_period = True,
+            return_expectations={"incidence": 0.02,},
+        ),
+
+        # find date at which the high risk code was added
+        date_severely_clinically_vulnerable=patients.date_of(
+            "severely_clinically_vulnerable", 
+            date_format="YYYY-MM-DD",   
+        ),
+
+        ### NOT SHIELDED GROUP (medium and low risk) - only flag if later than 'shielded'
+        less_vulnerable=patients.with_these_clinical_events(
+            not_high_risk_codes, 
+            on_or_after="date_severely_clinically_vulnerable",
+            return_expectations={"incidence": 0.01,},
+            ),
+        ),
         # Subgroups
-        diabetes_subgroup=patients.satisfying(
-            """
-            has_t1_diabetes OR 
-            has_t2_diabetes
-            """,
-            has_t1_diabetes=patients.with_these_clinical_events(
+        has_t1_diabetes=patients.with_these_clinical_events(
             t1dm_codes,
             on_or_before="index_date",
             returning="binary_flag",
@@ -96,6 +138,11 @@ common_variables = dict(
             returning="binary_flag",
             return_expectations={"incidence":0.8,}
             ),
+        diabetes_subgroup=patients.satisfying(
+            """
+            has_t1_diabetes OR 
+            has_t2_diabetes
+            """,
         ),
         cvd_subgroup=patients.satisfying(
             """
@@ -122,30 +169,30 @@ common_variables = dict(
                 return_expectations={"incidence": 0.1},
             ),
             ),
-        resp_subgroup=patients.satisfying(
-            """
-            has_asthma OR
-            has_copd""",
-            has_asthma=patients.with_these_clinical_events(
-            asthma_codes,
-            between=["index_date - 3 years", "index_date"],
-            returning="binary_flag",
-            return_expectations={"incidence":0.2,}
-            ),
-            has_copd=patients.satisfying(
-            """has_copd_code AND age>40""",
+        has_asthma=patients.with_these_clinical_events(
+        asthma_codes,
+        between=["index_date - 3 years", "index_date"],
+        returning="binary_flag",
+        return_expectations={"incidence":0.2,}
+        ),
+        has_copd=patients.satisfying(
+        """has_copd_code AND age>40""",
             has_copd_code=patients.with_these_clinical_events(
-                copd_codes,
-                on_or_before="index_date",
-                returning="binary_flag",
-                return_expectations={"incidence":0.8,}
+            copd_codes,
+            on_or_before="index_date",
+            returning="binary_flag",
+            return_expectations={"incidence":0.8,}
             ),
-            ),
+        ),
+        resp_subgroup=patients.satisfying(
+                """
+                has_asthma OR
+                has_copd""",
+        ),
         mh_subgroup=patients.with_these_clinical_events(
         severe_mental_illness_codes,
         returning="binary_flag",
         on_or_before="index_date",
         return_expectations={"incidence": 0.2},
-        ),
-    ),
+            ),
 )

@@ -12,16 +12,19 @@ cap mkdir ./output/time_series
 
 * Mortality outcomes - DM outcomes not currently included
 * cvd, resp, mh, mi, stroke, heart failure, vte, asthma, copd
-foreach c in cvd resp mh mi stroke heart_failure vte asthma copd {
-	import delimited "./output/measures/mortality/collapse_measure_`c'_mortality_ethnic_rate.csv", numericcols(4) clear	//get csv
-	gen temp_date=date(datea, "DM20Y")
+foreach c in cvd resp mh mi stroke heart_failure vte asthma copd all_cause {
+	import delimited "./output/measures/mortality/measure_`c'_mortality_ethnic_rate.csv", numericcols(4) clear	//get csv
+	gen temp_date=date(date, "YMD")
 	format temp_date %td
 	gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
-	gen quarter=qofd(temp_date)
-	*format month %tm
+	gen month=mofd(temp_date)
+	format month %tm
 	drop temp_date
+	*Value to rate per 100k
+	gen rate = value*100000
+	label variable rate "Rate of `c' per 100,000"
 	*Set time series
-	tsset ethnicity quarter 
+	tsset ethnicity month 
 	*Kernel density plots to check for normality and extreme values
 	kdensity rate if ethnicity==1, normal name(kd_ethnicity_1_`c')
 	kdensity rate if ethnicity==2, normal name(kd_ethnicity_2_`c')
@@ -42,24 +45,27 @@ foreach c in cvd resp mh mi stroke heart_failure vte asthma copd {
     pac rate if ethnicity==5, name(pac_ethnicity_5_`c')*/
 	*Combine Graphs
 	graph combine kd_ethnicity_1_`c' kd_ethnicity_2_`c' kd_ethnicity_3_`c' kd_ethnicity_4_`c' kd_ethnicity_5_`c', altshrink
-	graph export ./output/time_series/checks_kd_`c'_ethnicity.svg, as(svg) replace
+	graph export ./output/time_series/mortality_kd_`c'_ethnicity.svg, as(svg) replace
 	graph combine ac_ethnicity_1_`c' ac_ethnicity_2_`c' ac_ethnicity_3_`c' ac_ethnicity_4_`c' ac_ethnicity_5_`c', altshrink
-	graph export ./output/time_series/checks_ac_`c'_ethnicity.svg, as(svg) replace
+	graph export ./output/time_series/mortality_ac_`c'_ethnicity.svg, as(svg) replace
     /*graph combine pac_ethnicity*', altshrink
-	graph export .output/graphs/checks_pac_`c'_ethnicity.svg, as(svg) replace*/
+	graph export .output/time_series/mortality_pac_`c'_ethnicity.svg, as(svg) replace*/
 	}
 
 * IMD
-foreach c in cvd resp mh mi stroke heart_failure vte asthma copd {
+foreach c in cvd resp mh mi stroke heart_failure vte asthma copd all_cause {
 	import delimited "./output/measures/mortality/measure_`c'_mortality_imd_rate.csv", numericcols(4) clear	//get csv
 	gen temp_date=date(date, "YMD")
 	format temp_date %td
 	gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
-	gen quarter=qofd(temp_date)
-	*format month %tm
+	gen month=mofd(temp_date)
+	format month %tm
 	drop temp_date
+	*Value to rate per 100k
+	gen rate = value*100000
+	label variable rate "Rate of `c' per 100,000"
 	*Set time series
-	tsset imd quarter 
+	tsset imd month 
 	*Kernel density plots to check for normality and extreme values
 	kdensity rate if imd==1, normal name(kd_imd_1_`c')
 	kdensity rate if imd==2, normal name(kd_imd_2_`c')
@@ -80,11 +86,11 @@ foreach c in cvd resp mh mi stroke heart_failure vte asthma copd {
     pac rate if imd==5, name(pac_imd_5_`c')*/
 	*Combine Graphs
 	graph combine kd_imd_1_`c' kd_imd_2_`c' kd_imd_3_`c' kd_imd_4_`c' kd_imd_5_`c', altshrink
-	graph export ./output/time_series/checks_kd_`c'_imd.svg, as(svg) replace
+	graph export ./output/time_series/mortality_kd_`c'_imd.svg, as(svg) replace
 	graph combine ac_imd_1_`c' ac_imd_2_`c' ac_imd_3_`c' ac_imd_4_`c' ac_imd_5_`c', altshrink
-	graph export ./output/time_series/checks_ac_`c'_imd.svg, as(svg) replace
+	graph export ./output/time_series/mortality_ac_`c'_imd.svg, as(svg) replace
     /*graph combine pac_imd*', altshrink
-	graph export .output/graphs/checks_pac_`c'_imd.svg, as(svg) replace*/
+	graph export .output/time_series/mortality_pac_`c'_imd.svg, as(svg) replace*/
 	}
 
 

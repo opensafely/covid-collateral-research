@@ -54,229 +54,229 @@
 .                 *Combine Graphs
 .                 graph combine kd_`d'_1_`e' kd_`d'_2_`e' kd_`d'_3_`e' kd_`d'_4
 > _`e' kd_`d'_5_`e', altshrink
- 28.                 graph export ./output/time_series/mh_kd_`c'_`d'.eps, as(ep
-> s) replace
+ 28.                 graph export ./output/time_series/mh_kd_`c'_`d'.svg, as(sv
+> g) replace
  29.                 graph combine ac_`d'_1_`e' ac_`d'_2_`e' ac_`d'_3_`e' ac_`d
 > '_4_`e' ac_`d'_5_`e', altshrink
- 30.                 graph export ./output/time_series/mh_ac_`c'_`d'.eps, as(ep
-> s) replace
+ 30.                 graph export ./output/time_series/mh_ac_`c'_`d'.svg, as(sv
+> g) replace
  31.                 /*graph combine pac_`d'*', altshrink
->                 graph export .output/graphs/mh_pac_`c'_`d'.eps, as(eps) repla
+>                 graph export .output/graphs/mh_pac_`c'_`d'.svg, as(svg) repla
 > ce*/
 .                 }
  32.         }
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/mh_kd_systolic_bp_mh_ethnicity.eps not found)
-(file ./output/time_series/mh_kd_systolic_bp_mh_ethnicity.eps written in EPS fo
+(note: file ./output/time_series/mh_kd_systolic_bp_mh_ethnicity.svg not found)
+(file ./output/time_series/mh_kd_systolic_bp_mh_ethnicity.svg written in SVG fo
 > rmat)
-(note: file ./output/time_series/mh_ac_systolic_bp_mh_ethnicity.eps not found)
-(file ./output/time_series/mh_ac_systolic_bp_mh_ethnicity.eps written in EPS fo
+(note: file ./output/time_series/mh_ac_systolic_bp_mh_ethnicity.svg not found)
+(file ./output/time_series/mh_ac_systolic_bp_mh_ethnicity.svg written in SVG fo
 > rmat)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_systolic_bp_mh_imd.eps not found)
-(file ./output/time_series/mh_kd_systolic_bp_mh_imd.eps written in EPS format)
-(note: file ./output/time_series/mh_ac_systolic_bp_mh_imd.eps not found)
-(file ./output/time_series/mh_ac_systolic_bp_mh_imd.eps written in EPS format)
+(note: file ./output/time_series/mh_kd_systolic_bp_mh_imd.svg not found)
+(file ./output/time_series/mh_kd_systolic_bp_mh_imd.svg written in SVG format)
+(note: file ./output/time_series/mh_ac_systolic_bp_mh_imd.svg not found)
+(file ./output/time_series/mh_ac_systolic_bp_mh_imd.svg written in SVG format)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/mh_kd_depression_admission_ethnicity.eps not f
+(note: file ./output/time_series/mh_kd_depression_admission_ethnicity.svg not f
 > ound)
-(file ./output/time_series/mh_kd_depression_admission_ethnicity.eps written in 
-> EPS format)
-(note: file ./output/time_series/mh_ac_depression_admission_ethnicity.eps not f
+(file ./output/time_series/mh_kd_depression_admission_ethnicity.svg written in 
+> SVG format)
+(note: file ./output/time_series/mh_ac_depression_admission_ethnicity.svg not f
 > ound)
-(file ./output/time_series/mh_ac_depression_admission_ethnicity.eps written in 
-> EPS format)
+(file ./output/time_series/mh_ac_depression_admission_ethnicity.svg written in 
+> SVG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_depression_admission_imd.eps not found)
-(file ./output/time_series/mh_kd_depression_admission_imd.eps written in EPS fo
+(note: file ./output/time_series/mh_kd_depression_admission_imd.svg not found)
+(file ./output/time_series/mh_kd_depression_admission_imd.svg written in SVG fo
 > rmat)
-(note: file ./output/time_series/mh_ac_depression_admission_imd.eps not found)
-(file ./output/time_series/mh_ac_depression_admission_imd.eps written in EPS fo
+(note: file ./output/time_series/mh_ac_depression_admission_imd.svg not found)
+(file ./output/time_series/mh_ac_depression_admission_imd.svg written in SVG fo
 > rmat)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/mh_kd_anxiety_admission_ethnicity.eps not foun
+(note: file ./output/time_series/mh_kd_anxiety_admission_ethnicity.svg not foun
 > d)
-(file ./output/time_series/mh_kd_anxiety_admission_ethnicity.eps written in EPS
+(file ./output/time_series/mh_kd_anxiety_admission_ethnicity.svg written in SVG
 >  format)
-(note: file ./output/time_series/mh_ac_anxiety_admission_ethnicity.eps not foun
+(note: file ./output/time_series/mh_ac_anxiety_admission_ethnicity.svg not foun
 > d)
-(file ./output/time_series/mh_ac_anxiety_admission_ethnicity.eps written in EPS
+(file ./output/time_series/mh_ac_anxiety_admission_ethnicity.svg written in SVG
 >  format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_anxiety_admission_imd.eps not found)
-(file ./output/time_series/mh_kd_anxiety_admission_imd.eps written in EPS forma
+(note: file ./output/time_series/mh_kd_anxiety_admission_imd.svg not found)
+(file ./output/time_series/mh_kd_anxiety_admission_imd.svg written in SVG forma
 > t)
-(note: file ./output/time_series/mh_ac_anxiety_admission_imd.eps not found)
-(file ./output/time_series/mh_ac_anxiety_admission_imd.eps written in EPS forma
+(note: file ./output/time_series/mh_ac_anxiety_admission_imd.svg not found)
+(file ./output/time_series/mh_ac_anxiety_admission_imd.svg written in SVG forma
 > t)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/mh_kd_smi_admission_ethnicity.eps not found)
-(file ./output/time_series/mh_kd_smi_admission_ethnicity.eps written in EPS for
+(note: file ./output/time_series/mh_kd_smi_admission_ethnicity.svg not found)
+(file ./output/time_series/mh_kd_smi_admission_ethnicity.svg written in SVG for
 > mat)
-(note: file ./output/time_series/mh_ac_smi_admission_ethnicity.eps not found)
-(file ./output/time_series/mh_ac_smi_admission_ethnicity.eps written in EPS for
+(note: file ./output/time_series/mh_ac_smi_admission_ethnicity.svg not found)
+(file ./output/time_series/mh_ac_smi_admission_ethnicity.svg written in SVG for
 > mat)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_smi_admission_imd.eps not found)
-(file ./output/time_series/mh_kd_smi_admission_imd.eps written in EPS format)
-(note: file ./output/time_series/mh_ac_smi_admission_imd.eps not found)
-(file ./output/time_series/mh_ac_smi_admission_imd.eps written in EPS format)
+(note: file ./output/time_series/mh_kd_smi_admission_imd.svg not found)
+(file ./output/time_series/mh_kd_smi_admission_imd.svg written in SVG format)
+(note: file ./output/time_series/mh_ac_smi_admission_imd.svg not found)
+(file ./output/time_series/mh_ac_smi_admission_imd.svg written in SVG format)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/mh_kd_self_harm_admission_ethnicity.eps not fo
+(note: file ./output/time_series/mh_kd_self_harm_admission_ethnicity.svg not fo
 > und)
-(file ./output/time_series/mh_kd_self_harm_admission_ethnicity.eps written in E
-> PS format)
-(note: file ./output/time_series/mh_ac_self_harm_admission_ethnicity.eps not fo
+(file ./output/time_series/mh_kd_self_harm_admission_ethnicity.svg written in S
+> VG format)
+(note: file ./output/time_series/mh_ac_self_harm_admission_ethnicity.svg not fo
 > und)
-(file ./output/time_series/mh_ac_self_harm_admission_ethnicity.eps written in E
-> PS format)
+(file ./output/time_series/mh_ac_self_harm_admission_ethnicity.svg written in S
+> VG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_self_harm_admission_imd.eps not found)
-(file ./output/time_series/mh_kd_self_harm_admission_imd.eps written in EPS for
+(note: file ./output/time_series/mh_kd_self_harm_admission_imd.svg not found)
+(file ./output/time_series/mh_kd_self_harm_admission_imd.svg written in SVG for
 > mat)
-(note: file ./output/time_series/mh_ac_self_harm_admission_imd.eps not found)
-(file ./output/time_series/mh_ac_self_harm_admission_imd.eps written in EPS for
+(note: file ./output/time_series/mh_ac_self_harm_admission_imd.svg not found)
+(file ./output/time_series/mh_ac_self_harm_admission_imd.svg written in SVG for
 > mat)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/mh_kd_eating_dis_admission_ethnicity.eps not f
+(note: file ./output/time_series/mh_kd_eating_dis_admission_ethnicity.svg not f
 > ound)
-(file ./output/time_series/mh_kd_eating_dis_admission_ethnicity.eps written in 
-> EPS format)
-(note: file ./output/time_series/mh_ac_eating_dis_admission_ethnicity.eps not f
+(file ./output/time_series/mh_kd_eating_dis_admission_ethnicity.svg written in 
+> SVG format)
+(note: file ./output/time_series/mh_ac_eating_dis_admission_ethnicity.svg not f
 > ound)
-(file ./output/time_series/mh_ac_eating_dis_admission_ethnicity.eps written in 
-> EPS format)
+(file ./output/time_series/mh_ac_eating_dis_admission_ethnicity.svg written in 
+> SVG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_eating_dis_admission_imd.eps not found)
-(file ./output/time_series/mh_kd_eating_dis_admission_imd.eps written in EPS fo
+(note: file ./output/time_series/mh_kd_eating_dis_admission_imd.svg not found)
+(file ./output/time_series/mh_kd_eating_dis_admission_imd.svg written in SVG fo
 > rmat)
-(note: file ./output/time_series/mh_ac_eating_dis_admission_imd.eps not found)
-(file ./output/time_series/mh_ac_eating_dis_admission_imd.eps written in EPS fo
+(note: file ./output/time_series/mh_ac_eating_dis_admission_imd.svg not found)
+(file ./output/time_series/mh_ac_eating_dis_admission_imd.svg written in SVG fo
 > rmat)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/mh_kd_ocd_admission_ethnicity.eps not found)
-(file ./output/time_series/mh_kd_ocd_admission_ethnicity.eps written in EPS for
+(note: file ./output/time_series/mh_kd_ocd_admission_ethnicity.svg not found)
+(file ./output/time_series/mh_kd_ocd_admission_ethnicity.svg written in SVG for
 > mat)
-(note: file ./output/time_series/mh_ac_ocd_admission_ethnicity.eps not found)
-(file ./output/time_series/mh_ac_ocd_admission_ethnicity.eps written in EPS for
+(note: file ./output/time_series/mh_ac_ocd_admission_ethnicity.svg not found)
+(file ./output/time_series/mh_ac_ocd_admission_ethnicity.svg written in SVG for
 > mat)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_ocd_admission_imd.eps not found)
-(file ./output/time_series/mh_kd_ocd_admission_imd.eps written in EPS format)
-(note: file ./output/time_series/mh_ac_ocd_admission_imd.eps not found)
-(file ./output/time_series/mh_ac_ocd_admission_imd.eps written in EPS format)
+(note: file ./output/time_series/mh_kd_ocd_admission_imd.svg not found)
+(file ./output/time_series/mh_kd_ocd_admission_imd.svg written in SVG format)
+(note: file ./output/time_series/mh_ac_ocd_admission_imd.svg not found)
+(file ./output/time_series/mh_ac_ocd_admission_imd.svg written in SVG format)
 
 . 
 . * Primary and emergency admissions by ethnicity
@@ -291,29 +291,32 @@
 . forvalues i=1/11 {
   2.         local c: word `i' of `a'
   3.         local d: word `i' of `b'
-  4.         import delimited "./output/measures/collapse_measure_`c'_ethnicity
-> _rate.csv", numericcols(3) clear      //get csv
-  5.         gen temp_date=date(datea, "DM20Y")
+  4.         import delimited "./output/measures/measure_`c'_ethnicity_rate.csv
+> ", numericcols(3) clear       //get csv
+  5.         gen temp_date=date(date, "YMD")
   6.         format temp_date %td
   7.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
-  8.         gen quarter=qofd(temp_date)
-  9.         *format month %tm
-.         drop temp_date
- 10.         *Set time series
-.         tsset ethnicity quarter 
- 11.         *Kernel density plots to check for normality and extreme values
+  8.         gen month=mofd(temp_date)
+  9.         format month %tm
+ 10.         drop temp_date
+ 11.         *Value to rate per 100k
+.         gen rate = value*100000
+ 12.         label variable rate "Rate of `c' exacerbation per 100,000"
+ 13.         *Set time series
+.         tsset ethnicity month
+ 14.         *Kernel density plots to check for normality and extreme values
 .         kdensity rate if ethnicity==1, normal name(kd_ethnic_1_`d')
- 12.         kdensity rate if ethnicity==2, normal name(kd_ethnic_2_`d')
- 13.     kdensity rate if ethnicity==3, normal name(kd_ethnic_3_`d')
- 14.     kdensity rate if ethnicity==4, normal name(kd_ethnic_4_`d')
- 15.     kdensity rate if ethnicity==5, normal name(kd_ethnic_5_`d')
- 16.         *Autoregression plots by ethnicity
+ 15.         kdensity rate if ethnicity==2, normal name(kd_ethnic_2_`d')
+ 16.     kdensity rate if ethnicity==3, normal name(kd_ethnic_3_`d')
+ 17.     kdensity rate if ethnicity==4, normal name(kd_ethnic_4_`d')
+ 18.     kdensity rate if ethnicity==5, normal name(kd_ethnic_5_`d')
+ 19.         *Autoregression plots by ethnicity
 .     ac rate if ethnicity==1, name(ac_ethnic_1_`d')
- 17.         ac rate if ethnicity==2, name(ac_ethnic_2_`d')
- 18.     ac rate if ethnicity==3, name(ac_ethnic_3_`d')
- 19.     ac rate if ethnicity==4, name(ac_ethnic_4_`d')
- 20.     ac rate if ethnicity==5, name(ac_ethnic_5_`d')
- 21.         /*Partial autoregression plots by ethnicity
+ 20.         ac rate if ethnicity==2, name(ac_ethnic_2_`d')
+ 21.     ac rate if ethnicity==3, name(ac_ethnic_3_`d')
+ 22.     ac rate if ethnicity==4, name(ac_ethnic_4_`d')
+ 23.     ac rate if ethnicity==5, name(ac_ethnic_5_`d')
+ 24.         /*Partial autoregression plots by ethnicity
 >         pac rate if ethnicity==1, name(pac_ethnic_1_`d')
 >         pac rate if ethnicity==2, name(pac_ethnic_2_`d')
 >     pac rate if ethnicity==3, name(pac_ethnic_3_`d')
@@ -322,197 +325,197 @@
 .         *Combine Graphs
 .         graph combine kd_ethnic_1_`d' kd_ethnic_2_`d' kd_ethnic_3_`d' kd_ethn
 > ic_4_`d' kd_ethnic_5_`d', altshrink
- 22.         graph export ./output/time_series/mh_kd_`c'_ethnicity.eps, as(eps)
+ 25.         graph export ./output/time_series/mh_kd_`c'_ethnicity.svg, as(svg)
 >  replace
- 23.         graph combine ac_ethnic_1_`d' ac_ethnic_2_`d' ac_ethnic_3_`d' ac_e
+ 26.         graph combine ac_ethnic_1_`d' ac_ethnic_2_`d' ac_ethnic_3_`d' ac_e
 > thnic_4_`d' ac_ethnic_5_`d', altshrink
- 24.         graph export ./output/time_series/mh_ac_`c'_ethnic.eps, as(eps) re
+ 27.         graph export ./output/time_series/mh_ac_`c'_ethnic.svg, as(svg) re
 > place
- 25.     /*graph combine pac_ethnic*', altshrink
->         graph export .output/graphs/checks_pac_`c'_ethnicity.eps, as(eps) rep
+ 28.     /*graph combine pac_ethnic*', altshrink
+>         graph export .output/graphs/checks_pac_`c'_ethnicity.svg, as(svg) rep
 > lace*/
 .         }
-(6 vars, 10 obs)
+(5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  quarter, 240 to 241
-                delta:  1 unit
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(note: file ./output/time_series/mh_kd_depression_primary_admission_ethnicity.e
-> ps not found)
-(file ./output/time_series/mh_kd_depression_primary_admission_ethnicity.eps wri
-> tten in EPS format)
-(note: file ./output/time_series/mh_ac_depression_primary_admission_ethnic.eps 
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/mh_kd_depression_primary_admission_ethnicity.s
+> vg not found)
+(file ./output/time_series/mh_kd_depression_primary_admission_ethnicity.svg wri
+> tten in SVG format)
+(note: file ./output/time_series/mh_ac_depression_primary_admission_ethnic.svg 
 > not found)
-(file ./output/time_series/mh_ac_depression_primary_admission_ethnic.eps writte
-> n in EPS format)
-(6 vars, 10 obs)
+(file ./output/time_series/mh_ac_depression_primary_admission_ethnic.svg writte
+> n in SVG format)
+(5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  quarter, 240 to 241
-                delta:  1 unit
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(note: file ./output/time_series/mh_kd_anxiety_primary_admission_ethnicity.eps 
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/mh_kd_anxiety_primary_admission_ethnicity.svg 
 > not found)
-(file ./output/time_series/mh_kd_anxiety_primary_admission_ethnicity.eps writte
-> n in EPS format)
-(note: file ./output/time_series/mh_ac_anxiety_primary_admission_ethnic.eps not
+(file ./output/time_series/mh_kd_anxiety_primary_admission_ethnicity.svg writte
+> n in SVG format)
+(note: file ./output/time_series/mh_ac_anxiety_primary_admission_ethnic.svg not
 >  found)
-(file ./output/time_series/mh_ac_anxiety_primary_admission_ethnic.eps written i
-> n EPS format)
-(6 vars, 10 obs)
+(file ./output/time_series/mh_ac_anxiety_primary_admission_ethnic.svg written i
+> n SVG format)
+(5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  quarter, 240 to 241
-                delta:  1 unit
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(note: file ./output/time_series/mh_kd_smi_primary_admission_ethnicity.eps not 
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/mh_kd_smi_primary_admission_ethnicity.svg not 
 > found)
-(file ./output/time_series/mh_kd_smi_primary_admission_ethnicity.eps written in
->  EPS format)
-(note: file ./output/time_series/mh_ac_smi_primary_admission_ethnic.eps not fou
+(file ./output/time_series/mh_kd_smi_primary_admission_ethnicity.svg written in
+>  SVG format)
+(note: file ./output/time_series/mh_ac_smi_primary_admission_ethnic.svg not fou
 > nd)
-(file ./output/time_series/mh_ac_smi_primary_admission_ethnic.eps written in EP
-> S format)
-(6 vars, 10 obs)
+(file ./output/time_series/mh_ac_smi_primary_admission_ethnic.svg written in SV
+> G format)
+(5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  quarter, 240 to 241
-                delta:  1 unit
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(note: file ./output/time_series/mh_kd_self_harm_primary_admission_ethnicity.ep
-> s not found)
-(file ./output/time_series/mh_kd_self_harm_primary_admission_ethnicity.eps writ
-> ten in EPS format)
-(note: file ./output/time_series/mh_ac_self_harm_primary_admission_ethnic.eps n
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/mh_kd_self_harm_primary_admission_ethnicity.sv
+> g not found)
+(file ./output/time_series/mh_kd_self_harm_primary_admission_ethnicity.svg writ
+> ten in SVG format)
+(note: file ./output/time_series/mh_ac_self_harm_primary_admission_ethnic.svg n
 > ot found)
-(file ./output/time_series/mh_ac_self_harm_primary_admission_ethnic.eps written
->  in EPS format)
-(6 vars, 10 obs)
+(file ./output/time_series/mh_ac_self_harm_primary_admission_ethnic.svg written
+>  in SVG format)
+(5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  quarter, 240 to 241
-                delta:  1 unit
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(note: file ./output/time_series/mh_kd_eating_dis_primary_admission_ethnicity.e
-> ps not found)
-(file ./output/time_series/mh_kd_eating_dis_primary_admission_ethnicity.eps wri
-> tten in EPS format)
-(note: file ./output/time_series/mh_ac_eating_dis_primary_admission_ethnic.eps 
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/mh_kd_eating_dis_primary_admission_ethnicity.s
+> vg not found)
+(file ./output/time_series/mh_kd_eating_dis_primary_admission_ethnicity.svg wri
+> tten in SVG format)
+(note: file ./output/time_series/mh_ac_eating_dis_primary_admission_ethnic.svg 
 > not found)
-(file ./output/time_series/mh_ac_eating_dis_primary_admission_ethnic.eps writte
-> n in EPS format)
-(6 vars, 10 obs)
+(file ./output/time_series/mh_ac_eating_dis_primary_admission_ethnic.svg writte
+> n in SVG format)
+(5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  quarter, 240 to 241
-                delta:  1 unit
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(note: file ./output/time_series/mh_kd_ocd_primary_admission_ethnicity.eps not 
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/mh_kd_ocd_primary_admission_ethnicity.svg not 
 > found)
-(file ./output/time_series/mh_kd_ocd_primary_admission_ethnicity.eps written in
->  EPS format)
-(note: file ./output/time_series/mh_ac_ocd_primary_admission_ethnic.eps not fou
+(file ./output/time_series/mh_kd_ocd_primary_admission_ethnicity.svg written in
+>  SVG format)
+(note: file ./output/time_series/mh_ac_ocd_primary_admission_ethnic.svg not fou
 > nd)
-(file ./output/time_series/mh_ac_ocd_primary_admission_ethnic.eps written in EP
-> S format)
-(6 vars, 10 obs)
+(file ./output/time_series/mh_ac_ocd_primary_admission_ethnic.svg written in SV
+> G format)
+(5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  quarter, 240 to 241
-                delta:  1 unit
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(note: file ./output/time_series/mh_kd_anxiety_emergency_ethnicity.eps not foun
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/mh_kd_anxiety_emergency_ethnicity.svg not foun
 > d)
-(file ./output/time_series/mh_kd_anxiety_emergency_ethnicity.eps written in EPS
+(file ./output/time_series/mh_kd_anxiety_emergency_ethnicity.svg written in SVG
 >  format)
-(note: file ./output/time_series/mh_ac_anxiety_emergency_ethnic.eps not found)
-(file ./output/time_series/mh_ac_anxiety_emergency_ethnic.eps written in EPS fo
+(note: file ./output/time_series/mh_ac_anxiety_emergency_ethnic.svg not found)
+(file ./output/time_series/mh_ac_anxiety_emergency_ethnic.svg written in SVG fo
 > rmat)
-(6 vars, 10 obs)
+(5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  quarter, 240 to 241
-                delta:  1 unit
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(note: file ./output/time_series/mh_kd_smi_emergency_ethnicity.eps not found)
-(file ./output/time_series/mh_kd_smi_emergency_ethnicity.eps written in EPS for
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/mh_kd_smi_emergency_ethnicity.svg not found)
+(file ./output/time_series/mh_kd_smi_emergency_ethnicity.svg written in SVG for
 > mat)
-(note: file ./output/time_series/mh_ac_smi_emergency_ethnic.eps not found)
-(file ./output/time_series/mh_ac_smi_emergency_ethnic.eps written in EPS format
+(note: file ./output/time_series/mh_ac_smi_emergency_ethnic.svg not found)
+(file ./output/time_series/mh_ac_smi_emergency_ethnic.svg written in SVG format
 > )
-(6 vars, 10 obs)
+(5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  quarter, 240 to 241
-                delta:  1 unit
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(note: file ./output/time_series/mh_kd_self_harm_emergency_ethnicity.eps not fo
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/mh_kd_self_harm_emergency_ethnicity.svg not fo
 > und)
-(file ./output/time_series/mh_kd_self_harm_emergency_ethnicity.eps written in E
-> PS format)
-(note: file ./output/time_series/mh_ac_self_harm_emergency_ethnic.eps not found
+(file ./output/time_series/mh_kd_self_harm_emergency_ethnicity.svg written in S
+> VG format)
+(note: file ./output/time_series/mh_ac_self_harm_emergency_ethnic.svg not found
 > )
-(file ./output/time_series/mh_ac_self_harm_emergency_ethnic.eps written in EPS 
+(file ./output/time_series/mh_ac_self_harm_emergency_ethnic.svg written in SVG 
 > format)
-(6 vars, 10 obs)
+(5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  quarter, 240 to 241
-                delta:  1 unit
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(note: file ./output/time_series/mh_kd_eating_dis_emergency_ethnicity.eps not f
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/mh_kd_eating_dis_emergency_ethnicity.svg not f
 > ound)
-(file ./output/time_series/mh_kd_eating_dis_emergency_ethnicity.eps written in 
-> EPS format)
-(note: file ./output/time_series/mh_ac_eating_dis_emergency_ethnic.eps not foun
+(file ./output/time_series/mh_kd_eating_dis_emergency_ethnicity.svg written in 
+> SVG format)
+(note: file ./output/time_series/mh_ac_eating_dis_emergency_ethnic.svg not foun
 > d)
-(file ./output/time_series/mh_ac_eating_dis_emergency_ethnic.eps written in EPS
+(file ./output/time_series/mh_ac_eating_dis_emergency_ethnic.svg written in SVG
 >  format)
-(6 vars, 10 obs)
+(5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  quarter, 240 to 241
-                delta:  1 unit
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(n() set to 10)
-(note: file ./output/time_series/mh_kd_ocd_emergency_ethnicity.eps not found)
-(file ./output/time_series/mh_kd_ocd_emergency_ethnicity.eps written in EPS for
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(note: file ./output/time_series/mh_kd_ocd_emergency_ethnicity.svg not found)
+(file ./output/time_series/mh_kd_ocd_emergency_ethnicity.svg written in SVG for
 > mat)
-(note: file ./output/time_series/mh_ac_ocd_emergency_ethnic.eps not found)
-(file ./output/time_series/mh_ac_ocd_emergency_ethnic.eps written in EPS format
+(note: file ./output/time_series/mh_ac_ocd_emergency_ethnic.svg not found)
+(file ./output/time_series/mh_ac_ocd_emergency_ethnic.svg written in SVG format
 > )
 
 . 
@@ -562,184 +565,184 @@
 .         *Combine Graphs
 .         graph combine kd_imd_1_`d' kd_imd_2_`d' kd_imd_3_`d' kd_imd_4_`d' kd_
 > imd_5_`d', altshrink
- 25.         graph export ./output/time_series/mh_kd_`c'_imd.eps, as(eps) repla
+ 25.         graph export ./output/time_series/mh_kd_`c'_imd.svg, as(svg) repla
 > ce
  26.         graph combine ac_imd_1_`d' ac_imd_2_`d' ac_imd_3_`d' ac_imd_4_`d' 
 > ac_imd_5_`d', altshrink
- 27.         graph export ./output/time_series/mh_ac_`c'_imd.eps, as(eps) repla
+ 27.         graph export ./output/time_series/mh_ac_`c'_imd.svg, as(svg) repla
 > ce
  28.         /*graph combine pac_imd*', altshrink
->         graph export .output/graphs/mh_pac_`c'_imd.eps, as(eps) replace*/
+>         graph export .output/graphs/mh_pac_`c'_imd.svg, as(svg) replace*/
 .         }
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_depression_primary_admission_imd.eps not
+(note: file ./output/time_series/mh_kd_depression_primary_admission_imd.svg not
 >  found)
-(file ./output/time_series/mh_kd_depression_primary_admission_imd.eps written i
-> n EPS format)
-(note: file ./output/time_series/mh_ac_depression_primary_admission_imd.eps not
+(file ./output/time_series/mh_kd_depression_primary_admission_imd.svg written i
+> n SVG format)
+(note: file ./output/time_series/mh_ac_depression_primary_admission_imd.svg not
 >  found)
-(file ./output/time_series/mh_ac_depression_primary_admission_imd.eps written i
-> n EPS format)
+(file ./output/time_series/mh_ac_depression_primary_admission_imd.svg written i
+> n SVG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_anxiety_primary_admission_imd.eps not fo
+(note: file ./output/time_series/mh_kd_anxiety_primary_admission_imd.svg not fo
 > und)
-(file ./output/time_series/mh_kd_anxiety_primary_admission_imd.eps written in E
-> PS format)
-(note: file ./output/time_series/mh_ac_anxiety_primary_admission_imd.eps not fo
+(file ./output/time_series/mh_kd_anxiety_primary_admission_imd.svg written in S
+> VG format)
+(note: file ./output/time_series/mh_ac_anxiety_primary_admission_imd.svg not fo
 > und)
-(file ./output/time_series/mh_ac_anxiety_primary_admission_imd.eps written in E
-> PS format)
+(file ./output/time_series/mh_ac_anxiety_primary_admission_imd.svg written in S
+> VG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_smi_primary_admission_imd.eps not found)
-(file ./output/time_series/mh_kd_smi_primary_admission_imd.eps written in EPS f
+(note: file ./output/time_series/mh_kd_smi_primary_admission_imd.svg not found)
+(file ./output/time_series/mh_kd_smi_primary_admission_imd.svg written in SVG f
 > ormat)
-(note: file ./output/time_series/mh_ac_smi_primary_admission_imd.eps not found)
-(file ./output/time_series/mh_ac_smi_primary_admission_imd.eps written in EPS f
+(note: file ./output/time_series/mh_ac_smi_primary_admission_imd.svg not found)
+(file ./output/time_series/mh_ac_smi_primary_admission_imd.svg written in SVG f
 > ormat)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_self_harm_primary_admission_imd.eps not 
+(note: file ./output/time_series/mh_kd_self_harm_primary_admission_imd.svg not 
 > found)
-(file ./output/time_series/mh_kd_self_harm_primary_admission_imd.eps written in
->  EPS format)
-(note: file ./output/time_series/mh_ac_self_harm_primary_admission_imd.eps not 
+(file ./output/time_series/mh_kd_self_harm_primary_admission_imd.svg written in
+>  SVG format)
+(note: file ./output/time_series/mh_ac_self_harm_primary_admission_imd.svg not 
 > found)
-(file ./output/time_series/mh_ac_self_harm_primary_admission_imd.eps written in
->  EPS format)
+(file ./output/time_series/mh_ac_self_harm_primary_admission_imd.svg written in
+>  SVG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_eating_dis_primary_admission_imd.eps not
+(note: file ./output/time_series/mh_kd_eating_dis_primary_admission_imd.svg not
 >  found)
-(file ./output/time_series/mh_kd_eating_dis_primary_admission_imd.eps written i
-> n EPS format)
-(note: file ./output/time_series/mh_ac_eating_dis_primary_admission_imd.eps not
+(file ./output/time_series/mh_kd_eating_dis_primary_admission_imd.svg written i
+> n SVG format)
+(note: file ./output/time_series/mh_ac_eating_dis_primary_admission_imd.svg not
 >  found)
-(file ./output/time_series/mh_ac_eating_dis_primary_admission_imd.eps written i
-> n EPS format)
+(file ./output/time_series/mh_ac_eating_dis_primary_admission_imd.svg written i
+> n SVG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_ocd_primary_admission_imd.eps not found)
-(file ./output/time_series/mh_kd_ocd_primary_admission_imd.eps written in EPS f
+(note: file ./output/time_series/mh_kd_ocd_primary_admission_imd.svg not found)
+(file ./output/time_series/mh_kd_ocd_primary_admission_imd.svg written in SVG f
 > ormat)
-(note: file ./output/time_series/mh_ac_ocd_primary_admission_imd.eps not found)
-(file ./output/time_series/mh_ac_ocd_primary_admission_imd.eps written in EPS f
+(note: file ./output/time_series/mh_ac_ocd_primary_admission_imd.svg not found)
+(file ./output/time_series/mh_ac_ocd_primary_admission_imd.svg written in SVG f
 > ormat)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_anxiety_emergency_imd.eps not found)
-(file ./output/time_series/mh_kd_anxiety_emergency_imd.eps written in EPS forma
+(note: file ./output/time_series/mh_kd_anxiety_emergency_imd.svg not found)
+(file ./output/time_series/mh_kd_anxiety_emergency_imd.svg written in SVG forma
 > t)
-(note: file ./output/time_series/mh_ac_anxiety_emergency_imd.eps not found)
-(file ./output/time_series/mh_ac_anxiety_emergency_imd.eps written in EPS forma
+(note: file ./output/time_series/mh_ac_anxiety_emergency_imd.svg not found)
+(file ./output/time_series/mh_ac_anxiety_emergency_imd.svg written in SVG forma
 > t)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_smi_emergency_imd.eps not found)
-(file ./output/time_series/mh_kd_smi_emergency_imd.eps written in EPS format)
-(note: file ./output/time_series/mh_ac_smi_emergency_imd.eps not found)
-(file ./output/time_series/mh_ac_smi_emergency_imd.eps written in EPS format)
+(note: file ./output/time_series/mh_kd_smi_emergency_imd.svg not found)
+(file ./output/time_series/mh_kd_smi_emergency_imd.svg written in SVG format)
+(note: file ./output/time_series/mh_ac_smi_emergency_imd.svg not found)
+(file ./output/time_series/mh_ac_smi_emergency_imd.svg written in SVG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_self_harm_emergency_imd.eps not found)
-(file ./output/time_series/mh_kd_self_harm_emergency_imd.eps written in EPS for
+(note: file ./output/time_series/mh_kd_self_harm_emergency_imd.svg not found)
+(file ./output/time_series/mh_kd_self_harm_emergency_imd.svg written in SVG for
 > mat)
-(note: file ./output/time_series/mh_ac_self_harm_emergency_imd.eps not found)
-(file ./output/time_series/mh_ac_self_harm_emergency_imd.eps written in EPS for
+(note: file ./output/time_series/mh_ac_self_harm_emergency_imd.svg not found)
+(file ./output/time_series/mh_ac_self_harm_emergency_imd.svg written in SVG for
 > mat)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_eating_dis_emergency_imd.eps not found)
-(file ./output/time_series/mh_kd_eating_dis_emergency_imd.eps written in EPS fo
+(note: file ./output/time_series/mh_kd_eating_dis_emergency_imd.svg not found)
+(file ./output/time_series/mh_kd_eating_dis_emergency_imd.svg written in SVG fo
 > rmat)
-(note: file ./output/time_series/mh_ac_eating_dis_emergency_imd.eps not found)
-(file ./output/time_series/mh_ac_eating_dis_emergency_imd.eps written in EPS fo
+(note: file ./output/time_series/mh_ac_eating_dis_emergency_imd.svg not found)
+(file ./output/time_series/mh_ac_eating_dis_emergency_imd.svg written in SVG fo
 > rmat)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/mh_kd_ocd_emergency_imd.eps not found)
-(file ./output/time_series/mh_kd_ocd_emergency_imd.eps written in EPS format)
-(note: file ./output/time_series/mh_ac_ocd_emergency_imd.eps not found)
-(file ./output/time_series/mh_ac_ocd_emergency_imd.eps written in EPS format)
+(note: file ./output/time_series/mh_kd_ocd_emergency_imd.svg not found)
+(file ./output/time_series/mh_kd_ocd_emergency_imd.svg written in SVG format)
+(note: file ./output/time_series/mh_ac_ocd_emergency_imd.svg not found)
+(file ./output/time_series/mh_ac_ocd_emergency_imd.svg written in SVG format)
 
 . 
 . 
@@ -747,5 +750,5 @@
       name:  <unnamed>
        log:  /workspace/logs/model_checks_mh.log
   log type:  text
- closed on:  29 Apr 2022, 11:28:51
+ closed on:   4 May 2022, 15:47:53
 -------------------------------------------------------------------------------

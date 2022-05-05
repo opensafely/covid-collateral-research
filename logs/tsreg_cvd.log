@@ -51,738 +51,820 @@
  30.         }
  31.     }
 (5 vars, 20 obs)
-(15 real changes made)
-(5 real changes made)
 (0 real changes made)
+(0 real changes made)
+(10 real changes made)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 2.ethnicity#1.postcovid omitted because of collinearity
+note: 3.ethnicity#1.postcovid omitted because of collinearity
+note: 4.ethnicity#1.postcovid omitted because of collinearity
+note: 5.ethnicity#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         20
-maximum lag: 1                                  F(  0,         9) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  5,        14) =       2.04
+                                                Prob > F          =     0.1349
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |  -138333.3          .        .       .            .           .
-          3  |  -48076.92          .        .       .            .           .
-          4  |   91666.69          .        .       .            .           .
-          5  |     112500          .        .       .            .           .
+          2  |   66388.88   50838.08     1.31   0.213    -42647.96    175425.7
+          3  |   11527.78   20257.78     0.57   0.578    -31920.83    54976.39
+          4  |   25168.64   26461.42     0.95   0.358    -31585.46    81922.75
+          5  |   -43309.2   23384.52    -1.85   0.085       -93464    6845.607
              |
- 1.postcovid |  -80303.41          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
    ethnicity#|
    postcovid |
-        2 1  |   156840.8          .        .       .            .           .
-        3 1  |   99143.27          .        .       .            .           .
-        4 1  |   78566.32          .        .       .            .           .
-        5 1  |   9201.255          .        .       .            .           .
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |  -7288.791          .        .       .            .           .
-       _cons |     225000          .        .       .            .           .
+     Winter  |     -10216   20502.06    -0.50   0.626    -54188.54    33756.53
+       _cons |   206427.4   20050.53    10.30   0.000     163423.3    249431.6
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 24 obs)
-(18 real changes made)
-(6 real changes made)
 (0 real changes made)
+(0 real changes made)
+(12 real changes made)
+(1 missing value generated)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 1.imd#1.postcovid omitted because of collinearity
+note: 2.imd#1.postcovid omitted because of collinearity
+note: 3.imd#1.postcovid omitted because of collinearity
+note: 4.imd#1.postcovid omitted because of collinearity
+note: 5.imd#1.postcovid omitted because of collinearity
 
-Regression with Newey-West standard errors      Number of obs     =         24
-maximum lag: 1                                  F(  0,        11) =          .
-                                                Prob > F          =          .
+Regression with Newey-West standard errors      Number of obs     =         23
+maximum lag: 1                                  F(  6,        16) =       0.69
+                                                Prob > F          =     0.6606
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |   83333.34          .        .       .            .           .
-          2  |   95833.34          .        .       .            .           .
-          3  |   43333.33          .        .       .            .           .
-          4  |  -30303.02          .        .       .            .           .
-          5  |  -4166.656          .        .       .            .           .
+          1  |  -20917.15   86102.22    -0.24   0.811    -203445.7    161611.4
+          2  |  -21837.06   82206.16    -0.27   0.794    -196106.3    152432.2
+          3  |  -53384.68   86955.12    -0.61   0.548    -237721.3    130951.9
+          4  |   110680.1   126186.8     0.88   0.393    -156823.9    378184.1
+          5  |  -62561.27   88971.98    -0.70   0.492    -251173.4    126050.9
              |
- 1.postcovid |  -34451.86          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
          imd#|
    postcovid |
-        1 1  |   86678.88          .        .       .            .           .
-        2 1  |  -67718.87          .        .       .            .           .
-        3 1  |   18427.13          .        .       .            .           .
-        4 1  |   133131.3          .        .       .            .           .
-        5 1  |   221160.1          .        .       .            .           .
+        1 1  |          0  (omitted)
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |   70022.27          .        .       .            .           .
-       _cons |   166666.7          .        .       .            .           .
+     Winter  |   49772.41   43420.39     1.15   0.269    -42274.71    141819.5
+       _cons |   208409.2   77820.93     2.68   0.016     43436.21    373382.2
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 20 obs)
-(15 real changes made)
-(5 real changes made)
 (0 real changes made)
+(0 real changes made)
+(10 real changes made)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 2.ethnicity#1.postcovid omitted because of collinearity
+note: 3.ethnicity#1.postcovid omitted because of collinearity
+note: 4.ethnicity#1.postcovid omitted because of collinearity
+note: 5.ethnicity#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         20
-maximum lag: 1                                  F(  0,         9) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  5,        14) =       0.97
+                                                Prob > F          =     0.4704
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   113.0713          .        .       .            .           .
-          3  |   1360.843          .        .       .            .           .
-          4  |   3428.402          .        .       .            .           .
-          5  |    7921.93          .        .       .            .           .
+          2  |   1980.019   1331.061     1.49   0.159    -874.8227     4834.86
+          3  |   1050.738   992.4162     1.06   0.308    -1077.783    3179.259
+          4  |   2063.401   1258.436     1.64   0.123    -635.6748    4762.477
+          5  |   1479.453   969.3373     1.53   0.149    -599.5683    3558.475
              |
- 1.postcovid |    3186.86          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
    ethnicity#|
    postcovid |
-        2 1  |  -875.3057          .        .       .            .           .
-        3 1  |  -3810.046          .        .       .            .           .
-        4 1  |  -3177.592          .        .       .            .           .
-        5 1  |  -8152.629          .        .       .            .           .
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |   -33.3603          .        .       .            .           .
-       _cons |   7462.687          .        .       .            .           .
+     Winter  |  -28.61768   905.4289    -0.03   0.975    -1970.569    1913.334
+       _cons |   8683.826   738.3838    11.76   0.000      7100.15     10267.5
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 24 obs)
-(18 real changes made)
-(6 real changes made)
 (0 real changes made)
+(0 real changes made)
+(12 real changes made)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 1.imd#1.postcovid omitted because of collinearity
+note: 2.imd#1.postcovid omitted because of collinearity
+note: 3.imd#1.postcovid omitted because of collinearity
+note: 4.imd#1.postcovid omitted because of collinearity
+note: 5.imd#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         24
-maximum lag: 1                                  F(  0,        11) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  6,        17) =       2.47
+                                                Prob > F          =     0.0669
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |   998.1846          .        .       .            .           .
-          2  |   3973.013          .        .       .            .           .
-          3  |   3466.143          .        .       .            .           .
-          4  |   3741.746          .        .       .            .           .
-          5  |   4333.395          .        .       .            .           .
+          1  |  -1784.701   2531.206    -0.71   0.490    -7125.079    3555.677
+          2  |   743.4692   2489.598     0.30   0.769    -4509.123    5996.061
+          3  |   2293.761   2568.782     0.89   0.384    -3125.895    7713.416
+          4  |   208.6055   2606.698     0.08   0.937    -5291.048    5708.259
+          5  |  -2249.397    2614.13    -0.86   0.401    -7764.729    3265.935
              |
- 1.postcovid |   3142.851          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
          imd#|
    postcovid |
-        1 1  |  -3299.926          .        .       .            .           .
-        2 1  |  -3295.744          .        .       .            .           .
-        3 1  |  -2435.744          .        .       .            .           .
-        4 1  |  -4026.493          .        .       .            .           .
-        5 1  |  -3403.395          .        .       .            .           .
+        1 1  |          0  (omitted)
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |   37.63481          .        .       .            .           .
-       _cons |   6896.552          .        .       .            .           .
+     Winter  |  -137.7009   950.1598    -0.14   0.886    -2142.363    1866.961
+       _cons |   10257.95   2513.341     4.08   0.001     4955.265    15560.64
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 20 obs)
-(15 real changes made)
-(5 real changes made)
 (0 real changes made)
+(0 real changes made)
+(10 real changes made)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 2.ethnicity#1.postcovid omitted because of collinearity
+note: 3.ethnicity#1.postcovid omitted because of collinearity
+note: 4.ethnicity#1.postcovid omitted because of collinearity
+note: 5.ethnicity#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         20
-maximum lag: 1                                  F(  0,         9) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  5,        14) =       0.91
+                                                Prob > F          =     0.5008
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   2208.654          .        .       .            .           .
-          3  |   -7535.85          .        .       .            .           .
-          4  |  -5507.117          .        .       .            .           .
-          5  |  -1155.759          .        .       .            .           .
+          2  |   1054.419   899.9909     1.17   0.261    -875.8697    2984.707
+          3  |   472.0182   1791.632     0.26   0.796     -3370.65    4314.686
+          4  |  -25.28455   704.8049    -0.04   0.972    -1536.941    1486.372
+          5  |   1050.409   779.6302     1.35   0.199    -621.7319    2722.549
              |
- 1.postcovid |  -2324.576          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
    ethnicity#|
    postcovid |
-        2 1  |  -2374.986          .        .       .            .           .
-        3 1  |   6261.286          .        .       .            .           .
-        4 1  |   6547.196          .        .       .            .           .
-        5 1  |    967.776          .        .       .            .           .
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |   74.64844          .        .       .            .           .
-       _cons |   12437.81          .        .       .            .           .
+     Winter  |   -48.6563   967.0237    -0.05   0.961    -2122.716    2025.403
+       _cons |   9512.311   747.1437    12.73   0.000     7909.848    11114.78
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 24 obs)
-(18 real changes made)
-(6 real changes made)
 (0 real changes made)
+(0 real changes made)
+(12 real changes made)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 1.imd#1.postcovid omitted because of collinearity
+note: 2.imd#1.postcovid omitted because of collinearity
+note: 3.imd#1.postcovid omitted because of collinearity
+note: 4.imd#1.postcovid omitted because of collinearity
+note: 5.imd#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         24
-maximum lag: 1                                  F(  0,        11) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  6,        17) =       1.89
+                                                Prob > F          =     0.1417
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |  -5372.051          .        .       .            .           .
-          2  |  -2923.539          .        .       .            .           .
-          3  |  -3948.544          .        .       .            .           .
-          4  |  -6346.295          .        .       .            .           .
-          5  |  -1493.638          .        .       .            .           .
+          1  |     301.97   3360.704     0.09   0.929    -6788.496    7392.436
+          2  |   935.0079   3506.698     0.27   0.793    -6463.478    8333.494
+          3  |   1793.875    3337.91     0.54   0.598      -5248.5    8836.249
+          4  |   1740.388   3406.707     0.51   0.616    -5447.136    8927.912
+          5  |   3806.442   3450.283     1.10   0.285    -3473.019     11085.9
              |
- 1.postcovid |  -4363.814          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
          imd#|
    postcovid |
-        1 1  |   4896.165          .        .       .            .           .
-        2 1  |   4914.899          .        .       .            .           .
-        3 1  |   2898.182          .        .       .            .           .
-        4 1  |   8451.947          .        .       .            .           .
-        5 1  |   3243.478          .        .       .            .           .
+        1 1  |          0  (omitted)
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |    -632.96          .        .       .            .           .
-       _cons |    13793.1          .        .       .            .           .
+     Winter  |  -1104.656   1310.387    -0.84   0.411     -3869.33    1660.019
+       _cons |   8903.489   3391.816     2.62   0.018     1747.382     16059.6
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 20 obs)
-(15 real changes made)
-(5 real changes made)
 (0 real changes made)
+(0 real changes made)
+(10 real changes made)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 2.ethnicity#1.postcovid omitted because of collinearity
+note: 3.ethnicity#1.postcovid omitted because of collinearity
+note: 4.ethnicity#1.postcovid omitted because of collinearity
+note: 5.ethnicity#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         20
-maximum lag: 1                                  F(  0,         9) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  5,        14) =       1.95
+                                                Prob > F          =     0.1501
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |  -4341.928          .        .       .            .           .
-          3  |  -5099.503          .        .       .            .           .
-          4  |  -3531.847          .        .       .            .           .
-          5  |  -4202.067          .        .       .            .           .
+          2  |  -3009.444    1454.94    -2.07   0.058     -6129.98    111.0924
+          3  |  -3223.302   1485.342    -2.17   0.048    -6409.044   -37.55974
+          4  |  -1110.369   1166.343    -0.95   0.357    -3611.927    1391.188
+          5  |  -850.4875   1297.763    -0.66   0.523    -3633.913    1932.938
              |
- 1.postcovid |   -4361.22          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
    ethnicity#|
    postcovid |
-        2 1  |   3463.683          .        .       .            .           .
-        3 1  |   6907.215          .        .       .            .           .
-        4 1  |   4114.481          .        .       .            .           .
-        5 1  |   7153.571          .        .       .            .           .
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |   36.20283          .        .       .            .           .
-       _cons |   13432.84          .        .       .            .           .
+     Winter  |   33.91558   1048.085     0.03   0.975    -2214.004    2281.835
+       _cons |   11619.01   1127.217    10.31   0.000     9201.368    14036.65
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 24 obs)
-(18 real changes made)
-(6 real changes made)
 (0 real changes made)
+(0 real changes made)
+(12 real changes made)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 1.imd#1.postcovid omitted because of collinearity
+note: 2.imd#1.postcovid omitted because of collinearity
+note: 3.imd#1.postcovid omitted because of collinearity
+note: 4.imd#1.postcovid omitted because of collinearity
+note: 5.imd#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         24
-maximum lag: 1                                  F(  0,        11) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  6,        17) =       6.64
+                                                Prob > F          =     0.0009
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |   7749.547          .        .       .            .           .
-          2  |   10775.86          .        .       .            .           .
-          3  |   5529.748          .        .       .            .           .
-          4  |   9446.075          .        .       .            .           .
-          5  |   10575.33          .        .       .            .           .
+          1  |  -4612.559   1347.809    -3.42   0.003    -7456.189    -1768.93
+          2  |   -4243.36   1341.935    -3.16   0.006    -7074.595   -1412.124
+          3  |  -5425.053   1509.453    -3.59   0.002    -8609.721   -2240.385
+          4  |  -4122.823   1281.498    -3.22   0.005    -6826.547   -1419.098
+          5  |  -6906.306   1323.353    -5.22   0.000    -9698.336   -4114.276
              |
- 1.postcovid |   8390.372          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
          imd#|
    postcovid |
-        1 1  |  -8105.335          .        .       .            .           .
-        2 1  |  -10857.05          .        .       .            .           .
-        3 1  |  -6998.859          .        .       .            .           .
-        4 1  |  -10496.11          .        .       .            .           .
-        5 1  |  -8547.141          .        .       .            .           .
+        1 1  |          0  (omitted)
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |   141.2602          .        .       .            .           .
-       _cons |   1724.138          .        .       .            .           .
+     Winter  |   292.1932   713.3398     0.41   0.687    -1212.822    1797.209
+       _cons |   14602.13   1171.111    12.47   0.000      12131.3    17072.96
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 20 obs)
-(15 real changes made)
-(5 real changes made)
 (0 real changes made)
+(0 real changes made)
+(10 real changes made)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 2.ethnicity#1.postcovid omitted because of collinearity
+note: 3.ethnicity#1.postcovid omitted because of collinearity
+note: 4.ethnicity#1.postcovid omitted because of collinearity
+note: 5.ethnicity#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         20
-maximum lag: 1                                  F(  0,         9) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  5,        14) =       2.13
+                                                Prob > F          =     0.1219
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   5163.575          .        .       .            .           .
-          3  |   3811.823          .        .       .            .           .
-          4  |   458.1055          .        .       .            .           .
-          5  |   3306.544          .        .       .            .           .
+          2  |   1359.143   1694.219     0.80   0.436    -2274.595    4992.882
+          3  |   229.4888    1842.91     0.12   0.903    -3723.161    4182.139
+          4  |  -29.85449   1709.008    -0.02   0.986    -3695.313    3635.604
+          5  |   1473.153   1998.459     0.74   0.473    -2813.115    5759.421
              |
- 1.postcovid |   655.1505          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
    ethnicity#|
    postcovid |
-        2 1  |  -4528.674          .        .       .            .           .
-        3 1  |  -374.9875          .        .       .            .           .
-        4 1  |   1650.901          .        .       .            .           .
-        5 1  |  -195.4878          .        .       .            .           .
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |  -47.70488          .        .       .            .           .
-       _cons |   7462.687          .        .       .            .           .
+     Winter  |  -99.78564   1009.075    -0.10   0.923    -2264.037    2064.465
+       _cons |   9419.772   1698.111     5.55   0.000     5777.687    13061.86
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 24 obs)
-(18 real changes made)
-(6 real changes made)
 (0 real changes made)
+(0 real changes made)
+(12 real changes made)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 1.imd#1.postcovid omitted because of collinearity
+note: 2.imd#1.postcovid omitted because of collinearity
+note: 3.imd#1.postcovid omitted because of collinearity
+note: 4.imd#1.postcovid omitted because of collinearity
+note: 5.imd#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         24
-maximum lag: 1                                  F(  0,        11) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  6,        17) =       3.55
+                                                Prob > F          =     0.0183
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |  -725.9531          .        .       .            .           .
-          2  |   4966.267          .        .       .            .           .
-          3  |    2260.14          .        .       .            .           .
-          4  |   2017.608          .        .       .            .           .
-          5  |  -1134.059          .        .       .            .           .
+          1  |   4169.864   1398.913     2.98   0.008     1218.414    7121.313
+          2  |   3428.667   1113.649     3.08   0.007     1079.073    5778.262
+          3  |   3785.183   1579.901     2.40   0.028     451.8833    7118.483
+          4  |   3582.612   1005.624     3.56   0.002      1460.93    5704.294
+          5  |   3876.529     892.23     4.34   0.000     1994.088    5758.969
              |
- 1.postcovid |   1145.982          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
          imd#|
    postcovid |
-        1 1  |   865.7965          .        .       .            .           .
-        2 1  |  -3865.889          .        .       .            .           .
-        3 1  |  -3891.427          .        .       .            .           .
-        4 1  |  -1912.857          .        .       .            .           .
-        5 1  |   3216.291          .        .       .            .           .
+        1 1  |          0  (omitted)
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |  -175.3407          .        .       .            .           .
-       _cons |   8620.689          .        .       .            .           .
+     Winter  |   83.69395   807.6263     0.10   0.919    -1620.249    1787.636
+       _cons |   6332.781   773.9499     8.18   0.000     4699.889    7965.673
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 20 obs)
-(15 real changes made)
-(5 real changes made)
 (0 real changes made)
+(0 real changes made)
+(10 real changes made)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 2.ethnicity#1.postcovid omitted because of collinearity
+note: 3.ethnicity#1.postcovid omitted because of collinearity
+note: 4.ethnicity#1.postcovid omitted because of collinearity
+note: 5.ethnicity#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         20
-maximum lag: 1                                  F(  0,         9) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  5,        14) =       0.40
+                                                Prob > F          =     0.8419
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   1680.987          .        .       .            .           .
-          3  |  -3592.333          .        .       .            .           .
-          4  |  -2034.383          .        .       .            .           .
-          5  |  -688.8643          .        .       .            .           .
+          2  |  -61.22241   722.4563    -0.08   0.934    -1610.737    1488.292
+          3  |   -989.275    1204.56    -0.82   0.425    -3572.799    1594.249
+          4  |  -1086.225   1409.376    -0.77   0.454    -4109.035    1936.585
+          5  |  -771.7562   858.9966    -0.90   0.384    -2614.121    1070.608
              |
- 1.postcovid |  -3042.888          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
    ethnicity#|
    postcovid |
-        2 1  |    510.731          .        .       .            .           .
-        3 1  |    6515.59          .        .       .            .           .
-        4 1  |    3470.27          .        .       .            .           .
-        5 1  |   4446.023          .        .       .            .           .
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |   118.7523          .        .       .            .           .
-       _cons |   10945.27          .        .       .            .           .
+     Winter  |   50.32402   905.6642     0.06   0.956    -1892.133    1992.781
+       _cons |   10549.33   686.1904    15.37   0.000     9077.597    12021.06
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 24 obs)
-(18 real changes made)
-(6 real changes made)
 (0 real changes made)
+(0 real changes made)
+(12 real changes made)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 1.imd#1.postcovid omitted because of collinearity
+note: 2.imd#1.postcovid omitted because of collinearity
+note: 3.imd#1.postcovid omitted because of collinearity
+note: 4.imd#1.postcovid omitted because of collinearity
+note: 5.imd#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         24
-maximum lag: 1                                  F(  0,        11) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  6,        17) =       1.17
+                                                Prob > F          =     0.3685
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |   2196.007          .        .       .            .           .
-          2  |    5697.15          .        .       .            .           .
-          3  |   1045.202          .        .       .            .           .
-          4  |   10785.03          .        .       .            .           .
-          5  |   6057.532          .        .       .            .           .
+          1  |  -2335.424   2193.537    -1.06   0.302    -6963.383    2292.535
+          2  |  -2849.986   1314.538    -2.17   0.045    -5623.418   -76.55404
+          3  |  -1473.814   1772.876    -0.83   0.417    -5214.255    2266.627
+          4  |  -2811.796   1307.924    -2.15   0.046    -5571.275    -52.3174
+          5  |  -1671.225   1513.278    -1.10   0.285    -4863.963    1521.513
              |
- 1.postcovid |   4445.723          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
          imd#|
    postcovid |
-        1 1  |  -1681.568          .        .       .            .           .
-        2 1  |  -4718.465          .        .       .            .           .
-        3 1  |  -2507.418          .        .       .            .           .
-        4 1  |  -10207.35          .        .       .            .           .
-        5 1  |  -5914.725          .        .       .            .           .
+        1 1  |          0  (omitted)
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |   314.5893          .        .       .            .           .
-       _cons |   5172.414          .        .       .            .           .
+     Winter  |   552.9981   1179.815     0.47   0.645    -1936.195    3042.191
+       _cons |   11874.36   1183.216    10.04   0.000      9377.99    14370.72
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 20 obs)
-(15 real changes made)
-(5 real changes made)
 (0 real changes made)
+(0 real changes made)
+(10 real changes made)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 2.ethnicity#1.postcovid omitted because of collinearity
+note: 3.ethnicity#1.postcovid omitted because of collinearity
+note: 4.ethnicity#1.postcovid omitted because of collinearity
+note: 5.ethnicity#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         20
-maximum lag: 1                                  F(  0,         9) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  5,        14) =       5.36
+                                                Prob > F          =     0.0059
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |  -376.9028          .        .       .            .           .
-          3  |   365.8184          .        .       .            .           .
-          4  |   2433.378          .        .       .            .           .
-          5  |   5388.443          .        .       .            .           .
+          2  |  -2075.563   748.2575    -2.77   0.015    -3680.415     -470.71
+          3  |  -374.7389   1349.579    -0.28   0.785    -3269.297    2519.819
+          4  |  -718.7631   1497.255    -0.48   0.639    -3930.055    2492.529
+          5  |   451.4692   759.6443     0.59   0.562    -1177.806    2080.744
              |
- 1.postcovid |   1151.943          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
    ethnicity#|
    postcovid |
-        2 1  |    520.585          .        .       .            .           .
-        3 1  |   44.12874          .        .       .            .           .
-        4 1  |  -1968.284          .        .       .            .           .
-        5 1  |  -4419.266          .        .       .            .           .
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |   39.62124          .        .       .            .           .
-       _cons |   8457.711          .        .       .            .           .
+     Winter  |  -18.03423   784.5892    -0.02   0.982    -1700.811    1664.742
+       _cons |   10532.29   788.8103    13.35   0.000     8840.459    12224.12
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 24 obs)
-(18 real changes made)
-(6 real changes made)
 (0 real changes made)
+(0 real changes made)
+(12 real changes made)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 1.imd#1.postcovid omitted because of collinearity
+note: 2.imd#1.postcovid omitted because of collinearity
+note: 3.imd#1.postcovid omitted because of collinearity
+note: 4.imd#1.postcovid omitted because of collinearity
+note: 5.imd#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         24
-maximum lag: 1                                  F(  0,        11) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  6,        17) =       7.32
+                                                Prob > F          =     0.0005
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |  -2450.092          .        .       .            .           .
-          2  |   2155.172          .        .       .            .           .
-          3  |    536.001          .        .       .            .           .
-          4  |  -770.3594          .        .       .            .           .
-          5  |  -1253.919          .        .       .            .           .
+          1  |  -4210.724   1075.987    -3.91   0.001    -6480.858    -1940.59
+          2  |  -4640.844   1141.529    -4.07   0.001     -7049.26   -2232.429
+          3  |  -4815.897   834.1676    -5.77   0.000    -6575.836   -3055.957
+          4  |  -1568.161   879.3793    -1.78   0.092    -3423.489    287.1673
+          5  |   -2870.84   957.5335    -3.00   0.008     -4891.06   -850.6211
              |
- 1.postcovid |   2761.179          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
          imd#|
    postcovid |
-        1 1  |    -690.84          .        .       .            .           .
-        2 1  |  -5819.308          .        .       .            .           .
-        3 1  |  -5642.782          .        .       .            .           .
-        4 1  |  -1629.785          .        .       .            .           .
-        5 1  |   688.8294          .        .       .            .           .
+        1 1  |          0  (omitted)
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |  -763.5229          .        .       .            .           .
-       _cons |   10344.83          .        .       .            .           .
+     Winter  |   96.26762   689.3383     0.14   0.891    -1358.109    1550.644
+       _cons |   13307.52   630.9455    21.09   0.000     11976.34     14638.7
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 20 obs)
-(15 real changes made)
-(5 real changes made)
 (0 real changes made)
+(0 real changes made)
+(10 real changes made)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 2.ethnicity#1.postcovid omitted because of collinearity
+note: 3.ethnicity#1.postcovid omitted because of collinearity
+note: 4.ethnicity#1.postcovid omitted because of collinearity
+note: 5.ethnicity#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         20
-maximum lag: 1                                  F(  0,         9) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  5,        14) =       0.14
+                                                Prob > F          =     0.9797
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   625.6597          .        .       .            .           .
-          3  |     4784.9          .        .       .            .           .
-          4  |    3920.99          .        .       .            .           .
-          5  |   757.7505          .        .       .            .           .
+          2  |   432.4302   2113.053     0.20   0.841    -4099.618    4964.478
+          3  |   657.4227   1926.542     0.34   0.738    -3474.599    4789.444
+          4  |  -638.2172   1948.599    -0.33   0.748    -4817.546    3541.112
+          5  |  -355.8174   1455.701    -0.24   0.810    -3477.986    2766.351
              |
- 1.postcovid |   111.8103          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
    ethnicity#|
    postcovid |
-        2 1  |   2692.243          .        .       .            .           .
-        3 1  |  -3545.848          .        .       .            .           .
-        4 1  |  -2329.855          .        .       .            .           .
-        5 1  |   2522.396          .        .       .            .           .
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |   104.9335          .        .       .            .           .
-       _cons |   7960.199          .        .       .            .           .
+     Winter  |  -108.3548   1393.181    -0.08   0.939     -3096.43    2879.721
+       _cons |   10053.56   1631.169     6.16   0.000     6555.046    13552.07
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 24 obs)
-(18 real changes made)
-(6 real changes made)
 (0 real changes made)
+(0 real changes made)
+(12 real changes made)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 1.imd#1.postcovid omitted because of collinearity
+note: 2.imd#1.postcovid omitted because of collinearity
+note: 3.imd#1.postcovid omitted because of collinearity
+note: 4.imd#1.postcovid omitted because of collinearity
+note: 5.imd#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         24
-maximum lag: 1                                  F(  0,        11) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  6,        17) =       2.39
+                                                Prob > F          =     0.0734
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |  -6569.872          .        .       .            .           .
-          2  |  -7365.067          .        .       .            .           .
-          3  |  -4118.277          .        .       .            .           .
-          4  |  -5942.772          .        .       .            .           .
-          5  |  -5356.813          .        .       .            .           .
+          1  |   1985.095   2053.774     0.97   0.347    -2347.989    6318.179
+          2  |   811.9252   2142.185     0.38   0.709     -3707.69    5331.541
+          3  |   1422.018   2002.723     0.71   0.487    -2803.359    5647.394
+          4  |   3834.921    1918.19     2.00   0.062    -212.1053    7881.948
+          5  |   1167.621   2451.075     0.48   0.640    -4003.696    6338.937
              |
- 1.postcovid |   -5986.51          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
          imd#|
    postcovid |
-        1 1  |   6364.964          .        .       .            .           .
-        2 1  |   9310.884          .        .       .            .           .
-        3 1  |   5001.412          .        .       .            .           .
-        4 1  |   5534.627          .        .       .            .           .
-        5 1  |   6431.843          .        .       .            .           .
+        1 1  |          0  (omitted)
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |  -235.0653          .        .       .            .           .
-       _cons |   15517.24          .        .       .            .           .
+     Winter  |  -85.20384   1034.862    -0.08   0.935    -2268.571    2098.163
+       _cons |   8240.729   1903.321     4.33   0.000     4225.073    12256.38
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 20 obs)
-(15 real changes made)
-(5 real changes made)
 (0 real changes made)
+(0 real changes made)
+(10 real changes made)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 2.ethnicity#1.postcovid omitted because of collinearity
+note: 3.ethnicity#1.postcovid omitted because of collinearity
+note: 4.ethnicity#1.postcovid omitted because of collinearity
+note: 5.ethnicity#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         20
-maximum lag: 1                                  F(  0,         9) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  5,        14) =       0.95
+                                                Prob > F          =     0.4812
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |  -1861.903          .        .       .            .           .
-          3  |  -153.6436          .        .       .            .           .
-          4  |   443.3271          .        .       .            .           .
-          5  |  -704.1719          .        .       .            .           .
+          2  |   128.1785   1013.496     0.13   0.901    -2045.555    2301.912
+          3  |   1748.442   1007.185     1.74   0.105    -411.7547    3908.639
+          4  |  -276.0814   626.8763    -0.44   0.666    -1620.597    1068.435
+          5  |    280.113   716.5587     0.39   0.702    -1256.753    1816.979
              |
- 1.postcovid |  -1838.661          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
    ethnicity#|
    postcovid |
-        2 1  |   2918.409          .        .       .            .           .
-        3 1  |   1238.308          .        .       .            .           .
-        4 1  |   3420.473          .        .       .            .           .
-        5 1  |   1551.115          .        .       .            .           .
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |   9.741846          .        .       .            .           .
-       _cons |   10447.76          .        .       .            .           .
+     Winter  |   72.55327   596.7335     0.12   0.905    -1207.313    1352.419
+       _cons |   9582.783   598.1615    16.02   0.000     8299.854    10865.71
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (5 vars, 24 obs)
-(18 real changes made)
-(6 real changes made)
 (0 real changes made)
+(0 real changes made)
+(12 real changes made)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
-Warning:  variance matrix is nonsymmetric or highly singular
+note: 1.postcovid omitted because of collinearity
+note: 1.imd#1.postcovid omitted because of collinearity
+note: 2.imd#1.postcovid omitted because of collinearity
+note: 3.imd#1.postcovid omitted because of collinearity
+note: 4.imd#1.postcovid omitted because of collinearity
+note: 5.imd#1.postcovid omitted because of collinearity
 
 Regression with Newey-West standard errors      Number of obs     =         24
-maximum lag: 1                                  F(  0,        11) =          .
-                                                Prob > F          =          .
+maximum lag: 1                                  F(  6,        17) =       1.46
+                                                Prob > F          =     0.2515
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |  -4174.229          .        .       .            .           .
-          2  |  -3373.312          .        .       .            .           .
-          3  |  -151.8662          .        .       .            .           .
-          4  |   2824.652          .        .       .            .           .
-          5  |  -6186.612          .        .       .            .           .
+          1  |  -2761.845    3333.85    -0.83   0.419    -9795.653    4271.964
+          2  |   -1966.71   3230.406    -0.61   0.551     -8782.27    4848.851
+          3  |  -502.6494   3266.421    -0.15   0.880    -7394.195    6388.896
+          4  |  -3763.582   3308.178    -1.14   0.271    -10743.23    3216.063
+          5  |  -2501.091   3172.036    -0.79   0.441    -9193.501     4191.32
              |
- 1.postcovid |  -3541.669          .        .       .            .           .
+ 1.postcovid |          0  (omitted)
              |
          imd#|
    postcovid |
-        1 1  |   7483.308          .        .       .            .           .
-        2 1  |   5107.361          .        .       .            .           .
-        3 1  |   525.8133          .        .       .            .           .
-        4 1  |   442.0534          .        .       .            .           .
-        5 1  |   5286.625          .        .       .            .           .
+        1 1  |          0  (omitted)
+        2 1  |          0  (omitted)
+        3 1  |          0  (omitted)
+        4 1  |          0  (omitted)
+        5 1  |          0  (omitted)
              |
       season |
-     Summer  |  -339.2598          .        .       .            .           .
-       _cons |   12068.96          .        .       .            .           .
+     Winter  |   1412.752   1528.548     0.92   0.368    -1812.202    4637.705
+       _cons |   11505.49   3256.106     3.53   0.003     4635.706    18375.27
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
@@ -792,7 +874,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.xPoeethYio", write text replace
+. . file open output using "/tmp/tmp.pmo3V2ePtv", write text replace
 
 . . file write output "success" 
 
