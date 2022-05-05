@@ -7,8 +7,8 @@ Description:    collapses data to 3-monthly then generates line graphs of
                 rates of each outcome and strata per month
 ==============================================================================*/
 cap log using ./logs/graphs_mortality.log, replace
-cap mkdir ./output/measures/mortality/collapsed
-cap mkdir ./output/graphs/mortality
+cap mkdir ./output/collapsed
+cap mkdir ./output/graphs
 * Generates graphs for ethnicity - to include DM once defined
 local a "resp asthma copd cvd mi stroke heart_failure vte mh keto"
 forvalues i=1/9 {
@@ -27,7 +27,7 @@ forvalues i=1/9 {
     format quarter %tq
     collapse (sum) value rate population `b'_mortality (min) dateA,  by(quarter ethnicity)
     * Outputing file 
-    export delimited using "./output/measures/mortality/collapsed/collapse_measure_`b'_mortality_ethnic_rate.csv", replace 
+    export delimited using "./output/collapsed/collapse_measure_`b'_mortality_ethnic_rate.csv", replace 
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `b'_mortality population, i(dateA) j(ethnicity)
     describe
@@ -42,7 +42,7 @@ forvalues i=1/9 {
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
     ytitle("Rate per 100,000") 
 
-    graph export ./output/graphs/mortality/line_mortality_`b'_ethnic.eps, as(eps) replace
+    graph export ./output/graphs/line_mortality_`b'_ethnic.svg, as(svg) replace
     * IMD
     clear 
     import delimited using ./output/measures/mortality/measure_`b'_mortality_imd_rate.csv, numericcols(4)
@@ -57,7 +57,7 @@ forvalues i=1/9 {
     gen quarter = qofd(dateA)
     collapse (sum) value rate population `b'_mortality (min) dateA,  by(quarter imd)
     * Outputing file 
-    export delimited using ./output/measures/mortality/collapsed/collapse_measure_`b'_mortality_imd_rate.csv 
+    export delimited using ./output/collapsed/collapse_measure_`b'_mortality_imd_rate.csv 
     * reshape dataset so columns with rates for each level of IMD
     reshape wide value rate `b'_mortality population, i(dateA) j(imd)
     describe
@@ -72,5 +72,5 @@ forvalues i=1/9 {
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
     ytitle("Rate per 100,000") 
     * save graph
-    graph export ./output/graphs/mortality/line_mortality_`b'_imd.eps, as(eps) replace
+    graph export ./output/graphs/line_mortality_`b'_imd.svg, as(svg) replace
 }
