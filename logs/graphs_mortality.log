@@ -1,7 +1,7 @@
 
-. cap mkdir ./output/measures/mortality/collapsed
+. cap mkdir ./output/collapsed
 
-. cap mkdir ./output/graphs/mortality
+. cap mkdir ./output/graphs
 
 . * Generates graphs for ethnicity - to include DM once defined
 . local a "resp asthma copd cvd mi stroke heart_failure vte mh keto"
@@ -24,8 +24,8 @@
  11.     collapse (sum) value rate population `b'_mortality (min) dateA,  by(qu
 > arter ethnicity)
  12.     * Outputing file 
-.     export delimited using "./output/measures/mortality/collapsed/collapse_me
-> asure_`b'_mortality_ethnic_rate.csv", replace 
+.     export delimited using "./output/collapsed/collapse_measure_`b'_mortality
+> _ethnic_rate.csv", replace 
  13.     * reshape dataset so columns with rates for each ethnicity 
 .     reshape wide value rate `b'_mortality population, i(dateA) j(ethnicity)
  14.     describe
@@ -41,8 +41,8 @@
 > format(%dM-CY)) ///
 >     ytitle("Rate per 100,000") 
  21. 
-.     graph export ./output/graphs/mortality/line_mortality_`b'_ethnic.eps, as(
-> eps) replace
+.     graph export ./output/graphs/line_mortality_`b'_ethnic.svg, as(svg) repla
+> ce
  22.     * IMD
 .     clear 
  23.     import delimited using ./output/measures/mortality/measure_`b'_mortali
@@ -59,8 +59,8 @@
  30.     collapse (sum) value rate population `b'_mortality (min) dateA,  by(qu
 > arter imd)
  31.     * Outputing file 
-.     export delimited using ./output/measures/mortality/collapsed/collapse_mea
-> sure_`b'_mortality_imd_rate.csv 
+.     export delimited using ./output/collapsed/collapse_measure_`b'_mortality_
+> imd_rate.csv, replace 
  32.     * reshape dataset so columns with rates for each level of IMD
 .     reshape wide value rate `b'_mortality population, i(dateA) j(imd)
  33.     describe
@@ -76,14 +76,12 @@
 > -CY)) ///
 >     ytitle("Rate per 100,000") 
  40.     * save graph
-.     graph export ./output/graphs/mortality/line_mortality_`b'_imd.eps, as(eps
-> ) replace
+.     graph export ./output/graphs/line_mortality_`b'_imd.svg, as(svg) replace
  41. }
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_resp_mortali
-> ty_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_resp_mortality_ethn
-> ic_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_resp_mortality_ethnic_rate.csv 
+> not found)
+file ./output/collapsed/collapse_measure_resp_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -132,9 +130,7 @@ quarter         float   %tq
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_resp_ethnic.eps not found)
-(file ./output/graphs/mortality/line_mortality_resp_ethnic.eps written in EPS f
-> ormat)
+(file ./output/graphs/line_mortality_resp_ethnic.svg written in SVG format)
 (5 vars, 282 obs)
 
       dateA |      Freq.     Percent        Cum.
@@ -188,8 +184,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-file ./output/measures/mortality/collapsed/collapse_measure_resp_mortality_imd_
-> rate.csv saved
+(note: file ./output/collapsed/collapse_measure_resp_mortality_imd_rate.csv not
+>  found)
+file ./output/collapsed/collapse_measure_resp_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -242,14 +239,11 @@ quarter         float   %9.0g
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_resp_imd.eps not found)
-(file ./output/graphs/mortality/line_mortality_resp_imd.eps written in EPS form
-> at)
+(file ./output/graphs/line_mortality_resp_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_asthma_morta
-> lity_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_asthma_mortality_et
-> hnic_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_asthma_mortality_ethnic_rate.cs
+> v not found)
+file ./output/collapsed/collapse_measure_asthma_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -298,10 +292,7 @@ quarter         float   %tq
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_asthma_ethnic.eps not foun
-> d)
-(file ./output/graphs/mortality/line_mortality_asthma_ethnic.eps written in EPS
->  format)
+(file ./output/graphs/line_mortality_asthma_ethnic.svg written in SVG format)
 (5 vars, 282 obs)
 
       dateA |      Freq.     Percent        Cum.
@@ -355,8 +346,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-file ./output/measures/mortality/collapsed/collapse_measure_asthma_mortality_im
-> d_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_asthma_mortality_imd_rate.csv n
+> ot found)
+file ./output/collapsed/collapse_measure_asthma_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -409,14 +401,11 @@ quarter         float   %9.0g
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_asthma_imd.eps not found)
-(file ./output/graphs/mortality/line_mortality_asthma_imd.eps written in EPS fo
-> rmat)
+(file ./output/graphs/line_mortality_asthma_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_copd_mortali
-> ty_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_copd_mortality_ethn
-> ic_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_copd_mortality_ethnic_rate.csv 
+> not found)
+file ./output/collapsed/collapse_measure_copd_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -465,9 +454,7 @@ quarter         float   %tq
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_copd_ethnic.eps not found)
-(file ./output/graphs/mortality/line_mortality_copd_ethnic.eps written in EPS f
-> ormat)
+(file ./output/graphs/line_mortality_copd_ethnic.svg written in SVG format)
 (5 vars, 282 obs)
 
       dateA |      Freq.     Percent        Cum.
@@ -521,8 +508,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-file ./output/measures/mortality/collapsed/collapse_measure_copd_mortality_imd_
-> rate.csv saved
+(note: file ./output/collapsed/collapse_measure_copd_mortality_imd_rate.csv not
+>  found)
+file ./output/collapsed/collapse_measure_copd_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -575,14 +563,11 @@ quarter         float   %9.0g
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_copd_imd.eps not found)
-(file ./output/graphs/mortality/line_mortality_copd_imd.eps written in EPS form
-> at)
+(file ./output/graphs/line_mortality_copd_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_cvd_mortalit
-> y_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_cvd_mortality_ethni
-> c_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_cvd_mortality_ethnic_rate.csv n
+> ot found)
+file ./output/collapsed/collapse_measure_cvd_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -631,9 +616,7 @@ quarter         float   %tq
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_cvd_ethnic.eps not found)
-(file ./output/graphs/mortality/line_mortality_cvd_ethnic.eps written in EPS fo
-> rmat)
+(file ./output/graphs/line_mortality_cvd_ethnic.svg written in SVG format)
 (5 vars, 282 obs)
 
       dateA |      Freq.     Percent        Cum.
@@ -687,8 +670,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-file ./output/measures/mortality/collapsed/collapse_measure_cvd_mortality_imd_r
-> ate.csv saved
+(note: file ./output/collapsed/collapse_measure_cvd_mortality_imd_rate.csv not 
+> found)
+file ./output/collapsed/collapse_measure_cvd_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -741,14 +725,11 @@ quarter         float   %9.0g
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_cvd_imd.eps not found)
-(file ./output/graphs/mortality/line_mortality_cvd_imd.eps written in EPS forma
-> t)
+(file ./output/graphs/line_mortality_cvd_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_mi_mortality
-> _ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_mi_mortality_ethnic
-> _rate.csv saved
+(note: file ./output/collapsed/collapse_measure_mi_mortality_ethnic_rate.csv no
+> t found)
+file ./output/collapsed/collapse_measure_mi_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -797,9 +778,7 @@ quarter         float   %tq
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_mi_ethnic.eps not found)
-(file ./output/graphs/mortality/line_mortality_mi_ethnic.eps written in EPS for
-> mat)
+(file ./output/graphs/line_mortality_mi_ethnic.svg written in SVG format)
 (5 vars, 282 obs)
 
       dateA |      Freq.     Percent        Cum.
@@ -853,8 +832,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-file ./output/measures/mortality/collapsed/collapse_measure_mi_mortality_imd_ra
-> te.csv saved
+(note: file ./output/collapsed/collapse_measure_mi_mortality_imd_rate.csv not f
+> ound)
+file ./output/collapsed/collapse_measure_mi_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -907,14 +887,11 @@ quarter         float   %9.0g
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_mi_imd.eps not found)
-(file ./output/graphs/mortality/line_mortality_mi_imd.eps written in EPS format
-> )
+(file ./output/graphs/line_mortality_mi_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_stroke_morta
-> lity_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_stroke_mortality_et
-> hnic_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_stroke_mortality_ethnic_rate.cs
+> v not found)
+file ./output/collapsed/collapse_measure_stroke_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -963,10 +940,7 @@ quarter         float   %tq
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_stroke_ethnic.eps not foun
-> d)
-(file ./output/graphs/mortality/line_mortality_stroke_ethnic.eps written in EPS
->  format)
+(file ./output/graphs/line_mortality_stroke_ethnic.svg written in SVG format)
 (5 vars, 282 obs)
 
       dateA |      Freq.     Percent        Cum.
@@ -1020,8 +994,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-file ./output/measures/mortality/collapsed/collapse_measure_stroke_mortality_im
-> d_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_stroke_mortality_imd_rate.csv n
+> ot found)
+file ./output/collapsed/collapse_measure_stroke_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1074,14 +1049,12 @@ quarter         float   %9.0g
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_stroke_imd.eps not found)
-(file ./output/graphs/mortality/line_mortality_stroke_imd.eps written in EPS fo
-> rmat)
+(file ./output/graphs/line_mortality_stroke_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_heart_failur
-> e_mortality_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_heart_failure_morta
-> lity_ethnic_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_heart_failure_mortality_ethnic_
+> rate.csv not found)
+file ./output/collapsed/collapse_measure_heart_failure_mortality_ethnic_rate.cs
+> v saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1130,10 +1103,8 @@ quarter         float   %tq
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_heart_failure_ethnic.eps n
-> ot found)
-(file ./output/graphs/mortality/line_mortality_heart_failure_ethnic.eps written
->  in EPS format)
+(file ./output/graphs/line_mortality_heart_failure_ethnic.svg written in SVG fo
+> rmat)
 (5 vars, 282 obs)
 
       dateA |      Freq.     Percent        Cum.
@@ -1187,8 +1158,10 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-file ./output/measures/mortality/collapsed/collapse_measure_heart_failure_morta
-> lity_imd_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_heart_failure_mortality_imd_rat
+> e.csv not found)
+file ./output/collapsed/collapse_measure_heart_failure_mortality_imd_rate.csv s
+> aved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1241,15 +1214,12 @@ quarter         float   %9.0g
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_heart_failure_imd.eps not 
-> found)
-(file ./output/graphs/mortality/line_mortality_heart_failure_imd.eps written in
->  EPS format)
+(file ./output/graphs/line_mortality_heart_failure_imd.svg written in SVG forma
+> t)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_vte_mortalit
-> y_ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_vte_mortality_ethni
-> c_rate.csv saved
+(note: file ./output/collapsed/collapse_measure_vte_mortality_ethnic_rate.csv n
+> ot found)
+file ./output/collapsed/collapse_measure_vte_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1298,9 +1268,7 @@ quarter         float   %tq
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_vte_ethnic.eps not found)
-(file ./output/graphs/mortality/line_mortality_vte_ethnic.eps written in EPS fo
-> rmat)
+(file ./output/graphs/line_mortality_vte_ethnic.svg written in SVG format)
 (5 vars, 282 obs)
 
       dateA |      Freq.     Percent        Cum.
@@ -1354,8 +1322,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-file ./output/measures/mortality/collapsed/collapse_measure_vte_mortality_imd_r
-> ate.csv saved
+(note: file ./output/collapsed/collapse_measure_vte_mortality_imd_rate.csv not 
+> found)
+file ./output/collapsed/collapse_measure_vte_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1408,14 +1377,11 @@ quarter         float   %9.0g
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_vte_imd.eps not found)
-(file ./output/graphs/mortality/line_mortality_vte_imd.eps written in EPS forma
-> t)
+(file ./output/graphs/line_mortality_vte_imd.svg written in SVG format)
 (5 vars, 235 obs)
-(note: file ./output/measures/mortality/collapsed/collapse_measure_mh_mortality
-> _ethnic_rate.csv not found)
-file ./output/measures/mortality/collapsed/collapse_measure_mh_mortality_ethnic
-> _rate.csv saved
+(note: file ./output/collapsed/collapse_measure_mh_mortality_ethnic_rate.csv no
+> t found)
+file ./output/collapsed/collapse_measure_mh_mortality_ethnic_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1464,9 +1430,7 @@ quarter         float   %tq
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_mh_ethnic.eps not found)
-(file ./output/graphs/mortality/line_mortality_mh_ethnic.eps written in EPS for
-> mat)
+(file ./output/graphs/line_mortality_mh_ethnic.svg written in SVG format)
 (5 vars, 282 obs)
 
       dateA |      Freq.     Percent        Cum.
@@ -1520,8 +1484,9 @@ Sorted by: dateA
   01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
       Total |        282      100.00
-file ./output/measures/mortality/collapsed/collapse_measure_mh_mortality_imd_ra
-> te.csv saved
+(note: file ./output/collapsed/collapse_measure_mh_mortality_imd_rate.csv not f
+> ound)
+file ./output/collapsed/collapse_measure_mh_mortality_imd_rate.csv saved
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1574,14 +1539,12 @@ quarter         float   %9.0g
 -------------------------------------------------------------------------------
 Sorted by: dateA
      Note: Dataset has changed since last saved.
-(note: file ./output/graphs/mortality/line_mortality_mh_imd.eps not found)
-(file ./output/graphs/mortality/line_mortality_mh_imd.eps written in EPS format
-> )
+(file ./output/graphs/line_mortality_mh_imd.svg written in SVG format)
 
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.WicpFyDsXN", write text replace
+. . file open output using "/tmp/tmp.XCzzJdNdDy", write text replace
 
 . . file write output "success" 
 

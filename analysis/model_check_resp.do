@@ -39,20 +39,20 @@ foreach var in asthma_monitoring copd_monitoring asthma_exacerbation copd_exacer
 		ac rate if `strata'==3, name(ac_`strata'_3, replace)
 		ac rate if `strata'==4, name(ac_`strata'_4, replace)
 		ac rate if `strata'==5, name(ac_`strata'_5, replace)
-		/*Partial autoregression plots by ethnicity
+		*Partial autoregression plots by ethnicity
 		pac rate if `strata'==1, name(pac_`strata'_1, replace)
 		pac rate if `strata'==2, name(pac_`strata'_2, replace)
 		pac rate if `strata'==3, name(pac_`strata'_3, replace)
 		pac rate if `strata'==4, name(pac_`strata'_4, replace)
-		pac rate if `strata'==5, name(pac_`strata'_5, replace)*/
+		pac rate if `strata'==5, name(pac_`strata'_5, replace)
 		*Combine Graphs
 		graph combine kd_`strata'_1 kd_`strata'_2 kd_`strata'_3 kd_`strata'_4 kd_`strata'_5, altshrink
 		graph export ./output/time_series/resp_kd_`var'_`strata'.svg, as(svg) replace
 		graph combine ac_`strata'_1 ac_`strata'_2 ac_`strata'_3 ac_`strata'_4 ac_`strata'_5, altshrink
 		graph export ./output/time_series/resp_ac_`var'_`strata'.svg, as(svg) replace
-		/*
+		
 		graph combine pac_`strata'_1 pac_`strata'_2 pac_`strata'_3 pac_`strata'_4 pac_`strata'_5, altshrink
-		graph export ./output/time_series/resp_pac_`var'_`strata'.svg, as(svg) replace*/
+		graph export ./output/time_series/resp_pac_`var'_`strata'.svg, as(svg) replace
 	}
 }	
 

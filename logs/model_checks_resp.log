@@ -41,37 +41,32 @@
  19.                 ac rate if `strata'==3, name(ac_`strata'_3, replace)
  20.                 ac rate if `strata'==4, name(ac_`strata'_4, replace)
  21.                 ac rate if `strata'==5, name(ac_`strata'_5, replace)
- 22.                 /*Partial autoregression plots by ethnicity
->                 pac rate if `strata'==1, name(pac_`strata'_1, replace)
->                 pac rate if `strata'==2, name(pac_`strata'_2, replace)
->                 pac rate if `strata'==3, name(pac_`strata'_3, replace)
->                 pac rate if `strata'==4, name(pac_`strata'_4, replace)
->                 pac rate if `strata'==5, name(pac_`strata'_5, replace)*/
-.                 *Combine Graphs
+ 22.                 *Partial autoregression plots by ethnicity
+.                 pac rate if `strata'==1, name(pac_`strata'_1, replace)
+ 23.                 pac rate if `strata'==2, name(pac_`strata'_2, replace)
+ 24.                 pac rate if `strata'==3, name(pac_`strata'_3, replace)
+ 25.                 pac rate if `strata'==4, name(pac_`strata'_4, replace)
+ 26.                 pac rate if `strata'==5, name(pac_`strata'_5, replace)
+ 27.                 *Combine Graphs
 .                 graph combine kd_`strata'_1 kd_`strata'_2 kd_`strata'_3 kd_`s
 > trata'_4 kd_`strata'_5, altshrink
- 23.                 graph export ./output/time_series/resp_kd_`var'_`strata'.s
+ 28.                 graph export ./output/time_series/resp_kd_`var'_`strata'.s
 > vg, as(svg) replace
- 24.                 graph combine ac_`strata'_1 ac_`strata'_2 ac_`strata'_3 ac
+ 29.                 graph combine ac_`strata'_1 ac_`strata'_2 ac_`strata'_3 ac
 > _`strata'_4 ac_`strata'_5, altshrink
- 25.                 graph export ./output/time_series/resp_ac_`var'_`strata'.s
+ 30.                 graph export ./output/time_series/resp_ac_`var'_`strata'.s
 > vg, as(svg) replace
- 26.                 /*
->                 graph combine pac_`strata'_1 pac_`strata'_2 pac_`strata'_3 pa
+ 31.                 
+.                 graph combine pac_`strata'_1 pac_`strata'_2 pac_`strata'_3 pa
 > c_`strata'_4 pac_`strata'_5, altshrink
->                 graph export ./output/time_series/resp_pac_`var'_`strata'.svg
-> , as(svg) replace*/
-.         }
- 27. }       
-(5 vars, 20 obs)
+ 32.                 graph export ./output/time_series/resp_pac_`var'_`strata'.
+> svg, as(svg) replace
+ 33.         }
+ 34. }       
+(5 vars, 175 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2021m10 to 2022m1
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
 (note: file ./output/time_series/resp_kd_asthma_monitoring_ethnicity.svg not fo
 > und)
 (file ./output/time_series/resp_kd_asthma_monitoring_ethnicity.svg written in S
@@ -80,30 +75,27 @@
 > und)
 (file ./output/time_series/resp_ac_asthma_monitoring_ethnicity.svg written in S
 > VG format)
-(5 vars, 24 obs)
+(note: file ./output/time_series/resp_pac_asthma_monitoring_ethnicity.svg not f
+> ound)
+(file ./output/time_series/resp_pac_asthma_monitoring_ethnicity.svg written in 
+> SVG format)
+(5 vars, 210 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2021m10 to 2022m1
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
 (note: file ./output/time_series/resp_kd_asthma_monitoring_imd.svg not found)
 (file ./output/time_series/resp_kd_asthma_monitoring_imd.svg written in SVG for
 > mat)
 (note: file ./output/time_series/resp_ac_asthma_monitoring_imd.svg not found)
 (file ./output/time_series/resp_ac_asthma_monitoring_imd.svg written in SVG for
 > mat)
-(5 vars, 20 obs)
+(note: file ./output/time_series/resp_pac_asthma_monitoring_imd.svg not found)
+(file ./output/time_series/resp_pac_asthma_monitoring_imd.svg written in SVG fo
+> rmat)
+(5 vars, 175 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2021m10 to 2022m1
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
 (note: file ./output/time_series/resp_kd_copd_monitoring_ethnicity.svg not foun
 > d)
 (file ./output/time_series/resp_kd_copd_monitoring_ethnicity.svg written in SVG
@@ -112,30 +104,28 @@
 > d)
 (file ./output/time_series/resp_ac_copd_monitoring_ethnicity.svg written in SVG
 >  format)
-(5 vars, 24 obs)
+(note: file ./output/time_series/resp_pac_copd_monitoring_ethnicity.svg not fou
+> nd)
+(file ./output/time_series/resp_pac_copd_monitoring_ethnicity.svg written in SV
+> G format)
+(5 vars, 210 obs)
+(6 missing values generated)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2021m10 to 2022m1
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
 (note: file ./output/time_series/resp_kd_copd_monitoring_imd.svg not found)
 (file ./output/time_series/resp_kd_copd_monitoring_imd.svg written in SVG forma
 > t)
 (note: file ./output/time_series/resp_ac_copd_monitoring_imd.svg not found)
 (file ./output/time_series/resp_ac_copd_monitoring_imd.svg written in SVG forma
 > t)
-(5 vars, 20 obs)
+(note: file ./output/time_series/resp_pac_copd_monitoring_imd.svg not found)
+(file ./output/time_series/resp_pac_copd_monitoring_imd.svg written in SVG form
+> at)
+(5 vars, 175 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2021m10 to 2022m1
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
 (note: file ./output/time_series/resp_kd_asthma_exacerbation_ethnicity.svg not 
 > found)
 (file ./output/time_series/resp_kd_asthma_exacerbation_ethnicity.svg written in
@@ -144,30 +134,28 @@
 > found)
 (file ./output/time_series/resp_ac_asthma_exacerbation_ethnicity.svg written in
 >  SVG format)
-(5 vars, 24 obs)
+(note: file ./output/time_series/resp_pac_asthma_exacerbation_ethnicity.svg not
+>  found)
+(file ./output/time_series/resp_pac_asthma_exacerbation_ethnicity.svg written i
+> n SVG format)
+(5 vars, 210 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2021m10 to 2022m1
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
 (note: file ./output/time_series/resp_kd_asthma_exacerbation_imd.svg not found)
 (file ./output/time_series/resp_kd_asthma_exacerbation_imd.svg written in SVG f
 > ormat)
 (note: file ./output/time_series/resp_ac_asthma_exacerbation_imd.svg not found)
 (file ./output/time_series/resp_ac_asthma_exacerbation_imd.svg written in SVG f
 > ormat)
-(5 vars, 20 obs)
+(note: file ./output/time_series/resp_pac_asthma_exacerbation_imd.svg not found
+> )
+(file ./output/time_series/resp_pac_asthma_exacerbation_imd.svg written in SVG 
+> format)
+(5 vars, 175 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2021m10 to 2022m1
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
 (note: file ./output/time_series/resp_kd_copd_exacerbation_ethnicity.svg not fo
 > und)
 (file ./output/time_series/resp_kd_copd_exacerbation_ethnicity.svg written in S
@@ -176,21 +164,24 @@
 > und)
 (file ./output/time_series/resp_ac_copd_exacerbation_ethnicity.svg written in S
 > VG format)
-(5 vars, 24 obs)
+(note: file ./output/time_series/resp_pac_copd_exacerbation_ethnicity.svg not f
+> ound)
+(file ./output/time_series/resp_pac_copd_exacerbation_ethnicity.svg written in 
+> SVG format)
+(5 vars, 210 obs)
+(6 missing values generated)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2021m10 to 2022m1
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
 (note: file ./output/time_series/resp_kd_copd_exacerbation_imd.svg not found)
 (file ./output/time_series/resp_kd_copd_exacerbation_imd.svg written in SVG for
 > mat)
 (note: file ./output/time_series/resp_ac_copd_exacerbation_imd.svg not found)
 (file ./output/time_series/resp_ac_copd_exacerbation_imd.svg written in SVG for
 > mat)
+(note: file ./output/time_series/resp_pac_copd_exacerbation_imd.svg not found)
+(file ./output/time_series/resp_pac_copd_exacerbation_imd.svg written in SVG fo
+> rmat)
 
 . 
 .         
@@ -198,5 +189,5 @@
       name:  <unnamed>
        log:  /workspace/logs/model_checks_resp.log
   log type:  text
- closed on:   4 May 2022, 14:34:11
+ closed on:   5 May 2022, 10:20:44
 -------------------------------------------------------------------------------
