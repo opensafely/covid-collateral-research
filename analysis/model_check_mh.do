@@ -46,19 +46,19 @@ forvalues i=1/7 {
 		ac rate if `d'==3, name(ac_`d'_3_`e')
 		ac rate if `d'==4, name(ac_`d'_4_`e')
 		ac rate if `d'==5, name(ac_`d'_5_`e')
-		/*Partial autoregression plots by ethnicity
+		*Partial autoregression plots by ethnicity
 		pac rate if `d'==1, name(pac_`d'_1_`e')
 		pac rate if `d'==2, name(pac_`d'_2_`e')
 		pac rate if `d'==3, name(pac_`d'_3_`e')
 		pac rate if `d'==4, name(pac_`d'_4_`e')
-		pac rate if `d'==5, name(pac_`d'_5_`e')*/
+		pac rate if `d'==5, name(pac_`d'_5_`e')
 		*Combine Graphs
 		graph combine kd_`d'_1_`e' kd_`d'_2_`e' kd_`d'_3_`e' kd_`d'_4_`e' kd_`d'_5_`e', altshrink
 		graph export ./output/time_series/mh_kd_`c'_`d'.svg, as(svg) replace
 		graph combine ac_`d'_1_`e' ac_`d'_2_`e' ac_`d'_3_`e' ac_`d'_4_`e' ac_`d'_5_`e', altshrink
 		graph export ./output/time_series/mh_ac_`c'_`d'.svg, as(svg) replace
-		/*graph combine pac_`d'*', altshrink
-		graph export .output/graphs/mh_pac_`c'_`d'.svg, as(svg) replace*/
+		graph combine pac_`d'_1_`e' pac_`d'_2_`e' pac_`d'_3_`e' pac_`d'_4_`e' pac_`d'_5_`e', altshrink
+		graph export .output/graphs/mh_pac_`c'_`d'.svg, as(svg) replace
 		}
 	}
 
@@ -92,19 +92,19 @@ forvalues i=1/11 {
     ac rate if ethnicity==3, name(ac_ethnic_3_`d')
     ac rate if ethnicity==4, name(ac_ethnic_4_`d')
     ac rate if ethnicity==5, name(ac_ethnic_5_`d')
-	/*Partial autoregression plots by ethnicity
+	*Partial autoregression plots by ethnicity
 	pac rate if ethnicity==1, name(pac_ethnic_1_`d')
 	pac rate if ethnicity==2, name(pac_ethnic_2_`d')
     pac rate if ethnicity==3, name(pac_ethnic_3_`d')
     pac rate if ethnicity==4, name(pac_ethnic_4_`d')
-    pac rate if ethnicity==5, name(pac_ethnic_5_`d')*/
+    pac rate if ethnicity==5, name(pac_ethnic_5_`d')
 	*Combine Graphs
 	graph combine kd_ethnic_1_`d' kd_ethnic_2_`d' kd_ethnic_3_`d' kd_ethnic_4_`d' kd_ethnic_5_`d', altshrink
 	graph export ./output/time_series/mh_kd_`c'_ethnicity.svg, as(svg) replace
 	graph combine ac_ethnic_1_`d' ac_ethnic_2_`d' ac_ethnic_3_`d' ac_ethnic_4_`d' ac_ethnic_5_`d', altshrink
 	graph export ./output/time_series/mh_ac_`c'_ethnic.svg, as(svg) replace
-    /*graph combine pac_ethnic*', altshrink
-	graph export .output/graphs/checks_pac_`c'_ethnicity.svg, as(svg) replace*/
+    graph combine pac_ethnic_1_`d' pac_ethnic_2_`d' pac_ethnic_3_`d' pac_ethnic_4_`d' pac_ethnic_5_`d', altshrink
+	graph export .output/graphs/checks_pac_`c'_ethnicity.svg, as(svg) replace
 	}
 
 * Primary and emergency admissions by IMD
@@ -137,19 +137,19 @@ forvalues i=1/11 {
 	ac rate if imd==3, name(ac_imd_3_`d')
 	ac rate if imd==4, name(ac_imd_4_`d')
 	ac rate if imd==5, name(ac_imd_5_`d')
-	/*Partial autoregression plots by ethnicity
+	*Partial autoregression plots by ethnicity
 	pac rate if imd==1, name(pac_imd_1_`d')
 	pac rate if imd==2, name(pac_imd_2_`d')
 	pac rate if imd==3, name(pac_imd_3_`d')
 	pac rate if imd==4, name(pac_imd_4_`d')
-	pac rate if imd==5, name(pac_imd_5_`d')*/
+	pac rate if imd==5, name(pac_imd_5_`d')
 	*Combine Graphs
 	graph combine kd_imd_1_`d' kd_imd_2_`d' kd_imd_3_`d' kd_imd_4_`d' kd_imd_5_`d', altshrink
 	graph export ./output/time_series/mh_kd_`c'_imd.svg, as(svg) replace
 	graph combine ac_imd_1_`d' ac_imd_2_`d' ac_imd_3_`d' ac_imd_4_`d' ac_imd_5_`d', altshrink
 	graph export ./output/time_series/mh_ac_`c'_imd.svg, as(svg) replace
-	/*graph combine pac_imd*', altshrink
-	graph export .output/graphs/mh_pac_`c'_imd.svg, as(svg) replace*/
+	graph combine pac_imd_1_`d' pac_imd_2_`d' pac_imd_3_`d' pac_imd_4_`d' pac_imd_5_`d', altshrink
+	graph export .output/graphs/mh_pac_`c'_imd.svg, as(svg) replace
 	}
 
 

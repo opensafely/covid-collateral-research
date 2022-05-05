@@ -50,7 +50,6 @@ foreach var in asthma_monitoring copd_monitoring asthma_exacerbation copd_exacer
 		graph export ./output/time_series/resp_kd_`var'_`strata'.svg, as(svg) replace
 		graph combine ac_`strata'_1 ac_`strata'_2 ac_`strata'_3 ac_`strata'_4 ac_`strata'_5, altshrink
 		graph export ./output/time_series/resp_ac_`var'_`strata'.svg, as(svg) replace
-		
 		graph combine pac_`strata'_1 pac_`strata'_2 pac_`strata'_3 pac_`strata'_4 pac_`strata'_5, altshrink
 		graph export ./output/time_series/resp_pac_`var'_`strata'.svg, as(svg) replace
 	}
