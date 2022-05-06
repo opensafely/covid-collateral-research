@@ -5,278 +5,516 @@
 . * Clinical monitoring: hba1c and BP measurement, hospital admissions: t1, t2 
 > & keto both primary and any code
 . local a "hba1c systolic_bp t1_primary t2_primary keto_primary t1_any t2_any k
-> eto_any"
+> eto_any t1_primary t1_any t2_primary t2_any keto_primary keto_any"
 
-. forvalues i=1/8 {
+. forvalues i=1/14 {
   2.     local c: word `i' of `a' 
   3.         local b "ethnicity imd"
   4.         forvalues i=1/2 {
   5.         local d: word `i' of `b'
-  6.         import delimited "./output/measures/dm/measure_dm_`c'_`d'_rate.csv
-> ", numericcols(4) clear       //get csv
-  7.         gen temp_date=date(date, "YMD")
-  8.         format temp_date %td
-  9.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
- 10.         gen month=mofd(temp_date)
- 11.         format month %tm
- 12.         drop temp_date
- 13.         *Value to rate per 100k
-.         gen rate = value*100000
- 14.         label variable rate "Rate of `c' exacerbation per 100,000"
- 15.         *Set time series
-.         tsset `d' month 
- 16.         *Kernel density plots to check for normality and extreme values
-.         kdensity rate if `d'==1, normal name(kd_`d'_1_`c')
- 17.         kdensity rate if `d'==2, normal name(kd_`d'_2_`c')
- 18.     kdensity rate if `d'==3, normal name(kd_`d'_3_`c')
- 19.     kdensity rate if `d'==4, normal name(kd_`d'_4_`c')
- 20.     kdensity rate if `d'==5, normal name(kd_`d'_5_`c')
- 21.         *Autoregression plots by ethnicity
-.     ac rate if `d'==1, name(ac_`d'_1_`c')
- 22.         ac rate if `d'==2, name(ac_`d'_2_`c')
- 23.     ac rate if `d'==3, name(ac_`d'_3_`c')
- 24.     ac rate if `d'==4, name(ac_`d'_4_`c')
- 25.     ac rate if `d'==5, name(ac_`d'_5_`c')
- 26.         /*Partial autoregression plots by ethnicity
->         pac rate if `d'==1, name(pac_`d'_1_`c')
->         pac rate if `d'==2, name(pac_`d'_2_`c')
->     pac rate if `d'==3, name(pac_`d'_3_`c')
->     pac rate if `d'==4, name(pac_`d'_4_`c')
->     pac rate if `d'==5, name(pac_`d'_5_`c')*/
-.         *Combine Graphs
-.         graph combine kd_`d'_1_`c' kd_`d'_2_`c' kd_`d'_3_`c' kd_`d'_4_`c' kd_
-> `d'_5_`c', altshrink
- 27.         graph export ./output/time_series/dm_kd_`c'_`d'.eps, as(eps) repla
-> ce
- 28.         graph combine ac_`d'_1_`c' ac_`d'_2_`c' ac_`d'_3_`c' ac_`d'_4_`c' 
-> ac_`d'_5_`c', altshrink
- 29.         graph export ./output/time_series/dm_ac_`c'_`d'.eps, as(eps) repla
-> ce
- 30.     /*graph combine pac_`d'*', altshrink
->         graph export .output/graphs/dm_pac_`c'_`d'.eps, as(eps) replace*/
-.         }
- 31. }
+  6.                 import delimited "./output/measures/dm/measure_dm_`c'_`d'_
+> rate.csv", numericcols(4) clear       //get csv
+  7.                 gen temp_date=date(date, "YMD")
+  8.                 format temp_date %td
+  9.                 gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+ 10.                 gen month=mofd(temp_date)
+ 11.                 format month %tm
+ 12.                 drop temp_date
+ 13.                 *Value to rate per 100k
+.                 gen rate = value*100000
+ 14.                 label variable rate "Rate of `c' exacerbation per 100,000"
+ 15.                 *Set time series
+.                 tsset `d' month 
+ 16.                 *Kernel density plots to check for normality and extreme v
+> alues
+.                 kdensity rate if `d'==1, normal name(kd_`d'_1_`c', replace)
+ 17.                 kdensity rate if `d'==2, normal name(kd_`d'_2_`c', replace
+> )
+ 18.                 kdensity rate if `d'==3, normal name(kd_`d'_3_`c', replace
+> )
+ 19.                 kdensity rate if `d'==4, normal name(kd_`d'_4_`c', replace
+> )
+ 20.                 kdensity rate if `d'==5, normal name(kd_`d'_5_`c', replace
+> )
+ 21.                 *Autoregression plots by ethnicity
+.                 ac rate if `d'==1, name(ac_`d'_1_`c', replace)
+ 22.                 ac rate if `d'==2, name(ac_`d'_2_`c', replace)
+ 23.                 ac rate if `d'==3, name(ac_`d'_3_`c', replace)
+ 24.                 ac rate if `d'==4, name(ac_`d'_4_`c', replace)
+ 25.                 ac rate if `d'==5, name(ac_`d'_5_`c', replace)
+ 26.                 /*Partial autoregression plots by ethnicity
+>                 pac rate if `d'==1, name(pac_`d'_1_`c', replace)
+>                 pac rate if `d'==2, name(pac_`d'_2_`c', replace)
+>                 pac rate if `d'==3, name(pac_`d'_3_`c', replace)
+>                 pac rate if `d'==4, name(pac_`d'_4_`c', replace)
+>                 pac rate if `d'==5, name(pac_`d'_5_`c', replace)*/
+.                 *Combine Graphs
+.                 graph combine kd_`d'_1_`c' kd_`d'_2_`c' kd_`d'_3_`c' kd_`d'_4
+> _`c' kd_`d'_5_`c', altshrink
+ 27.                 graph export ./output/time_series/dm_kd_`c'_`d'.svg, as(sv
+> g) replace
+ 28.                 graph combine ac_`d'_1_`c' ac_`d'_2_`c' ac_`d'_3_`c' ac_`d
+> '_4_`c' ac_`d'_5_`c', altshrink
+ 29.                 graph export ./output/time_series/dm_ac_`c'_`d'.svg, as(sv
+> g) replace
+ 30.                 /*graph combine pac_`d'*', altshrink
+>                 graph export .output/graphs/dm_pac_`c'_`d'.svg, as(svg) repla
+> ce*/
+.                 }
+ 31.         }
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/dm_kd_hba1c_ethnicity.eps not found)
-(file ./output/time_series/dm_kd_hba1c_ethnicity.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_hba1c_ethnicity.eps not found)
-(file ./output/time_series/dm_ac_hba1c_ethnicity.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_hba1c_ethnicity.svg not found)
+(file ./output/time_series/dm_kd_hba1c_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_hba1c_ethnicity.svg not found)
+(file ./output/time_series/dm_ac_hba1c_ethnicity.svg written in SVG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/dm_kd_hba1c_imd.eps not found)
-(file ./output/time_series/dm_kd_hba1c_imd.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_hba1c_imd.eps not found)
-(file ./output/time_series/dm_ac_hba1c_imd.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_hba1c_imd.svg not found)
+(file ./output/time_series/dm_kd_hba1c_imd.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_hba1c_imd.svg not found)
+(file ./output/time_series/dm_ac_hba1c_imd.svg written in SVG format)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/dm_kd_systolic_bp_ethnicity.eps not found)
-(file ./output/time_series/dm_kd_systolic_bp_ethnicity.eps written in EPS forma
+(note: file ./output/time_series/dm_kd_systolic_bp_ethnicity.svg not found)
+(file ./output/time_series/dm_kd_systolic_bp_ethnicity.svg written in SVG forma
 > t)
-(note: file ./output/time_series/dm_ac_systolic_bp_ethnicity.eps not found)
-(file ./output/time_series/dm_ac_systolic_bp_ethnicity.eps written in EPS forma
+(note: file ./output/time_series/dm_ac_systolic_bp_ethnicity.svg not found)
+(file ./output/time_series/dm_ac_systolic_bp_ethnicity.svg written in SVG forma
 > t)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/dm_kd_systolic_bp_imd.eps not found)
-(file ./output/time_series/dm_kd_systolic_bp_imd.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_systolic_bp_imd.eps not found)
-(file ./output/time_series/dm_ac_systolic_bp_imd.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_systolic_bp_imd.svg not found)
+(file ./output/time_series/dm_kd_systolic_bp_imd.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_systolic_bp_imd.svg not found)
+(file ./output/time_series/dm_ac_systolic_bp_imd.svg written in SVG format)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/dm_kd_t1_primary_ethnicity.eps not found)
-(file ./output/time_series/dm_kd_t1_primary_ethnicity.eps written in EPS format
+(note: file ./output/time_series/dm_kd_t1_primary_ethnicity.svg not found)
+(file ./output/time_series/dm_kd_t1_primary_ethnicity.svg written in SVG format
 > )
-(note: file ./output/time_series/dm_ac_t1_primary_ethnicity.eps not found)
-(file ./output/time_series/dm_ac_t1_primary_ethnicity.eps written in EPS format
+(note: file ./output/time_series/dm_ac_t1_primary_ethnicity.svg not found)
+(file ./output/time_series/dm_ac_t1_primary_ethnicity.svg written in SVG format
 > )
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/dm_kd_t1_primary_imd.eps not found)
-(file ./output/time_series/dm_kd_t1_primary_imd.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_t1_primary_imd.eps not found)
-(file ./output/time_series/dm_ac_t1_primary_imd.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_t1_primary_imd.svg not found)
+(file ./output/time_series/dm_kd_t1_primary_imd.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_t1_primary_imd.svg not found)
+(file ./output/time_series/dm_ac_t1_primary_imd.svg written in SVG format)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/dm_kd_t2_primary_ethnicity.eps not found)
-(file ./output/time_series/dm_kd_t2_primary_ethnicity.eps written in EPS format
+(note: file ./output/time_series/dm_kd_t2_primary_ethnicity.svg not found)
+(file ./output/time_series/dm_kd_t2_primary_ethnicity.svg written in SVG format
 > )
-(note: file ./output/time_series/dm_ac_t2_primary_ethnicity.eps not found)
-(file ./output/time_series/dm_ac_t2_primary_ethnicity.eps written in EPS format
+(note: file ./output/time_series/dm_ac_t2_primary_ethnicity.svg not found)
+(file ./output/time_series/dm_ac_t2_primary_ethnicity.svg written in SVG format
 > )
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/dm_kd_t2_primary_imd.eps not found)
-(file ./output/time_series/dm_kd_t2_primary_imd.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_t2_primary_imd.eps not found)
-(file ./output/time_series/dm_ac_t2_primary_imd.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_t2_primary_imd.svg not found)
+(file ./output/time_series/dm_kd_t2_primary_imd.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_t2_primary_imd.svg not found)
+(file ./output/time_series/dm_ac_t2_primary_imd.svg written in SVG format)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/dm_kd_keto_primary_ethnicity.eps not found)
-(file ./output/time_series/dm_kd_keto_primary_ethnicity.eps written in EPS form
+(note: file ./output/time_series/dm_kd_keto_primary_ethnicity.svg not found)
+(file ./output/time_series/dm_kd_keto_primary_ethnicity.svg written in SVG form
 > at)
-(note: file ./output/time_series/dm_ac_keto_primary_ethnicity.eps not found)
-(file ./output/time_series/dm_ac_keto_primary_ethnicity.eps written in EPS form
+(note: file ./output/time_series/dm_ac_keto_primary_ethnicity.svg not found)
+(file ./output/time_series/dm_ac_keto_primary_ethnicity.svg written in SVG form
 > at)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/dm_kd_keto_primary_imd.eps not found)
-(file ./output/time_series/dm_kd_keto_primary_imd.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_keto_primary_imd.eps not found)
-(file ./output/time_series/dm_ac_keto_primary_imd.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_keto_primary_imd.svg not found)
+(file ./output/time_series/dm_kd_keto_primary_imd.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_keto_primary_imd.svg not found)
+(file ./output/time_series/dm_ac_keto_primary_imd.svg written in SVG format)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/dm_kd_t1_any_ethnicity.eps not found)
-(file ./output/time_series/dm_kd_t1_any_ethnicity.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_t1_any_ethnicity.eps not found)
-(file ./output/time_series/dm_ac_t1_any_ethnicity.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_t1_any_ethnicity.svg not found)
+(file ./output/time_series/dm_kd_t1_any_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_t1_any_ethnicity.svg not found)
+(file ./output/time_series/dm_ac_t1_any_ethnicity.svg written in SVG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/dm_kd_t1_any_imd.eps not found)
-(file ./output/time_series/dm_kd_t1_any_imd.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_t1_any_imd.eps not found)
-(file ./output/time_series/dm_ac_t1_any_imd.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_t1_any_imd.svg not found)
+(file ./output/time_series/dm_kd_t1_any_imd.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_t1_any_imd.svg not found)
+(file ./output/time_series/dm_ac_t1_any_imd.svg written in SVG format)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/dm_kd_t2_any_ethnicity.eps not found)
-(file ./output/time_series/dm_kd_t2_any_ethnicity.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_t2_any_ethnicity.eps not found)
-(file ./output/time_series/dm_ac_t2_any_ethnicity.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_t2_any_ethnicity.svg not found)
+(file ./output/time_series/dm_kd_t2_any_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_t2_any_ethnicity.svg not found)
+(file ./output/time_series/dm_ac_t2_any_ethnicity.svg written in SVG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/dm_kd_t2_any_imd.eps not found)
-(file ./output/time_series/dm_kd_t2_any_imd.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_t2_any_imd.eps not found)
-(file ./output/time_series/dm_ac_t2_any_imd.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_t2_any_imd.svg not found)
+(file ./output/time_series/dm_kd_t2_any_imd.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_t2_any_imd.svg not found)
+(file ./output/time_series/dm_ac_t2_any_imd.svg written in SVG format)
 (5 vars, 20 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
 (n() set to 20)
-(note: file ./output/time_series/dm_kd_keto_any_ethnicity.eps not found)
-(file ./output/time_series/dm_kd_keto_any_ethnicity.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_keto_any_ethnicity.eps not found)
-(file ./output/time_series/dm_ac_keto_any_ethnicity.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_keto_any_ethnicity.svg not found)
+(file ./output/time_series/dm_kd_keto_any_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_keto_any_ethnicity.svg not found)
+(file ./output/time_series/dm_ac_keto_any_ethnicity.svg written in SVG format)
 (5 vars, 24 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2021m10 to 2022m1
                 delta:  1 month
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
 (n() set to 24)
-(note: file ./output/time_series/dm_kd_keto_any_imd.eps not found)
-(file ./output/time_series/dm_kd_keto_any_imd.eps written in EPS format)
-(note: file ./output/time_series/dm_ac_keto_any_imd.eps not found)
-(file ./output/time_series/dm_ac_keto_any_imd.eps written in EPS format)
+(note: file ./output/time_series/dm_kd_keto_any_imd.svg not found)
+(file ./output/time_series/dm_kd_keto_any_imd.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_keto_any_imd.svg not found)
+(file ./output/time_series/dm_ac_keto_any_imd.svg written in SVG format)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/dm_kd_t1_primary_ethnicity.svg written in SVG format
+> )
+(file ./output/time_series/dm_ac_t1_primary_ethnicity.svg written in SVG format
+> )
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/dm_kd_t1_primary_imd.svg written in SVG format)
+(file ./output/time_series/dm_ac_t1_primary_imd.svg written in SVG format)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/dm_kd_t1_any_ethnicity.svg written in SVG format)
+(file ./output/time_series/dm_ac_t1_any_ethnicity.svg written in SVG format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/dm_kd_t1_any_imd.svg written in SVG format)
+(file ./output/time_series/dm_ac_t1_any_imd.svg written in SVG format)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/dm_kd_t2_primary_ethnicity.svg written in SVG format
+> )
+(file ./output/time_series/dm_ac_t2_primary_ethnicity.svg written in SVG format
+> )
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/dm_kd_t2_primary_imd.svg written in SVG format)
+(file ./output/time_series/dm_ac_t2_primary_imd.svg written in SVG format)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/dm_kd_t2_any_ethnicity.svg written in SVG format)
+(file ./output/time_series/dm_ac_t2_any_ethnicity.svg written in SVG format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/dm_kd_t2_any_imd.svg written in SVG format)
+(file ./output/time_series/dm_ac_t2_any_imd.svg written in SVG format)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/dm_kd_keto_primary_ethnicity.svg written in SVG form
+> at)
+(file ./output/time_series/dm_ac_keto_primary_ethnicity.svg written in SVG form
+> at)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/dm_kd_keto_primary_imd.svg written in SVG format)
+(file ./output/time_series/dm_ac_keto_primary_imd.svg written in SVG format)
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(file ./output/time_series/dm_kd_keto_any_ethnicity.svg written in SVG format)
+(file ./output/time_series/dm_ac_keto_any_ethnicity.svg written in SVG format)
+(5 vars, 24 obs)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(n() set to 24)
+(file ./output/time_series/dm_kd_keto_any_imd.svg written in SVG format)
+(file ./output/time_series/dm_ac_keto_any_imd.svg written in SVG format)
 
+. 
+. /*foreach var in t1_primary t1_any t2_primary t2_any keto_primary keto_any {
+>         import delimited "./output/measures/dm/collapse_measure_dm_`var'_ethn
+> icity_rate.csv", numericcols(2) clear      //get csv
+>         gen temp_date=date(datea, "DM20Y")
+>         format temp_date %td
+>         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+>         * identify 3 monthly intervals
+>     gen quarter = qofd(temp_date)
+>         format quarter %tq
+>         drop temp_date
+>         *Set time series
+>         tsset ethnicity quarter
+>         *Kernel density plots to check for normality and extreme values
+>         kdensity rate if ethnicity==1, normal name(kd_ethnicity_1_`var', repl
+> ace)
+>         kdensity rate if ethnicity==2, normal name(kd_ethnicity_2_`var', repl
+> ace)
+>         kdensity rate if ethnicity==3, normal name(kd_ethnicity_3_`var', repl
+> ace)
+>         kdensity rate if ethnicity==4, normal name(kd_ethnicity_4_`var', repl
+> ace)
+>         kdensity rate if ethnicity==5, normal name(kd_ethnicity_5_`var', repl
+> ace)
+>         *Autoregression plots by ethnicity
+>         ac rate if ethnicity==1, name(ac_ethnicity_1_`var', replace)
+>         ac rate if ethnicity==2, name(ac_ethnicity_2_`var', replace)
+>         ac rate if ethnicity==3, name(ac_ethnicity_3_`var', replace)
+>         ac rate if ethnicity==4, name(ac_ethnicity_4_`var', replace)
+>         ac rate if ethnicity==5, name(ac_ethnicity_5_`var', replace)
+>         /*Partial autoregression plots by ethnicity
+>         pac rate if ethnicity==1, name(pac_ethnicity_1_`var', replace)
+>         pac rate if ethnicity==2, name(pac_ethnicity_2_`var', replace)
+>         pac rate if ethnicity==3, name(pac_ethnicity_3_`var', replace)
+>         pac rate if ethnicity==4, name(pac_ethnicity_4_`var', replace)
+>         pac rate if ethnicity==5, name(pac_ethnicity_5_`var', replace)*/
+>         *Combine Graphs
+>         graph combine kd_ethnicity_1_`var' kd_ethnicity_2_`var' kd_ethnicity_
+> 3_`var' kd_ethnicity_4_`var' kd_ethnicity_5_`var', altshrink
+>         graph export ./output/time_series/dm_kd_`var'_ethnicity.svg, as(svg) 
+> replace
+>         graph combine ac_ethnicity_1_`var' ac_ethnicity_2_`var' ac_ethnicity_
+> 3_`var' ac_ethnicity_4_`var' ac_ethnicity_5_`var', altshrink
+>         graph export ./output/time_series/dm_ac_`var'_ethnicity.svg, as(svg) 
+> replace
+>         *graph combine pac_ethnicity*', altshrink
+>         *graph export .output/graphs/dm_pac_`var'_ethnicity.svg, as(svg) repl
+> ace
+>         }
+> 
+> foreach var in t1_primary t1_any t2_primary t2_any keto_primary keto_any {
+>         import delimited "./output/measures/dm/measure_dm_`var'_imd_rate.csv"
+> , numericcols(4) clear     //get csv
+>         gen temp_date=date(date, "YMD")
+>         format temp_date %td
+>         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+>         gen month=mofd(temp_date)
+>         format month %tm
+>         drop temp_date
+>         *Value to rate per 100k
+>         gen rate = value*100000
+>         label variable rate "Rate of `var' exacerbation per 100,000"
+>         *Set time series
+>         tsset imd month 
+>         *Kernel density plots to check for normality and extreme values
+>         kdensity rate if imd==1, normal name(kd_imd_1_`var', replace)
+>         kdensity rate if imd==2, normal name(kd_imd_2_`var', replace)
+>         kdensity rate if imd==3, normal name(kd_imd_3_`var', replace)
+>         kdensity rate if imd==4, normal name(kd_imd_4_`var', replace)
+>         kdensity rate if imd==5, normal name(kd_imd_5_`var', replace)
+>         *Autoregression plots by imd
+>         ac rate if imd==1, name(ac_imd_1_`var', replace)
+>         ac rate if imd==2, name(ac_imd_2_`var', replace)
+>         ac rate if imd==3, name(ac_imd_3_`var', replace)
+>         ac rate if imd==4, name(ac_imd_4_`var', replace)
+>         ac rate if imd==5, name(ac_imd_5_`var', replace)
+>         /*Partial autoregression plots by imd
+>         pac rate if imd==1, name(pac_imd_1_`var', replace)
+>         pac rate if imd==2, name(pac_imd_2_`var', replace)
+>         pac rate if imd==3, name(pac_imd_3_`var', replace)
+>         pac rate if imd==4, name(pac_imd_4_`var', replace)
+>         pac rate if imd==5, name(pac_imd_5_`var', replace)*/
+>         *Combine Graphs
+>         graph combine kd_imd_1_`var' kd_imd_2_`var' kd_imd_3_`var' kd_imd_4_`
+> var' kd_imd_5_`var', altshrink
+>         graph export ./output/time_series/dm_kd_`var'_imd.svg, as(svg) replac
+> e
+>         graph combine ac_imd_1_`var' ac_imd_2_`var' ac_imd_3_`var' ac_imd_4_`
+> var' ac_imd_5_`var', altshrink
+>         graph export ./output/time_series/dm_ac_`var'_imd.svg, as(svg) replac
+> e
+>         *graph combine pac_imd*', altshrink
+>         *graph export .output/graphs/dm_pac_`var'_imd.svg, as(svg) replace
+>         }*/
 . 
 . log close
       name:  <unnamed>
        log:  /workspace/logs/model_checks_dm.log
   log type:  text
- closed on:  22 Apr 2022, 14:10:34
+ closed on:   4 May 2022, 14:20:21
 -------------------------------------------------------------------------------

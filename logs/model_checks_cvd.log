@@ -1,0 +1,87 @@
+
+. cap mkdir ./output/time_series
+
+. 
+. * CVD outcomes
+. * Clinical monitoring: BP measurement
+. * Hospital admissions: any code and primary code for MI, stroke, heart failur
+> e and vte
+. local a "systolic_bp_cvd mi_admission stroke_admission heart_failure_admissio
+> n vte_admission mi_primary_admission stroke_primary_admission heart_failure_p
+> rimary_admission vte_primary_admission"
+
+. local z "bp_cvd mi_admit stroke_admit hf_admit vte_admit mi_pri stroke_pri hf
+> _pri vte_pri"
+
+. forvalues i=1/9 {
+  2.     local c: word `i' of `a' 
+  3.         local e: word `i' of `z'
+  4.         local b "ethnicity imd"
+  5.         forvalues i=1/2 {
+  6.         local d: word `i' of `b'
+  7.                 import delimited "./output/measures/measure_`c'_`d'_rate.c
+> sv", numericcols(4) clear     //get csv
+  8.                 gen temp_date=date(date, "YMD")
+  9.                 format temp_date %td
+ 10.                 gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+ 11.                 gen month=mofd(temp_date)
+ 12.                 format month %tm
+ 13.                 drop temp_date
+ 14.                 *Value to rate per 100k
+.                 gen rate = value*100000
+ 15.                 label variable rate "Rate of `c' exacerbation per 100,000"
+ 16.                 *Set time series
+.                 tsset `d' month 
+ 17.                 *Kernel density plots to check for normality and extreme v
+> alues
+.                 kdensity rate if `d'==1, normal name(kd_`d'_1_`e')
+ 18.                 kdensity rate if `d'==2, normal name(kd_`d'_2_`e')
+ 19.                 kdensity rate if `d'==3, normal name(kd_`d'_3_`e')
+ 20.                 kdensity rate if `d'==4, normal name(kd_`d'_4_`e')
+ 21.                 kdensity rate if `d'==5, normal name(kd_`d'_5_`e')
+ 22.                 *Autoregression plots by ethnicity
+.                 ac rate if `d'==1, name(ac_`d'_1_`e')
+ 23.                 ac rate if `d'==2, name(ac_`d'_2_`e')
+ 24.                 ac rate if `d'==3, name(ac_`d'_3_`e')
+ 25.                 ac rate if `d'==4, name(ac_`d'_4_`e')
+ 26.                 ac rate if `d'==5, name(ac_`d'_5_`e')
+ 27.                 *Partial autoregression plots by ethnicity
+.                 pac rate if `d'==1, name(pac_`d'_1_`e')
+ 28.                 pac rate if `d'==2, name(pac_`d'_2_`e')
+ 29.                 pac rate if `d'==3, name(pac_`d'_3_`e')
+ 30.                 pac rate if `d'==4, name(pac_`d'_4_`e')
+ 31.                 pac rate if `d'==5, name(pac_`d'_5_`e')
+ 32.                 *Combine Graphs
+.                 graph combine kd_`d'_1_`e' kd_`d'_2_`e' kd_`d'_3_`e' kd_`d'_4
+> _`e' kd_`d'_5_`e', altshrink
+ 33.                 graph export ./output/time_series/cvd_kd_`d'_`c'.svg, as(s
+> vg) replace
+ 34.                 graph combine ac_`d'_1_`e' ac_`d'_2_`e' ac_`d'_3_`e' ac_`d
+> '_4_`e' ac_`d'_5_`e', altshrink
+ 35.                 graph export ./output/time_series/cvd_ac_`d'_`c'.svg, as(s
+> vg) replace
+ 36.                 /*graph combine pac_`d'*', altshrink
+>                 graph export .output/graphs/cvd_pac_`d'_`c'.svg, as(svg) repl
+> ace*/
+.                 }
+ 37.         }
+(5 vars, 20 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2021m10 to 2022m1
+                delta:  1 month
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+(n() set to 20)
+number of observations must be greater than 5
+r(2001);
+
+end of do-file
+r(2001);
+
+end of do-file
+
+r(2001);
+
+

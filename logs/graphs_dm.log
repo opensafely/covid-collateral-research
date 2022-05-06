@@ -316,8 +316,8 @@ Sorted by: dateA
 > eA,  by(quarter ethnicity)
  11.     drop quarter
  12.     * Outputing file 
-.     export delimited using ./output/measures/dm/measure_dm_t1_`v'_ethnicity_r
-> ate_collapse.csv
+.     export delimited using ./output/measures/dm/collapse_measure_dm_t1_`v'_et
+> hnicity_rate.csv
  13.     * reshape dataset so columns with rates for each ethnicity 
 .     reshape wide value rate has_t1_diabetes t1dm_admission_`v', i(dateA) j(et
 > hnicity)
@@ -381,8 +381,8 @@ Sorted by: dateA
 > eA,  by(quarter ethnicity)
  47.     drop quarter
  48.     * Outputing file 
-.     export delimited using ./output/measures/dm/measure_dm_t2_`v'_ethnicity_r
-> ate_collapse.csv 
+.     export delimited using ./output/measures/dm/collapse_measure_dm_t2_`v'_et
+> hnicity_rate.csv 
  49.     * reshape dataset so columns with rates for each ethnicity 
 .     reshape wide value rate has_t2_diabetes t2dm_admission_`v', i(dateA) j(et
 > hnicity)
@@ -446,8 +446,8 @@ Sorted by: dateA
 > ,  by(quarter ethnicity)
  83.     drop quarter
  84.     * Outputing file 
-.     export delimited using ./output/measures/dm/measure_dm_keto_`v'_ethnicity
-> _rate_collapse.csv
+.     export delimited using ./output/measures/dm/collapse_measure_dm_keto_`v'_
+> ethnicity_rate.csv
  85.     * reshape dataset so columns with rates for each ethnicity 
 .     reshape wide value rate population dm_keto_admission_`v', i(dateA) j(ethn
 > icity)
@@ -504,7 +504,7 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
-file ./output/measures/dm/measure_dm_t1_primary_ethnicity_rate_collapse.csv sav
+file ./output/measures/dm/collapse_measure_dm_t1_primary_ethnicity_rate.csv sav
 > ed
 (note: j = 1 2 3 4 5)
 
@@ -626,7 +626,7 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
-file ./output/measures/dm/measure_dm_t2_primary_ethnicity_rate_collapse.csv sav
+file ./output/measures/dm/collapse_measure_dm_t2_primary_ethnicity_rate.csv sav
 > ed
 (note: j = 1 2 3 4 5)
 
@@ -748,7 +748,7 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
-file ./output/measures/dm/measure_dm_keto_primary_ethnicity_rate_collapse.csv s
+file ./output/measures/dm/collapse_measure_dm_keto_primary_ethnicity_rate.csv s
 > aved
 (note: j = 1 2 3 4 5)
 
@@ -870,7 +870,7 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
-file ./output/measures/dm/measure_dm_t1_any_ethnicity_rate_collapse.csv saved
+file ./output/measures/dm/collapse_measure_dm_t1_any_ethnicity_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -991,7 +991,7 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
-file ./output/measures/dm/measure_dm_t2_any_ethnicity_rate_collapse.csv saved
+file ./output/measures/dm/collapse_measure_dm_t2_any_ethnicity_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1112,7 +1112,7 @@ Sorted by: dateA
   01jun2020 |          5       25.00      100.00
 ------------+-----------------------------------
       Total |         20      100.00
-file ./output/measures/dm/measure_dm_keto_any_ethnicity_rate_collapse.csv saved
+file ./output/measures/dm/collapse_measure_dm_keto_any_ethnicity_rate.csv saved
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -1229,5 +1229,5 @@ Sorted by: dateA
       name:  <unnamed>
        log:  /workspace/logs/graphs_dm.log
   log type:  text
- closed on:  14 Apr 2022, 09:23:53
+ closed on:  27 Apr 2022, 13:30:36
 -------------------------------------------------------------------------------

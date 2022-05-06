@@ -8,7 +8,8 @@
 . * both by IMD and ethnicity
 . * hospital admissions for asthma exacerbation only by IMD as ethnicity has sm
 > all numbers
-. foreach var in asthma_monitoring copd_monitoring copd_exacerbation {
+. foreach var in asthma_monitoring copd_monitoring asthma_exacerbation copd_exa
+> cerbation {
   2.         foreach strata in ethnicity imd {
   3.                 import delimited "./output/measures/resp/measure_`var'_`st
 > rata'_rate.csv", numericcols(4) clear //get csv
@@ -20,8 +21,7 @@
   9.                 drop temp_date
  10.                 *Value to rate per 100k
 .                 gen rate = value*100000
- 11. 
-.                 *Set time series
+ 11.                 *Set time series
 .                 tsset `strata' month 
  12.                 *Kernel density plots to check for normality and extreme v
 > alues
@@ -41,210 +41,153 @@
  19.                 ac rate if `strata'==3, name(ac_`strata'_3, replace)
  20.                 ac rate if `strata'==4, name(ac_`strata'_4, replace)
  21.                 ac rate if `strata'==5, name(ac_`strata'_5, replace)
- 22.                 /*Partial autoregression plots by ethnicity
->                 pac rate if `strata'==1, name(pac_`strata'_1, replace)
->                 pac rate if `strata'==2, name(pac_`strata'_2, replace)
->                 pac rate if `strata'==3, name(pac_`strata'_3, replace)
->                 pac rate if `strata'==4, name(pac_`strata'_4, replace)
->                 pac rate if `strata'==5, name(pac_`strata'_5, replace)*/
-.                 *Combine Graphs
+ 22.                 *Partial autoregression plots by ethnicity
+.                 pac rate if `strata'==1, name(pac_`strata'_1, replace)
+ 23.                 pac rate if `strata'==2, name(pac_`strata'_2, replace)
+ 24.                 pac rate if `strata'==3, name(pac_`strata'_3, replace)
+ 25.                 pac rate if `strata'==4, name(pac_`strata'_4, replace)
+ 26.                 pac rate if `strata'==5, name(pac_`strata'_5, replace)
+ 27.                 *Combine Graphs
 .                 graph combine kd_`strata'_1 kd_`strata'_2 kd_`strata'_3 kd_`s
 > trata'_4 kd_`strata'_5, altshrink
- 23.                 graph export ./output/time_series/resp_kd_`var'_`strata'.e
-> ps, as(eps) replace
- 24.                 graph combine ac_`strata'_1 ac_`strata'_2 ac_`strata'_3 ac
+ 28.                 graph export ./output/time_series/resp_kd_`var'_`strata'.s
+> vg, as(svg) replace
+ 29.                 graph combine ac_`strata'_1 ac_`strata'_2 ac_`strata'_3 ac
 > _`strata'_4 ac_`strata'_5, altshrink
- 25.                 graph export ./output/time_series/resp_ac_`var'_`strata'.e
-> ps, as(eps) replace
- 26.                 /*
->                 graph combine pac_`strata'_1 pac_`strata'_2 pac_`strata'_3 pa
+ 30.                 graph export ./output/time_series/resp_ac_`var'_`strata'.s
+> vg, as(svg) replace
+ 31.                 
+.                 graph combine pac_`strata'_1 pac_`strata'_2 pac_`strata'_3 pa
 > c_`strata'_4 pac_`strata'_5, altshrink
->                 graph export ./output/time_series/resp_pac_`var'_`strata'.eps
-> , as(eps) replace*/
-.                 }
- 27.         }       
-(5 vars, 20 obs)
+ 32.                 graph export ./output/time_series/resp_pac_`var'_`strata'.
+> svg, as(svg) replace
+ 33.         }
+ 34. }       
+(5 vars, 175 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(note: file ./output/time_series/resp_kd_asthma_monitoring_ethnicity.eps not fo
+(note: file ./output/time_series/resp_kd_asthma_monitoring_ethnicity.svg not fo
 > und)
-(file ./output/time_series/resp_kd_asthma_monitoring_ethnicity.eps written in E
-> PS format)
-(note: file ./output/time_series/resp_ac_asthma_monitoring_ethnicity.eps not fo
+(file ./output/time_series/resp_kd_asthma_monitoring_ethnicity.svg written in S
+> VG format)
+(note: file ./output/time_series/resp_ac_asthma_monitoring_ethnicity.svg not fo
 > und)
-(file ./output/time_series/resp_ac_asthma_monitoring_ethnicity.eps written in E
-> PS format)
-(5 vars, 24 obs)
+(file ./output/time_series/resp_ac_asthma_monitoring_ethnicity.svg written in S
+> VG format)
+(note: file ./output/time_series/resp_pac_asthma_monitoring_ethnicity.svg not f
+> ound)
+(file ./output/time_series/resp_pac_asthma_monitoring_ethnicity.svg written in 
+> SVG format)
+(5 vars, 210 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(note: file ./output/time_series/resp_kd_asthma_monitoring_imd.eps not found)
-(file ./output/time_series/resp_kd_asthma_monitoring_imd.eps written in EPS for
+(note: file ./output/time_series/resp_kd_asthma_monitoring_imd.svg not found)
+(file ./output/time_series/resp_kd_asthma_monitoring_imd.svg written in SVG for
 > mat)
-(note: file ./output/time_series/resp_ac_asthma_monitoring_imd.eps not found)
-(file ./output/time_series/resp_ac_asthma_monitoring_imd.eps written in EPS for
+(note: file ./output/time_series/resp_ac_asthma_monitoring_imd.svg not found)
+(file ./output/time_series/resp_ac_asthma_monitoring_imd.svg written in SVG for
 > mat)
-(5 vars, 20 obs)
+(note: file ./output/time_series/resp_pac_asthma_monitoring_imd.svg not found)
+(file ./output/time_series/resp_pac_asthma_monitoring_imd.svg written in SVG fo
+> rmat)
+(5 vars, 175 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(note: file ./output/time_series/resp_kd_copd_monitoring_ethnicity.eps not foun
+(note: file ./output/time_series/resp_kd_copd_monitoring_ethnicity.svg not foun
 > d)
-(file ./output/time_series/resp_kd_copd_monitoring_ethnicity.eps written in EPS
+(file ./output/time_series/resp_kd_copd_monitoring_ethnicity.svg written in SVG
 >  format)
-(note: file ./output/time_series/resp_ac_copd_monitoring_ethnicity.eps not foun
+(note: file ./output/time_series/resp_ac_copd_monitoring_ethnicity.svg not foun
 > d)
-(file ./output/time_series/resp_ac_copd_monitoring_ethnicity.eps written in EPS
+(file ./output/time_series/resp_ac_copd_monitoring_ethnicity.svg written in SVG
 >  format)
-(5 vars, 24 obs)
+(note: file ./output/time_series/resp_pac_copd_monitoring_ethnicity.svg not fou
+> nd)
+(file ./output/time_series/resp_pac_copd_monitoring_ethnicity.svg written in SV
+> G format)
+(5 vars, 210 obs)
+(6 missing values generated)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(note: file ./output/time_series/resp_kd_copd_monitoring_imd.eps not found)
-(file ./output/time_series/resp_kd_copd_monitoring_imd.eps written in EPS forma
+(note: file ./output/time_series/resp_kd_copd_monitoring_imd.svg not found)
+(file ./output/time_series/resp_kd_copd_monitoring_imd.svg written in SVG forma
 > t)
-(note: file ./output/time_series/resp_ac_copd_monitoring_imd.eps not found)
-(file ./output/time_series/resp_ac_copd_monitoring_imd.eps written in EPS forma
+(note: file ./output/time_series/resp_ac_copd_monitoring_imd.svg not found)
+(file ./output/time_series/resp_ac_copd_monitoring_imd.svg written in SVG forma
 > t)
-(5 vars, 20 obs)
+(note: file ./output/time_series/resp_pac_copd_monitoring_imd.svg not found)
+(file ./output/time_series/resp_pac_copd_monitoring_imd.svg written in SVG form
+> at)
+(5 vars, 175 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(note: file ./output/time_series/resp_kd_copd_exacerbation_ethnicity.eps not fo
-> und)
-(file ./output/time_series/resp_kd_copd_exacerbation_ethnicity.eps written in E
-> PS format)
-(note: file ./output/time_series/resp_ac_copd_exacerbation_ethnicity.eps not fo
-> und)
-(file ./output/time_series/resp_ac_copd_exacerbation_ethnicity.eps written in E
-> PS format)
-(5 vars, 24 obs)
+(note: file ./output/time_series/resp_kd_asthma_exacerbation_ethnicity.svg not 
+> found)
+(file ./output/time_series/resp_kd_asthma_exacerbation_ethnicity.svg written in
+>  SVG format)
+(note: file ./output/time_series/resp_ac_asthma_exacerbation_ethnicity.svg not 
+> found)
+(file ./output/time_series/resp_ac_asthma_exacerbation_ethnicity.svg written in
+>  SVG format)
+(note: file ./output/time_series/resp_pac_asthma_exacerbation_ethnicity.svg not
+>  found)
+(file ./output/time_series/resp_pac_asthma_exacerbation_ethnicity.svg written i
+> n SVG format)
+(5 vars, 210 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
+        time variable:  month, 2019m3 to 2022m1
                 delta:  1 month
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(n() set to 24)
-(note: file ./output/time_series/resp_kd_copd_exacerbation_imd.eps not found)
-(file ./output/time_series/resp_kd_copd_exacerbation_imd.eps written in EPS for
+(note: file ./output/time_series/resp_kd_asthma_exacerbation_imd.svg not found)
+(file ./output/time_series/resp_kd_asthma_exacerbation_imd.svg written in SVG f
+> ormat)
+(note: file ./output/time_series/resp_ac_asthma_exacerbation_imd.svg not found)
+(file ./output/time_series/resp_ac_asthma_exacerbation_imd.svg written in SVG f
+> ormat)
+(note: file ./output/time_series/resp_pac_asthma_exacerbation_imd.svg not found
+> )
+(file ./output/time_series/resp_pac_asthma_exacerbation_imd.svg written in SVG 
+> format)
+(5 vars, 175 obs)
+       panel variable:  ethnicity (strongly balanced)
+        time variable:  month, 2019m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/resp_kd_copd_exacerbation_ethnicity.svg not fo
+> und)
+(file ./output/time_series/resp_kd_copd_exacerbation_ethnicity.svg written in S
+> VG format)
+(note: file ./output/time_series/resp_ac_copd_exacerbation_ethnicity.svg not fo
+> und)
+(file ./output/time_series/resp_ac_copd_exacerbation_ethnicity.svg written in S
+> VG format)
+(note: file ./output/time_series/resp_pac_copd_exacerbation_ethnicity.svg not f
+> ound)
+(file ./output/time_series/resp_pac_copd_exacerbation_ethnicity.svg written in 
+> SVG format)
+(5 vars, 210 obs)
+(6 missing values generated)
+       panel variable:  imd (strongly balanced)
+        time variable:  month, 2019m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/resp_kd_copd_exacerbation_imd.svg not found)
+(file ./output/time_series/resp_kd_copd_exacerbation_imd.svg written in SVG for
 > mat)
-(note: file ./output/time_series/resp_ac_copd_exacerbation_imd.eps not found)
-(file ./output/time_series/resp_ac_copd_exacerbation_imd.eps written in EPS for
+(note: file ./output/time_series/resp_ac_copd_exacerbation_imd.svg not found)
+(file ./output/time_series/resp_ac_copd_exacerbation_imd.svg written in SVG for
 > mat)
+(note: file ./output/time_series/resp_pac_copd_exacerbation_imd.svg not found)
+(file ./output/time_series/resp_pac_copd_exacerbation_imd.svg written in SVG fo
+> rmat)
 
 . 
-. * Asthma exacerbation - IMD
-. import delimited "./output/measures/resp/measure_asthma_exacerbation_imd_rate
-> .csv", numericcols(4) clear        //get csv
-(5 vars, 24 obs)
-
-. gen temp_date=date(date, "YMD")
-
-. format temp_date %td
-
-. gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
-
-. gen month=mofd(temp_date)
-
-. format month %tm
-
-. drop temp_date
-
-. *Value to rate per 100k
-. gen rate = value*100000
-
-. 
-. *Set time series
-. tsset imd month 
-       panel variable:  imd (strongly balanced)
-        time variable:  month, 2020m3 to 2020m6
-                delta:  1 month
-
-. *Kernel density plots to check for normality and extreme values
-. kdensity rate if imd==1, normal name(kd_imd_1, replace)
-(n() set to 24)
-
-. kdensity rate if imd==2, normal name(kd_imd_2, replace)
-(n() set to 24)
-
-. kdensity rate if imd==3, normal name(kd_imd_3, replace)
-(n() set to 24)
-
-. kdensity rate if imd==4, normal name(kd_imd_4, replace)
-(n() set to 24)
-
-. kdensity rate if imd==5, normal name(kd_imd_5, replace)
-(n() set to 24)
-
-. *Autoregression plots by ethnicity
-. ac rate if imd==1, name(ac_imd_1, replace)
-
-. ac rate if imd==2, name(ac_imd_2, replace)
-
-. ac rate if imd==3, name(ac_imd_3, replace)
-
-. ac rate if imd==4, name(ac_imd_4, replace)
-
-. ac rate if imd==5, name(ac_imd_5, replace)
-
-. /*Partial autoregression plots by ethnicity
-> pac rate if imd==1, name(pac_imd_1, replace)
-> pac rate if imd==2, name(pac_imd_2, replace)
-> pac rate if imd==3, name(pac_imd_3, replace)
-> pac rate if imd==4, name(pac_imd_4, replace)
-> pac rate if imd==5, name(pac_imd_5, replace)*/
-. *Combine Graphs
-. graph combine kd_imd_1 kd_imd_2 kd_imd_3 kd_imd_4 kd_imd_5, altshrink
-
-. graph export ./output/time_series/resp_kd_asthma_exacerbation_imd.eps, as(eps
-> ) replace
-(note: file ./output/time_series/resp_kd_asthma_exacerbation_imd.eps not found)
-(file ./output/time_series/resp_kd_asthma_exacerbation_imd.eps written in EPS f
-> ormat)
-
-. graph combine ac_imd_1 ac_imd_2 ac_imd_3 ac_imd_4 ac_imd_5, altshrink
-
-. graph export ./output/time_series/resp_ac_asthma_exacerbation_imd.eps, as(eps
-> ) replace
-(note: file ./output/time_series/resp_ac_asthma_exacerbation_imd.eps not found)
-(file ./output/time_series/resp_ac_asthma_exacerbation_imd.eps written in EPS f
-> ormat)
-
-. /*
-> graph combine pac_imd_1 pac_imd_2 pac_imd_3 pac_imd_4 pac_imd_5, altshrink
-> graph export ./output/time_series/resp_pac_asthma_exacerbation_imd.eps, as(ep
-> s) replace*/               
+.         
 . log close
       name:  <unnamed>
        log:  /workspace/logs/model_checks_resp.log
   log type:  text
- closed on:  21 Apr 2022, 09:56:15
+ closed on:   5 May 2022, 10:20:44
 -------------------------------------------------------------------------------

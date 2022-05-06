@@ -4,7 +4,7 @@ expectations:
   population_size: 1000
 
 actions:
-  # Generates study population for CV, mental health outcomes
+  # Generates study population for CV, mental health outcomes - start date = 2018-03-01
   generate_study_population:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures --output-format=csv
     outputs:
@@ -48,6 +48,14 @@ actions:
       highly_sensitive:
         cohort: output/measures/tables/input_tables_2021-01-01.csv
   
+  # Generates baseline tables
+  create_baseline_tables:
+    run: stata-mp:latest analysis/baseline_tables.do
+    needs: [generate_study_population_tables_2019, generate_study_population_tables_2020, generate_study_population_tables_2021]
+    outputs:
+      highly_sensitive:
+        output: output/measures/tables/baseline_table_*.xlsx
+
   # Generates summary measures for CV and mental health outcomes
   calculate_measures:
     run: cohortextractor:latest  generate_measures --study-definition study_definition --output-dir=output/measures
@@ -128,15 +136,15 @@ actions:
     outputs:
       moderately_sensitive: 
         log: logs/model_checks_dm.log
-        output: output/time_series/dm_*.eps
+        output: output/time_series/dm_*.svg
 
   model_checks_resp:
     run: stata-mp:latest analysis/model_check_resp.do
-    needs: [calculate_measures_resp, graphs_resp]
+    needs: [calculate_measures_resp]
     outputs:
       moderately_sensitive: 
         log: logs/model_checks_resp.log
-        output: output/time_series/resp_*.eps
+        output: output/time_series/resp_*.svg
 
   model_checks_cvd:
     run: stata-mp:latest analysis/model_check_cvd.do
@@ -144,7 +152,7 @@ actions:
     outputs:
       moderately_sensitive: 
         log: logs/model_checks_cvd.log
-        output: output/time_series/cvd_*.eps
+        output: output/time_series/cvd_*.svg
 
   model_checks_mh:
     run: stata-mp:latest analysis/model_check_mh.do
@@ -152,21 +160,52 @@ actions:
     outputs:
       moderately_sensitive: 
         log: logs/model_checks_mh.log
-        output: output/time_series/mh_*.eps
+        output: output/time_series/mh_*.svg
 
   model_checks_mortality:
     run: stata-mp:latest analysis/model_check_mortality.do
-    needs: [calculate_measures_mortality, graphs_mortality]
+    needs: [calculate_measures_mortality]
     outputs:
       moderately_sensitive: 
         log: logs/model_checks_mortality.log
-        output: output/time_series/mortality_*.eps
+        output: output/time_series/mortality_*.svg
   
   time_series_resp:
     run: stata-mp:latest analysis/time_series_resp.do
     needs: [calculate_measures_resp]
     outputs:
       moderately_sensitive:
-        log: logs/tsreg.log
-        output: output/time_series/tsreg_tables.xlsx
+        log: logs/tsreg_resp.log
+        output: output/time_series/tsreg_tables_resp.xlsx
 
+  time_series_dm:
+    run: stata-mp:latest analysis/time_series_dm.do
+    needs: [calculate_measures_dm]
+    outputs:
+      moderately_sensitive:
+        log: logs/tsreg_dm.log
+        output: output/time_series/tsreg_tables_dm.xlsx
+
+  time_series_cvd:
+    run: stata-mp:latest analysis/time_series_cvd.do
+    needs: [calculate_measures]
+    outputs:
+      moderately_sensitive:
+        log: logs/tsreg_cvd.log
+        output: output/time_series/tsreg_tables_cvd.xlsx
+
+  time_series_mh:
+    run: stata-mp:latest analysis/time_series_mh.do
+    needs: [calculate_measures]
+    outputs:
+      moderately_sensitive:
+        log: logs/tsreg_mh.log
+        output: output/time_series/tsreg_tables_mh.xlsx
+
+  time_series_mortality:
+    run: stata-mp:latest analysis/time_series_mortality.do
+    needs: [calculate_measures_mortality]
+    outputs:
+      moderately_sensitive:
+        log: logs/tsreg_mortality.log
+        output: output/time_series/tsreg_tables_mortality.xlsx

@@ -3,7 +3,6 @@
 
 . cap mkdir ./output/graphs
 
-. 
 . * Generates graphs for ethnicity - to include DM once defined
 . local a "resp asthma copd cvd mi stroke heart_failure vte mh keto"
 

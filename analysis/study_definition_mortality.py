@@ -213,7 +213,11 @@ study = StudyDefinition(
         match_only_underlying_cause=True,
         returning="binary_flag",
     ),
-
+    # All-cause mortality
+    all_cause_mortality=patients.died_from_any_cause(
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+    ),
 )
 # Currently rates all for general population - not any subpopulations..
 measures = [
@@ -241,7 +245,7 @@ measures = [
         denominator="population",
         group_by=["ethnicity"],
     ),
-        Measure(
+    Measure(
         id="mi_mortality_ethnic_rate",
         numerator="mi_mortality",
         denominator="population",
@@ -274,6 +278,12 @@ measures = [
     Measure(
         id="copd_mortality_ethnic_rate",
         numerator="copd_mortality",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="all_cause_mortality_ethnic_rate",
+        numerator="all_cause_mortality",
         denominator="population",
         group_by=["ethnicity"],
     ),
@@ -334,6 +344,12 @@ measures = [
     Measure(
         id="copd_mortality_imd_rate",
         numerator="copd_mortality",
+        denominator="population",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="all_cause_mortality_imd_rate",
+        numerator="all_cause_mortality",
         denominator="population",
         group_by=["imd"],
     ),

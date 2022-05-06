@@ -3,12 +3,12 @@ Do file name:   graphs_mortality.do
 Project:        COVID Collateral
 Date:           23/03/2022
 Author:         Ruth Costello
-Description:    Generates line graphs of rates of each outcome and strata per month
+Description:    collapses data to 3-monthly then generates line graphs of 
+                rates of each outcome and strata per month
 ==============================================================================*/
 cap log using ./logs/graphs_mortality.log, replace
 cap mkdir ./output/collapsed
 cap mkdir ./output/graphs
-
 * Generates graphs for ethnicity - to include DM once defined
 local a "resp asthma copd cvd mi stroke heart_failure vte mh keto"
 forvalues i=1/9 {
@@ -27,7 +27,7 @@ forvalues i=1/9 {
     format quarter %tq
     collapse (sum) value rate population `b'_mortality (min) dateA,  by(quarter ethnicity)
     * Outputing file 
-    export delimited using "./output//collapsed/collapse_measure_`b'_mortality_ethnic_rate.csv", replace 
+    export delimited using "./output/collapsed/collapse_measure_`b'_mortality_ethnic_rate.csv", replace 
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `b'_mortality population, i(dateA) j(ethnicity)
     describe

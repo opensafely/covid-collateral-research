@@ -1,5 +1,5 @@
 # Remember to update codelists.txt with new codelists prior to import
-from cohortextractor import codelist_from_csv
+from cohortextractor import codelist_from_csv, codelist
 
 # Ethnicity
 ethnicity_codes = codelist_from_csv(
@@ -179,3 +179,13 @@ self_harm_snomed_codes = codelist_from_csv(
     system="snomed",
     column="code",
 )
+# High risk and not high risk codes, to define clinical vulnerability to complications from COVID-19 infection/shielding
+high_risk_codes = codelist(
+    ['1300561000000107'],
+    system="snomed",
+    )
+
+not_high_risk_codes = codelist(
+    ['1300591000000101', '1300571000000100'],
+    system="snomed",
+    )
