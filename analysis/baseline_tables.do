@@ -30,9 +30,9 @@ forvalues i=2019/2021 {
     *(1) ethnicity
     replace ethnicity=6 if ethnicity==.
     label define eth5 			1 "White"  					///
-                                2 "South Asian"				///						
-                                3 "Black"  					///
-                                4 "Mixed"					///
+                                2 "Mixed"				///						
+                                3 "Asian"  					///
+                                4 "Black"					///
                                 5 "Other"					///
                                 6 "Unknown"
                         
@@ -48,7 +48,7 @@ forvalues i=2019/2021 {
     label values age_cat age
 
     * Use new package
-    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ imd cate \ region cate) saving (./output/measures/tables/baseline_table_`i'.xlsx, replace)
+    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate) saving (./output/measures/tables/baseline_table_`i'.xlsx, replace)
     }
 
 * Close log file 

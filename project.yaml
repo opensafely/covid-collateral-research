@@ -26,7 +26,7 @@ actions:
 
   # Generates study population for mortality
   generate_study_population_mortality:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_mortality --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures/mortality --output-format=csv --skip-existing
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_mortality --index-date-range "2019-02-01 to 2022-01-31 by month" --output-dir=output/measures/mortality --output-format=csv --skip-existing
     outputs:
       highly_sensitive:
         cohort: output/measures/mortality/input_mortality_*.csv
