@@ -29,7 +29,7 @@ common_variables = dict(
                      },
                 ),
             # fill missing ethnicity from SUS
-            ethnicity_sus=patients.with_ethnicity_from_sus(
+        ethnicity_sus=patients.with_ethnicity_from_sus(
                 returning="group_6",
                 use_most_frequent_code=True,
                 return_expectations={
