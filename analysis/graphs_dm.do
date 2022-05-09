@@ -25,11 +25,11 @@ foreach v in hba1c systolic_bp {
     reshape wide value rate population `v', i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
@@ -84,16 +84,16 @@ foreach v in primary any /*emergency*/ {
     collapse (sum) value rate has_t1_diabetes t1dm_admission_`v' (min) dateA,  by(quarter ethnicity)
     drop quarter
     * Outputing file 
-    export delimited using ./output/measures/dm/collapse_measure_dm_t1_`v'_ethnicity_rate.csv
+    export delimited using ./output/collapsed/collapse_measure_dm_t1_`v'_ethnicity_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate has_t1_diabetes t1dm_admission_`v', i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
@@ -146,16 +146,16 @@ foreach v in primary any /*emergency*/ {
     collapse (sum) value rate has_t2_diabetes t2dm_admission_`v' (min) dateA,  by(quarter ethnicity)
     drop quarter
     * Outputing file 
-    export delimited using ./output/measures/dm/collapse_measure_dm_t2_`v'_ethnicity_rate.csv 
+    export delimited using ./output/collapsed/collapse_measure_dm_t2_`v'_ethnicity_rate.csv 
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate has_t2_diabetes t2dm_admission_`v', i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
@@ -211,11 +211,11 @@ foreach v in primary any /*emergency*/ {
     reshape wide value rate population dm_keto_admission_`v', i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///

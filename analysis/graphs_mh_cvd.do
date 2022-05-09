@@ -6,6 +6,8 @@ Author:         Ruth Costello
 Description:    Generates line graphs of rates of each outcome and strata per month
 ==============================================================================*/
 cap log using ./logs/graphs_mh_cvd.log, replace
+cap mkdir ./output/collapsed
+cap mkdir ./output/graphs
 
 * Generates graphs for clinical monitoring measures
 foreach this_group in cvd mh {
@@ -23,17 +25,18 @@ foreach this_group in cvd mh {
         reshape wide value rate `this_group'_subgroup systolic_bp, i(dateA) j(ethnicity)
         describe
         * Labelling ethnicity variables
-        label var rate1 "Ethnicity - White"
-        label var rate2 "Ethnicity - Mixed"
-        label var rate3 "Ethnicity - Asian"
-        label var rate4 "Ethnicity - Black"
-        label var rate5 "Ethnicity - Other"
+        label var rate1 "White"
+        label var rate2 "Mixed"
+        label var rate3 "Asian"
+        label var rate4 "Black"
+        label var rate5 "Other"
 
         * Generate line graph
-        graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
-        ytitle("Rate per 100,000") 
+        graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+        format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+        angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
 
-        graph export ./output/line_bp_`this_group'_ethnic.eps, as(eps) replace
+        graph export ./output/graphs/line_bp_`this_group'_ethnic.svg, as(svg) replace
     * IMD
     clear 
     import delimited using ./output/measures/measure_systolic_bp_`this_group'_imd_rate.csv, numericcols(4)
@@ -55,10 +58,11 @@ foreach this_group in cvd mh {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
 
-    graph export ./output/line_bp_`this_group'_imd.eps, as(eps) replace
+    graph export ./output/graphs/line_bp_`this_group'_imd.svg, as(svg) replace
     }
 }
 * Hospital admission graphs
@@ -79,17 +83,18 @@ forvalues i=1/10 {
     reshape wide value rate `this_group'_admission population, i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
 
-    graph export ./output/line_`this_group'_admission_ethnicity.eps, as(eps) replace
+    graph export ./output/graphs/line_`this_group'_admission_ethnicity.svg, as(svg) replace
     * IMD
     clear 
     import delimited using ./output/measures/measure_`this_group'_admission_imd_rate.csv, numericcols(4)
@@ -111,10 +116,11 @@ forvalues i=1/10 {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
 
-    graph export ./output/line_`this_group'_admission_imd.eps, as(eps) replace
+    graph export ./output/graphs/line_`this_group'_admission_imd.svg, as(svg) replace
 
 }
 * Hospital admissions - primary diagnosis
@@ -135,17 +141,18 @@ forvalues i=1/4 {
     reshape wide value rate `this_group'_primary_admission population, i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small))) 
 
-    graph export ./output/line_`this_group'_primary_admission_ethnicity.eps, as(eps) replace
+    graph export ./output/graphs/line_`this_group'_primary_admission_ethnicity.svg, as(svg) replace
     * IMD
     clear 
     import delimited using ./output/measures/measure_`this_group'_primary_admission_imd_rate.csv, numericcols(4)
@@ -167,13 +174,14 @@ forvalues i=1/4 {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
 
-    graph export ./output/line_`this_group'_primary_admission_imd.eps, as(eps) replace
+    graph export ./output/graphs/line_`this_group'_primary_admission_imd.svg, as(svg) replace
 
 }
-* Mental health measures - 3 monthly rates for primary admissions
+/* Mental health measures - 3 monthly rates for primary admissions
 local groups "depression anxiety smi self_harm eating_dis ocd"
 forvalues i=1/6 {
     local this_group :word `i' of `groups'
@@ -192,22 +200,24 @@ forvalues i=1/6 {
     collapse (sum) value rate `this_group'_primary_admission population (min) dateA,  by(quarter ethnicity)
     drop quarter
     * Outputing file 
-    export delimited using ./output/measures/collapse_measure_`this_group'_primary_admission_ethnicity_rate.csv
+    export delimited using ./output/collapsed/collapse_measure_`this_group'_primary_admission_ethnicity_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `this_group'_primary_admission population, i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small))) 
 
-    graph export ./output/line_`this_group'_primary_admission_ethnicity.eps, as(eps) replace
+    graph export ./output/graphs/line_`this_group'_primary_admission_ethnicity.svg, as(svg) replace
+    
     * IMD
     clear 
     import delimited using ./output/measures/measure_`this_group'_primary_admission_imd_rate.csv, numericcols(4)
@@ -223,7 +233,7 @@ forvalues i=1/6 {
     collapse (sum) value rate `this_group'_primary_admission population (min) dateA,  by(quarter imd)
     drop quarter
     * Outputing file 
-    export delimited using ./output/measures/collapse_measure_`this_group'_primary_admission_imd_rate.csv
+    export delimited using ./output/collapsed/collapse_measure_`this_group'_primary_admission_imd_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `this_group'_primary_admission population, i(dateA) j(imd)
     describe
@@ -235,16 +245,17 @@ forvalues i=1/6 {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
 
-    graph export ./output/line_`this_group'_primary_admission_imd.eps, as(eps) replace
+    graph export ./output/graphs/line_`this_group'_primary_admission_imd.svg, as(svg) replace
 
 }
-
-* Emergency admissions - collapsed to 3 monthly
-local groups "anxiety smi self_harm eating_dis ocd"
-forvalues i=1/5 {
+*/
+* Emergency admissions - small numbers for eating disorders and ocd so those not included
+local groups "anxiety smi self_harm"
+forvalues i=1/3 {
     local this_group :word `i' of `groups'
 * Ethnicity
     clear 
@@ -256,27 +267,22 @@ forvalues i=1/5 {
     drop date
     format dateA %dD/M/Y
     tab dateA 
-    * Collapse at 3 monthly intervals
-    gen quarter = qofd(dateA)
-    collapse (sum) value rate `this_group'_emergency population (min) dateA,  by(quarter ethnicity)
-    drop quarter
-    * Outputing file 
-    export delimited using ./output/measures/collapse_measure_`this_group'_emergency_ethnicity_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `this_group'_emergency population, i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small))) 
 
-    graph export ./output/line_`this_group'_emergency_ethnicity.eps, as(eps) replace
+    graph export ./output/graphs/line_`this_group'_emergency_ethnicity.svg, as(svg) replace
     * IMD
     clear 
     import delimited using ./output/measures/measure_`this_group'_emergency_imd_rate.csv, numericcols(4)
@@ -287,12 +293,6 @@ forvalues i=1/5 {
     drop date
     format dateA %dD/M/Y
     tab dateA 
-    * Collapse at 3 monthly intervals
-    gen quarter = qofd(dateA)
-    collapse (sum) value rate `this_group'_emergency population (min) dateA,  by(quarter imd)
-    drop quarter
-    * Outputing file 
-    export delimited using ./output/measures/collapse_measure_`this_group'_emergency_imd_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `this_group'_emergency population, i(dateA) j(imd)
     describe
@@ -304,10 +304,11 @@ forvalues i=1/5 {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
 
-    graph export ./output/line_`this_group'_emergency_imd.eps, as(eps) replace
+    graph export ./output/graphs/line_`this_group'_emergency_imd.svg, as(svg) replace
 
 }
 
@@ -333,17 +334,18 @@ forvalues i=1/2 {
     reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small))) 
 
-    graph export ./output/line_resp_ethnic_`this_outcome'_`this_strata'.eps, as(eps) replace
+    graph export ./output/graphs/line_resp_ethnic_`this_outcome'_`this_strata'.svg, as(svg) replace
     * IMD
     clear 
     import delimited using "./output/measures/resp/measure_`this_outcome'_`this_strata'_imd_rate.csv"
@@ -365,9 +367,10 @@ forvalues i=1/2 {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
 
-    graph export ./output/line_resp_imd_`this_outcome'_`this_strata'.eps, as(eps) replace
+    graph export ./output/graphs/line_resp_imd_`this_outcome'_`this_strata'.svg, as(svg) replace
     }
 }
