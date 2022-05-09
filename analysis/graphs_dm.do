@@ -6,6 +6,8 @@ Author:         Ruth Costello
 Description:    Generates line graphs of rates of each outcome and strata per month
 ==============================================================================*/
 cap log using ./logs/graphs_dm.log, replace
+cap mkdir ./output/collapsed
+cap mkdir ./output/graphs
 
 * Generates graphs for clinical monitoring measures
 foreach v in hba1c systolic_bp {
@@ -30,10 +32,12 @@ foreach v in hba1c systolic_bp {
     label var rate5 "Ethnicity - Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+ 
 
-    graph export ./output/line_dm_ethnic_`v'.eps, as(eps) replace
+    graph export ./output/graphs/line_dm_ethnic_`v'.svg, as(svg) replace
     * IMD
     clear 
     import delimited using ./output/measures/dm/measure_dm_`v'_imd_rate.csv, numericcols(4)
@@ -55,10 +59,12 @@ foreach v in hba1c systolic_bp {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
 
-    graph export ./output/line_dm_imd_`v'.eps, as(eps) replace
+
+    graph export ./output/graphs/line_dm_imd_`v'.svg, as(svg) replace
 
 }
 * Generates graphs for DM hospital admissions
@@ -90,10 +96,13 @@ foreach v in primary any /*emergency*/ {
     label var rate5 "Ethnicity - Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
 
-    graph export ./output/line_dm_ethnic_t1_`v'.eps, as(eps) replace
+
+    graph export ./output/graphs/line_dm_ethnic_t1_`v'.svg, as(svg) replace
+    
     * IMD - type 1 DM
     clear 
     import delimited using ./output/measures/dm/measure_dm_t1_`v'_imd_rate.csv, numericcols(4)
@@ -115,10 +124,12 @@ foreach v in primary any /*emergency*/ {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
 
-    graph export ./output/line_dm_imd_t1_`v'.eps, as(eps) replace
+
+    graph export ./output/graphs/line_dm_imd_t1_`v'.svg, as(svg) replace
 
     * Ethnicity - Type 2 DM
     clear 
@@ -147,10 +158,12 @@ foreach v in primary any /*emergency*/ {
     label var rate5 "Ethnicity - Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+ 
 
-    graph export ./output/line_dm_ethnic_t2_`v'.eps, as(eps) replace
+    graph export ./output/graphs/line_dm_ethnic_t2_`v'.svg, as(svg) replace
     * IMD - type 2 DM
     clear 
     import delimited using ./output/measures/dm/measure_dm_t2_`v'_imd_rate.csv
@@ -172,12 +185,13 @@ foreach v in primary any /*emergency*/ {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
 
-    graph export ./output/line_dm_imd_t2_`v'.eps, as(eps) replace
+    graph export ./output/graphs/line_dm_imd_t2_`v'.svg, as(svg) replace
 
-    * Ethnicity - Ketoacidosis
+    /* Ethnicity - Ketoacidosis
     clear 
     import delimited using ./output/measures/dm/measure_dm_keto_`v'_ethnicity_rate.csv
     * Generate rate per 100,000
@@ -192,7 +206,7 @@ foreach v in primary any /*emergency*/ {
     collapse (sum) value rate population dm_keto_admission_`v' (min) dateA,  by(quarter ethnicity)
     drop quarter
     * Outputing file 
-    export delimited using ./output/measures/dm/collapse_measure_dm_keto_`v'_ethnicity_rate.csv
+    export delimited using ./output/collapsed/collapse_measure_dm_keto_`v'_ethnicity_rate.csv
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate population dm_keto_admission_`v', i(dateA) j(ethnicity)
     describe
@@ -204,10 +218,13 @@ foreach v in primary any /*emergency*/ {
     label var rate5 "Ethnicity - Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+ 
 
-    graph export ./output/line_dm_ethnic_keto_`v'.eps, as(eps) replace
+    graph export ./output/graphs/line_dm_ethnic_keto_`v'.svg, as(svg) replace
+    */
     * IMD - type 1 DM
     clear 
     import delimited using ./output/measures/dm/measure_dm_keto_`v'_imd_rate.csv
@@ -229,10 +246,12 @@ foreach v in primary any /*emergency*/ {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
 
-    graph export ./output/line_dm_imd_keto_`v'.eps, as(eps) replace
+
+    graph export ./output/graphs/line_dm_imd_keto_`v'.svg, as(svg) replace
 
 }
 
