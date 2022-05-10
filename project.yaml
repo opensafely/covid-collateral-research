@@ -12,7 +12,7 @@ actions:
         cohort: output/measures/input_*.csv
   # Generates study population for diabetes outcomes
   generate_study_population_dm:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_dm --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures/dm --output-format=csv --skip-existing
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_dm --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures/dm --output-format=csv 
     outputs:
       highly_sensitive:
         cohort: output/measures/dm/input_dm_*.csv
@@ -94,9 +94,8 @@ actions:
     outputs: 
       moderately_sensitive:
         log: logs/graphs_mh_cvd.log
-        output: output/line_*.eps
-      highly_sensitive:
-        output: output/measures/collapse_measure_*
+        output: output/graphs/line_*.svg
+     
   # Generates graphs for diabetes outcomes
   graphs_dm:
     run: stata-mp:latest analysis/graphs_dm.do 
@@ -104,9 +103,9 @@ actions:
     outputs: 
       moderately_sensitive:
         log: logs/graphs_dm.log
-        output: output/line_dm_*.eps
+        output: output/graphs/line_dm_*.svg
       highly_sensitive:
-        output: output/measures/dm/collapse_measure_*
+        output: output/collapsed/collapse_measure_dm_*
   # Generate graphs for respiratory outcomes
   graphs_resp:
     run: stata-mp:latest analysis/graphs_resp.do 
@@ -114,9 +113,7 @@ actions:
     outputs: 
       moderately_sensitive:
         log: logs/graphs_resp.log
-        output: output/line_resp_*.eps
-      highly_sensitive:
-        output: output/measures/resp/collapse_measure_*
+        output: output/graphs/line_resp_*.svg
 
   # Generate graphs for mortality
   graphs_mortality:

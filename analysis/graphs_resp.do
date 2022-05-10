@@ -6,6 +6,8 @@ Author:         Ruth Costello
 Description:    Generates line graphs of rates of each outcome and strata per month
 ==============================================================================*/
 cap log using ./logs/graphs_resp.log, replace
+cap mkdir ./output/collapsed
+cap mkdir ./output/graphs
 
 * Generates graphs for clinical monitoring measures
 local outcomes "asthma copd"
@@ -30,17 +32,19 @@ forvalues i=1/2 {
     reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, angle(45) format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
 
-    graph export ./output/line_resp_ethnic_`this_outcome'_`this_strata'.eps, as(eps) replace
+
+    graph export ./output/graphs/line_resp_ethnic_`this_outcome'_`this_strata'.svg, as(svg) replace
     * IMD
     clear 
     import delimited using "./output/measures/resp/measure_`this_outcome'_`this_strata'_imd_rate.csv", numericcols(4)
@@ -62,14 +66,16 @@ forvalues i=1/2 {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, format(%dM-CY)) ///
-    ytitle("Rate per 100,000") 
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
 
-    graph export ./output/line_resp_imd_`this_outcome'_`this_strata'.eps, as(eps) replace
+
+    graph export ./output/graphs/line_resp_imd_`this_outcome'_`this_strata'.svg, as(svg) replace
     }
 }
 
-* Adding three monthly intervals for asthma exacerbation for ethnicity
+/* Adding three monthly intervals for asthma exacerbation for ethnicity
 * Ethnicity
     clear 
     import delimited using "./output/measures/resp/measure_asthma_exacerbation_ethnicity_rate.csv", numericcols(4)
@@ -90,14 +96,14 @@ forvalues i=1/2 {
     reshape wide value rate has_asthma asthma_exacerbation, i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
-    label var rate1 "Ethnicity - White"
-    label var rate2 "Ethnicity - Mixed"
-    label var rate3 "Ethnicity - Asian"
-    label var rate4 "Ethnicity - Black"
-    label var rate5 "Ethnicity - Other"
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 dateA, xlabel(, angle(45) format(%dM-CY)) ///
     ytitle("Rate per 100,000") 
 
-    graph export ./output/line_resp_ethnic_asthma_exacerbation_collapse.eps, as(eps) replace
+    graph export ./output/line_resp_ethnic_asthma_exacerbation_collapse.svg, as(svg) replace
