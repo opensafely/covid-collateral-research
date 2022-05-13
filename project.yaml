@@ -209,7 +209,7 @@ actions:
 
   # Study definition for pre-pandemic survival analysis
   generate_study_population_survival_pre:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_survival_pre --index-date-range "2018-03-01" --output-dir=output/survival --output-format=csv --skip-existing
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_survival_pre --output-dir -output/survival --output-format=csv --skip-existing
     outputs:
       highly_sensitive:
-        cohort: output/survival/input_pre_pandemic.csv
+        cohort: output/survival/input_survival.csv
