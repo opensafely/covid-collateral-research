@@ -212,4 +212,4 @@ actions:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_survival_pre --output-dir=output/survival --output-format=csv --skip-existing
     outputs:
       highly_sensitive:
-        cohort: output/survival/input_survival.csv
+        cohort: output/survival/input_survival*.csv
