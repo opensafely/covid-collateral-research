@@ -22,7 +22,7 @@ foreach this_group in cvd mh {
         format dateA %dD/M/Y
         tab dateA 
         * reshape dataset so columns with rates for each ethnicity 
-        reshape wide value rate `this_group'_group systolic_bp, i(dateA) j(ethnicity)
+        reshape wide value rate `this_group'_subgroup systolic_bp, i(dateA) j(ethnicity)
         describe
         * Labelling ethnicity variables
         label var rate1 "White"
@@ -48,7 +48,7 @@ foreach this_group in cvd mh {
     format dateA %dD/M/Y
     tab dateA 
     * reshape dataset so columns with rates for each ethnicity 
-    reshape wide value rate `this_group'_group systolic_bp, i(dateA) j(imd)
+    reshape wide value rate `this_group'_subgroup systolic_bp, i(dateA) j(imd)
     describe
     * Labelling ethnicity variables
     label var rate1 "IMD - 1"
