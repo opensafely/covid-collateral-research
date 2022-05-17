@@ -65,7 +65,7 @@ forvalues i=1/7 {
 * Primary and emergency admissions by ethnicity
 local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission anxiety_emergency smi_emergency self_harm_emergency"
 local b "depress anxiety smi sh anx_emergency smi_emergency sh_emergency"
-forvalues i=1/11 {
+forvalues i=1/7 {
 	local c: word `i' of `a'
 	local d: word `i' of `b'
 	import delimited "./output/measures/measure_`c'_ethnicity_rate.csv", numericcols(3) clear	//get csv
@@ -110,7 +110,7 @@ forvalues i=1/11 {
 * Primary and emergency admissions by IMD
 local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission anxiety_emergency smi_emergency self_harm_emergency"
 local b "depress anxiety smi sh anx_emergency smi_emergency sh_emergency"
-forvalues i=1/11 {
+forvalues i=1/7 {
 	local c: word `i' of `a'
 	local d: word `i' of `b'
 	import delimited "./output/measures/measure_`c'_imd_rate.csv", numericcols(4) clear	//get csv

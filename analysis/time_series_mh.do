@@ -51,7 +51,7 @@ forvalues i=1/7 {
 
 local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission anxiety_emergency smi_emergency self_harm_emergency"
 local b "depress_pri anxiety_pri smi_pri sh_pri anx_emergency smi_emergency sh_emergency"
-forvalues i=1/11 {
+forvalues i=1/7 {
 	local c: word `i' of `a'
     local d: word `i' of `b' 
 	local e "ethnicity imd"
