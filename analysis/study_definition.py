@@ -506,33 +506,6 @@ measures = [
         denominator="population",
         group_by=["imd"],
     ),
-    # Hospital admissions for eating disorders
-    Measure(
-        id="eating_dis_primary_admission_ethnicity_rate",
-        numerator="eating_dis_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="eating_dis_primary_admission_imd_rate",
-        numerator="eating_dis_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for OCD
-    Measure(
-        id="ocd_primary_admission_ethnicity_rate",
-        numerator="ocd_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="ocd_primary_admission_imd_rate",
-        numerator="ocd_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    
     # Emergency admissions for anxiety
     Measure(
         id="anxiety_emergency_ethnicity_rate",
@@ -569,32 +542,6 @@ measures = [
     Measure(
         id="self_harm_emergency_imd_rate",
         numerator="self_harm_emergency",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for eating disorders
-    Measure(
-        id="eating_dis_emergency_ethnicity_rate",
-        numerator="eating_dis_emergency",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="eating_dis_emergency_imd_rate",
-        numerator="eating_dis_emergency",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for OCD
-    Measure(
-        id="ocd_emergency_ethnicity_rate",
-        numerator="ocd_emergency",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="ocd_emergency_imd_rate",
-        numerator="ocd_emergency",
         denominator="population",
         group_by=["imd"],
     ),
