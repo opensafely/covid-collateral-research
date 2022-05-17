@@ -49,9 +49,9 @@ forvalues i=1/7 {
         }
     }
 
-local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission eating_dis_primary_admission ocd_primary_admission anxiety_emergency smi_emergency self_harm_emergency eating_dis_emergency ocd_emergency"
-local b "depress_pri anxiety_pri smi_pri sh_pri eat_dis_pri ocd_pri anx_emergency smi_emergency sh_emergency ed_emergency ocd_emergency"
-forvalues i=1/11 {
+local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission anxiety_emergency smi_emergency self_harm_emergency"
+local b "depress_pri anxiety_pri smi_pri sh_pri anx_emergency smi_emergency sh_emergency"
+forvalues i=1/7 {
 	local c: word `i' of `a'
     local d: word `i' of `b' 
 	local e "ethnicity imd"
