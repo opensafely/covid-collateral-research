@@ -43,8 +43,11 @@
  26.         matrix a = r(table)'
  27.         putexcel A6 = matrix(a), rownames
  28.         putexcel save
- 29.         }
- 30.     }
+ 29.         import excel using ./output/time_series/tsreg_tables_mh.xlsx, shee
+> t (`c'_`d') clear
+ 30.         export delimited using ./output/time_series/tsreg_mh_`c'_`d'.csv
+ 31.         }
+ 32.     }
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -87,6 +90,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_systolic_bp_mh_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -131,6 +136,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_systolic_bp_mh_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -173,6 +180,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_depression_admission_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -217,6 +226,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_depression_admission_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -259,6 +270,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_anxiety_admission_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -303,6 +316,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_anxiety_admission_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -345,6 +360,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_smi_admission_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -389,6 +406,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_smi_admission_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -431,6 +450,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_self_harm_admission_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -475,6 +496,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_self_harm_admission_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -517,6 +540,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_eating_dis_admission_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -561,6 +586,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_eating_dis_admission_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -603,6 +630,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_ocd_admission_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -647,6 +676,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_ocd_admission_imd.csv saved
 
 . 
 . local a "depression_primary_admission anxiety_primary_admission smi_primary_a
@@ -692,8 +723,11 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
  27.         matrix a = r(table)'
  28.         putexcel A6 = matrix(a), rownames
  29.         putexcel save
- 30.         }
- 31.     }
+ 30.         import excel using ./output/time_series/tsreg_tables_mh.xlsx, shee
+> t (`d'_`f') clear
+ 31.         export delimited using ./output/time_series/tsreg_mh_`d'_`f'.csv
+ 32.         }
+ 33.     }
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -736,6 +770,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_depress_pri_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -780,6 +816,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_depress_pri_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -822,6 +860,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_anxiety_pri_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -866,6 +906,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_anxiety_pri_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -908,6 +950,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_smi_pri_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -952,6 +996,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_smi_pri_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -994,6 +1040,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_sh_pri_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -1038,6 +1086,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_sh_pri_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -1080,6 +1130,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_anx_emergency_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -1124,6 +1176,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_anx_emergency_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -1166,6 +1220,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_smi_emergency_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -1210,6 +1266,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_smi_emergency_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -1252,6 +1310,8 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 27 obs)
+file ./output/time_series/tsreg_mh_sh_emergency_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -1296,12 +1356,14 @@ file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
 file ./output/time_series/tsreg_tables_mh.xlsx saved
+(10 vars, 30 obs)
+file ./output/time_series/tsreg_mh_sh_emergency_imd.csv saved
 
 . 
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.QlS1jD1ZSw", write text replace
+. . file open output using "/tmp/tmp.asFgoA4AMN", write text replace
 
 . . file write output "success" 
 

@@ -50,8 +50,7 @@
  29.         putexcel save
  30.         import excel using ./output/time_series/tsreg_tables_cvd.xlsx, she
 > et (`e'_`d') clear
- 31.         export delimited using ./output/time_series/tsreg_tables_`e'_`d'.c
-> sv
+ 31.         export delimited using ./output/time_series/tsreg_cvd_`e'_`d'.csv
  32.         }
  33.     }
 (5 vars, 235 obs)
@@ -97,7 +96,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 27 obs)
-file ./output/time_series/tsreg_tables_bp_cvd_ethnicity.csv saved
+file ./output/time_series/tsreg_cvd_bp_cvd_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -144,7 +143,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 30 obs)
-file ./output/time_series/tsreg_tables_bp_cvd_imd.csv saved
+file ./output/time_series/tsreg_cvd_bp_cvd_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -188,7 +187,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 27 obs)
-file ./output/time_series/tsreg_tables_mi_admit_ethnicity.csv saved
+file ./output/time_series/tsreg_cvd_mi_admit_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -234,7 +233,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 30 obs)
-file ./output/time_series/tsreg_tables_mi_admit_imd.csv saved
+file ./output/time_series/tsreg_cvd_mi_admit_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -278,7 +277,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 27 obs)
-file ./output/time_series/tsreg_tables_stroke_admit_ethnicity.csv saved
+file ./output/time_series/tsreg_cvd_stroke_admit_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -324,7 +323,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 30 obs)
-file ./output/time_series/tsreg_tables_stroke_admit_imd.csv saved
+file ./output/time_series/tsreg_cvd_stroke_admit_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -368,7 +367,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 27 obs)
-file ./output/time_series/tsreg_tables_hf_admit_ethnicity.csv saved
+file ./output/time_series/tsreg_cvd_hf_admit_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -414,7 +413,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 30 obs)
-file ./output/time_series/tsreg_tables_hf_admit_imd.csv saved
+file ./output/time_series/tsreg_cvd_hf_admit_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -458,7 +457,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 27 obs)
-file ./output/time_series/tsreg_tables_vte_admit_ethnicity.csv saved
+file ./output/time_series/tsreg_cvd_vte_admit_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -504,7 +503,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 30 obs)
-file ./output/time_series/tsreg_tables_vte_admit_imd.csv saved
+file ./output/time_series/tsreg_cvd_vte_admit_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -548,7 +547,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 27 obs)
-file ./output/time_series/tsreg_tables_mi_pri_ethnicity.csv saved
+file ./output/time_series/tsreg_cvd_mi_pri_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -594,7 +593,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 30 obs)
-file ./output/time_series/tsreg_tables_mi_pri_imd.csv saved
+file ./output/time_series/tsreg_cvd_mi_pri_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -638,7 +637,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 27 obs)
-file ./output/time_series/tsreg_tables_stroke_pri_ethnicity.csv saved
+file ./output/time_series/tsreg_cvd_stroke_pri_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -684,7 +683,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 30 obs)
-file ./output/time_series/tsreg_tables_stroke_pri_imd.csv saved
+file ./output/time_series/tsreg_cvd_stroke_pri_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -728,7 +727,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 27 obs)
-file ./output/time_series/tsreg_tables_hf_pri_ethnicity.csv saved
+file ./output/time_series/tsreg_cvd_hf_pri_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -774,7 +773,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 30 obs)
-file ./output/time_series/tsreg_tables_hf_pri_imd.csv saved
+file ./output/time_series/tsreg_cvd_hf_pri_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
 (60 real changes made)
@@ -818,7 +817,7 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 27 obs)
-file ./output/time_series/tsreg_tables_vte_pri_ethnicity.csv saved
+file ./output/time_series/tsreg_cvd_vte_pri_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
 (72 real changes made)
@@ -864,12 +863,12 @@ file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 file ./output/time_series/tsreg_tables_cvd.xlsx saved
 (10 vars, 30 obs)
-file ./output/time_series/tsreg_tables_vte_pri_imd.csv saved
+file ./output/time_series/tsreg_cvd_vte_pri_imd.csv saved
 
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.mIq62nMZXe", write text replace
+. . file open output using "/tmp/tmp.ng2TxRTSZi", write text replace
 
 . . file write output "success" 
 
