@@ -48,5 +48,7 @@ forvalues i=1/9 {
         matrix a = r(table)'
         putexcel A6 = matrix(a), rownames
         putexcel save
+        import excel using ./output/time_series/tsreg_tables_cvd.xlsx, sheet (`e'_`d') clear
+        export delimited using ./output/time_series/tsreg_tables_`e'_`d'.csv
         }
     }
