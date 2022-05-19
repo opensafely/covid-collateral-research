@@ -4,6 +4,7 @@ expectations:
   population_size: 1000
 
 actions:
+  # Generating static variables 
   generate_study_population_static:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_static --output-format=csv
     outputs:
@@ -15,6 +16,7 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/measures/input_*.csv
+  # Join static and time-varying variables
   join_cohorts_cvd:
     run: >
       cohort-joiner:v0.0.30
@@ -31,6 +33,7 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/measures/input_mh_*.csv
+  # Join static and time-varying variables
   join_cohorts_mh:
     run: >
       cohort-joiner:v0.0.30
@@ -87,13 +90,14 @@ actions:
       moderately_sensitive:
         output: output/tables/baseline_table_*.csv
 
-  # Generates summary measures for CV and mental health outcomes
+  # Generates summary measures for CV 
   calculate_measures:
     run: cohortextractor:latest  generate_measures --study-definition study_definition --output-dir=output/measures/cvd
     needs: [join_cohorts_cvd]
     outputs:
       moderately_sensitive:
         measure: output/measures/cvd/measure_*_rate.csv
+  # Generates summary measures for mental health outcomes
   calculate_measures_mh:
     run: cohortextractor:latest  generate_measures --study-definition study_definition_mh --output-dir=output/measures/mh
     needs: [join_cohorts_mh]
