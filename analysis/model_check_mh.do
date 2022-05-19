@@ -22,7 +22,7 @@ forvalues i=1/7 {
 	local b "ethnicity imd"
 	forvalues i=1/2 {
     	local d: word `i' of `b'
-		import delimited "./output/measures/measure_`c'_`d'_rate.csv", numericcols(4) clear	//get csv
+		import delimited "./output/measures/mh/measure_`c'_`d'_rate.csv", numericcols(4) clear	//get csv
 		gen temp_date=date(date, "YMD")
 		format temp_date %td
 		gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
@@ -68,7 +68,7 @@ local b "depress anxiety smi sh anx_emergency smi_emergency sh_emergency"
 forvalues i=1/7 {
 	local c: word `i' of `a'
 	local d: word `i' of `b'
-	import delimited "./output/measures/measure_`c'_ethnicity_rate.csv", numericcols(3) clear	//get csv
+	import delimited "./output/measures/mh/measure_`c'_ethnicity_rate.csv", numericcols(3) clear	//get csv
 	gen temp_date=date(date, "YMD")
 	format temp_date %td
 	gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
@@ -113,7 +113,7 @@ local b "depress anxiety smi sh anx_emergency smi_emergency sh_emergency"
 forvalues i=1/7 {
 	local c: word `i' of `a'
 	local d: word `i' of `b'
-	import delimited "./output/measures/measure_`c'_imd_rate.csv", numericcols(4) clear	//get csv
+	import delimited "./output/measures/mh/measure_`c'_imd_rate.csv", numericcols(4) clear	//get csv
 	gen temp_date=date(date, "YMD")
 	format temp_date %td
 	gen postcovid=(temp_date>=date("23/03/2020", "DMY"))

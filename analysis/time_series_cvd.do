@@ -20,7 +20,7 @@ forvalues i=1/9 {
 	local b "ethnicity imd"
 	forvalues i=1/2 {
     	local d: word `i' of `b'
-		import delimited "./output/measures/measure_`c'_`d'_rate.csv", numericcols(4) clear	//get csv
+		import delimited "./output/measures/cvd/measure_`c'_`d'_rate.csv", numericcols(4) clear	//get csv
         putexcel set ./output/time_series/tsreg_tables_cvd, sheet(`e'_`d') modify			//open xlsx
         *Format time
         gen temp_date=date(date, "YMD")
