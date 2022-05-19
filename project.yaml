@@ -53,8 +53,8 @@ actions:
     run: stata-mp:latest analysis/baseline_tables.do
     needs: [generate_study_population_tables_2019, generate_study_population_tables_2020, generate_study_population_tables_2021]
     outputs:
-      highly_sensitive:
-        output: output/tables/baseline_table_*.xlsx
+      moderately_sensitive:
+        output: output/tables/baseline_table_*.csv
 
   # Generates summary measures for CV and mental health outcomes
   calculate_measures:
@@ -173,7 +173,7 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_resp.log
-        output: output/time_series/tsreg_tables_resp.xlsx
+        output: output/time_series/tsreg_resp*.csv
 
   time_series_dm:
     run: stata-mp:latest analysis/time_series_dm.do
@@ -181,7 +181,7 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_dm.log
-        output: output/time_series/tsreg_tables_dm.xlsx
+        output: output/time_series/tsreg_dm*.csv
 
   time_series_cvd:
     run: stata-mp:latest analysis/time_series_cvd.do
@@ -189,7 +189,7 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_cvd.log
-        output: output/time_series/tsreg_tables_cvd.xlsx
+        output: output/time_series/tsreg_cvd_*.csv
 
   time_series_mh:
     run: stata-mp:latest analysis/time_series_mh.do
@@ -197,7 +197,7 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_mh.log
-        output: output/time_series/tsreg_tables_mh.xlsx
+        output: output/time_series/tsreg_mh*.csv
 
   time_series_mortality:
     run: stata-mp:latest analysis/time_series_mortality.do
@@ -205,4 +205,4 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_mortality.log
-        output: output/time_series/tsreg_tables_mortality.xlsx
+        output: output/time_series/tsreg_mortality*.csv

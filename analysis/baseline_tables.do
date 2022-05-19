@@ -50,7 +50,8 @@ forvalues i=2019/2021 {
     label values age_cat age
 
     * Use new package
-    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate) saving (./output/tables/baseline_table_`i'.xlsx, replace)
+    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate) clear
+    export delimited using ./output/tables/baseline_table_`i'.csv
     }
 
 * Close log file 

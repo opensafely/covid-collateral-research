@@ -11,8 +11,8 @@ cap log using ./logs/tsreg_dm.log, replace
 cap mkdir ./output/time_series
 * Time series analysis for t1DM, t2DM & keto by ethnicity & IMD
 * Clinical monitoring measures first as these have not been collapsed
-local a "hba1c systolic_bp t1_primary t2_primary keto_primary t1_any t2_any keto_any t1_primary t1_any t2_primary t2_any keto_primary keto_any"
-forvalues i=1/14 {
+local a "hba1c systolic_bp t1_primary t2_primary keto_primary t1_any t2_any keto_any"
+forvalues i=1/8 {
     local c: word `i' of `a' 
 	local b "ethnicity imd"
 	forvalues i=1/2 {
@@ -45,6 +45,8 @@ forvalues i=1/14 {
 		matrix a = r(table)'
 		putexcel A6 = matrix(a), rownames
 		putexcel save
+		import excel using ./output/time_series/tsreg_tables_dm.xlsx, sheet (`c'_`d') clear
+        export delimited using ./output/time_series/tsreg_dm_`c'_`d'.csv, replace
 		}
 	}
 
