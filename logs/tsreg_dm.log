@@ -4,9 +4,9 @@
 . * Time series analysis for t1DM, t2DM & keto by ethnicity & IMD
 . * Clinical monitoring measures first as these have not been collapsed
 . local a "hba1c systolic_bp t1_primary t2_primary keto_primary t1_any t2_any k
-> eto_any t1_primary t1_any t2_primary t2_any keto_primary keto_any"
+> eto_any"
 
-. forvalues i=1/14 {
+. forvalues i=1/8 {
   2.     local c: word `i' of `a' 
   3.         local b "ethnicity imd"
   4.         forvalues i=1/2 {
@@ -45,7 +45,8 @@
  28.                 putexcel save
  29.                 import excel using ./output/time_series/tsreg_tables_dm.xl
 > sx, sheet (`c'_`d') clear
- 30.         export delimited using ./output/time_series/tsreg_dm_`c'_`d'.csv
+ 30.         export delimited using ./output/time_series/tsreg_dm_`c'_`d'.csv, 
+> replace
  31.                 }
  32.         }
 (5 vars, 235 obs)
@@ -91,6 +92,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_dm_hba1c_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_hba1c_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
@@ -137,6 +139,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_dm_hba1c_imd.csv not found)
 file ./output/time_series/tsreg_dm_hba1c_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
@@ -181,6 +184,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_dm_systolic_bp_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_systolic_bp_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
@@ -227,6 +231,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_dm_systolic_bp_imd.csv not found)
 file ./output/time_series/tsreg_dm_systolic_bp_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
@@ -271,6 +276,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_dm_t1_primary_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_t1_primary_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
@@ -317,6 +323,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_dm_t1_primary_imd.csv not found)
 file ./output/time_series/tsreg_dm_t1_primary_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
@@ -361,6 +368,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_dm_t2_primary_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_t2_primary_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
@@ -407,6 +415,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_dm_t2_primary_imd.csv not found)
 file ./output/time_series/tsreg_dm_t2_primary_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
@@ -451,6 +460,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_dm_keto_primary_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_keto_primary_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
@@ -497,6 +507,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_dm_keto_primary_imd.csv not found)
 file ./output/time_series/tsreg_dm_keto_primary_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
@@ -541,6 +552,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_dm_t1_any_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_t1_any_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
@@ -587,6 +599,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_dm_t1_any_imd.csv not found)
 file ./output/time_series/tsreg_dm_t1_any_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
@@ -631,6 +644,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_dm_t2_any_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_t2_any_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
@@ -677,6 +691,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_dm_t2_any_imd.csv not found)
 file ./output/time_series/tsreg_dm_t2_any_imd.csv saved
 (5 vars, 235 obs)
 (60 real changes made)
@@ -721,6 +736,7 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_dm_keto_any_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_keto_any_ethnicity.csv saved
 (5 vars, 282 obs)
 (72 real changes made)
@@ -767,58 +783,87 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_dm_keto_any_imd.csv not found)
 file ./output/time_series/tsreg_dm_keto_any_imd.csv saved
-(5 vars, 235 obs)
-(60 real changes made)
-(60 real changes made)
-(60 real changes made)
-       panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2018m3 to 2022m1
-                delta:  1 month
 
-Regression with Newey-West standard errors      Number of obs     =        235
-maximum lag: 1                                  F( 12,       222) =       0.89
-                                                Prob > F          =     0.5620
-
-------------------------------------------------------------------------------
-             |             Newey-West
-        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-   ethnicity |
-          2  |    1148.36   2962.847     0.39   0.699    -4690.544    6987.264
-          3  |   3884.202   3890.745     1.00   0.319    -3783.317    11551.72
-          4  |   5235.737   3318.668     1.58   0.116    -1304.385    11775.86
-          5  |   7000.788   2867.496     2.44   0.015     1349.792    12651.78
-             |
- 1.postcovid |   1487.879   3117.086     0.48   0.634    -4654.985    7630.743
-             |
-   ethnicity#|
-   postcovid |
-        2 1  |  -570.4871   3967.574    -0.14   0.886    -8389.415    7248.441
-        3 1  |  -1452.645   4986.568    -0.29   0.771    -11279.71    8374.421
-        4 1  |   -4687.15   4524.492    -1.04   0.301     -13603.6      4229.3
-        5 1  |  -4001.597   4042.155    -0.99   0.323     -11967.5    3964.307
-             |
-      season |
-     Summer  |  -225.3767   2228.567    -0.10   0.920     -4617.23    4166.477
-     Autumn  |  -608.1252   2083.631    -0.29   0.771    -4714.352    3498.101
-     Winter  |  -295.0914   2091.226    -0.14   0.888    -4416.286    3826.103
-             |
-       _cons |   47891.92   2505.595    19.11   0.000     42954.13    52829.72
-------------------------------------------------------------------------------
-file ./output/time_series/tsreg_tables_dm.xlsx saved
-file ./output/time_series/tsreg_tables_dm.xlsx saved
-file ./output/time_series/tsreg_tables_dm.xlsx saved
-file ./output/time_series/tsreg_tables_dm.xlsx saved
-(10 vars, 27 obs)
-file ./output/time_series/tsreg_dm_t1_primary_ethnicity.csv already exists
-r(602);
+. 
+. /* hospitalisations collapsed to 3 monthly for ethnicity
+> foreach var in t1_primary t1_any t2_primary t2_any keto_primary keto_any {
+>         import delimited ./output/measures/dm/collapse_measure_dm_`var'_ethni
+> city_rate.csv, numericcols(2) clear        //get csv
+>         putexcel set ./output/time_series/tsreg_tables_dm, sheet(`var'_ethnic
+> ity) modify                        //open xlsx
+>         *Format time
+>         gen temp_date=date(date, "DM20Y")
+>         format temp_date %td
+>         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+>         gen quarter=qofd(temp_date)
+>         format quarter %tq
+>         /*Define Seasons - not needed as collinarity with quarter
+>         gen season=4
+>         replace season = 1 if inrange(month(temp_date),3,5)
+>         replace season = 2 if inrange(month(temp_date),6,8)
+>         replace season = 3 if inrange(month(temp_date),9,11)
+>         label define seasonlab 1 "Spring" 2 "Summer" 3 "Autumn" 4 "Winter"
+>         label values season seasonlab*/
+>         drop temp_date
+>         *Run time series with EWH-robust SE and 1 Lag
+>         tsset ethnicity quarter
+>         newey rate i.ethnicity##i.postcovid, lag(1) force
+>         *Export results
+>         putexcel E1=("Number of obs") G1=(e(N))
+>         putexcel E2=("F") G2=(e(F))
+>         putexcel E3=("Prob > F") G3=(Ftail(e(df_m), e(df_r), e(F)))
+>         matrix a = r(table)'
+>         putexcel A6 = matrix(a), rownames
+>         putexcel save
+>         }
+> 
+> * hospitalisations monthly by IMD
+> foreach var in t1_primary t1_any t2_primary t2_any keto_primary keto_any {
+>         import delimited ./output/measures/dm/measure_dm_`var'_imd_rate.csv, 
+> numericcols(4) clear       //get csv
+>         putexcel set ./output/time_series/tsreg_tables_dm, sheet(`var'_imd) m
+> odify                      //open xlsx
+>         *Format time
+>         gen temp_date=date(date, "YMD")
+>         format temp_date %td
+>         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+>         gen month=mofd(temp_date)
+>         format month %tm
+>         *Define Seasons
+>         gen season=4
+>         replace season = 1 if inrange(month(temp_date),3,5)
+>         replace season = 2 if inrange(month(temp_date),6,8)
+>         replace season = 3 if inrange(month(temp_date),9,11)
+>         label define seasonlab 1 "Spring" 2 "Summer" 3 "Autumn" 4 "Winter"
+>         label values season seasonlab
+>         drop temp_date
+>         *Value to rate per 100k
+>         gen rate = value*100000
+>         *Run time series with EWH-robust SE and 1 Lag
+>         tsset imd month
+>         newey rate i.imd##i.postcovid i.season, lag(1) force
+>         *Export results
+>         putexcel E1=("Number of obs") G1=(e(N))
+>         putexcel E2=("F") G2=(e(F))
+>         putexcel E3=("Prob > F") G3=(Ftail(e(df_m), e(df_r), e(F)))
+>         matrix a = r(table)'
+>         putexcel A6 = matrix(a), rownames
+>         putexcel save
+>         }
+> 
+> log close
 
 end of do-file
-r(602);
 
+. . file open output using "/tmp/tmp.O8EXTZWDGC", write text replace
+
+. . file write output "success" 
+
+. . file close output
+
+. 
 end of do-file
-
-r(602);
 
 

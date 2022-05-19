@@ -88,7 +88,7 @@ forvalues i=1/7 {
         putexcel A6 = matrix(a), rownames
         putexcel save
         import excel using ./output/time_series/tsreg_tables_mh.xlsx, sheet (`d'_`f') clear
-        export delimited using ./output/time_series/tsreg_mh_`d'_`f'.csv
+        export delimited using ./output/time_series/tsreg_mh_`d'_`f'.csv, replace
         }
     }
 

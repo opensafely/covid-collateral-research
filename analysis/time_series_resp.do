@@ -41,7 +41,7 @@ foreach var in asthma_monitoring copd_monitoring asthma_exacerbation copd_exacer
 	putexcel A6 = matrix(a), rownames
 	putexcel save
 	import excel using ./output/time_series/tsreg_tables_resp.xlsx, sheet (`var'_`strata') clear
-    export delimited using ./output/time_series/tsreg_resp_`var'_`strata'.csv
+    export delimited using ./output/time_series/tsreg_resp_`var'_`strata'.csv, replace
 	}
 }
 
