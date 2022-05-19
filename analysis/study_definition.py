@@ -1,4 +1,4 @@
-# Creates study population with no restirctions but include indicators for
+# Creates study population with no restrictions but include indicators for
 # mental health and CVD where clinical monitoring is diagnosis specific
 from cohortextractor import (
     StudyDefinition,

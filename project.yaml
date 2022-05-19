@@ -131,7 +131,7 @@ actions:
   # Generates graphs for CVD & mental health outcomes
   graphs_mh_cvd:
     run: stata-mp:latest analysis/graphs_mh_cvd.do 
-    needs: [calculate_measures]
+    needs: [calculate_measures, calculate_measures_mh]
     outputs: 
       moderately_sensitive:
         log: logs/graphs_mh_cvd.log
