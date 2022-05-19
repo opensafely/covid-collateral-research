@@ -4,12 +4,43 @@ expectations:
   population_size: 1000
 
 actions:
-  # Generates study population for CV, mental health outcomes - start date = 2018-03-01
+  generate_study_population_static:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_static --output-format=csv
+    outputs:
+      highly_sensitive:
+        cohort: output/input_static.csv
+  # Generates study population for CV - start date = 2018-03-01
   generate_study_population:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures --output-format=csv
     outputs:
       highly_sensitive:
         cohort: output/measures/input_*.csv
+  join_cohorts_cvd:
+    run: >
+      cohort-joiner:v0.0.30
+        --lhs output/measures/input_*.csv
+        --rhs output/input_static.csv
+        --output-dir output/measures/cvd
+    needs: [generate_study_population, generate_study_population_static]
+    outputs: 
+      highly_sensitive:
+        cohort: output/measures/cvd/input_*.csv
+  # Generates study population for mental health outcomes - start date = 2018-03-01
+  generate_study_population_mh:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_mh --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures --output-format=csv
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/input_mh_*.csv
+  join_cohorts_mh:
+    run: >
+      cohort-joiner:v0.0.30
+        --lhs output/measures/input_mh_*.csv
+        --rhs output/input_static.csv
+        --output-dir output/measures/mh
+    needs: [generate_study_population_mh, generate_study_population_static]
+    outputs: 
+      highly_sensitive:
+        cohort: output/measures/mh/input_mh_*.csv
   # Generates study population for diabetes outcomes
   generate_study_population_dm:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_dm --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures/dm --output-format=csv 
@@ -58,11 +89,17 @@ actions:
 
   # Generates summary measures for CV and mental health outcomes
   calculate_measures:
-    run: cohortextractor:latest  generate_measures --study-definition study_definition --output-dir=output/measures
-    needs: [generate_study_population]
+    run: cohortextractor:latest  generate_measures --study-definition study_definition --output-dir=output/measures/cvd
+    needs: [join_cohorts_cvd]
     outputs:
       moderately_sensitive:
-        measure: output/measures/measure_*_rate.csv
+        measure: output/measures/cvd/measure_*_rate.csv
+  calculate_measures_mh:
+    run: cohortextractor:latest  generate_measures --study-definition study_definition_mh --output-dir=output/measures/mh
+    needs: [join_cohorts_mh]
+    outputs:
+      moderately_sensitive:
+        measure: output/measures/mh/measure_*_rate.csv
   # Generates summary measures for diabetes outcomes  
   calculate_measures_dm:
     run: cohortextractor:latest  generate_measures --study-definition study_definition_dm --output-dir=output/measures/dm
