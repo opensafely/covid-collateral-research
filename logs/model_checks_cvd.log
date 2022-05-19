@@ -19,8 +19,8 @@
   4.         local b "ethnicity imd"
   5.         forvalues i=1/2 {
   6.         local d: word `i' of `b'
-  7.                 import delimited "./output/measures/measure_`c'_`d'_rate.c
-> sv", numericcols(4) clear     //get csv
+  7.                 import delimited "./output/measures/cvd/measure_`c'_`d'_ra
+> te.csv", numericcols(4) clear //get csv
   8.                 gen temp_date=date(date, "YMD")
   9.                 format temp_date %td
  10.                 gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
@@ -60,28 +60,277 @@
 > '_4_`e' ac_`d'_5_`e', altshrink
  35.                 graph export ./output/time_series/cvd_ac_`d'_`c'.svg, as(s
 > vg) replace
- 36.                 /*graph combine pac_`d'*', altshrink
->                 graph export .output/graphs/cvd_pac_`d'_`c'.svg, as(svg) repl
-> ace*/
-.                 }
- 37.         }
-(5 vars, 20 obs)
-       panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2021m10 to 2022m1
+ 36.                 graph combine pac_`d'_1_`e' pac_`d'_2_`e' pac_`d'_3_`e' pa
+> c_`d'_4_`e' pac_`d'_5_`e', altshrink
+ 37.                 graph export ./output/time_series/cvd_pac_`d'_`e'.svg, as(
+> svg) replace
+ 38.                 }
+ 39.         }
+(5 vars, 282 obs)
+(90 missing values generated)
+       panel variable:  ethnicity (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-(n() set to 20)
-number of observations must be greater than 5
-r(2001);
+(note: time series has 12 gaps)
+(note: time series has 8 gaps)
+(note: time series has 10 gaps)
+(note: time series has 9 gaps)
+(note: time series has 11 gaps)
+(note: time series has 12 gaps)
+(note: time series has 8 gaps)
+(note: time series has 10 gaps)
+(note: time series has 9 gaps)
+(note: time series has 11 gaps)
+(note: file ./output/time_series/cvd_kd_ethnicity_systolic_bp_cvd.svg not found
+> )
+(file ./output/time_series/cvd_kd_ethnicity_systolic_bp_cvd.svg written in SVG 
+> format)
+(note: file ./output/time_series/cvd_ac_ethnicity_systolic_bp_cvd.svg not found
+> )
+(file ./output/time_series/cvd_ac_ethnicity_systolic_bp_cvd.svg written in SVG 
+> format)
+(note: file ./output/time_series/cvd_pac_ethnicity_bp_cvd.svg not found)
+(file ./output/time_series/cvd_pac_ethnicity_bp_cvd.svg written in SVG format)
+(5 vars, 329 obs)
+(130 missing values generated)
+       panel variable:  imd (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: time series has 8 gaps)
+(note: time series has 10 gaps)
+(note: time series has 12 gaps)
+(note: time series has 13 gaps)
+(note: time series has 9 gaps)
+(note: time series has 8 gaps)
+(note: time series has 10 gaps)
+(note: time series has 12 gaps)
+(note: time series has 13 gaps)
+(note: time series has 9 gaps)
+(note: file ./output/time_series/cvd_kd_imd_systolic_bp_cvd.svg not found)
+(file ./output/time_series/cvd_kd_imd_systolic_bp_cvd.svg written in SVG format
+> )
+(note: file ./output/time_series/cvd_ac_imd_systolic_bp_cvd.svg not found)
+(file ./output/time_series/cvd_ac_imd_systolic_bp_cvd.svg written in SVG format
+> )
+(note: file ./output/time_series/cvd_pac_imd_bp_cvd.svg not found)
+(file ./output/time_series/cvd_pac_imd_bp_cvd.svg written in SVG format)
+(5 vars, 282 obs)
+       panel variable:  ethnicity (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_ethnicity_mi_admission.svg not found)
+(file ./output/time_series/cvd_kd_ethnicity_mi_admission.svg written in SVG for
+> mat)
+(note: file ./output/time_series/cvd_ac_ethnicity_mi_admission.svg not found)
+(file ./output/time_series/cvd_ac_ethnicity_mi_admission.svg written in SVG for
+> mat)
+(note: file ./output/time_series/cvd_pac_ethnicity_mi_admit.svg not found)
+(file ./output/time_series/cvd_pac_ethnicity_mi_admit.svg written in SVG format
+> )
+(5 vars, 329 obs)
+       panel variable:  imd (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_imd_mi_admission.svg not found)
+(file ./output/time_series/cvd_kd_imd_mi_admission.svg written in SVG format)
+(note: file ./output/time_series/cvd_ac_imd_mi_admission.svg not found)
+(file ./output/time_series/cvd_ac_imd_mi_admission.svg written in SVG format)
+(note: file ./output/time_series/cvd_pac_imd_mi_admit.svg not found)
+(file ./output/time_series/cvd_pac_imd_mi_admit.svg written in SVG format)
+(5 vars, 282 obs)
+       panel variable:  ethnicity (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_ethnicity_stroke_admission.svg not foun
+> d)
+(file ./output/time_series/cvd_kd_ethnicity_stroke_admission.svg written in SVG
+>  format)
+(note: file ./output/time_series/cvd_ac_ethnicity_stroke_admission.svg not foun
+> d)
+(file ./output/time_series/cvd_ac_ethnicity_stroke_admission.svg written in SVG
+>  format)
+(note: file ./output/time_series/cvd_pac_ethnicity_stroke_admit.svg not found)
+(file ./output/time_series/cvd_pac_ethnicity_stroke_admit.svg written in SVG fo
+> rmat)
+(5 vars, 329 obs)
+       panel variable:  imd (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_imd_stroke_admission.svg not found)
+(file ./output/time_series/cvd_kd_imd_stroke_admission.svg written in SVG forma
+> t)
+(note: file ./output/time_series/cvd_ac_imd_stroke_admission.svg not found)
+(file ./output/time_series/cvd_ac_imd_stroke_admission.svg written in SVG forma
+> t)
+(note: file ./output/time_series/cvd_pac_imd_stroke_admit.svg not found)
+(file ./output/time_series/cvd_pac_imd_stroke_admit.svg written in SVG format)
+(5 vars, 282 obs)
+       panel variable:  ethnicity (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_ethnicity_heart_failure_admission.svg n
+> ot found)
+(file ./output/time_series/cvd_kd_ethnicity_heart_failure_admission.svg written
+>  in SVG format)
+(note: file ./output/time_series/cvd_ac_ethnicity_heart_failure_admission.svg n
+> ot found)
+(file ./output/time_series/cvd_ac_ethnicity_heart_failure_admission.svg written
+>  in SVG format)
+(note: file ./output/time_series/cvd_pac_ethnicity_hf_admit.svg not found)
+(file ./output/time_series/cvd_pac_ethnicity_hf_admit.svg written in SVG format
+> )
+(5 vars, 329 obs)
+       panel variable:  imd (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_imd_heart_failure_admission.svg not fou
+> nd)
+(file ./output/time_series/cvd_kd_imd_heart_failure_admission.svg written in SV
+> G format)
+(note: file ./output/time_series/cvd_ac_imd_heart_failure_admission.svg not fou
+> nd)
+(file ./output/time_series/cvd_ac_imd_heart_failure_admission.svg written in SV
+> G format)
+(note: file ./output/time_series/cvd_pac_imd_hf_admit.svg not found)
+(file ./output/time_series/cvd_pac_imd_hf_admit.svg written in SVG format)
+(5 vars, 282 obs)
+       panel variable:  ethnicity (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_ethnicity_vte_admission.svg not found)
+(file ./output/time_series/cvd_kd_ethnicity_vte_admission.svg written in SVG fo
+> rmat)
+(note: file ./output/time_series/cvd_ac_ethnicity_vte_admission.svg not found)
+(file ./output/time_series/cvd_ac_ethnicity_vte_admission.svg written in SVG fo
+> rmat)
+(note: file ./output/time_series/cvd_pac_ethnicity_vte_admit.svg not found)
+(file ./output/time_series/cvd_pac_ethnicity_vte_admit.svg written in SVG forma
+> t)
+(5 vars, 329 obs)
+       panel variable:  imd (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_imd_vte_admission.svg not found)
+(file ./output/time_series/cvd_kd_imd_vte_admission.svg written in SVG format)
+(note: file ./output/time_series/cvd_ac_imd_vte_admission.svg not found)
+(file ./output/time_series/cvd_ac_imd_vte_admission.svg written in SVG format)
+(note: file ./output/time_series/cvd_pac_imd_vte_admit.svg not found)
+(file ./output/time_series/cvd_pac_imd_vte_admit.svg written in SVG format)
+(5 vars, 282 obs)
+       panel variable:  ethnicity (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_ethnicity_mi_primary_admission.svg not 
+> found)
+(file ./output/time_series/cvd_kd_ethnicity_mi_primary_admission.svg written in
+>  SVG format)
+(note: file ./output/time_series/cvd_ac_ethnicity_mi_primary_admission.svg not 
+> found)
+(file ./output/time_series/cvd_ac_ethnicity_mi_primary_admission.svg written in
+>  SVG format)
+(note: file ./output/time_series/cvd_pac_ethnicity_mi_pri.svg not found)
+(file ./output/time_series/cvd_pac_ethnicity_mi_pri.svg written in SVG format)
+(5 vars, 329 obs)
+       panel variable:  imd (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_imd_mi_primary_admission.svg not found)
+(file ./output/time_series/cvd_kd_imd_mi_primary_admission.svg written in SVG f
+> ormat)
+(note: file ./output/time_series/cvd_ac_imd_mi_primary_admission.svg not found)
+(file ./output/time_series/cvd_ac_imd_mi_primary_admission.svg written in SVG f
+> ormat)
+(note: file ./output/time_series/cvd_pac_imd_mi_pri.svg not found)
+(file ./output/time_series/cvd_pac_imd_mi_pri.svg written in SVG format)
+(5 vars, 282 obs)
+       panel variable:  ethnicity (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_ethnicity_stroke_primary_admission.svg 
+> not found)
+(file ./output/time_series/cvd_kd_ethnicity_stroke_primary_admission.svg writte
+> n in SVG format)
+(note: file ./output/time_series/cvd_ac_ethnicity_stroke_primary_admission.svg 
+> not found)
+(file ./output/time_series/cvd_ac_ethnicity_stroke_primary_admission.svg writte
+> n in SVG format)
+(note: file ./output/time_series/cvd_pac_ethnicity_stroke_pri.svg not found)
+(file ./output/time_series/cvd_pac_ethnicity_stroke_pri.svg written in SVG form
+> at)
+(5 vars, 329 obs)
+       panel variable:  imd (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_imd_stroke_primary_admission.svg not fo
+> und)
+(file ./output/time_series/cvd_kd_imd_stroke_primary_admission.svg written in S
+> VG format)
+(note: file ./output/time_series/cvd_ac_imd_stroke_primary_admission.svg not fo
+> und)
+(file ./output/time_series/cvd_ac_imd_stroke_primary_admission.svg written in S
+> VG format)
+(note: file ./output/time_series/cvd_pac_imd_stroke_pri.svg not found)
+(file ./output/time_series/cvd_pac_imd_stroke_pri.svg written in SVG format)
+(5 vars, 282 obs)
+       panel variable:  ethnicity (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_ethnicity_heart_failure_primary_admissi
+> on.svg not found)
+(file ./output/time_series/cvd_kd_ethnicity_heart_failure_primary_admission.svg
+>  written in SVG format)
+(note: file ./output/time_series/cvd_ac_ethnicity_heart_failure_primary_admissi
+> on.svg not found)
+(file ./output/time_series/cvd_ac_ethnicity_heart_failure_primary_admission.svg
+>  written in SVG format)
+(note: file ./output/time_series/cvd_pac_ethnicity_hf_pri.svg not found)
+(file ./output/time_series/cvd_pac_ethnicity_hf_pri.svg written in SVG format)
+(5 vars, 329 obs)
+       panel variable:  imd (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_imd_heart_failure_primary_admission.svg
+>  not found)
+(file ./output/time_series/cvd_kd_imd_heart_failure_primary_admission.svg writt
+> en in SVG format)
+(note: file ./output/time_series/cvd_ac_imd_heart_failure_primary_admission.svg
+>  not found)
+(file ./output/time_series/cvd_ac_imd_heart_failure_primary_admission.svg writt
+> en in SVG format)
+(note: file ./output/time_series/cvd_pac_imd_hf_pri.svg not found)
+(file ./output/time_series/cvd_pac_imd_hf_pri.svg written in SVG format)
+(5 vars, 282 obs)
+       panel variable:  ethnicity (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_ethnicity_vte_primary_admission.svg not
+>  found)
+(file ./output/time_series/cvd_kd_ethnicity_vte_primary_admission.svg written i
+> n SVG format)
+(note: file ./output/time_series/cvd_ac_ethnicity_vte_primary_admission.svg not
+>  found)
+(file ./output/time_series/cvd_ac_ethnicity_vte_primary_admission.svg written i
+> n SVG format)
+(note: file ./output/time_series/cvd_pac_ethnicity_vte_pri.svg not found)
+(file ./output/time_series/cvd_pac_ethnicity_vte_pri.svg written in SVG format)
+(5 vars, 329 obs)
+       panel variable:  imd (weakly balanced)
+        time variable:  month, 2018m3 to 2022m1
+                delta:  1 month
+(note: file ./output/time_series/cvd_kd_imd_vte_primary_admission.svg not found
+> )
+(file ./output/time_series/cvd_kd_imd_vte_primary_admission.svg written in SVG 
+> format)
+(note: file ./output/time_series/cvd_ac_imd_vte_primary_admission.svg not found
+> )
+(file ./output/time_series/cvd_ac_imd_vte_primary_admission.svg written in SVG 
+> format)
+(note: file ./output/time_series/cvd_pac_imd_vte_pri.svg not found)
+(file ./output/time_series/cvd_pac_imd_vte_pri.svg written in SVG format)
 
-end of do-file
-r(2001);
-
-end of do-file
-
-r(2001);
-
-
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/model_checks_cvd.log
+  log type:  text
+ closed on:  19 May 2022, 14:26:47
+-------------------------------------------------------------------------------

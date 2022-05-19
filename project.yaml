@@ -194,7 +194,7 @@ actions:
 
   model_checks_mh:
     run: stata-mp:latest analysis/model_check_mh.do
-    needs: [calculate_measures]
+    needs: [calculate_measures_mh]
     outputs:
       moderately_sensitive: 
         log: logs/model_checks_mh.log
@@ -234,7 +234,7 @@ actions:
 
   time_series_mh:
     run: stata-mp:latest analysis/time_series_mh.do
-    needs: [calculate_measures]
+    needs: [calculate_measures_mh]
     outputs:
       moderately_sensitive:
         log: logs/tsreg_mh.log
