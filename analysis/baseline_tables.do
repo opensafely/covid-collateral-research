@@ -22,6 +22,8 @@ adopath + ./analysis/ado
 capture log close
 log using ./logs/table1_descriptives.log, replace
 
+cap mkdir ./output/tables
+
 * Create  baseline tables for 3 years
 forvalues i=2019/2021 {
 * Import csv file
@@ -40,15 +42,16 @@ forvalues i=2019/2021 {
     label values ethnicity eth5
     safetab ethnicity, m
     *(2) IMD
-    replace imd=6 if imd==.
+    replace imd=6 if imd==0
 
     * Create age categories
     egen age_cat = cut(age), at(18, 40, 60, 80, 120) icodes
-    label define age 1 "18 - 40 years" 2 "41 - 60 years" 3 "61 - 80 years" 4 ">80 years"
+    label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years" 3 ">80 years"
     label values age_cat age
 
     * Use new package
-    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate) saving (./output/measures/tables/baseline_table_`i'.xlsx, replace)
+    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate) clear
+    export delimited using ./output/tables/baseline_table_`i'.csv
     }
 
 * Close log file 

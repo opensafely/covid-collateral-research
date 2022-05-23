@@ -11,9 +11,8 @@ cap mkdir ./output/graphs
 
 * Generates graphs for clinical monitoring measures
 foreach this_group in cvd mh {
-    foreach strata in ethnicity imd {
 * Ethnicity
-        import delimited using ./output/measures/measure_systolic_bp_`this_group'_ethnicity_rate.csv, numericcols(4) clear
+        import delimited using ./output/measures/`this_group'/measure_systolic_bp_`this_group'_ethnicity_rate.csv, numericcols(4) clear
         * Generate rate per 100,000
         gen rate = value*100000 
         * Format date
@@ -39,7 +38,7 @@ foreach this_group in cvd mh {
         graph export ./output/graphs/line_bp_`this_group'_ethnic.svg, as(svg) replace
     * IMD
     clear 
-    import delimited using ./output/measures/measure_systolic_bp_`this_group'_imd_rate.csv, numericcols(4)
+    import delimited using ./output/measures/`this_group'/measure_systolic_bp_`this_group'_imd_rate.csv, numericcols(4)
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -66,12 +65,12 @@ foreach this_group in cvd mh {
     }
 }
 * Hospital admission graphs
-local groups "mi stroke heart_failure vte depression anxiety smi self_harm eating_dis ocd"
-forvalues i=1/10 {
+local groups "mi stroke heart_failure vte"
+forvalues i=1/4 {
     local this_group :word `i' of `groups'
 * Ethnicity
     clear 
-    import delimited using ./output/measures/measure_`this_group'_admission_ethnicity_rate.csv, numericcols(4)
+    import delimited using ./output/measures/cvd/measure_`this_group'_admission_ethnicity_rate.csv, numericcols(4)
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -97,7 +96,64 @@ forvalues i=1/10 {
     graph export ./output/graphs/line_`this_group'_admission_ethnicity.svg, as(svg) replace
     * IMD
     clear 
-    import delimited using ./output/measures/measure_`this_group'_admission_imd_rate.csv, numericcols(4)
+    import delimited using ./output/measures/cvd/measure_`this_group'_admission_imd_rate.csv, numericcols(4)
+    * Generate rate per 100,000
+    gen rate = value*100000 
+    * Format date
+    gen dateA = date(date, "YMD")
+    drop date
+    format dateA %dD/M/Y
+    tab dateA 
+    * reshape dataset so columns with rates for each ethnicity 
+    reshape wide value rate `this_group'_admission population, i(dateA) j(imd)
+    describe
+    * Labelling ethnicity variables
+    label var rate1 "IMD - 1"
+    label var rate2 "IMD - 2"
+    label var rate3 "IMD - 3"
+    label var rate4 "IMD - 4"
+    label var rate5 "IMD - 5"
+
+    * Generate line graph
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
+
+    graph export ./output/graphs/line_`this_group'_admission_imd.svg, as(svg) replace
+
+}
+local groups "depression anxiety smi self_harm eating_dis ocd"
+forvalues i=1/6 {
+    local this_group :word `i' of `groups'
+* Ethnicity
+    clear 
+    import delimited using ./output/measures/mh/measure_`this_group'_admission_ethnicity_rate.csv, numericcols(4)
+    * Generate rate per 100,000
+    gen rate = value*100000 
+    * Format date
+    gen dateA = date(date, "YMD")
+    drop date
+    format dateA %dD/M/Y
+    tab dateA 
+    * reshape dataset so columns with rates for each ethnicity 
+    reshape wide value rate `this_group'_admission population, i(dateA) j(ethnicity)
+    describe
+    * Labelling ethnicity variables
+    label var rate1 "White"
+    label var rate2 "Mixed"
+    label var rate3 "Asian"
+    label var rate4 "Black"
+    label var rate5 "Other"
+
+    * Generate line graph
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
+    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+
+    graph export ./output/graphs/line_`this_group'_admission_ethnicity.svg, as(svg) replace
+    * IMD
+    clear 
+    import delimited using ./output/measures/mh/measure_`this_group'_admission_imd_rate.csv, numericcols(4)
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -129,7 +185,7 @@ forvalues i=1/4 {
     local this_group :word `i' of `groups'
 * Ethnicity
     clear 
-    import delimited using ./output/measures/measure_`this_group'_primary_admission_ethnicity_rate.csv, numericcols(4)
+    import delimited using ./output/measures/cvd/measure_`this_group'_primary_admission_ethnicity_rate.csv, numericcols(4)
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -155,7 +211,7 @@ forvalues i=1/4 {
     graph export ./output/graphs/line_`this_group'_primary_admission_ethnicity.svg, as(svg) replace
     * IMD
     clear 
-    import delimited using ./output/measures/measure_`this_group'_primary_admission_imd_rate.csv, numericcols(4)
+    import delimited using ./output/measures/cvd/measure_`this_group'_primary_admission_imd_rate.csv, numericcols(4)
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -259,7 +315,7 @@ forvalues i=1/3 {
     local this_group :word `i' of `groups'
 * Ethnicity
     clear 
-    import delimited using ./output/measures/measure_`this_group'_emergency_ethnicity_rate.csv, numericcols(4)
+    import delimited using ./output/measures/mh/measure_`this_group'_emergency_ethnicity_rate.csv, numericcols(4)
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -285,7 +341,7 @@ forvalues i=1/3 {
     graph export ./output/graphs/line_`this_group'_emergency_ethnicity.svg, as(svg) replace
     * IMD
     clear 
-    import delimited using ./output/measures/measure_`this_group'_emergency_imd_rate.csv, numericcols(4)
+    import delimited using ./output/measures/mh/measure_`this_group'_emergency_imd_rate.csv, numericcols(4)
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date

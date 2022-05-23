@@ -4,12 +4,54 @@ expectations:
   population_size: 1000
 
 actions:
-  # Generates study population for CV, mental health outcomes - start date = 2018-03-01
+  # Generating static variables 
+  generate_study_population_static:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_static --output-format=csv
+    outputs:
+      highly_sensitive:
+        cohort: output/input_static.csv
+  # Generates study population for CV - start date = 2018-03-01
   generate_study_population:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures --output-format=csv
     outputs:
       highly_sensitive:
         cohort: output/measures/input_*.csv
+  # Join static and time-varying variables
+  join_cohorts_cvd:
+    run: >
+      cohort-joiner:v0.0.30
+        --lhs output/measures/input_*.csv
+        --rhs output/input_static.csv
+        --output-dir output/measures/cvd
+    needs: [generate_study_population, generate_study_population_static]
+    outputs: 
+      highly_sensitive:
+        cohort: output/measures/cvd/input_*.csv
+  # Generates study population for mental health outcomes - start date = 2018-03-01
+  generate_study_population_mh:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_mh --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures --output-format=csv
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/input_mh_*.csv
+  # Join static and time-varying variables
+  join_cohorts_mh:
+    run: >
+      cohort-joiner:v0.0.30
+        --lhs output/measures/input_mh_*.csv
+        --rhs output/input_static.csv
+        --output-dir output/measures/mh
+    needs: [generate_study_population_mh, generate_study_population_static]
+    outputs: 
+      highly_sensitive:
+        cohort: output/measures/mh/input_mh_*.csv
+
+  # Check join
+  join_check:
+    run: stata-mp:latest analysis/variable_check.do 
+    needs: [join_cohorts_cvd, join_cohorts_mh]
+    outputs: 
+      moderately_sensitive:
+        log: logs/missing_check.log
   # Generates study population for diabetes outcomes
   generate_study_population_dm:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_dm --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures/dm --output-format=csv 
@@ -53,16 +95,23 @@ actions:
     run: stata-mp:latest analysis/baseline_tables.do
     needs: [generate_study_population_tables_2019, generate_study_population_tables_2020, generate_study_population_tables_2021]
     outputs:
-      highly_sensitive:
-        output: output/measures/tables/baseline_table_*.xlsx
+      moderately_sensitive:
+        output: output/tables/baseline_table_*.csv
 
-  # Generates summary measures for CV and mental health outcomes
+  # Generates summary measures for CV 
   calculate_measures:
-    run: cohortextractor:latest  generate_measures --study-definition study_definition --output-dir=output/measures
-    needs: [generate_study_population]
+    run: cohortextractor:latest  generate_measures --study-definition study_definition --output-dir=output/measures/cvd
+    needs: [join_cohorts_cvd]
     outputs:
       moderately_sensitive:
-        measure: output/measures/measure_*_rate.csv
+        measure: output/measures/cvd/measure_*_rate.csv
+  # Generates summary measures for mental health outcomes
+  calculate_measures_mh:
+    run: cohortextractor:latest  generate_measures --study-definition study_definition_mh --output-dir=output/measures/mh
+    needs: [join_cohorts_mh]
+    outputs:
+      moderately_sensitive:
+        measure: output/measures/mh/measure_*_rate.csv
   # Generates summary measures for diabetes outcomes  
   calculate_measures_dm:
     run: cohortextractor:latest  generate_measures --study-definition study_definition_dm --output-dir=output/measures/dm
@@ -90,7 +139,7 @@ actions:
   # Generates graphs for CVD & mental health outcomes
   graphs_mh_cvd:
     run: stata-mp:latest analysis/graphs_mh_cvd.do 
-    needs: [calculate_measures]
+    needs: [calculate_measures, calculate_measures_mh]
     outputs: 
       moderately_sensitive:
         log: logs/graphs_mh_cvd.log
@@ -153,7 +202,7 @@ actions:
 
   model_checks_mh:
     run: stata-mp:latest analysis/model_check_mh.do
-    needs: [calculate_measures]
+    needs: [calculate_measures_mh]
     outputs:
       moderately_sensitive: 
         log: logs/model_checks_mh.log
@@ -173,7 +222,7 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_resp.log
-        output: output/time_series/tsreg_tables_resp.xlsx
+        output: output/time_series/tsreg_resp*.csv
 
   time_series_dm:
     run: stata-mp:latest analysis/time_series_dm.do
@@ -181,7 +230,7 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_dm.log
-        output: output/time_series/tsreg_tables_dm.xlsx
+        output: output/time_series/tsreg_dm*.csv
 
   time_series_cvd:
     run: stata-mp:latest analysis/time_series_cvd.do
@@ -189,15 +238,15 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_cvd.log
-        output: output/time_series/tsreg_tables_cvd.xlsx
+        output: output/time_series/tsreg_cvd_*.csv
 
   time_series_mh:
     run: stata-mp:latest analysis/time_series_mh.do
-    needs: [calculate_measures]
+    needs: [calculate_measures_mh]
     outputs:
       moderately_sensitive:
         log: logs/tsreg_mh.log
-        output: output/time_series/tsreg_tables_mh.xlsx
+        output: output/time_series/tsreg_mh*.csv
 
   time_series_mortality:
     run: stata-mp:latest analysis/time_series_mortality.do

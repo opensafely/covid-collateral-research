@@ -14,6 +14,8 @@ foreach var in asthma_monitoring copd_monitoring asthma_exacerbation copd_exacer
 	foreach strata in ethnicity imd {
 	import delimited ./output/measures/resp/measure_`var'_`strata'_rate.csv, numericcols(4) clear	//get csv
 	putexcel set ./output/time_series/tsreg_tables_resp, sheet(`var'_`strata') modify			//open xlsx
+	* Drop records where ethnicity is missing - no missing IMD
+        drop if `strata'==0
 	*Format time
 	gen temp_date=date(date, "YMD")
 	format temp_date %td
@@ -40,6 +42,8 @@ foreach var in asthma_monitoring copd_monitoring asthma_exacerbation copd_exacer
 	matrix a = r(table)'
 	putexcel A6 = matrix(a), rownames
 	putexcel save
+	import excel using ./output/time_series/tsreg_tables_resp.xlsx, sheet (`var'_`strata') clear
+    export delimited using ./output/time_series/tsreg_resp_`var'_`strata'.csv, replace
 	}
 }
 

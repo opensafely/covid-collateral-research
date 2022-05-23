@@ -1,4 +1,4 @@
-# Creates study population with no restirctions but include indicators for
+# Creates study population with no restrictions but include indicators for
 # mental health and CVD where clinical monitoring is diagnosis specific
 from cohortextractor import (
     StudyDefinition,
@@ -6,7 +6,6 @@ from cohortextractor import (
     patients,
 )
 from codelists import *
-from common_variables import common_variables
 
 study = StudyDefinition(
     default_expectations={
@@ -43,7 +42,74 @@ study = StudyDefinition(
             "2020-02-01",
             returning="household_size",
         ),
+        age=patients.age_as_of(
+            "index_date",
+            return_expectations={
+                "rate": "universal",
+                "int": {"distribution": "population_ages"},
+            },
+        ),
+        # Sex
+        sex=patients.sex(
+            return_expectations={
+                "rate": "universal",
+                "category": {"ratios": {"M": 0.49, "F": 0.5, "U": 0.01}},
+            },
+        ),
+        imd=patients.categorised_as(
+            {
+            "0": "DEFAULT",
+            "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
+            "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
+            "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
+            "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
+            "5": """index_of_multiple_deprivation >= 32844*4/5 AND index_of_multiple_deprivation < 32844""",
+            },
+        index_of_multiple_deprivation=patients.address_as_of(
+            "index_date",
+            returning="index_of_multiple_deprivation",
+            round_to_nearest=100,
+            ),
+        return_expectations={
+            "rate": "universal",
+            "category": {
+                "ratios": {
+                    "0": 0.05,
+                    "1": 0.19,
+                    "2": 0.19,
+                    "3": 0.19,
+                    "4": 0.19,
+                    "5": 0.19,
+                    }
+                },
+            },
+        ),
     ),
+    cvd_subgroup=patients.satisfying(
+        """
+        has_chd OR
+        has_stroke OR
+        has_tia
+        """,
+        has_chd=patients.with_these_clinical_events(
+            chd_codes,
+            returning="binary_flag",
+            on_or_before="index_date",
+            return_expectations={"incidence": 0.1},
+        ),
+        has_stroke=patients.with_these_clinical_events(
+            stroke_codes,
+            returning="binary_flag",
+            on_or_before="index_date",
+            return_expectations={"incidence": 0.1},
+        ),
+        has_tia=patients.with_these_clinical_events(
+            tia_codes,
+            returning="binary_flag",
+            on_or_before="index_date",
+            return_expectations={"incidence": 0.1},
+        ),
+        ),
 
     # Clinical monitoring
     # Systolic blood pressure - cvd population & mental health population
@@ -92,44 +158,6 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
     ),
-    # Hospital admissions - mental health
-    depression_primary_admission=patients.admitted_to_hospital(
-        with_these_primary_diagnoses=depression_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    anxiety_primary_admission=patients.admitted_to_hospital(
-        with_these_primary_diagnoses=anxiety_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    smi_primary_admission=patients.admitted_to_hospital(
-        with_these_primary_diagnoses=severe_mental_illness_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    self_harm_primary_admission=patients.admitted_to_hospital(
-        with_these_primary_diagnoses=self_harm_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    eating_dis_primary_admission=patients.admitted_to_hospital(
-        with_these_primary_diagnoses=eating_disorder_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    ocd_primary_admission=patients.admitted_to_hospital(
-        with_these_primary_diagnoses=ocd_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-
     # Hospital admissions any diagnosis - CVD
     # MI
     mi_admission=patients.admitted_to_hospital(
@@ -168,78 +196,6 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
     ),
-    # Hospital admissions - mental health
-    depression_admission=patients.admitted_to_hospital(
-        with_these_diagnoses=depression_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    anxiety_admission=patients.admitted_to_hospital(
-        with_these_diagnoses=anxiety_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    smi_admission=patients.admitted_to_hospital(
-        with_these_diagnoses=severe_mental_illness_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    self_harm_admission=patients.admitted_to_hospital(
-        with_these_diagnoses=self_harm_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    eating_dis_admission=patients.admitted_to_hospital(
-        with_these_diagnoses=eating_disorder_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    ocd_admission=patients.admitted_to_hospital(
-        with_these_diagnoses=ocd_icd_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    # Emergency admissions
-    # CVD - codelists still required
-
-    # Mental health
-    anxiety_emergency=patients.attended_emergency_care(
-        with_these_diagnoses=anxiety_snomed_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    ocd_emergency=patients.attended_emergency_care(
-        with_these_diagnoses=ocd_snomed_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    eating_dis_emergency=patients.attended_emergency_care(
-        with_these_diagnoses=eating_disorder_snomed_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    self_harm_emergency=patients.attended_emergency_care(
-        with_these_diagnoses=self_harm_snomed_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    smi_emergency=patients.attended_emergency_care(
-        with_these_diagnoses=severe_mental_illness_codes,
-        between=["index_date", "last_day_of_month(index_date)"],
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1},
-    ),
-    **common_variables
  )
 
 measures = [
@@ -254,18 +210,6 @@ measures = [
         id="systolic_bp_cvd_imd_rate",
         numerator="systolic_bp",
         denominator="cvd_subgroup",
-        group_by=["imd"],
-    ),
-    Measure(
-        id="systolic_bp_mh_ethnicity_rate",
-        numerator="systolic_bp",
-        denominator="mh_subgroup",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="systolic_bp_mh_imd_rate",
-        numerator="systolic_bp",
-        denominator="mh_subgroup",
         group_by=["imd"],
     ),
     # Hospital admissions for MI
@@ -319,84 +263,6 @@ measures = [
     Measure(
         id="vte_admission_imd_rate",
         numerator="vte_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for depression
-    Measure(
-        id="depression_admission_ethnicity_rate",
-        numerator="depression_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="depression_admission_imd_rate",
-        numerator="depression_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for anxiety
-    Measure(
-        id="anxiety_admission_ethnicity_rate",
-        numerator="anxiety_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="anxiety_admission_imd_rate",
-        numerator="anxiety_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for severe mental illness
-    Measure(
-        id="smi_admission_ethnicity_rate",
-        numerator="smi_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="smi_admission_imd_rate",
-        numerator="smi_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for self harm
-    Measure(
-        id="self_harm_admission_ethnicity_rate",
-        numerator="self_harm_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="self_harm_admission_imd_rate",
-        numerator="self_harm_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for eating disorders
-    Measure(
-        id="eating_dis_admission_ethnicity_rate",
-        numerator="eating_dis_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="eating_dis_admission_imd_rate",
-        numerator="eating_dis_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for OCD
-    Measure(
-        id="ocd_admission_ethnicity_rate",
-        numerator="ocd_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="ocd_admission_imd_rate",
-        numerator="ocd_admission",
         denominator="population",
         group_by=["imd"],
     ),
@@ -454,148 +320,5 @@ measures = [
         denominator="population",
         group_by=["imd"],
     ),
-    # Hospital admissions for depression
-    Measure(
-        id="depression_primary_admission_ethnicity_rate",
-        numerator="depression_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="depression_primary_admission_imd_rate",
-        numerator="depression_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for anxiety
-    Measure(
-        id="anxiety_primary_admission_ethnicity_rate",
-        numerator="anxiety_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="anxiety_primary_admission_imd_rate",
-        numerator="anxiety_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for severe mental illness
-    Measure(
-        id="smi_primary_admission_ethnicity_rate",
-        numerator="smi_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="smi_primary_admission_imd_rate",
-        numerator="smi_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for self harm
-    Measure(
-        id="self_harm_primary_admission_ethnicity_rate",
-        numerator="self_harm_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="self_harm_primary_admission_imd_rate",
-        numerator="self_harm_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for eating disorders
-    Measure(
-        id="eating_dis_primary_admission_ethnicity_rate",
-        numerator="eating_dis_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="eating_dis_primary_admission_imd_rate",
-        numerator="eating_dis_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for OCD
-    Measure(
-        id="ocd_primary_admission_ethnicity_rate",
-        numerator="ocd_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="ocd_primary_admission_imd_rate",
-        numerator="ocd_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    
-    # Emergency admissions for anxiety
-    Measure(
-        id="anxiety_emergency_ethnicity_rate",
-        numerator="anxiety_emergency",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="anxiety_emergency_imd_rate",
-        numerator="anxiety_emergency",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for severe mental illness
-    Measure(
-        id="smi_emergency_ethnicity_rate",
-        numerator="smi_emergency",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="smi_emergency_imd_rate",
-        numerator="smi_emergency",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for self harm
-    Measure(
-        id="self_harm_emergency_ethnicity_rate",
-        numerator="self_harm_emergency",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="self_harm_emergency_imd_rate",
-        numerator="self_harm_emergency",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for eating disorders
-    Measure(
-        id="eating_dis_emergency_ethnicity_rate",
-        numerator="eating_dis_emergency",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="eating_dis_emergency_imd_rate",
-        numerator="eating_dis_emergency",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for OCD
-    Measure(
-        id="ocd_emergency_ethnicity_rate",
-        numerator="ocd_emergency",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="ocd_emergency_imd_rate",
-        numerator="ocd_emergency",
-        denominator="population",
-        group_by=["imd"],
-    ),
+
 ]

@@ -22,7 +22,7 @@ forvalues i=1/7 {
 	local b "ethnicity imd"
 	forvalues i=1/2 {
     	local d: word `i' of `b'
-		import delimited "./output/measures/measure_`c'_`d'_rate.csv", numericcols(4) clear	//get csv
+		import delimited "./output/measures/mh/measure_`c'_`d'_rate.csv", numericcols(4) clear	//get csv
 		gen temp_date=date(date, "YMD")
 		format temp_date %td
 		gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
@@ -63,12 +63,12 @@ forvalues i=1/7 {
 	}
 
 * Primary and emergency admissions by ethnicity
-local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission eating_dis_primary_admission ocd_primary_admission anxiety_emergency smi_emergency self_harm_emergency eating_dis_emergency ocd_emergency"
-local b "depress anxiety smi sh eat_dis ocd anx_emergency smi_emergency sh_emergency ed_emergency ocd_emergency"
-forvalues i=1/11 {
+local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission anxiety_emergency smi_emergency self_harm_emergency"
+local b "depress anxiety smi sh anx_emergency smi_emergency sh_emergency"
+forvalues i=1/7 {
 	local c: word `i' of `a'
 	local d: word `i' of `b'
-	import delimited "./output/measures/measure_`c'_ethnicity_rate.csv", numericcols(3) clear	//get csv
+	import delimited "./output/measures/mh/measure_`c'_ethnicity_rate.csv", numericcols(3) clear	//get csv
 	gen temp_date=date(date, "YMD")
 	format temp_date %td
 	gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
@@ -108,12 +108,12 @@ forvalues i=1/11 {
 	}
 
 * Primary and emergency admissions by IMD
-local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission eating_dis_primary_admission ocd_primary_admission anxiety_emergency smi_emergency self_harm_emergency eating_dis_emergency ocd_emergency"
-local b "depress anxiety smi sh eat_dis ocd anx_emergency smi_emergency sh_emergency ed_emergency ocd_emergency"
-forvalues i=1/11 {
+local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission anxiety_emergency smi_emergency self_harm_emergency"
+local b "depress anxiety smi sh anx_emergency smi_emergency sh_emergency"
+forvalues i=1/7 {
 	local c: word `i' of `a'
 	local d: word `i' of `b'
-	import delimited "./output/measures/measure_`c'_imd_rate.csv", numericcols(4) clear	//get csv
+	import delimited "./output/measures/mh/measure_`c'_imd_rate.csv", numericcols(4) clear	//get csv
 	gen temp_date=date(date, "YMD")
 	format temp_date %td
 	gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
