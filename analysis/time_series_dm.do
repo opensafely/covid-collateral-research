@@ -19,6 +19,8 @@ forvalues i=1/8 {
     	local d: word `i' of `b'
 		import delimited "./output/measures/dm/measure_dm_`c'_`d'_rate.csv", numericcols(4) clear	//get csv
 		putexcel set ./output/time_series/tsreg_tables_dm, sheet(`c'_`d') modify			//open xlsx
+		* Drop records where ethnicity is missing - no missing IMD
+        drop if `d'==0
 		*Format time
 		gen temp_date=date(date, "YMD")
 		format temp_date %td

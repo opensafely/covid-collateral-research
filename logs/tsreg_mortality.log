@@ -8,38 +8,41 @@
 > ty_ethnic_rate.csv, numericcols(4) clear      //get csv
   3.         putexcel set ./output/time_series/tsreg_tables_mortality, sheet(`v
 > ar'_ethnic) modify                    //open xlsx
-  4.         *Format time
+  4.         * Drop records where ethnicity is missing - no missing IMD
+.         drop if ethnicity==0
+  5.         *Format time
 .         gen temp_date=date(date, "YMD")
-  5.         format temp_date %td
-  6.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
-  7.         gen month=mofd(temp_date)
-  8.         format month %tm
-  9.         *Define Seasons
+  6.         format temp_date %td
+  7.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+  8.         gen month=mofd(temp_date)
+  9.         format month %tm
+ 10.         *Define Seasons
 .         gen season=4
- 10.         replace season = 1 if inrange(month(temp_date),3,5)
- 11.         replace season = 2 if inrange(month(temp_date),6,8)
- 12.         replace season = 3 if inrange(month(temp_date),9,11)
- 13.         label define seasonlab 1 "Spring" 2 "Summer" 3 "Autumn" 4 "Winter"
- 14.         label values season seasonlab
- 15.         drop temp_date
- 16.         *Value to rate per 100k
+ 11.         replace season = 1 if inrange(month(temp_date),3,5)
+ 12.         replace season = 2 if inrange(month(temp_date),6,8)
+ 13.         replace season = 3 if inrange(month(temp_date),9,11)
+ 14.         label define seasonlab 1 "Spring" 2 "Summer" 3 "Autumn" 4 "Winter"
+ 15.         label values season seasonlab
+ 16.         drop temp_date
+ 17.         *Value to rate per 100k
 .         gen rate = value*100000
- 17.         *Run time series with EWH-robust SE and 1 Lag
+ 18.         *Run time series with EWH-robust SE and 1 Lag
 .         tsset ethnicity month
- 18.         newey rate i.ethnicity##i.postcovid i.season, lag(1) force
- 19.         *Export results
+ 19.         newey rate i.ethnicity##i.postcovid i.season, lag(1) force
+ 20.         *Export results
 .         putexcel E1=("Number of obs") G1=(e(N))
- 20.         putexcel E2=("F") G2=(e(F))
- 21.         putexcel E3=("Prob > F") G3=(Ftail(e(df_m), e(df_r), e(F)))
- 22.         matrix a = r(table)'
- 23.         putexcel A6 = matrix(a), rownames
- 24.         putexcel save
- 25.         import excel using ./output/time_series/tsreg_tables_mortality.xls
+ 21.         putexcel E2=("F") G2=(e(F))
+ 22.         putexcel E3=("Prob > F") G3=(Ftail(e(df_m), e(df_r), e(F)))
+ 23.         matrix a = r(table)'
+ 24.         putexcel A6 = matrix(a), rownames
+ 25.         putexcel save
+ 26.         import excel using ./output/time_series/tsreg_tables_mortality.xls
 > x, sheet (`var'_ethnic) clear
- 26.         export delimited using ./output/time_series/tsreg_mortality_`var'_
-> ethnic.csv
- 27.         }
+ 27.         export delimited using ./output/time_series/tsreg_mortality_`var'_
+> ethnic.csv, replace
+ 28.         }
 (5 vars, 180 obs)
+(0 observations deleted)
 (45 real changes made)
 (45 real changes made)
 (45 real changes made)
@@ -82,8 +85,10 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_mortality_cvd_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_cvd_ethnic.csv saved
 (5 vars, 180 obs)
+(0 observations deleted)
 (45 real changes made)
 (45 real changes made)
 (45 real changes made)
@@ -126,8 +131,10 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_mortality_resp_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_resp_ethnic.csv saved
 (5 vars, 180 obs)
+(0 observations deleted)
 (45 real changes made)
 (45 real changes made)
 (45 real changes made)
@@ -170,8 +177,10 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_mortality_mh_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_mh_ethnic.csv saved
 (5 vars, 180 obs)
+(0 observations deleted)
 (45 real changes made)
 (45 real changes made)
 (45 real changes made)
@@ -214,8 +223,10 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_mortality_mi_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_mi_ethnic.csv saved
 (5 vars, 180 obs)
+(0 observations deleted)
 (45 real changes made)
 (45 real changes made)
 (45 real changes made)
@@ -258,8 +269,10 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_mortality_stroke_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_stroke_ethnic.csv saved
 (5 vars, 180 obs)
+(0 observations deleted)
 (45 real changes made)
 (45 real changes made)
 (45 real changes made)
@@ -302,8 +315,11 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_mortality_heart_failure_ethnic.csv not f
+> ound)
 file ./output/time_series/tsreg_mortality_heart_failure_ethnic.csv saved
 (5 vars, 180 obs)
+(0 observations deleted)
 (45 real changes made)
 (45 real changes made)
 (45 real changes made)
@@ -346,8 +362,10 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_mortality_vte_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_vte_ethnic.csv saved
 (5 vars, 180 obs)
+(0 observations deleted)
 (45 real changes made)
 (45 real changes made)
 (45 real changes made)
@@ -390,8 +408,10 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_mortality_asthma_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_asthma_ethnic.csv saved
 (5 vars, 180 obs)
+(0 observations deleted)
 (45 real changes made)
 (45 real changes made)
 (45 real changes made)
@@ -434,8 +454,10 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_mortality_copd_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_copd_ethnic.csv saved
 (5 vars, 180 obs)
+(0 observations deleted)
 (45 real changes made)
 (45 real changes made)
 (45 real changes made)
@@ -478,6 +500,8 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 27 obs)
+(note: file ./output/time_series/tsreg_mortality_all_cause_ethnic.csv not found
+> )
 file ./output/time_series/tsreg_mortality_all_cause_ethnic.csv saved
 
 . * Time series analysis for mortality by IMD
@@ -516,7 +540,7 @@ file ./output/time_series/tsreg_mortality_all_cause_ethnic.csv saved
  25.         import excel using ./output/time_series/tsreg_tables_mortality.xls
 > x, sheet (`var'_imd) clear
  26.     export delimited using ./output/time_series/tsreg_mortality_`var'_imd.
-> csv
+> csv, replace
  27.         }
 (5 vars, 216 obs)
 (54 real changes made)
@@ -563,6 +587,7 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_mortality_cvd_imd.csv not found)
 file ./output/time_series/tsreg_mortality_cvd_imd.csv saved
 (5 vars, 216 obs)
 (54 real changes made)
@@ -609,6 +634,7 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_mortality_resp_imd.csv not found)
 file ./output/time_series/tsreg_mortality_resp_imd.csv saved
 (5 vars, 216 obs)
 (54 real changes made)
@@ -655,6 +681,7 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_mortality_mh_imd.csv not found)
 file ./output/time_series/tsreg_mortality_mh_imd.csv saved
 (5 vars, 216 obs)
 (54 real changes made)
@@ -701,6 +728,7 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_mortality_mi_imd.csv not found)
 file ./output/time_series/tsreg_mortality_mi_imd.csv saved
 (5 vars, 216 obs)
 (54 real changes made)
@@ -747,6 +775,7 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_mortality_stroke_imd.csv not found)
 file ./output/time_series/tsreg_mortality_stroke_imd.csv saved
 (5 vars, 216 obs)
 (54 real changes made)
@@ -793,6 +822,8 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_mortality_heart_failure_imd.csv not foun
+> d)
 file ./output/time_series/tsreg_mortality_heart_failure_imd.csv saved
 (5 vars, 216 obs)
 (54 real changes made)
@@ -839,6 +870,7 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_mortality_vte_imd.csv not found)
 file ./output/time_series/tsreg_mortality_vte_imd.csv saved
 (5 vars, 216 obs)
 (54 real changes made)
@@ -885,6 +917,7 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_mortality_asthma_imd.csv not found)
 file ./output/time_series/tsreg_mortality_asthma_imd.csv saved
 (5 vars, 216 obs)
 (54 real changes made)
@@ -931,6 +964,7 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_mortality_copd_imd.csv not found)
 file ./output/time_series/tsreg_mortality_copd_imd.csv saved
 (5 vars, 216 obs)
 (54 real changes made)
@@ -977,11 +1011,12 @@ file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 (10 vars, 30 obs)
+(note: file ./output/time_series/tsreg_mortality_all_cause_imd.csv not found)
 file ./output/time_series/tsreg_mortality_all_cause_imd.csv saved
 
 . log close
       name:  <unnamed>
        log:  /workspace/logs/tsreg_mortality.log
   log type:  text
- closed on:  18 May 2022, 16:05:09
+ closed on:  23 May 2022, 12:33:26
 -------------------------------------------------------------------------------

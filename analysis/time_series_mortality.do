@@ -13,6 +13,8 @@ cap mkdir ./output/time_series
 foreach var in cvd resp mh mi stroke heart_failure vte asthma copd all_cause {
 	import delimited ./output/measures/mortality/measure_`var'_mortality_ethnic_rate.csv, numericcols(4) clear	//get csv
 	putexcel set ./output/time_series/tsreg_tables_mortality, sheet(`var'_ethnic) modify			//open xlsx
+	* Drop records where ethnicity is missing - no missing IMD
+        drop if ethnicity==0
 	*Format time
 	gen temp_date=date(date, "YMD")
 	format temp_date %td
