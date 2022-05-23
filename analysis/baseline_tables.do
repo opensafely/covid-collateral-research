@@ -42,11 +42,11 @@ forvalues i=2019/2021 {
     label values ethnicity eth5
     safetab ethnicity, m
     *(2) IMD
-    replace imd=6 if imd==.
+    replace imd=6 if imd==0
 
     * Create age categories
     egen age_cat = cut(age), at(18, 40, 60, 80, 120) icodes
-    label define age 1 "18 - 40 years" 2 "41 - 60 years" 3 "61 - 80 years" 4 ">80 years"
+    label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years" 3 ">80 years"
     label values age_cat age
 
     * Use new package

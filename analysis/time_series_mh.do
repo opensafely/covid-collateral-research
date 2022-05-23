@@ -20,6 +20,8 @@ forvalues i=1/7 {
     	local d: word `i' of `b'
 		import delimited "./output/measures/mh/measure_`c'_`d'_rate.csv", numericcols(4) clear	//get csv
         putexcel set ./output/time_series/tsreg_tables_mh, sheet(`c'_`d') modify			//open xlsx
+        * Drop records where ethnicity is missing - no missing IMD
+        drop if `d'==0
         *Format time
         gen temp_date=date(date, "YMD")
         format temp_date %td
@@ -61,6 +63,8 @@ forvalues i=1/7 {
     	local f: word `i' of `e'
         import delimited "./output/measures/mh/measure_`c'_`f'_rate.csv", numericcols(3) clear	//get csv
         putexcel set ./output/time_series/tsreg_tables_mh, sheet(`d'_`f') modify			//open xlsx
+        * Drop records where ethnicity is missing - no missing IMD
+        drop if `f'==0
         *Format time
         gen temp_date=date(date, "YMD")
         format temp_date %td
