@@ -17,7 +17,7 @@ forvalues j=3/12 {
         misstable summarize
     }
 }
-forvalues i=2019/2021 {
+/*forvalues i=2019/2021 {
     forvalues j=1/12 {
         di "`i'_`j' cvd"
         if `j'<10 {
