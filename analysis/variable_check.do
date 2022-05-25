@@ -20,23 +20,23 @@ count if region==""
 
 * check files from 2020
 import delimited "./output/measures/cvd/input_2020-06-01.csv", clear
-misstable summarize age imd
+misstable summarize imd
 count if sex==""
 count if region==""
 
 import delimited "./output/measures/mh/input_mh_2020-06-01.csv", clear
-misstable summarize age imd
+misstable summarize imd
 count if sex==""
 count if region==""
 
 * check files from 2021
 import delimited "./output/measures/cvd/input_2021-07-01.csv", clear
-misstable summarize age imd
+misstable summarize imd
 count if sex==""
 count if region==""
 
 import delimited "./output/measures/mh/input_mh_2021-07-01.csv", clear
-misstable summarize age imd
+misstable summarize imd
 count if sex==""
 count if region==""
 
