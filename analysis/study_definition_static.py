@@ -16,12 +16,12 @@ study = StudyDefinition(
     population=patients.all(),
 
     age=patients.age_as_of(
-            "index_date",
-            return_expectations={
-                "rate": "universal",
-                "int": {"distribution": "population_ages"},
-            },
-        ),
+        "index_date",
+        return_expectations={
+            "rate": "universal",
+            "int": {"distribution": "population_ages"},
+        },
+    ),
     # Sex
     sex=patients.sex(
         return_expectations={
