@@ -1,40 +1,39 @@
 * Checking missingness for static variables
 cap log using ./logs/missing_check.log, replace
-forvalues j=3/12 {
-    di "`i'_2018 cvd"
-    if `j'<10 {
-        import delimited "./output/measures/cvd/input_2018-0`j'-01.csv", clear
-        misstable summarize
-        di "`i'_`j' mh"
-        import delimited "./output/measures/mh/input_mh_2018-0`j'-01.csv", clear
-        misstable summarize
-    }
-    else {
-        import delimited "./output/measures/cvd/input_2018-`j'-01.csv", clear
-        misstable summarize
-        di "`i'_`j' mh"
-        import delimited "./output/measures/mh/input_mh_2018-`j'-01.csv", clear
-        misstable summarize
-    }
-}
-/*forvalues i=2019/2021 {
-    forvalues j=1/12 {
-        di "`i'_`j' cvd"
-        if `j'<10 {
-            import delimited "./output/measures/cvd/input_`i'-0`j'-01.csv", clear
-            misstable summarize
-            di "`i'_`j' mh"
-            import delimited "./output/measures/mh/input_mh_`i'-0`j'-01.csv", clear
-            misstable summarize
-        }
-        else {
-            import delimited "./output/measures/cvd/input_`i'-`j'-01.csv", clear
-            misstable summarize
-            di "`i'_`j' mh"
-            import delimited "./output/measures/mh/input_mh_`i'-`j'-01.csv", clear
-            misstable summarize
-        }
-    }
+* Check files from 2018
+import delimited "./output/measures/cvd/input_2018-03-01.csv", clear
+di "cvd March 2018"
+misstable summarize
+        
+import delimited "./output/measures/mh/input_mh_2018-03-01.csv", clear
+di "mh March 2018"
+misstable summarize
 
-}
+* check files from 2019
+import delimited "./output/measures/cvd/input_2019-05-01.csv", clear
+di "cvd May 2019"
+misstable summarize
+
+import delimited "./output/measures/mh/input_mh_2019-05-01.csv", clear
+di "mh May 2019"
+misstable summarize
+
+* check files from 2020
+import delimited "./output/measures/cvd/input_2020-06-01.csv", clear
+di "cvd June 2020"
+misstable summarize
+
+import delimited "./output/measures/mh/input_mh_2020-06-01.csv", clear
+di "mh June 2020"
+misstable summarize
+
+* check files from 2021
+import delimited "./output/measures/cvd/input_2021-07-01.csv", clear
+di "cvd July 2021"
+misstable summarize
+
+import delimited "./output/measures/mh/input_mh_2021-07-01.csv", clear
+di "mh July 2021"
+misstable summarize
+
 log close
