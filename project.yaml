@@ -10,12 +10,19 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input_static.csv
+
+  # Generating static variables 
+  generate_study_population_static_2020:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_static_2020 --output-format=csv
+    outputs:
+      highly_sensitive:
+        cohort: output/input_static_2020.csv
   # Generates study population for CV - start date = 2018-03-01
   generate_study_population:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures --output-format=csv
     outputs:
       highly_sensitive:
-        cohort: output/measures/input_*.csv
+        cohort: output/measures/test/input_*.csv
   # Join static and time-varying variables
   join_cohorts_cvd:
     run: >
@@ -27,6 +34,16 @@ actions:
     outputs: 
       highly_sensitive:
         cohort: output/measures/cvd/input_*.csv
+  join_cohorts_cvd_2020:
+    run: >
+      cohort-joiner:v0.0.30
+        --lhs output/measures/input_*.csv
+        --rhs output/input_static_2020.csv
+        --output-dir output/measures/cvd/test
+    needs: [generate_study_population, generate_study_population_static_2020]
+    outputs: 
+      highly_sensitive:
+        cohort: output/measures/cvd/test/input_*.csv
   # Generates study population for mental health outcomes - start date = 2018-03-01
   generate_study_population_mh:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_mh --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures --output-format=csv
@@ -48,7 +65,7 @@ actions:
   # Check join
   join_check:
     run: stata-mp:latest analysis/variable_check.do 
-    needs: [join_cohorts_cvd, join_cohorts_mh]
+    needs: [join_cohorts_cvd, join_cohorts_mh, join_cohorts_cvd_2020]
     outputs: 
       moderately_sensitive:
         log: logs/missing_check.log

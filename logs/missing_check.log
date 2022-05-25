@@ -32,7 +32,7 @@
 . import delimited "./output/measures/cvd/input_2019-05-01.csv", clear
 (16 vars, 1,000 obs)
 
-. misstable summarize age sex imd region
+. misstable summarize age imd
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
@@ -42,11 +42,17 @@
            imd |       905                  95  |      6          0           5
   -----------------------------------------------------------------------------
 
+. count if sex==""
+  905
+
+. count if region==""
+  905
+
 . 
 . import delimited "./output/measures/mh/input_mh_2019-05-01.csv", clear
 (25 vars, 1,000 obs)
 
-. misstable summarize age sex imd region
+. misstable summarize age imd
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
@@ -56,12 +62,18 @@
            imd |       903                  97  |      6          0           5
   -----------------------------------------------------------------------------
 
+. count if sex==""
+  903
+
+. count if region==""
+  903
+
 . 
 . * check files from 2020
 . import delimited "./output/measures/cvd/input_2020-06-01.csv", clear
 (16 vars, 1,000 obs)
 
-. misstable summarize age sex imd region
+. misstable summarize age imd
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
@@ -71,11 +83,17 @@
            imd |       900                 100  |      6          0           5
   -----------------------------------------------------------------------------
 
+. count if sex==""
+  900
+
+. count if region==""
+  900
+
 . 
 . import delimited "./output/measures/mh/input_mh_2020-06-01.csv", clear
 (25 vars, 1,000 obs)
 
-. misstable summarize age sex imd region
+. misstable summarize age imd
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
@@ -85,12 +103,18 @@
            imd |       897                 103  |      6          0           5
   -----------------------------------------------------------------------------
 
+. count if sex==""
+  897
+
+. count if region==""
+  897
+
 . 
 . * check files from 2021
 . import delimited "./output/measures/cvd/input_2021-07-01.csv", clear
 (16 vars, 1,000 obs)
 
-. misstable summarize age sex imd region
+. misstable summarize age imd
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
@@ -100,11 +124,17 @@
            imd |       897                 103  |      6          0           5
   -----------------------------------------------------------------------------
 
+. count if sex==""
+  897
+
+. count if region==""
+  897
+
 . 
 . import delimited "./output/measures/mh/input_mh_2021-07-01.csv", clear
 (25 vars, 1,000 obs)
 
-. misstable summarize age sex imd region
+. misstable summarize age imd
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
@@ -114,10 +144,58 @@
            imd |       907                  93  |      6          0           5
   -----------------------------------------------------------------------------
 
+. count if sex==""
+  907
+
+. count if region==""
+  907
+
+. 
+. * Checking files created with the 2020 static cohort
+. * Check files from 2018
+. import delimited "./output/measures/cvd/test/input_2018-03-01.csv", clear
+(16 vars, 1,000 obs)
+
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       914                  86  |     55          1          87
+           imd |       914                  86  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  914
+
+. count if region==""
+  914
+
+.         
+. import delimited "./output/measures/cvd/test/input_2020-03-01.csv", clear
+(16 vars, 1,000 obs)
+
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       920                  80  |     54          1          92
+           imd |       920                  80  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  920
+
+. count if region==""
+  920
+
 . 
 . log close
       name:  <unnamed>
        log:  /workspace/logs/missing_check.log
   log type:  text
- closed on:  25 May 2022, 09:26:18
+ closed on:  25 May 2022, 10:38:38
 -------------------------------------------------------------------------------
