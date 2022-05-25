@@ -1,321 +1,201 @@
 
-. forvalues j=3/12 {
-  2.     di "`i'_2018 cvd"
-  3.     if `j'<10 {
-  4.         import delimited "./output/measures/cvd/input_2018-0`j'-01.csv", c
-> lear
-  5.         misstable summarize
-  6.         di "`i'_`j' mh"
-  7.         import delimited "./output/measures/mh/input_mh_2018-0`j'-01.csv",
->  clear
-  8.         misstable summarize
-  9.     }
- 10.     else {
- 11.         import delimited "./output/measures/cvd/input_2018-`j'-01.csv", cl
-> ear
- 12.         misstable summarize
- 13.         di "`i'_`j' mh"
- 14.         import delimited "./output/measures/mh/input_mh_2018-`j'-01.csv", 
-> clear
- 15.         misstable summarize
- 16.     }
- 17. }
-_2018 cvd
-(18 vars, 1,000 obs)
+. * Check files from 2018
+. import delimited "./output/measures/cvd/input_2018-03-01.csv", clear
+(16 vars, 1,000 obs)
+
+. misstable summarize age sex imd region
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
       Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
   -------------+--------------------------------+------------------------------
-           age |       896                 104  |     60          0          88
-           eth |       896                 104  |      5          1           5
-  ethnicity_~s |       896                 104  |      5          1           5
-     ethnicity |       896                 104  |      5          1           5
-           imd |       896                 104  |      6          0           5
+           age |       919                  81  |     52          0          83
+           imd |       919                  81  |      6          0           5
   -----------------------------------------------------------------------------
-_3 mh
-(27 vars, 1,000 obs)
+
+.         
+. import delimited "./output/measures/mh/input_mh_2018-03-01.csv", clear
+(25 vars, 1,000 obs)
+
+. misstable summarize age sex imd region
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
       Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
   -------------+--------------------------------+------------------------------
-           age |       891                 109  |     62          0          98
-           eth |       891                 109  |      5          1           5
-  ethnicity_~s |       891                 109  |      5          1           5
-     ethnicity |       891                 109  |      5          1           5
-           imd |       891                 109  |      6          0           5
-  -----------------------------------------------------------------------------
-_2018 cvd
-(18 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       887                 113  |     59          0          86
-           eth |       887                 113  |      5          1           5
-  ethnicity_~s |       887                 113  |      5          1           5
-     ethnicity |       887                 113  |      5          1           5
-           imd |       887                 113  |      6          0           5
-  -----------------------------------------------------------------------------
-_4 mh
-(27 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       897                 103  |     60          0          92
-           eth |       897                 103  |      5          1           5
-  ethnicity_~s |       897                 103  |      5          1           5
-     ethnicity |       897                 103  |      5          1           5
-           imd |       897                 103  |      6          0           5
-  -----------------------------------------------------------------------------
-_2018 cvd
-(18 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       901                  99  |     57          1          79
-           eth |       901                  99  |      5          1           5
-  ethnicity_~s |       901                  99  |      5          1           5
-     ethnicity |       901                  99  |      5          1           5
-           imd |       901                  99  |      6          0           5
-  -----------------------------------------------------------------------------
-_5 mh
-(27 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       910                  90  |     57          0          90
-           eth |       910                  90  |      5          1           5
-  ethnicity_~s |       910                  90  |      5          1           5
-     ethnicity |       910                  90  |      5          1           5
-           imd |       910                  90  |      6          0           5
-  -----------------------------------------------------------------------------
-_2018 cvd
-(18 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       902                  98  |     61          2          98
-           eth |       902                  98  |      5          1           5
-  ethnicity_~s |       902                  98  |      5          1           5
-     ethnicity |       902                  98  |      5          1           5
-           imd |       902                  98  |      6          0           5
-  -----------------------------------------------------------------------------
-_6 mh
-(27 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       916                  84  |     56          0          90
-           eth |       916                  84  |      5          1           5
-  ethnicity_~s |       916                  84  |      5          1           5
-     ethnicity |       916                  84  |      5          1           5
-           imd |       916                  84  |      6          0           5
-  -----------------------------------------------------------------------------
-_2018 cvd
-(18 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       908                  92  |     57          4          94
-           eth |       908                  92  |      5          1           5
-  ethnicity_~s |       908                  92  |      5          1           5
-     ethnicity |       908                  92  |      5          1           5
-           imd |       908                  92  |      6          0           5
-  -----------------------------------------------------------------------------
-_7 mh
-(27 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       886                 114  |     64          0          93
-           eth |       886                 114  |      5          1           5
-  ethnicity_~s |       886                 114  |      5          1           5
-     ethnicity |       886                 114  |      5          1           5
-           imd |       886                 114  |      6          0           5
-  -----------------------------------------------------------------------------
-_2018 cvd
-(18 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       898                 102  |     57          0          97
-           eth |       898                 102  |      5          1           5
-  ethnicity_~s |       898                 102  |      5          1           5
-     ethnicity |       898                 102  |      5          1           5
-           imd |       898                 102  |      6          0           5
-  -----------------------------------------------------------------------------
-_8 mh
-(27 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       901                  99  |     58          1          94
-           eth |       901                  99  |      5          1           5
-  ethnicity_~s |       901                  99  |      5          1           5
-     ethnicity |       901                  99  |      5          1           5
-           imd |       901                  99  |      6          0           5
-  -----------------------------------------------------------------------------
-_2018 cvd
-(18 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       876                 124  |     64          0          88
-           eth |       876                 124  |      5          1           5
-  ethnicity_~s |       876                 124  |      5          1           5
-     ethnicity |       876                 124  |      5          1           5
-           imd |       876                 124  |      6          0           5
-  -----------------------------------------------------------------------------
-_9 mh
-(27 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       891                 109  |     58          1          93
-           eth |       891                 109  |      5          1           5
-  ethnicity_~s |       891                 109  |      5          1           5
-     ethnicity |       891                 109  |      5          1           5
-           imd |       891                 109  |      6          0           5
-  -----------------------------------------------------------------------------
-_2018 cvd
-(18 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       905                  95  |     59          0          99
-           eth |       905                  95  |      5          1           5
-  ethnicity_~s |       905                  95  |      5          1           5
-     ethnicity |       905                  95  |      5          1           5
+           age |       905                  95  |     57          2          97
            imd |       905                  95  |      6          0           5
   -----------------------------------------------------------------------------
-_10 mh
-(27 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       891                 109  |     56          3          92
-           eth |       891                 109  |      5          1           5
-  ethnicity_~s |       891                 109  |      5          1           5
-     ethnicity |       891                 109  |      5          1           5
-           imd |       891                 109  |      6          0           5
-  -----------------------------------------------------------------------------
-_2018 cvd
-(18 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       895                 105  |     63          0          98
-           eth |       895                 105  |      5          1           5
-  ethnicity_~s |       895                 105  |      5          1           5
-     ethnicity |       895                 105  |      5          1           5
-           imd |       895                 105  |      6          0           5
-  -----------------------------------------------------------------------------
-_11 mh
-(27 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       908                  92  |     54          0          82
-           eth |       908                  92  |      5          1           5
-  ethnicity_~s |       908                  92  |      5          1           5
-     ethnicity |       908                  92  |      5          1           5
-           imd |       908                  92  |      6          0           5
-  -----------------------------------------------------------------------------
-_2018 cvd
-(18 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       894                 106  |     63          1          93
-           eth |       894                 106  |      5          1           5
-  ethnicity_~s |       894                 106  |      5          1           5
-     ethnicity |       894                 106  |      5          1           5
-           imd |       894                 106  |      6          0           5
-  -----------------------------------------------------------------------------
-_12 mh
-(27 vars, 1,000 obs)
-                                                               Obs<.
-                                                +------------------------------
-               |                                | Unique
-      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
-  -------------+--------------------------------+------------------------------
-           age |       891                 109  |     59          1          93
-           eth |       891                 109  |      5          1           5
-  ethnicity_~s |       891                 109  |      5          1           5
-     ethnicity |       891                 109  |      5          1           5
-           imd |       891                 109  |      6          0           5
-  -----------------------------------------------------------------------------
-
-. /*forvalues i=2019/2021 {
->     forvalues j=1/12 {
->         di "`i'_`j' cvd"
->         if `j'<10 {
->             import delimited "./output/measures/cvd/input_`i'-0`j'-01.csv", c
-> lear
->             misstable summarize
->             di "`i'_`j' mh"
->             import delimited "./output/measures/mh/input_mh_`i'-0`j'-01.csv",
->  clear
->             misstable summarize
->         }
->         else {
->             import delimited "./output/measures/cvd/input_`i'-`j'-01.csv", cl
-> ear
->             misstable summarize
->             di "`i'_`j' mh"
->             import delimited "./output/measures/mh/input_mh_`i'-`j'-01.csv", 
-> clear
->             misstable summarize
->         }
->     }
-> 
-> }
-> log close
-
-end of do-file
-
-. . file open output using "/tmp/tmp.1VyppSNCGD", write text replace
-
-. . file write output "success" 
-
-. . file close output
 
 . 
-end of do-file
+. * check files from 2019
+. import delimited "./output/measures/cvd/input_2019-05-01.csv", clear
+(16 vars, 1,000 obs)
 
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       905                  95  |     58          1          92
+           imd |       905                  95  |      6          0           5
+  -----------------------------------------------------------------------------
 
+. count if sex==""
+  905
+
+. count if region==""
+  905
+
+. 
+. import delimited "./output/measures/mh/input_mh_2019-05-01.csv", clear
+(25 vars, 1,000 obs)
+
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       903                  97  |     62          0          86
+           imd |       903                  97  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  903
+
+. count if region==""
+  903
+
+. 
+. * check files from 2020
+. import delimited "./output/measures/cvd/input_2020-06-01.csv", clear
+(16 vars, 1,000 obs)
+
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       900                 100  |     55          1          98
+           imd |       900                 100  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  900
+
+. count if region==""
+  900
+
+. 
+. import delimited "./output/measures/mh/input_mh_2020-06-01.csv", clear
+(25 vars, 1,000 obs)
+
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       897                 103  |     62          3          98
+           imd |       897                 103  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  897
+
+. count if region==""
+  897
+
+. 
+. * check files from 2021
+. import delimited "./output/measures/cvd/input_2021-07-01.csv", clear
+(16 vars, 1,000 obs)
+
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       897                 103  |     65          0          92
+           imd |       897                 103  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  897
+
+. count if region==""
+  897
+
+. 
+. import delimited "./output/measures/mh/input_mh_2021-07-01.csv", clear
+(25 vars, 1,000 obs)
+
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       907                  93  |     56          0          97
+           imd |       907                  93  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  907
+
+. count if region==""
+  907
+
+. 
+. * Checking files created with the 2020 static cohort
+. * Check files from 2018
+. import delimited "./output/measures/cvd/test/input_2018-03-01.csv", clear
+(16 vars, 1,000 obs)
+
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       914                  86  |     55          1          87
+           imd |       914                  86  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  914
+
+. count if region==""
+  914
+
+.         
+. import delimited "./output/measures/cvd/test/input_2020-03-01.csv", clear
+(16 vars, 1,000 obs)
+
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       920                  80  |     54          1          92
+           imd |       920                  80  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  920
+
+. count if region==""
+  920
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/missing_check.log
+  log type:  text
+ closed on:  25 May 2022, 10:38:38
+-------------------------------------------------------------------------------
