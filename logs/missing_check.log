@@ -3,14 +3,13 @@
 . import delimited "./output/measures/cvd/input_2018-03-01.csv", clear
 (16 vars, 1,000 obs)
 
-. misstable summarize
+. misstable summarize age sex imd region
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
       Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
   -------------+--------------------------------+------------------------------
            age |       919                  81  |     52          0          83
-     ethnicity |       919                  81  |      5          1           5
            imd |       919                  81  |      6          0           5
   -----------------------------------------------------------------------------
 
@@ -18,14 +17,13 @@
 . import delimited "./output/measures/mh/input_mh_2018-03-01.csv", clear
 (25 vars, 1,000 obs)
 
-. misstable summarize
+. misstable summarize age sex imd region
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
       Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
   -------------+--------------------------------+------------------------------
            age |       905                  95  |     57          2          97
-     ethnicity |       905                  95  |      5          1           5
            imd |       905                  95  |      6          0           5
   -----------------------------------------------------------------------------
 
@@ -34,14 +32,13 @@
 . import delimited "./output/measures/cvd/input_2019-05-01.csv", clear
 (16 vars, 1,000 obs)
 
-. misstable summarize
+. misstable summarize age sex imd region
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
       Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
   -------------+--------------------------------+------------------------------
            age |       905                  95  |     58          1          92
-     ethnicity |       905                  95  |      5          1           5
            imd |       905                  95  |      6          0           5
   -----------------------------------------------------------------------------
 
@@ -49,14 +46,13 @@
 . import delimited "./output/measures/mh/input_mh_2019-05-01.csv", clear
 (25 vars, 1,000 obs)
 
-. misstable summarize
+. misstable summarize age sex imd region
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
       Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
   -------------+--------------------------------+------------------------------
            age |       903                  97  |     62          0          86
-     ethnicity |       903                  97  |      5          1           5
            imd |       903                  97  |      6          0           5
   -----------------------------------------------------------------------------
 
@@ -65,14 +61,13 @@
 . import delimited "./output/measures/cvd/input_2020-06-01.csv", clear
 (16 vars, 1,000 obs)
 
-. misstable summarize
+. misstable summarize age sex imd region
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
       Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
   -------------+--------------------------------+------------------------------
            age |       900                 100  |     55          1          98
-     ethnicity |       900                 100  |      5          1           5
            imd |       900                 100  |      6          0           5
   -----------------------------------------------------------------------------
 
@@ -80,14 +75,13 @@
 . import delimited "./output/measures/mh/input_mh_2020-06-01.csv", clear
 (25 vars, 1,000 obs)
 
-. misstable summarize
+. misstable summarize age sex imd region
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
       Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
   -------------+--------------------------------+------------------------------
            age |       897                 103  |     62          3          98
-     ethnicity |       897                 103  |      5          1           5
            imd |       897                 103  |      6          0           5
   -----------------------------------------------------------------------------
 
@@ -96,14 +90,13 @@
 . import delimited "./output/measures/cvd/input_2021-07-01.csv", clear
 (16 vars, 1,000 obs)
 
-. misstable summarize
+. misstable summarize age sex imd region
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
       Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
   -------------+--------------------------------+------------------------------
            age |       897                 103  |     65          0          92
-     ethnicity |       897                 103  |      5          1           5
            imd |       897                 103  |      6          0           5
   -----------------------------------------------------------------------------
 
@@ -111,14 +104,13 @@
 . import delimited "./output/measures/mh/input_mh_2021-07-01.csv", clear
 (25 vars, 1,000 obs)
 
-. misstable summarize
+. misstable summarize age sex imd region
                                                                Obs<.
                                                 +------------------------------
                |                                | Unique
       Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
   -------------+--------------------------------+------------------------------
            age |       907                  93  |     56          0          97
-     ethnicity |       907                  93  |      5          1           5
            imd |       907                  93  |      6          0           5
   -----------------------------------------------------------------------------
 
@@ -127,5 +119,5 @@
       name:  <unnamed>
        log:  /workspace/logs/missing_check.log
   log type:  text
- closed on:  25 May 2022, 09:21:32
+ closed on:  25 May 2022, 09:26:18
 -------------------------------------------------------------------------------
