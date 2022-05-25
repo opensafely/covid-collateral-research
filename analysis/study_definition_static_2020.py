@@ -11,7 +11,7 @@ study = StudyDefinition(
         "rate": "uniform",
         "incidence": 0.05,
     },
-    index_date="2018-03-01",
+    index_date="2020-03-01",
     population=patients.all(),
 
     age=patients.age_as_of(
