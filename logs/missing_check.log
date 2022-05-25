@@ -3,15 +3,179 @@
 . import delimited "./output/measures/cvd/input_2018-03-01.csv", clear
 (14 vars, 1,000 obs)
 
-. misstable summarize age sex imd region
-variable age not found
-r(111);
+. misstable summarize imd 
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           imd |       905                  95  |      6          0           5
+  -----------------------------------------------------------------------------
 
-end of do-file
-r(111);
+. count if sex==""
+  905
 
-end of do-file
+. 
+. import delimited "./output/measures/mh/input_mh_2018-03-01.csv", clear
+(23 vars, 1,000 obs)
 
-r(111);
+. misstable summarize imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           imd |       888                 112  |      6          0           5
+  -----------------------------------------------------------------------------
 
+. count if sex==""
+  888
 
+. 
+. * check files from 2019
+. import delimited "./output/measures/cvd/input_2019-05-01.csv", clear
+(14 vars, 1,000 obs)
+
+. misstable summarize imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           imd |       901                  99  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  901
+
+. 
+. import delimited "./output/measures/mh/input_mh_2019-05-01.csv", clear
+(23 vars, 1,000 obs)
+
+. misstable summarize imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           imd |       900                 100  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  900
+
+. 
+. * check files from 2020
+. import delimited "./output/measures/cvd/input_2020-06-01.csv", clear
+(14 vars, 1,000 obs)
+
+. misstable summarize imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           imd |       907                  93  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  907
+
+. 
+. import delimited "./output/measures/mh/input_mh_2020-06-01.csv", clear
+(23 vars, 1,000 obs)
+
+. misstable summarize imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           imd |       909                  91  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  909
+
+. 
+. * check files from 2021
+. import delimited "./output/measures/cvd/input_2021-07-01.csv", clear
+(14 vars, 1,000 obs)
+
+. misstable summarize imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           imd |       916                  84  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  916
+
+. 
+. import delimited "./output/measures/mh/input_mh_2021-07-01.csv", clear
+(23 vars, 1,000 obs)
+
+. misstable summarize imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           imd |       903                  97  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  903
+
+. 
+. * Checking files created with the 2020 static cohort
+. * Check files from 2018
+. import delimited "./output/measures/cvd/test/input_2018-03-01.csv", clear
+(16 vars, 1,000 obs)
+
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       914                  86  |     55          1          87
+           imd |       914                  86  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  914
+
+. count if region==""
+  914
+
+.         
+. import delimited "./output/measures/cvd/test/input_2020-03-01.csv", clear
+(16 vars, 1,000 obs)
+
+. misstable summarize age imd
+                                                               Obs<.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs>.     Obs<.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+           age |       920                  80  |     54          1          92
+           imd |       920                  80  |      6          0           5
+  -----------------------------------------------------------------------------
+
+. count if sex==""
+  920
+
+. count if region==""
+  920
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/missing_check.log
+  log type:  text
+ closed on:  25 May 2022, 13:58:42
+-------------------------------------------------------------------------------
