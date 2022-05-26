@@ -63,7 +63,7 @@ foreach this_group in cvd mh {
 
     graph export ./output/graphs/line_bp_`this_group'_imd.svg, as(svg) replace
     }
-}
+
 * Hospital admission graphs
 local groups "mi stroke heart_failure vte"
 forvalues i=1/4 {
