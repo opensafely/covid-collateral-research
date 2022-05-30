@@ -7,11 +7,10 @@ Description:    collapses data to 3-monthly then generates line graphs of
                 rates of each outcome and strata per month
 ==============================================================================*/
 cap log using ./logs/graphs_mortality.log, replace
-cap mkdir ./output/collapsed
 cap mkdir ./output/graphs
 * Generates graphs for ethnicity - to include DM once defined
-local a "resp asthma copd cvd mi stroke heart_failure vte mh keto"
-forvalues i=1/9 {
+local a "resp asthma copd cvd mi stroke heart_failure vte mh keto all_cause"
+forvalues i=1/11 {
     local b :word `i' of `a'
 * Ethnicity
     clear 
@@ -22,12 +21,6 @@ forvalues i=1/9 {
     gen dateA = date(date, "YMD")
     drop date
     format dateA %dD/M/Y
-    * Collapse at 3 monthly intervals
-    gen quarter = qofd(dateA)
-    format quarter %tq
-    collapse (sum) value rate population `b'_mortality (min) dateA,  by(quarter ethnicity)
-    * Outputing file 
-    export delimited using "./output/collapsed/collapse_measure_`b'_mortality_ethnic_rate.csv", replace 
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `b'_mortality population, i(dateA) j(ethnicity)
     describe
@@ -54,11 +47,6 @@ forvalues i=1/9 {
     drop date
     format dateA %dD/M/Y
     tab dateA 
-    * Collapse at 3 monthly intervals
-    gen quarter = qofd(dateA)
-    collapse (sum) value rate population `b'_mortality (min) dateA,  by(quarter imd)
-    * Outputing file 
-    export delimited using "./output/collapsed/collapse_measure_`b'_mortality_imd_rate.csv", replace 
     * reshape dataset so columns with rates for each level of IMD
     reshape wide value rate `b'_mortality population, i(dateA) j(imd)
     describe
