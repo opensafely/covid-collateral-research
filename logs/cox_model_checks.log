@@ -1,0 +1,669 @@
+
+. cap mkdir ./output/graphs
+
+. cap mkdir ./output/tempdata
+
+. cap mkdir ./output/tables
+
+. 
+. import delimited using ./output/survival/input_survival_pre.csv, clear
+(39 vars, 1,000 obs)
+
+. * First preparing dataset
+. * Drop variables that make up COPD hospitalisation as not required
+. drop copd_exacerbation_hospital copd_hospital lrti_hospital copd_any eth ethn
+> icity_sus
+
+. 
+. * Assume deregistered on 1st of month
+. gen dereg_dateA = date(dereg_date, "YM")
+(950 missing values generated)
+
+. format %dD/N/CY dereg_dateA
+
+. drop dereg_date
+
+. 
+. * Format dates
+. local a "mi_primary_admission stroke_primary_admission heart_failure_primary_
+> admission vte_primary_admission t1dm_admission_primary t2dm_admission_primary
+>  dm_keto_admission_primary asthma_exacerbation depression_primary_admission a
+> nxiety_primary_admission smi_primary_admission self_harm_primary_admission cv
+> d_admission_date dm_admission copd_hospitalisation_date mh_admission" 
+
+. local b "mi__admit_date stroke_admit_date hf_admit_date vte_admit_date t1dm_a
+> dmit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_admit_
+> date anx_admit_date smi_admit_date sh_admit_date cvd_admit_date dm_admit_date
+>  copd_admit_date mh_admit_date" 
+
+. forvalues i=1/16 {
+  2.     local c: word `i' of `a'
+  3.     local d: word `i' of `b' 
+  4.     count if `c'!=""   
+  5.     gen `d'=date(`c', "YMD")
+  6.     format %dD/N/CY `d'
+  7.     drop `c'
+  8.     }
+  21
+(979 missing values generated)
+  33
+(967 missing values generated)
+  26
+(974 missing values generated)
+  28
+(972 missing values generated)
+  19
+(981 missing values generated)
+  26
+(974 missing values generated)
+  29
+(971 missing values generated)
+  27
+(973 missing values generated)
+  27
+(973 missing values generated)
+  23
+(977 missing values generated)
+  24
+(976 missing values generated)
+  22
+(978 missing values generated)
+  101
+(899 missing values generated)
+  72
+(928 missing values generated)
+  87
+(913 missing values generated)
+  94
+(906 missing values generated)
+
+. * Define index date
+. gen index_date = date("01/03/2018", "DMY")
+
+. * Define end of follow-up
+. gen end_study = date("22/03/2020", "DMY")
+
+. format %dD/N/CY index_date end_study
+
+. egen end_date = rowmin(dereg_dateA end_study)
+
+. format %dD/N/CY end_date
+
+. 
+. * Reorder ethnicity - white, asian, black, mixed, other
+. *re-order ethnicity
+.  gen eth5=1 if ethnicity==1
+(790 missing values generated)
+
+.  replace eth5=2 if ethnicity==3
+(210 real changes made)
+
+.  replace eth5=3 if ethnicity==4
+(183 real changes made)
+
+.  replace eth5=4 if ethnicity==2
+(195 real changes made)
+
+.  replace eth5=5 if ethnicity==5
+(202 real changes made)
+
+.  replace eth5=. if ethnicity==.
+(0 real changes made)
+
+. 
+.  label define eth5                      1 "White"                            
+>            ///
+>                                                         2 "South Asian"      
+>                    ///                                             
+>                                                         3 "Black"            
+>                            ///
+>                                                         4 "Mixed"            
+>                            ///
+>                                                         5 "Other"            
+>                            
+
+.                                         
+. 
+. label values eth5 eth5
+
+. safetab eth5, m
+5
+
+       eth5 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+      White |        210       21.00       21.00
+South Asian |        210       21.00       42.00
+      Black |        183       18.30       60.30
+      Mixed |        195       19.50       79.80
+      Other |        202       20.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+
+. 
+. * Make gender numeric
+. gen male = 1 if sex == "M"
+(512 missing values generated)
+
+. replace male = 0 if sex == "F"
+(501 real changes made)
+
+. label define male 0"Female" 1"Male"
+
+. label values male male
+
+. safetab male, miss
+5
+
+       male |      Freq.     Percent        Cum.
+------------+-----------------------------------
+     Female |        501       50.10       50.10
+       Male |        488       48.80       98.90
+          . |         11        1.10      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+
+. drop sex
+
+. 
+. * Make region numeric
+. generate region2=.
+(1,000 missing values generated)
+
+. replace region2=0 if region=="East"
+(0 real changes made)
+
+. replace region2=1 if region=="East Midlands"
+(94 real changes made)
+
+. replace region2=2 if region=="London"
+(211 real changes made)
+
+. replace region2=3 if region=="North East"
+(109 real changes made)
+
+. replace region2=4 if region=="North West"
+(117 real changes made)
+
+. replace region2=5 if region=="South East"
+(181 real changes made)
+
+. replace region2=6 if region=="South West"
+(0 real changes made)
+
+. replace region2=7 if region=="West Midlands"
+(97 real changes made)
+
+. replace region2=8 if region=="Yorkshire and The Humber"
+(0 real changes made)
+
+. drop region
+
+. rename region2 region
+
+. label var region "region of England"
+
+. label define region 0 "East" 1 "East Midlands"  2 "London" 3 "North East" 4 "
+> North West" 5 "South East" 6 "South West" 7 "West Midlands" 8 "Yorkshire and 
+> The Humber"
+
+. label values region region
+
+. safetab region, miss
+7
+
+       region of England |      Freq.     Percent        Cum.
+-------------------------+-----------------------------------
+           East Midlands |         94        9.40        9.40
+                  London |        211       21.10       30.50
+              North East |        109       10.90       41.40
+              North West |        117       11.70       53.10
+              South East |        181       18.10       71.20
+           West Midlands |         97        9.70       80.90
+                       . |        191       19.10      100.00
+-------------------------+-----------------------------------
+                   Total |      1,000      100.00
+
+. 
+. *create a 4 category rural urban variable 
+. generate urban_rural_5=.
+(1,000 missing values generated)
+
+. la var urban_rural_5 "Rural Urban in five categories"
+
+. replace urban_rural_5=1 if urban_rural==1
+(112 real changes made)
+
+. replace urban_rural_5=2 if urban_rural==2
+(94 real changes made)
+
+. replace urban_rural_5=3 if urban_rural==3|urban_rural==4
+(200 real changes made)
+
+. replace urban_rural_5=4 if urban_rural==5|urban_rural==6
+(204 real changes made)
+
+. replace urban_rural_5=5 if urban_rural==7|urban_rural==8
+(390 real changes made)
+
+. label define urban_rural_5 1 "Urban major conurbation" 2 "Urban minor conurba
+> tion" 3 "Urban city and town" 4 "Rural town and fringe" 5 "Rural village and 
+> dispersed"
+
+. label values urban_rural_5 urban_rural_5
+
+. safetab urban_rural_5, miss
+14
+
+        Rural Urban in five |
+                 categories |      Freq.     Percent        Cum.
+----------------------------+-----------------------------------
+    Urban major conurbation |        112       11.20       11.20
+    Urban minor conurbation |         94        9.40       20.60
+        Urban city and town |        200       20.00       40.60
+      Rural town and fringe |        204       20.40       61.00
+Rural village and dispersed |        390       39.00      100.00
+----------------------------+-----------------------------------
+                      Total |      1,000      100.00
+
+. 
+. *generate a binary rural urban (with missing assigned to urban)
+. generate urban_rural_bin=.
+(1,000 missing values generated)
+
+. replace urban_rural_bin=1 if urban_rural<=4|urban_rural==.
+(406 real changes made)
+
+. replace urban_rural_bin=0 if urban_rural>4 & urban_rural!=.
+(594 real changes made)
+
+. label define urban_rural_bin 0 "Rural" 1 "Urban"
+
+. label values urban_rural_bin urban_rural_bin
+
+. safetab urban_rural_bin urban_rural, miss
+28
+
+urban_rura |                      urban_rural
+     l_bin |         1          2          3          4          5 |     Total
+-----------+-------------------------------------------------------+----------
+     Rural |         0          0          0          0         96 |       594 
+     Urban |       112         94         93        107          0 |       406 
+-----------+-------------------------------------------------------+----------
+     Total |       112         94         93        107         96 |     1,000 
+
+
+urban_rura |           urban_rural
+     l_bin |         6          7          8 |     Total
+-----------+---------------------------------+----------
+     Rural |       108        202        188 |       594 
+     Urban |         0          0          0 |       406 
+-----------+---------------------------------+----------
+     Total |       108        202        188 |     1,000 
+
+. label var urban_rural_bin "Rural-Urban"
+
+. 
+. * Define age categories
+. * Create age categories
+. egen age_cat = cut(age), at(18, 40, 60, 80, 120) icodes
+(215 missing values generated)
+
+. label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years" 3 ">80
+>  years"
+
+. label values age_cat age
+
+. safetab age_cat, miss
+8
+
+      age_cat |      Freq.     Percent        Cum.
+--------------+-----------------------------------
+18 - 40 years |        301       30.10       30.10
+41 - 60 years |        236       23.60       53.70
+61 - 80 years |        200       20.00       73.70
+    >80 years |         48        4.80       78.50
+            . |        215       21.50      100.00
+--------------+-----------------------------------
+        Total |      1,000      100.00
+
+. 
+. * open file to write results to
+. file open tablecontent using ./output/tables/cox_models.txt, write text repla
+> ce
+(note: file ./output/tables/cox_models.txt not found)
+
+. file write tablecontent ("Association between ethnicity and outcomes pre-pand
+> emic") _n
+
+. file write tablecontent _tab ("Denominator") _tab ("Event") _tab ("Total pers
+> on-weeks") _tab ("Rate per 1,000") _tab ("Crude") _tab _tab ("Age/Sex Adjuste
+> d") _tab _tab ("Fully Adjusted") _tab _tab  _n
+
+. file write tablecontent _tab _tab _tab _tab _tab   ("HR") _tab ("95% CI") _ta
+> b ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% C
+> I") _tab ("HR") _tab ("95% CI") _tab _tab _n
+
+. 
+. foreach sub in cvd /*dm copd mh*/ {
+  2.     * Cox model for each outcome category
+.     * Generate flags and end dates for each outcome
+.     gen `sub'_admit=(`sub'_admit_date!=.)
+  3.     tab `sub'_admit
+  4.     count if `sub'_admit_date==.
+  5.     gen `sub'_end = end_date
+  6.     replace `sub'_end = `sub'_admit_date if `sub'_admit==1
+  7. 
+.     stset `sub'_end, fail(`sub'_admit) id(patient_id) enter(index_date) origi
+> n(index_date) scale(365.25) 
+  8.     * Kaplan-Meier plot
+.     sts graph, by(eth5)
+  9.     graph export ./output/graphs/km_`sub'_eth.svg, as(svg) replace
+ 10.     * Cox model - crude
+.     stcox i.eth5
+ 11.     estimates save "./output/tempdata/crude_`sub'_eth", replace 
+ 12.     eststo model1
+ 13.     parmest, label eform format(estimate p lb ub) saving("./output/tempdat
+> a/surv_crude_`sub'_eth16", replace) idstr("crude_`sub'_eth") 
+ 14.     estat phtest
+ 15.     * Cox model - age and gender adjusted
+.     stcox i.eth5 i.age_cat i.male
+ 16.     estimates save "./output/tempdata/model1_`sub'_eth", replace 
+ 17.     eststo model2
+ 18.     parmest, label eform format(estimate p lb ub) saving("./output/tempdat
+> a/surv_model1_`sub'_eth", replace) idstr("model1_`sub'_eth") 
+ 19.     * Cox model - fully adjusted
+.     stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded
+ 20.     estimates save "./output/tempdata/model2_`sub'_eth", replace 
+ 21.     eststo model3
+ 22.     parmest, label eform format(estimate p lb ub) saving("./output/tempdat
+> a/surv_model2_`sub'_eth", replace) idstr("model2_`sub'_eth") 
+ 23.     esttab model1 model2 model3 using "./output/tables/estout_table_eth_.t
+> xt", b(a2) ci(2) label wide compress eform ///
+>         title ("`sub'") ///
+>         varlabels(`e(labels)') ///
+>         stats(N_sub) ///
+>         append 
+ 24.     eststo clear
+ 25.    * Write results to table
+.     * Column headings 
+.     file write tablecontent ("`sub'") _n
+ 26. 
+.     * eth16 labelled columns
+. 
+.     local lab1: label eth5 1
+ 27.     local lab2: label eth5 2
+ 28.     local lab3: label eth5 3
+ 29.     local lab4: label eth5 4
+ 30.     local lab5: label eth5 5
+ 31.     /* counts */
+.     
+.     * First row, eth16 = 1 (White British) reference cat
+.     qui safecount if eth5==1
+ 32.     local denominator = r(N)
+ 33.     qui safecount if eth5 == 1 & `sub'_admit == 1
+ 34.     local event = r(N)
+ 35.     bysort eth5: egen total_follow_up = total(_t)
+ 36.     qui su total_follow_up if eth5 == 1
+ 37.     local person_week = r(mean)/7
+ 38.     local rate = 1000*(`event'/`person_week')
+ 39.     
+.     file write tablecontent  ("`lab1'") _tab (`denominator') _tab (`event') _
+> tab %10.0f (`person_week') _tab %3.2f (`rate') _tab
+ 40.     file write tablecontent ("1.00") _tab _tab ("1.00") _tab _tab ("1.00")
+>   _tab _tab ("1.00") _tab _tab ("1.00") _n
+ 41.     
+.     * Subsequent ethnic groups
+.     forvalues eth=2/5 {
+ 42.         qui safecount if eth5==`eth'
+ 43.         local denominator = r(N)
+ 44.         qui safecount if eth5 == `eth' & `sub'_admit == 1
+ 45.         local event = r(N)
+ 46.         qui su total_follow_up if eth5 == `eth'
+ 47.         local person_week = r(mean)/7
+ 48.         local rate = 1000*(`event'/`person_week')
+ 49.         file write tablecontent  ("`lab`eth''") _tab (`denominator') _tab 
+> (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _tab  
+ 50.         cap estimates use "./output/tempdata/crude_`sub'_eth" 
+ 51.         cap lincom `eth'.eth5, eform
+ 52.         file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(l
+> b)) (" - ") %4.2f (r(ub)) (")") _tab 
+ 53.         cap estimates clear
+ 54.         cap estimates use "./output/tempdata/model1_`sub'_eth" 
+ 55.         cap lincom `eth'.eth5, eform
+ 56.         file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(l
+> b)) (" - ") %4.2f (r(ub)) (")") _tab 
+ 57.         cap estimates clear
+ 58.         cap estimates use "./output/tempdata/model2_`sub'_eth" 
+ 59.         cap lincom `eth'.eth5, eform
+ 60.         file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(l
+> b)) (" - ") %4.2f (r(ub)) (")") _tab _n
+ 61.         cap estimates clear
+ 62.     }  //end ethnic group
+ 63. 
+. 
+. } //end outcomes
+
+  cvd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        899       89.90       89.90
+          1 |        101       10.10      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  899
+(101 real changes made)
+
+                id:  patient_id
+     failure event:  cvd_admit != 0 & cvd_admit < .
+obs. time interval:  (cvd_end[_n-1], cvd_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+        101  failures in single-failure-per-subject data
+  1,954.103  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  cvd_admit
+   analysis time _t:  (cvd_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_cvd_eth.svg not found)
+(file ./output/graphs/km_cvd_eth.svg written in SVG format)
+
+         failure _d:  cvd_admit
+   analysis time _t:  (cvd_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -692.45484
+Iteration 1:   log likelihood = -691.56931
+Iteration 2:   log likelihood = -691.56334
+Iteration 3:   log likelihood = -691.56334
+Refining estimates:
+Iteration 0:   log likelihood = -691.56334
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =        1,000                  Number of obs    =       1,000
+No. of failures =          101
+Time at risk    =  1954.102669
+                                                LR chi2(4)       =        1.78
+Log likelihood  =   -691.56334                  Prob > chi2      =      0.7756
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.006178   .3264476     0.02   0.985     .5327314    1.900384
+      Black  |   1.154015   .3744129     0.44   0.659     .6110045    2.179608
+      Mixed  |   1.070107   .3471895     0.21   0.835     .5665784     2.02113
+      Other  |   1.412572   .4299252     1.13   0.256     .7779326    2.564951
+------------------------------------------------------------------------------
+(note: file ./output/tempdata/crude_cvd_eth.ster not found)
+file ./output/tempdata/crude_cvd_eth.ster saved
+(note: file ./output/tempdata/surv_crude_cvd_eth16.dta not found)
+file ./output/tempdata/surv_crude_cvd_eth16.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                      6.15        4         0.1885
+      ----------------------------------------------------------------
+
+         failure _d:  cvd_admit
+   analysis time _t:  (cvd_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -501.91748
+Iteration 1:   log likelihood = -498.79542
+Iteration 2:   log likelihood = -498.78131
+Iteration 3:   log likelihood = -498.78131
+Refining estimates:
+Iteration 0:   log likelihood = -498.78131
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           76
+Time at risk    =   1521.36345
+                                                LR chi2(8)       =        6.27
+Log likelihood  =   -498.78131                  Prob > chi2      =      0.6168
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .8099053   .2923724    -0.58   0.559     .3991665    1.643291
+      Black  |   1.190125   .4255767     0.49   0.626     .5904882    2.398687
+      Mixed  |   .7080495   .2743942    -0.89   0.373     .3312783    1.513332
+      Other  |   1.246443    .416269     0.66   0.509     .6477399    2.398526
+             |
+     age_cat |
+41 - 60 y..  |    .761836   .2275322    -0.91   0.362     .4242669    1.367993
+61 - 80 y..  |   1.200019   .3306396     0.66   0.508     .6992909    2.059295
+  >80 years  |   .8650722   .4612979    -0.27   0.786     .3041942    2.460106
+             |
+        male |
+       Male  |   1.228259   .2862894     0.88   0.378     .7778344    1.939513
+------------------------------------------------------------------------------
+(note: file ./output/tempdata/model1_cvd_eth.ster not found)
+file ./output/tempdata/model1_cvd_eth.ster saved
+(note: file ./output/tempdata/surv_model1_cvd_eth.dta not found)
+file ./output/tempdata/surv_model1_cvd_eth.dta saved
+
+         failure _d:  cvd_admit
+   analysis time _t:  (cvd_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -501.91748
+Iteration 1:   log likelihood = -492.80542
+Iteration 2:   log likelihood = -492.48627
+Iteration 3:   log likelihood = -492.41784
+Iteration 4:   log likelihood = -492.39271
+Iteration 5:   log likelihood = -492.38347
+Iteration 6:   log likelihood = -492.38007
+Iteration 7:   log likelihood = -492.37882
+Iteration 8:   log likelihood = -492.37836
+Iteration 9:   log likelihood = -492.37819
+Iteration 10:  log likelihood = -492.37813
+Iteration 11:  log likelihood = -492.37811
+Iteration 12:  log likelihood =  -492.3781
+Iteration 13:  log likelihood =  -492.3781
+Iteration 14:  log likelihood =  -492.3781
+Iteration 15:  log likelihood =  -492.3781
+Iteration 16:  log likelihood =  -492.3781
+Iteration 17:  log likelihood =  -492.3781
+Iteration 18:  log likelihood =  -492.3781
+Iteration 19:  log likelihood =  -492.3781
+Iteration 20:  log likelihood =  -492.3781
+Iteration 21:  log likelihood =  -492.3781
+Iteration 22:  log likelihood =  -492.3781
+Iteration 23:  log likelihood =  -492.3781
+Iteration 24:  log likelihood =  -492.3781
+Iteration 25:  log likelihood =  -492.3781
+Iteration 26:  log likelihood =  -492.3781
+Iteration 27:  log likelihood =  -492.3781
+Iteration 28:  log likelihood =  -492.3781
+Iteration 29:  log likelihood =  -492.3781
+Iteration 30:  log likelihood =  -492.3781
+Iteration 31:  log likelihood =  -492.3781
+Iteration 32:  log likelihood =  -492.3781
+Iteration 33:  log likelihood =  -492.3781
+Iteration 34:  log likelihood =  -492.3781
+Refining estimates:
+Iteration 0:   log likelihood =  -492.3781
+Iteration 1:   log likelihood =  -492.3781
+Iteration 2:   log likelihood =  -492.3781
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           76
+Time at risk    =   1521.36345
+                                                LR chi2(15)      =       19.08
+Log likelihood  =    -492.3781                  Prob > chi2      =      0.2102
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .7550653   .2729221    -0.78   0.437     .3718035      1.5334
+      Black  |   1.116889    .399507     0.31   0.757      .554037     2.25155
+      Mixed  |   .6987473    .271153    -0.92   0.356     .3265926    1.494975
+      Other  |   1.263211   .4230661     0.70   0.485     .6552354    2.435312
+             |
+     age_cat |
+41 - 60 y..  |   .7380754   .2210054    -1.01   0.310     .4104133    1.327333
+61 - 80 y..  |   1.155437    .320454     0.52   0.602     .6709196    1.989859
+  >80 years  |   .8192979   .4398847    -0.37   0.710     .2860407     2.34669
+             |
+        male |
+       Male  |   1.173468   .2739204     0.69   0.493      .742638    1.854239
+             |
+urban_rura~n |
+      Urban  |   .9690524   .2298193    -0.13   0.895     .6088038    1.542472
+             |
+         imd |
+          1  |   .8524347   .5458455    -0.25   0.803     .2429994    2.990316
+          2  |   1.466883   .9032542     0.62   0.534     .4387889    4.903826
+          3  |   .5225344    .356819    -0.95   0.342     .1370444    1.992362
+          4  |   .5323577   .3574917    -0.94   0.348     .1427579    1.985213
+          5  |   1.079025   .6786067     0.12   0.904     .3145611    3.701334
+             |
+  1.shielded |   2.29e-16   1.68e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+(note: file ./output/tempdata/model2_cvd_eth.ster not found)
+file ./output/tempdata/model2_cvd_eth.ster saved
+(note: file ./output/tempdata/surv_model2_cvd_eth.dta not found)
+file ./output/tempdata/surv_model2_cvd_eth.dta saved
+(note: file ./output/tables/estout_table_eth_.txt not found)
+(output written to ./output/tables/estout_table_eth_.txt)
+
+. 
+. file close tablecontent
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/cox_model_checks.log
+  log type:  text
+ closed on:   1 Jun 2022, 15:30:16
+-------------------------------------------------------------------------------

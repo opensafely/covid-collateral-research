@@ -1,0 +1,389 @@
+{smcl}
+{* 21may2007}{...}
+{hi:help estadd}{right:(SJ7-2: st0085_1; SJ5-3: st0085)}
+{hline}
+
+{title:Title}
+
+{p 4 4 2}{hi:estadd} {hline 2} Add results to (stored) estimates
+
+
+{title:Syntax}
+
+{p 8 15 2}
+{cmd:estadd} {it:{help estadd##subcommands:subcommand}} [{cmd:,}
+{it:{help estadd##opts:options}} ] [ {cmd::} {it:namelist} ]
+
+
+    where {it:namelist} is {cmd:_all} | {cmd:*} | {it:name} [{it:name} ...]
+
+{marker subcommands}{...}
+    {it:subcommands}{col 26}description
+    {hline 64}
+    Elementary
+      {helpb estadd##local:{ul:loc}al} {it:name ...}{col 26}{...}
+add a macro
+      {helpb estadd##scalar:{ul:sca}lar} {it:name} {cmd:=} {it:exp}{col 26}{...}
+add a scalar
+      {helpb estadd##matrix:{ul:mat}rix} {it:name} {cmd:=} {it:mat}{col 26}{...}
+add a matrix
+
+    Statistics for each
+    coefficient
+      {helpb estadd##beta:beta}{col 26}{...}
+standardized coefficients
+      {helpb estadd##vif:vif}{col 26}{...}
+variance inflation factors (after {cmd:regress})
+      {helpb estadd##pcorr:pcorr}{col 26}{...}
+partial (and semipartial) correlations
+      {helpb estadd##expb:expb}{col 26}{...}
+exponentiated coefficients
+      {helpb estadd##ebsd:ebsd}{col 26}{...}
+standardized factor change coefficients
+      {helpb estadd##mean:mean}{col 26}{...}
+means of regressors
+      {helpb estadd##sd:sd}{col 26}{...}
+standard deviations of regressors
+      {helpb estadd##summ:summ}{col 26}{...}
+various descriptives of the regressors
+
+    Summary statistics
+      {helpb estadd##coxsnell:coxsnell}{col 26}{...}
+Cox and Snell's pseudo-R-squared
+      {helpb estadd##nagelkerke:nagelkerke}{col 26}{...}
+Nagelkerke's pseudo-R-squared
+      {helpb estadd##lrtest:lrtest} {it:model}{col 26}{...}
+likelihood-ratio test
+      {helpb estadd##ysumm:ysumm}{col 26}{...}
+descriptives of the dependent variable
+    {hline 64}
+
+{marker opts}{...}
+    {it:{help estadd##options:options}}{col 26}description
+    {hline 64}
+      {cmdab:r:eplace}{col 26}{...}
+permit overwriting existing {cmd:e()}'s
+      {cmdab:p:refix(}{it:string}{cmd:)}{col 26}{...}
+specify prefix for names of added results
+      {it:subcmdopts}{col 26}{...}
+subcommand specific options
+    {hline 64}
+
+
+{title:Description}
+
+{p 4 4 2}
+{cmd:estadd} adds more results to the {cmd:e()} saved results of an
+estimation command (see {help estcom} and {helpb ereturn}). If no
+{it:namelist} is provided, then the results are added to the
+currently active estimates (i.e., the model fitted last). If these
+estimates have been previously stored, the stored copy of the
+estimates will also be modified. Alternatively, if {it:namelist} is
+provided after the colon, results are added to all indicated sets of
+stored estimates (see {helpb estimates store} or 
+{helpb eststo}). You may use the {cmd:*} and {cmd:?}
+wildcards in {it:namelist}.
+
+{p 4 4 2}
+Adding more results to {cmd:e()} is useful, for example,
+if the estimates are to be tabulated by a command such as {helpb estout}
+or {helpb esttab}. See {it:{help estadd##examples:Examples}} below for
+the usage of {cmd:estadd}.
+
+{p 4 4 2}Technical note: Some of the subcommands below make use of the
+information contained in {cmd:e(sample)} to determine estimation sample.
+These subcommands return an error if the estimates do not contain
+{cmd:e(sample)}.
+
+
+{title:Subcommands}
+
+{dlgtab:Elementary}
+
+{marker local}{...}
+{p 4 8 2}
+{cmdab:loc:al} {it:name ...}
+{p_end}
+{p 8 8 2}
+adds in macro {cmd:e(}{it:name}{cmd:)} the specified contents (also
+see {helpb ereturn}).
+
+{marker scalar}{...}
+{p 4 8 2}
+{cmdab:sca:lar} {it:name} {cmd:=} {it:exp}
+{p_end}
+{p 8 8 2}
+adds in scalar {cmd:e(}{it:name}{cmd:)} the evaluation of {it:exp}
+(also see {helpb ereturn}).
+
+{marker matrix}{...}
+{p 4 8 2}
+{cmdab:mat:rix} {it:name} [{cmd:=}] {it:matname} [{cmd:, copy} ]
+{p_end}
+{p 8 8 2}
+moves matrix {it:matname} to {cmd:e(}{it:name}{cmd:)}. If {cmd:copy}
+is specified, {it:matname} is copied into {cmd:e(}{it:name}{cmd:)}
+(also see {helpb ereturn}).
+
+{dlgtab:Statistics for each coefficient}
+
+{marker beta}{...}
+{p 4 8 2}
+{cmd:beta}
+{p_end}
+{p 8 8 2}
+adds in {cmd:e(beta)} the standardized beta coefficients.
+
+{marker vif}{...}
+{p 4 8 2}
+{cmd:vif} [{cmd:,} {cmdab:tol:erance} {cmdab:sqr:vif} ]
+{p_end}
+{p 8 8 2}
+adds in {cmd:e(vif)} the variance inflation factors (VIFs) for the
+regressors (see {helpb vif}). {cmd:vif} works only
+with estimates produced by {helpb regress}. {cmd:tolerance}
+also adds the tolerances (1/VIF) in {cmd:e(tolerance)}.
+{cmd:sqrvif} also adds the square roots of the VIFs in
+{cmd:e(sqrvif)}.
+
+{marker pcorr}{...}
+{p 4 8 2}
+{cmd:pcorr} [{cmd:, semi} ]
+{p_end}
+{p 8 8 2}
+adds the partial correlations (see {helpb pcorr}) and,
+optionally, the semipartial correlations between the dependent
+variable and the individual regressors (see, e.g., the {cmd:pcorr2}
+package from the SSC archive). For multiple-equation
+models, the results are computed for the first equation only. The
+partial correlations will be returned in {cmd:e(pcorr)} and, if
+{cmd:semi} is specified, the semipartial correlations will be
+returned in {cmd:e(spcorr)}.
+
+{marker expb}{...}
+{p 4 8 2}
+{cmd:expb} [{cmd:,} {cmdab:nocons:tant} ]
+{p_end}
+{p 8 8 2}
+adds in {cmd:e(expb)} the exponentiated coefficients (see 
+{it:{help eform_option}}). {cmd:noconstant} excludes the constant
+from the added results.
+
+{marker ebsd}{...}
+{p 4 8 2}
+{cmd:ebsd}
+{p_end}
+{p 8 8 2}
+adds in {cmd:e(ebsd)} the standardized factor change coefficients,
+i.e., exp(b_jS_j), where b_j is the raw coefficient and S_j is the
+standard deviation of regressor j, that are sometimes reported for
+logistic regression (see Long 1997).
+
+{marker mean}{...}
+{p 4 8 2}
+{cmd:mean}
+{p_end}
+{p 8 8 2}
+adds in {cmd:e(mean)} the means of the regressors.
+
+{marker sd}{...}
+{p 4 8 2}
+{cmd:sd} [{cmd:,} {cmdab:nob:inary} ]
+{p_end}
+{p 8 8 2}
+adds in {cmd:e(sd)} the standard deviations of the regressors.
+{cmd:nobinary} suppresses the computation of the standard deviation
+for 0/1 variables.
+
+{marker summ}{...}
+{p 4 8 2}
+{cmd:summ} [{cmd:,} {it:stats} ]
+{p_end}
+{p 8 8 2}
+adds vectors of the regressors' descriptive statistics to the
+estimates. The following {it:stats} are available:
+{p_end}
+{marker stats}{...}
+        {it:stats}{col 26}description
+        {hline 59}
+          {cmdab:me:an}{col 26}mean
+          {cmdab:su:m}{col 26}sum
+          {cmdab:mi:n}{col 26}minimum
+          {cmdab:ma:x}{col 26}maximum
+          {cmdab:ra:nge}{col 26}range = max - min
+          {cmd:sd}{col 26}standard deviation
+          {cmdab:v:ar}{col 26}variance
+          {cmd:cv}{col 26}coefficient of variation (sd/mean)
+          {cmdab:sem:ean}{col 26}standard error of mean = sd/sqrt(n)
+          {cmdab:sk:ewness}{col 26}skewness
+          {cmdab:k:urtosis}{col 26}kurtosis
+          {cmd:p1}{col 26}1st percentile
+          {cmd:p5}{col 26}5th percentile
+          {cmd:p10}{col 26}10th percentile
+          {cmd:p25}{col 26}25th percentile
+          {cmd:p50}{col 26}50th percentile
+          {cmd:p75}{col 26}75th percentile
+          {cmd:p90}{col 26}90th percentile
+          {cmd:p95}{col 26}95th percentile
+          {cmd:p99}{col 26}99th percentile
+          {cmd:iqr}{col 26}interquartile range = p75 - p25
+          {cmd:all}{col 26}all the above
+          {cmdab:med:ian}{col 26}equivalent to specifying "{cmd:p50}"
+          {cmd:q}{col 26}equivalent to specifying "{cmd:p25 p50 p75}"
+        {hline 59}
+
+{p 8 8 2}
+The default is {cmd:mean sd min max}. Alternatively, indicate the
+desired statistics. For example, to add information on the
+regressors' skewness and kurtosis, type
+
+            {cmd:. estadd summ, skewness kurtosis}
+
+{p 8 8 2}
+The statistics' names are used as the names for the returned {cmd:e()}
+matrices. For example, {cmd:estadd summ, mean} will store the means
+of the regressors in {cmd:e(mean)}.
+
+{dlgtab:Summary statistics}
+
+{marker coxsnell}{...}
+{p 4 8 2}
+{cmd:coxsnell}
+{p_end}
+{p 8 8 2}
+adds in {cmd:e(coxsnell)} the Cox and Snell pseudo-R-squared, which is
+defined as
+
+{p 12 12 2}
+r2_coxsnell = 1 - ( L0 / L1 )^(2/N)
+
+{p 8 8 2}
+where L0 is the likelihood of the model without regressors, L1 is the
+likelihood of the full model, and N is the sample size.
+
+{marker nagelkerke}{...}
+{p 4 8 2}
+{cmd:nagelkerke}
+{p_end}
+{p 8 8 2}
+adds in {cmd:e(nagelkerke)} the Nagelkerke pseudo-R-squared (or Cragg
+and Uhler pseudo-R-squared), which is defined as
+
+{p 12 12 2}
+r2_nagelkerke = r2_coxsnell / (1 - L0^(2/N))
+
+{marker lrtest}{...}
+{p 4 8 2}
+{cmd:lrtest} {it:model} [{cmd:,} {cmdab:n:ame:(}{it:string}{cmd:)}
+{it:lrtest_options} ]
+{p_end}
+{p 8 8 2}
+adds the results from a likelihood-ratio test, where {cmd:model} is
+the comparison model (see {helpb lrtest}). Added are
+{cmd:e(lrtest_chi)}, {cmd:e(lrtest_df)}, and {cmd:e(lrtest_p)}. The
+names may be modified using the {cmd:name()} option. Specify
+{cmd:name(}{it:myname}{cmd:)} to add {cmd:e(}{it:myname}{cmd:chi)},
+{cmd:e(}{it:myname}{cmd:df)}, and {cmd:e(}{it:myname}{cmd:p)}. See
+{helpb lrtest} for the {it:lrtest_options}.
+
+{marker ysumm}{...}
+{p 4 8 2}
+{cmd:ysumm} [{cmd:,} {it:stats} ]
+{p_end}
+{p 8 8 2}
+adds descriptive statistics of the dependent variable. See the
+{helpb estadd##summ:summ} subcommand above for a list of the available
+{it:stats}. The default is {cmd:mean sd min max}. The default prefix
+for the names of the added scalars is {cmd:y} (e.g., the mean of the
+dependent variable will be returned in {cmd:e(ymean)}). Use
+{cmd:estadd}'s {cmd:prefix()} option to change the prefix. If a model
+has multiple dependent variables, results for the first variable will
+be added.
+
+
+{marker options}{...}
+{title:Options}
+
+{p 4 8 2}
+{cmd:replace} permits {cmd:estadd} to overwrite existing {cmd:e()}
+macros, scalars, or matrices.
+
+{p 4 8 2}
+{cmd:prefix(}{it:string}{cmd:)} denotes a prefix for the names of the
+added results. The default prefix is an empty string. For example, if
+{cmd:prefix(}{it:string}{cmd:)} is specified, the {cmd:beta}
+subcommand will return the matrix {cmd:e(}{it:string}{cmd:beta)}.
+
+{p 4 8 2}
+{it:subcmdopts} are subcommand-specific options. See the descriptions
+of the subcommands above.
+
+
+{marker examples}{...}
+{title:Examples}
+
+{p 4 4 2}
+Example 1: add standardized beta coefficients to stored estimates for
+tabulation in {cmd:estout}
+
+        {cmd}. sysuse auto
+        {cmd}. regress price mpg
+        {cmd}. estimates store model1
+        {cmd}. regress price mpg foreign
+        {cmd}. estimates store model2
+        {cmd}. estadd beta: *
+        {cmd}. estout *, cells(b beta(par)) style(fixed){txt}
+
+
+{p 4 4 2}Example 2: add means and standard deviations of the model's regressors
+to the current estimates
+
+        {cmd}. logit foreign price mpg
+        {cmd}. estadd summ, mean sd
+        {cmd}. estout, cells("mean sd") style(fixed) drop(_cons){txt}
+
+
+{p 4 4 2}Example 3: add {cmd:r()}-returns from other programs to the
+current estimates
+
+        {cmd}. regress price mpg weight
+        {cmd}. test mpg=weight
+        {cmd}. estadd scalar p_diff = r(p)
+        {cmd}. estimates table, stats(p_diff){txt}
+
+
+{title:Writing one's own subcommands}
+
+{p 4 4 2}
+A program providing a new {cmd:estadd} subcommand should be called
+{cmd:estadd_}{it:mysubcommand} (see {helpb program}).
+{it:mysubcommand} will be available to {cmd:estadd} as a new
+{it:subcommand} after the program definition has been executed or
+saved to a file called {cmd:estadd_}{it:mysubcommand}{cmd:.ado} in either the
+current directory or somewhere else in the {cmd:adopath}
+(see {helpb sysdir}).
+
+{p 4 4 2}
+Use the subcommands provided within {cmd:estadd.ado} as a starting
+point for writing new subcommands.
+
+
+{title:Author}
+
+{p 4 4 2} Ben Jann, ETH Zurich, jann@soz.gess.ethz.ch
+
+
+{title:Also see}
+
+    Manual:  {hi:[R] estimates}
+
+        SJ:  SJ5-3 st0085 (Jann 2005)
+
+{p 4 13 2}Online:
+ {helpb estimates},
+ {helpb ereturn},
+ {helpb program},
+ {helpb estout},
+ {helpb esttab},
+ {helpb eststo}
+{p_end}

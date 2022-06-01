@@ -7,7 +7,7 @@ AUTHOR:					R Costello
 DESCRIPTION OF FILE:	Produce a table of baseline characteristics for 3 years (2019, 2020, 2021)
 DATASETS USED:			output/measures/tables/input_tables_*
 DATASETS CREATED: 		None
-OTHER OUTPUT: 			Results in txt: table1.txt 
+OTHER OUTPUT: 			Results in excel: baseline_table*.xlsx
 						Log file: logs/table1_descriptives
 USER-INSTALLED ADO: 	 
   (place .ado file(s) in analysis folder)	
@@ -52,6 +52,7 @@ forvalues i=2019/2021 {
     * Use new package
     table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate) clear
     export delimited using ./output/tables/baseline_table_`i'.csv
+    
     }
 
 * Close log file 
