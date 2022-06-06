@@ -121,7 +121,7 @@ file write tablecontent ("Association between ethnicity and outcomes pre-pandemi
 file write tablecontent _tab ("Denominator") _tab ("Event") _tab ("Total person-weeks") _tab ("Rate per 1,000") _tab ("Crude") _tab _tab ("Age/Sex Adjusted") _tab _tab ("Fully Adjusted") _tab _tab  _n
 file write tablecontent _tab _tab _tab _tab _tab   ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab _tab  _n
 
-foreach sub in cvd /*dm copd mh*/ {
+foreach sub in cvd dm copd mh {
     * Cox model for each outcome category
     * Generate flags and end dates for each outcome
     gen `sub'_admit=(`sub'_admit_date!=.)
@@ -205,7 +205,7 @@ foreach sub in cvd /*dm copd mh*/ {
         file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab _n
         cap estimates clear
     }  //end ethnic group
-
+drop total_follow_up
 
 } //end outcomes
 
