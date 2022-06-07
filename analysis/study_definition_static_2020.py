@@ -11,9 +11,16 @@ study = StudyDefinition(
         "rate": "uniform",
         "incidence": 0.05,
     },
-    index_date="2018-03-01",
+    index_date="2020-03-01",
     population=patients.all(),
 
+    age=patients.age_as_of(
+        "index_date",
+        return_expectations={
+            "rate": "universal",
+            "int": {"distribution": "population_ages"},
+        },
+    ),
     # Sex
     sex=patients.sex(
         return_expectations={
@@ -78,6 +85,25 @@ study = StudyDefinition(
                 "4": 0.19,
                 "5": 0.19,
                 }
+            },
+        },
+    ),
+    region=patients.registered_practice_as_of(
+    "index_date",
+    returning="nuts1_region_name",
+    return_expectations={
+        "rate": "universal",
+        "category": {
+            "ratios": {
+                "North East": 0.1,
+                "North West": 0.1,
+                "Yorkshire and the Humber": 0.1,
+                "East Midlands": 0.1,
+                "West Midlands": 0.1,
+                "East of England": 0.1,
+                "London": 0.2,
+                "South East": 0.2,
+                },
             },
         },
     ),
