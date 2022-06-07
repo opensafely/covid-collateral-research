@@ -113,6 +113,7 @@ actions:
     needs: [generate_study_population_tables_2019, generate_study_population_tables_2020, generate_study_population_tables_2021]
     outputs:
       moderately_sensitive:
+        log: logs/table1_descriptives.log
         output: output/tables/baseline_table_*.csv
 
   # Generates summary measures for CV 
@@ -269,4 +270,29 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_mortality.log
-        output: output/time_series/tsreg_mortality*.csv
+        output: output/time_series/tsreg_tables_mortality.xlsx
+
+  # Study definition for pre-pandemic survival analysis
+  generate_study_population_survival_pre:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_survival_pre --output-dir=output/survival --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/survival/input_survival_pre*.csv
+
+  # Study definition for pandemic survival analysis
+  generate_study_population_survival_pandemic:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_survival_pandemic --output-dir=output/survival --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/survival/input_survival_pandemic*.csv
+
+  # Cox models
+  cox_models:
+    run: stata-mp:latest analysis/cox_models.do
+    needs: [generate_study_population_survival_pre, generate_study_population_survival_pandemic]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_checks.log
+        output: output/tables/*.txt
+        graph: output/graphs/km*.svg
+        

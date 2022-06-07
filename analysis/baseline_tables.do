@@ -7,7 +7,7 @@ AUTHOR:					R Costello
 DESCRIPTION OF FILE:	Produce a table of baseline characteristics for 3 years (2019, 2020, 2021)
 DATASETS USED:			output/measures/tables/input_tables_*
 DATASETS CREATED: 		None
-OTHER OUTPUT: 			Results in txt: table1.txt 
+OTHER OUTPUT: 			Results in excel: baseline_table*.xlsx
 						Log file: logs/table1_descriptives
 USER-INSTALLED ADO: 	 
   (place .ado file(s) in analysis folder)	
@@ -49,9 +49,34 @@ forvalues i=2019/2021 {
     label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years" 3 ">80 years"
     label values age_cat age
 
-    * Use new package
+    preserve
+    * Create baseline table
     table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate) clear
     export delimited using ./output/tables/baseline_table_`i'.csv
+    restore
+    drop if ethnicity==6
+    gen white = (ethnicity==1)
+    gen mixed = (ethnicity==2)
+    gen asian = (ethnicity==3)
+    gen black = (ethnicity==4)
+    gen other = (ethnicity==5)
+
+    tempfile tempfile
+    preserve
+    keep if ethnicity==1
+    table1_mc, vars(age_cat cate \ sex cate \ imd cate \ region cate) clear
+    save `tempfile', replace
+    restore
+    forvalues j=2/5 {
+      preserve
+      keep if ethnicity==`j'
+      table1_mc, vars(age_cat cate \ sex cate \ imd cate \ region cate) clear
+      append using `tempfile'
+      save `tempfile', replace
+      restore
+      }
+    use `tempfile', clear
+    export delimited using ./output/tables/baseline_table_strata`i'.csv
     }
 
 * Close log file 

@@ -195,4 +195,23 @@ common_variables = dict(
         on_or_before="index_date",
         return_expectations={"incidence": 0.2},
             ),
+        urban_rural=patients.address_as_of(
+            "index_date",
+            returning="rural_urban_classification",
+            return_expectations={
+            "rate": "universal",
+            "category": 
+                {"ratios": {
+                    "1": 0.1,
+                    "2": 0.1,
+                    "3": 0.1,
+                    "4": 0.1,
+                    "5": 0.1,
+                    "6": 0.1,
+                    "7": 0.2,
+                    "8": 0.2,
+                    }
+                },
+            },
+        ),
 )
