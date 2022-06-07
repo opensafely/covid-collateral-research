@@ -45,12 +45,16 @@
  27.                 matrix a = r(table)'
  28.                 putexcel A6 = matrix(a), rownames
  29.                 putexcel save
- 30.                 import excel using ./output/time_series/tsreg_tables_dm.xl
-> sx, sheet (`c'_`d') clear
- 31.         export delimited using ./output/time_series/tsreg_dm_`c'_`d'.csv, 
+ 30.                 quietly margins `d'##postcovid
+ 31.         marginsplot
+ 32.         graph export ./output/time_series/margins_dm_`c'_`d'.svg, as(svg) 
 > replace
- 32.                 }
- 33.         }
+ 33.                 import excel using ./output/time_series/tsreg_tables_dm.xl
+> sx, sheet (`c'_`d') clear
+ 34.         export delimited using ./output/time_series/tsreg_dm_`c'_`d'.csv, 
+> replace
+ 35.                 }
+ 36.         }
 (5 vars, 235 obs)
 (0 observations deleted)
 (60 real changes made)
@@ -94,6 +98,11 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_dm_hba1c_ethnicity.svg not found)
+(file ./output/time_series/margins_dm_hba1c_ethnicity.svg written in SVG format
+> )
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_hba1c_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_hba1c_ethnicity.csv saved
@@ -140,6 +149,10 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_dm_hba1c_imd.svg not found)
+(file ./output/time_series/margins_dm_hba1c_imd.svg written in SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_hba1c_imd.csv not found)
 file ./output/time_series/tsreg_dm_hba1c_imd.csv saved
@@ -186,6 +199,12 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_dm_systolic_bp_ethnicity.svg not found
+> )
+(file ./output/time_series/margins_dm_systolic_bp_ethnicity.svg written in SVG 
+> format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_systolic_bp_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_systolic_bp_ethnicity.csv saved
@@ -232,6 +251,11 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_dm_systolic_bp_imd.svg not found)
+(file ./output/time_series/margins_dm_systolic_bp_imd.svg written in SVG format
+> )
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_systolic_bp_imd.csv not found)
 file ./output/time_series/tsreg_dm_systolic_bp_imd.csv saved
@@ -278,6 +302,11 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_dm_t1_primary_ethnicity.svg not found)
+(file ./output/time_series/margins_dm_t1_primary_ethnicity.svg written in SVG f
+> ormat)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_t1_primary_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_t1_primary_ethnicity.csv saved
@@ -324,6 +353,10 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_dm_t1_primary_imd.svg not found)
+(file ./output/time_series/margins_dm_t1_primary_imd.svg written in SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_t1_primary_imd.csv not found)
 file ./output/time_series/tsreg_dm_t1_primary_imd.csv saved
@@ -370,6 +403,11 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_dm_t2_primary_ethnicity.svg not found)
+(file ./output/time_series/margins_dm_t2_primary_ethnicity.svg written in SVG f
+> ormat)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_t2_primary_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_t2_primary_ethnicity.csv saved
@@ -416,6 +454,10 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_dm_t2_primary_imd.svg not found)
+(file ./output/time_series/margins_dm_t2_primary_imd.svg written in SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_t2_primary_imd.csv not found)
 file ./output/time_series/tsreg_dm_t2_primary_imd.csv saved
@@ -462,6 +504,12 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_dm_keto_primary_ethnicity.svg not foun
+> d)
+(file ./output/time_series/margins_dm_keto_primary_ethnicity.svg written in SVG
+>  format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_keto_primary_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_keto_primary_ethnicity.csv saved
@@ -508,6 +556,11 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_dm_keto_primary_imd.svg not found)
+(file ./output/time_series/margins_dm_keto_primary_imd.svg written in SVG forma
+> t)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_keto_primary_imd.csv not found)
 file ./output/time_series/tsreg_dm_keto_primary_imd.csv saved
@@ -554,6 +607,11 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_dm_t1_any_ethnicity.svg not found)
+(file ./output/time_series/margins_dm_t1_any_ethnicity.svg written in SVG forma
+> t)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_t1_any_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_t1_any_ethnicity.csv saved
@@ -600,6 +658,10 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_dm_t1_any_imd.svg not found)
+(file ./output/time_series/margins_dm_t1_any_imd.svg written in SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_t1_any_imd.csv not found)
 file ./output/time_series/tsreg_dm_t1_any_imd.csv saved
@@ -646,6 +708,11 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_dm_t2_any_ethnicity.svg not found)
+(file ./output/time_series/margins_dm_t2_any_ethnicity.svg written in SVG forma
+> t)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_t2_any_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_t2_any_ethnicity.csv saved
@@ -692,6 +759,10 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_dm_t2_any_imd.svg not found)
+(file ./output/time_series/margins_dm_t2_any_imd.svg written in SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_t2_any_imd.csv not found)
 file ./output/time_series/tsreg_dm_t2_any_imd.csv saved
@@ -738,6 +809,11 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_dm_keto_any_ethnicity.svg not found)
+(file ./output/time_series/margins_dm_keto_any_ethnicity.svg written in SVG for
+> mat)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_keto_any_ethnicity.csv not found)
 file ./output/time_series/tsreg_dm_keto_any_ethnicity.csv saved
@@ -784,6 +860,10 @@ file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
 file ./output/time_series/tsreg_tables_dm.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_dm_keto_any_imd.svg not found)
+(file ./output/time_series/margins_dm_keto_any_imd.svg written in SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_dm_keto_any_imd.csv not found)
 file ./output/time_series/tsreg_dm_keto_any_imd.csv saved
@@ -859,7 +939,7 @@ file ./output/time_series/tsreg_dm_keto_any_imd.csv saved
 
 end of do-file
 
-. . file open output using "/tmp/tmp.2aq9pdpFHp", write text replace
+. . file open output using "/tmp/tmp.T1TwUdL2WG", write text replace
 
 . . file write output "success" 
 

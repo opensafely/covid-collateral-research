@@ -239,6 +239,7 @@ actions:
       moderately_sensitive:
         log: logs/tsreg_resp.log
         output: output/time_series/tsreg_resp*.csv
+        graph: output/time_series/margins_resp*.svg
 
   time_series_dm:
     run: stata-mp:latest analysis/time_series_dm.do
@@ -247,6 +248,7 @@ actions:
       moderately_sensitive:
         log: logs/tsreg_dm.log
         output: output/time_series/tsreg_dm*.csv
+        graph: output/time_series/margins_dm*.svg
 
   time_series_cvd:
     run: stata-mp:latest analysis/time_series_cvd.do
@@ -255,6 +257,7 @@ actions:
       moderately_sensitive:
         log: logs/tsreg_cvd.log
         output: output/time_series/tsreg_cvd_*.csv
+        graphs: output/time_series/margins_cvd*.svg
 
   time_series_mh:
     run: stata-mp:latest analysis/time_series_mh.do
@@ -263,6 +266,7 @@ actions:
       moderately_sensitive:
         log: logs/tsreg_mh.log
         output: output/time_series/tsreg_mh*.csv
+        graphs: output/time_series/margins_mh*.svg
 
   time_series_mortality:
     run: stata-mp:latest analysis/time_series_mortality.do
@@ -270,7 +274,8 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_mortality.log
-        output: output/time_series/tsreg_tables_mortality.xlsx
+        output: output/time_series/tsreg_tables_mortality*.csv
+        graph: output/time_series/margins_mort*.svg
 
   # Study definition for pre-pandemic survival analysis
   generate_study_population_survival_pre:

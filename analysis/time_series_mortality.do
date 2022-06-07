@@ -41,8 +41,11 @@ foreach var in cvd resp mh mi stroke heart_failure vte asthma copd all_cause {
 	matrix a = r(table)'
 	putexcel A6 = matrix(a), rownames
 	putexcel save
+	quietly margins ethnicity##postcovid
+	marginsplot
+	graph export ./output/time_series/margins_mort_ethnicity_`var'.svg, as(svg) replace
 	import excel using ./output/time_series/tsreg_tables_mortality.xlsx, sheet (`var'_ethnic) clear
-        export delimited using ./output/time_series/tsreg_mortality_`var'_ethnic.csv, replace
+	export delimited using ./output/time_series/tsreg_mortality_`var'_ethnic.csv, replace
 	}
 * Time series analysis for mortality by IMD
 foreach var in cvd resp mh mi stroke heart_failure vte asthma copd all_cause {
@@ -74,6 +77,9 @@ foreach var in cvd resp mh mi stroke heart_failure vte asthma copd all_cause {
 	matrix a = r(table)'
 	putexcel A6 = matrix(a), rownames
 	putexcel save
+	quietly margins imd##postcovid
+	marginsplot
+	graph export ./output/time_series/margins_mort_imd_`var'.svg, as(svg) replace
 	import excel using ./output/time_series/tsreg_tables_mortality.xlsx, sheet (`var'_imd) clear
     export delimited using ./output/time_series/tsreg_mortality_`var'_imd.csv, replace
 	}

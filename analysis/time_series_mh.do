@@ -48,6 +48,9 @@ forvalues i=1/7 {
         matrix a = r(table)'
         putexcel A6 = matrix(a), rownames
         putexcel save
+        quietly margins `d'##postcovid
+        marginsplot
+        graph export ./output/time_series/margins_mh_`c'_`d'.svg, as(svg) replace
         import excel using ./output/time_series/tsreg_tables_mh.xlsx, sheet (`c'_`d') clear
         export delimited using ./output/time_series/tsreg_mh_`c'_`d'.csv
         }
@@ -91,6 +94,9 @@ forvalues i=1/7 {
         matrix a = r(table)'
         putexcel A6 = matrix(a), rownames
         putexcel save
+        quietly margins `f'##postcovid
+        marginsplot
+        graph export ./output/time_series/margins_mh_`d'_`f'.svg, as(svg) replace
         import excel using ./output/time_series/tsreg_tables_mh.xlsx, sheet (`d'_`f') clear
         export delimited using ./output/time_series/tsreg_mh_`d'_`f'.csv, replace
         }
