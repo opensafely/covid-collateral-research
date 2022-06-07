@@ -132,7 +132,7 @@ common_variables = dict(
             returning="binary_flag",
             return_expectations={"incidence":0.2,}
             ),
-            has_t2_diabetes=patients.with_these_clinical_events(
+        has_t2_diabetes=patients.with_these_clinical_events(
             t2dm_codes,
             on_or_before="index_date",
             returning="binary_flag",

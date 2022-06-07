@@ -51,7 +51,8 @@ forvalues i=2019/2021 {
 
     preserve
     * Create baseline table
-    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate) clear
+    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate \ has_t1_diabetes cate ///
+    \ has_t2_diabetes cate \ has_asthma cate \ has_copd cate \ cvd_subgroup cate \ mh_subgroup cate) clear
     export delimited using ./output/tables/baseline_table_`i'.csv
     restore
     drop if ethnicity==6
@@ -64,13 +65,15 @@ forvalues i=2019/2021 {
     tempfile tempfile
     preserve
     keep if ethnicity==1
-    table1_mc, vars(age_cat cate \ sex cate \ imd cate \ region cate) clear
+    table1_mc, vars(age_cat cate \ sex cate \ imd cate \ region cate \ has_t1_diabetes cate ///
+    \ has_t2_diabetes cate \ has_asthma cate \ has_copd cate \ cvd_subgroup cate \ mh_subgroup cate) clear
     save `tempfile', replace
     restore
     forvalues j=2/5 {
       preserve
       keep if ethnicity==`j'
-      table1_mc, vars(age_cat cate \ sex cate \ imd cate \ region cate) clear
+      table1_mc, vars(age_cat cate \ sex cate \ imd cate \ region cate \  has_t1_diabetes cate ///
+      \ has_t2_diabetes cate \ has_asthma cate \ has_copd cate \ cvd_subgroup cate \ mh_subgroup cate) clear
       append using `tempfile'
       save `tempfile', replace
       restore
