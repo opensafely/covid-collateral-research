@@ -29,6 +29,7 @@ forvalues i=2019/2021 {
   * Import csv file
     import delimited ./output/measures/tables/input_tables_`i'-01-01.csv, clear
     * Check how often household is zero
+    sum household, d
     count if household==0
     *update variable with missing so that . is shown as unknown (just for this table)
     *(1) ethnicity
