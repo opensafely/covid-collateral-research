@@ -24,13 +24,12 @@ log using ./logs/table1_descriptives.log, replace
 
 cap mkdir ./output/tables
 
-* Check how often household is zero
-count if household==0
-
 * Create  baseline tables for 3 years
 forvalues i=2019/2021 {
-* Import csv file
+  * Import csv file
     import delimited ./output/measures/tables/input_tables_`i'-01-01.csv, clear
+    * Check how often household is zero
+    count if household==0
     *update variable with missing so that . is shown as unknown (just for this table)
     *(1) ethnicity
     replace ethnicity=6 if ethnicity==.
@@ -54,8 +53,8 @@ forvalues i=2019/2021 {
 
     preserve
     * Create baseline table
-    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate \ has_t1_diabetes cate ///
-    \ has_t2_diabetes cate \ has_asthma cate \ has_copd cate \ cvd_subgroup cate \ mh_subgroup cate) clear
+    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate \ urban_rural cate \  ///
+    has_t1_diabetes cate  \ has_t2_diabetes cate \ has_asthma cate \ has_copd cate \ cvd_subgroup cate \ mh_subgroup cate) clear
     export delimited using ./output/tables/baseline_table_`i'.csv
     restore
     drop if ethnicity==6
