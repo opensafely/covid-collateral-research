@@ -4,6 +4,7 @@ from cohortextractor import (
     StudyDefinition,
     Measure,
     patients,
+    filter_codes_by_category,
 )
 from codelists import *
 
@@ -123,7 +124,7 @@ study = StudyDefinition(
     # Hospital admissions primary diagnosis - CVD
     # MI
     mi_primary_admission=patients.admitted_to_hospital(
-        with_these_primary_diagnoses=mi_icd_codes,
+        with_these_primary_diagnoses=filter_codes_by_category(mi_icd_codes, include=["1"]),
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
@@ -146,7 +147,7 @@ study = StudyDefinition(
 
     # Heart failure
     heart_failure_primary_admission=patients.admitted_to_hospital(
-        with_these_primary_diagnoses=heart_failure_icd_codes,
+        with_these_primary_diagnoses=filter_codes_by_category(heart_failure_icd_codes, include=["1"]),
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
@@ -161,7 +162,7 @@ study = StudyDefinition(
     # Hospital admissions any diagnosis - CVD
     # MI
     mi_admission=patients.admitted_to_hospital(
-        with_these_diagnoses=mi_icd_codes,
+        with_these_diagnoses=filter_codes_by_category(mi_icd_codes, include=["1"]),
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
@@ -184,7 +185,7 @@ study = StudyDefinition(
 
     # Heart failure
     heart_failure_admission=patients.admitted_to_hospital(
-        with_these_diagnoses=heart_failure_icd_codes,
+        with_these_diagnoses=filter_codes_by_category(heart_failure_icd_codes, include=["1"]),
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},

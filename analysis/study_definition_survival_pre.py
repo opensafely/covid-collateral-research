@@ -3,6 +3,7 @@ from cohortextractor import (
     StudyDefinition,
     patients,
     codelist,
+    filter_codes_by_category,
 )
 from codelists import *
 from common_variables import common_variables
@@ -55,7 +56,7 @@ study = StudyDefinition(
     # Hospitalisation with primary reason CVD (inc. MI, stroke, heart failure, VTE)
     # MI
     mi_primary_admission=patients.admitted_to_hospital(
-        with_these_primary_diagnoses=mi_icd_codes,
+        with_these_primary_diagnoses=filter_codes_by_category(mi_icd_codes, include=["1"]),
         on_or_before="2020-03-22",
         returning="date_admitted",
         find_first_match_in_period=True,
@@ -73,7 +74,7 @@ study = StudyDefinition(
     ),
     # Heart failure
     heart_failure_primary_admission=patients.admitted_to_hospital(
-        with_these_primary_diagnoses=heart_failure_icd_codes,
+        with_these_primary_diagnoses=filter_codes_by_category(heart_failure_icd_codes, include=["1"]),
         on_or_before="2020-03-22",
         returning="date_admitted",
         find_first_match_in_period=True,
