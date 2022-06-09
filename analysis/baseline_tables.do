@@ -24,6 +24,9 @@ log using ./logs/table1_descriptives.log, replace
 
 cap mkdir ./output/tables
 
+* Check how often household is zero
+count if household==0
+
 * Create  baseline tables for 3 years
 forvalues i=2019/2021 {
 * Import csv file

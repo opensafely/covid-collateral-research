@@ -40,6 +40,7 @@ study = StudyDefinition(
     household=patients.household_as_of(
             "2020-02-01",
             returning="household_size",
+            return_expectations={"int" : {"distribution": "normal", "mean": 25, "stddev": 5}, "incidence" : 0.5}
         ),
     **common_variables
 )
