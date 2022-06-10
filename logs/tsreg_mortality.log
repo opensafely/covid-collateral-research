@@ -36,11 +36,15 @@
  23.         matrix a = r(table)'
  24.         putexcel A6 = matrix(a), rownames
  25.         putexcel save
- 26.         import excel using ./output/time_series/tsreg_tables_mortality.xls
+ 26.         quietly margins ethnicity##postcovid
+ 27.         marginsplot
+ 28.         graph export ./output/time_series/margins_mort_ethnicity_`var'.svg
+> , as(svg) replace
+ 29.         import excel using ./output/time_series/tsreg_tables_mortality.xls
 > x, sheet (`var'_ethnic) clear
- 27.         export delimited using ./output/time_series/tsreg_mortality_`var'_
+ 30.         export delimited using ./output/time_series/tsreg_mortality_`var'_
 > ethnic.csv, replace
- 28.         }
+ 31.         }
 (5 vars, 180 obs)
 (0 observations deleted)
 (45 real changes made)
@@ -51,39 +55,44 @@
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        180
-maximum lag: 1                                  F( 12,       167) =       1.87
-                                                Prob > F          =     0.0415
+maximum lag: 1                                  F( 12,       167) =       0.77
+                                                Prob > F          =     0.6809
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   312.0853   574.8451     0.54   0.588    -822.8146    1446.985
-          3  |  -190.3315   411.7933    -0.46   0.645    -1003.323      622.66
-          4  |   828.4137   556.1119     1.49   0.138    -269.5018    1926.329
-          5  |  -41.27441   466.9235    -0.09   0.930    -963.1079     880.559
+          2  |   82.06458   431.3121     0.19   0.849    -769.4624    933.5916
+          3  |   45.36794   344.4902     0.13   0.895     -634.749    725.4849
+          4  |   628.8509   486.8538     1.29   0.198    -332.3304    1590.032
+          5  |  -300.8703   388.1075    -0.78   0.439      -1067.1    465.3591
              |
- 1.postcovid |  -31.62137   472.4379    -0.07   0.947    -964.3418    901.0991
+ 1.postcovid |  -58.32005   447.3162    -0.13   0.896    -941.4435    824.8034
              |
    ethnicity#|
    postcovid |
-        2 1  |   149.8369   701.4713     0.21   0.831    -1235.057    1534.731
-        3 1  |   652.0121   623.6774     1.05   0.297     -579.296     1883.32
-        4 1  |  -1340.369    683.215    -1.96   0.051     -2689.22    8.482648
-        5 1  |   651.6507   588.7113     1.11   0.270    -510.6249    1813.926
+        2 1  |   597.2221   632.8976     0.94   0.347    -652.2893    1846.733
+        3 1  |   138.7329   524.7916     0.26   0.792     -897.348    1174.814
+        4 1  |  -829.8406    647.276    -1.28   0.202    -2107.739    448.0577
+        5 1  |   322.2254   564.4035     0.57   0.569    -792.0601    1436.511
              |
       season |
-     Summer  |  -6.165815   327.9683    -0.02   0.985    -653.6641    641.3325
-     Autumn  |  -5.953486   336.1577    -0.02   0.986    -669.6198    657.7128
-     Winter  |  -23.93828   291.8525    -0.08   0.935    -600.1341    552.2576
+     Summer  |   -6.74456   246.6556    -0.03   0.978    -493.7095    480.2204
+     Autumn  |   24.09186   253.3795     0.10   0.924    -476.1478    524.3316
+     Winter  |   .5070095   213.5131     0.00   0.998    -421.0257    422.0397
              |
-       _cons |   4831.587   453.8072    10.65   0.000     3935.649    5727.526
+       _cons |   4910.033   306.3277    16.03   0.000     4305.259    5514.807
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_mort_ethnicity_cvd.svg not found)
+(file ./output/time_series/margins_mort_ethnicity_cvd.svg written in SVG format
+> )
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_mortality_cvd_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_cvd_ethnic.csv saved
@@ -97,39 +106,44 @@ file ./output/time_series/tsreg_mortality_cvd_ethnic.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        180
-maximum lag: 1                                  F( 12,       167) =       1.27
-                                                Prob > F          =     0.2428
+maximum lag: 1                                  F( 12,       167) =       0.92
+                                                Prob > F          =     0.5301
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |    697.376   458.9349     1.52   0.131    -208.6859    1603.438
-          3  |  -256.2761   475.2856    -0.54   0.590    -1194.619    682.0665
-          4  |     188.46   495.4626     0.38   0.704    -789.7174    1166.637
-          5  |   546.9497   442.4193     1.24   0.218    -326.5059    1420.405
+          2  |   493.2132   584.8053     0.84   0.400    -661.3509    1647.777
+          3  |   527.2598   586.8647     0.90   0.370    -631.3702     1685.89
+          4  |  -618.6875   389.3943    -1.59   0.114    -1387.457    150.0822
+          5  |    564.732    470.297     1.20   0.232    -363.7617    1493.226
              |
- 1.postcovid |   422.2773   428.2824     0.99   0.326    -423.2682    1267.823
+ 1.postcovid |   336.8734   460.0802     0.73   0.465    -571.4497    1245.196
              |
    ethnicity#|
    postcovid |
-        2 1  |  -441.3867   614.3052    -0.72   0.473    -1654.192    771.4183
-        3 1  |  -73.67446   594.8422    -0.12   0.902    -1248.054    1100.705
-        4 1  |  -309.1338   617.0882    -0.50   0.617    -1527.433    909.1655
-        5 1  |  -1250.308   548.3089    -2.28   0.024    -2332.818   -167.7976
+        2 1  |  -384.7365   774.9022    -0.50   0.620    -1914.603    1145.131
+        3 1  |  -745.7873   799.2751    -0.93   0.352    -2323.773    832.1982
+        4 1  |   276.6615   590.7409     0.47   0.640    -889.6211    1442.944
+        5 1  |  -910.1095   664.3791    -1.37   0.173    -2221.774     401.555
              |
       season |
-     Summer  |   13.01277   269.6101     0.05   0.962    -519.2707    545.2962
-     Autumn  |  -2.995706   267.8959    -0.01   0.991    -531.8948    525.9034
-     Winter  |   19.73677   280.1218     0.07   0.944    -533.2996    572.7732
+     Summer  |  -23.22225    330.583    -0.07   0.944    -675.8826    629.4381
+     Autumn  |  -4.899772   307.1509    -0.02   0.987    -611.2988    601.4993
+     Winter  |   -30.9692    317.024    -0.10   0.922    -656.8605    594.9221
              |
-       _cons |   4746.882    401.782    11.81   0.000     3953.656    5540.109
+       _cons |   4830.822   313.2285    15.42   0.000     4212.425     5449.22
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_mort_ethnicity_resp.svg not found)
+(file ./output/time_series/margins_mort_ethnicity_resp.svg written in SVG forma
+> t)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_mortality_resp_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_resp_ethnic.csv saved
@@ -143,39 +157,43 @@ file ./output/time_series/tsreg_mortality_resp_ethnic.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        180
-maximum lag: 1                                  F( 12,       167) =       1.06
-                                                Prob > F          =     0.3932
+maximum lag: 1                                  F( 12,       167) =       0.81
+                                                Prob > F          =     0.6370
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   562.0602   529.9432     1.06   0.290    -484.1913    1608.312
-          3  |   363.6104   593.9319     0.61   0.541    -808.9722    1536.193
-          4  |   142.8839   539.4586     0.26   0.791    -922.1535    1207.921
-          5  |   291.6842   483.4313     0.60   0.547    -662.7402    1246.109
+          2  |  -1028.858   483.0721    -2.13   0.035    -1982.574   -75.14304
+          3  |  -344.1086   356.9262    -0.96   0.336    -1048.778    360.5604
+          4  |  -590.6857   449.0808    -1.32   0.190    -1477.293    295.9214
+          5  |   -255.702   361.0225    -0.71   0.480    -968.4582    457.0542
              |
- 1.postcovid |  -360.2671    444.703    -0.81   0.419    -1238.231    517.6972
+ 1.postcovid |  -74.47378   392.5032    -0.19   0.850    -849.3814    700.4338
              |
    ethnicity#|
    postcovid |
-        2 1  |   367.0718   674.2238     0.54   0.587    -964.0287    1698.172
-        3 1  |   780.6204   684.1413     1.14   0.255    -570.0599    2131.301
-        4 1  |   91.98148    661.814     0.14   0.890    -1214.619    1398.582
-        5 1  |   535.1528   589.0455     0.91   0.365    -627.7827    1698.088
+        2 1  |   841.3872   660.7304     1.27   0.205    -463.0735    2145.848
+        3 1  |  -88.90987   543.7384    -0.16   0.870    -1162.397     984.577
+        4 1  |   224.6043   644.7904     0.35   0.728    -1048.387    1497.595
+        5 1  |  -510.3736    558.856    -0.91   0.362    -1613.707    592.9595
              |
       season |
-     Summer  |  -12.20353   336.6107    -0.04   0.971    -676.7642    652.3572
-     Autumn  |  -.0201628   326.0949    -0.00   1.000    -643.8198    643.7794
-     Winter  |  -.6519124   331.9875    -0.00   0.998    -656.0853    654.7814
+     Summer  |   18.38535   274.0243     0.07   0.947    -522.6128    559.3835
+     Autumn  |   36.01498   242.8447     0.15   0.882    -443.4262    515.4562
+     Winter  |    20.9995   287.4217     0.07   0.942    -546.4488    588.4478
              |
-       _cons |   4730.243    415.177    11.39   0.000     3910.571    5549.915
+       _cons |   5405.809   282.0462    19.17   0.000     4848.974    5962.645
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_mort_ethnicity_mh.svg not found)
+(file ./output/time_series/margins_mort_ethnicity_mh.svg written in SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_mortality_mh_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_mh_ethnic.csv saved
@@ -189,39 +207,43 @@ file ./output/time_series/tsreg_mortality_mh_ethnic.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        180
-maximum lag: 1                                  F( 12,       167) =       0.63
-                                                Prob > F          =     0.8172
+maximum lag: 1                                  F( 12,       167) =       0.96
+                                                Prob > F          =     0.4875
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   561.3968   524.9908     1.07   0.286    -475.0772    1597.871
-          3  |   398.0177   515.1076     0.77   0.441    -618.9442     1414.98
-          4  |   62.59497   562.0197     0.11   0.911    -1046.984    1172.174
-          5  |   143.7382   497.6675     0.29   0.773    -838.7923    1126.269
+          2  |   683.9301   533.8734     1.28   0.202    -370.0806    1737.941
+          3  |  -302.5926   282.6912    -1.07   0.286    -860.7015    255.5164
+          4  |  -384.7056   400.3951    -0.96   0.338    -1175.194    405.7828
+          5  |   229.9514   294.4578     0.78   0.436    -351.3881    811.2909
              |
- 1.postcovid |   174.5722   547.2694     0.32   0.750    -905.8859     1255.03
+ 1.postcovid |  -215.3267   326.1178    -0.66   0.510    -859.1717    428.5183
              |
    ethnicity#|
    postcovid |
-        2 1  |  -698.7685   704.4822    -0.99   0.323    -2089.607    692.0702
-        3 1  |   190.1188     745.61     0.25   0.799    -1281.917    1662.155
-        4 1  |   -392.292   756.5492    -0.52   0.605    -1885.925    1101.341
-        5 1  |   65.25098   706.1682     0.09   0.926    -1328.916    1459.418
+        2 1  |  -768.8693   672.7384    -1.14   0.255    -2097.037    559.2984
+        3 1  |   427.7611   474.4161     0.90   0.369    -508.8648    1364.387
+        4 1  |   1023.346   565.4971     1.81   0.072    -93.09871     2139.79
+        5 1  |   308.0475   509.2413     0.60   0.546    -697.3327    1313.428
              |
       season |
-     Summer  |   8.553793    310.086     0.03   0.978      -603.64    620.7475
-     Autumn  |  -19.88545   340.6936    -0.06   0.954    -692.5069    652.7359
-     Winter  |   37.86521   293.5664     0.13   0.898    -541.7145    617.4449
+     Summer  |    4.62083   286.8055     0.02   0.987    -561.6109    570.8526
+     Autumn  |  -6.463198   286.1515    -0.02   0.982    -571.4037    558.4773
+     Winter  |  -15.75384   309.1114    -0.05   0.959    -626.0236    594.5159
              |
-       _cons |   4764.831   404.8626    11.77   0.000     3965.522    5564.139
+       _cons |   4975.072   271.0042    18.36   0.000     4440.037    5510.108
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_mort_ethnicity_mi.svg not found)
+(file ./output/time_series/margins_mort_ethnicity_mi.svg written in SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_mortality_mi_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_mi_ethnic.csv saved
@@ -235,39 +257,44 @@ file ./output/time_series/tsreg_mortality_mi_ethnic.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        180
-maximum lag: 1                                  F( 12,       167) =       0.37
-                                                Prob > F          =     0.9716
+maximum lag: 1                                  F( 12,       167) =       0.90
+                                                Prob > F          =     0.5519
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |  -483.9507   358.7392    -1.35   0.179    -1192.199    224.2977
-          3  |  -220.3238   396.8106    -0.56   0.579    -1003.735    563.0879
-          4  |   129.2664   473.2802     0.27   0.785    -805.1169     1063.65
-          5  |   17.38789   350.4985     0.05   0.960    -674.5911    709.3669
+          2  |   511.2042    470.732     1.09   0.279    -418.1482    1440.557
+          3  |   379.3805   509.9923     0.74   0.458    -627.4826    1386.244
+          4  |   625.0733   497.6844     1.26   0.211    -357.4905    1607.637
+          5  |   424.3861   505.3553     0.84   0.402    -573.3222    1422.095
              |
- 1.postcovid |  -206.2598   511.4553    -0.40   0.687    -1216.011    803.4914
+ 1.postcovid |   242.2898    440.941     0.55   0.583    -628.2472    1112.827
              |
    ethnicity#|
    postcovid |
-        2 1  |    481.058   635.7142     0.76   0.450     -774.014     1736.13
-        3 1  |   534.2506   674.2604     0.79   0.429    -796.9222    1865.423
-        4 1  |  -140.2462   678.4931    -0.21   0.836    -1479.776    1199.283
-        5 1  |   253.2312    675.408     0.37   0.708    -1080.207     1586.67
+        2 1  |  -61.26191   657.0929    -0.09   0.926    -1358.541    1236.018
+        3 1  |  -539.5068   628.2879    -0.86   0.392    -1779.917    700.9038
+        4 1  |  -908.7677    657.828    -1.38   0.169    -2207.498    389.9629
+        5 1  |   227.0243     647.41     0.35   0.726    -1051.138    1505.187
              |
       season |
-     Summer  |  -4.602804   275.7224    -0.02   0.987    -548.9535    539.7479
-     Autumn  |  -15.52952   293.4352    -0.05   0.958    -594.8501    563.7911
-     Winter  |  -11.66607   291.0304    -0.04   0.968     -586.239    562.9068
+     Summer  |  -11.82532   280.6558    -0.04   0.966    -565.9159    542.2653
+     Autumn  |   6.685312   309.9844     0.02   0.983    -605.3079    618.6785
+     Winter  |  -1.314095   316.3694    -0.00   0.997     -625.913    623.2848
              |
-       _cons |   5104.584   319.7638    15.96   0.000     4473.283    5735.884
+       _cons |   4631.639    364.134    12.72   0.000      3912.74    5350.538
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_mort_ethnicity_stroke.svg not found)
+(file ./output/time_series/margins_mort_ethnicity_stroke.svg written in SVG for
+> mat)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_mortality_stroke_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_stroke_ethnic.csv saved
@@ -281,39 +308,45 @@ file ./output/time_series/tsreg_mortality_stroke_ethnic.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        180
-maximum lag: 1                                  F( 12,       167) =       0.48
-                                                Prob > F          =     0.9254
+maximum lag: 1                                  F( 12,       167) =       0.37
+                                                Prob > F          =     0.9720
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |  -139.0577   411.3852    -0.34   0.736    -951.2435    673.1282
-          3  |  -343.8024   419.5841    -0.82   0.414    -1172.175    484.5704
-          4  |  -646.8802   473.2209    -1.37   0.173    -1581.146    287.3861
-          5  |   46.45232   455.8422     0.10   0.919    -853.5037    946.4084
+          2  |   795.0395    691.548     1.15   0.252    -570.2637    2160.343
+          3  |   39.83296   502.8943     0.08   0.937    -953.0166    1032.683
+          4  |  -258.3084   522.3267    -0.49   0.622    -1289.523     772.906
+          5  |   49.62768    547.581     0.09   0.928    -1031.446    1130.701
              |
- 1.postcovid |  -230.9022   416.6957    -0.55   0.580    -1053.573     591.768
+ 1.postcovid |   158.0071   520.3927     0.30   0.762     -869.389    1185.403
              |
    ethnicity#|
    postcovid |
-        2 1  |   -131.267    557.198    -0.24   0.814    -1231.327    968.7929
-        3 1  |    183.238   601.2665     0.30   0.761    -1003.825    1370.301
-        4 1  |   673.8508   598.4659     1.13   0.262    -507.6831    1855.385
-        5 1  |   271.9035   601.9118     0.45   0.652    -916.4334     1460.24
+        2 1  |  -690.6675   789.8185    -0.87   0.383    -2249.983    868.6483
+        3 1  |   -212.188   618.4628    -0.34   0.732    -1433.201    1008.825
+        4 1  |   135.3404   673.3058     0.20   0.841    -1193.948    1464.629
+        5 1  |   31.08789   670.7546     0.05   0.963    -1293.163    1355.339
              |
       season |
-     Summer  |  -15.68119   306.5058    -0.05   0.959    -620.8067    589.4443
-     Autumn  |   21.24613   277.5483     0.08   0.939    -526.7094    569.2016
-     Winter  |  -19.97461    267.737    -0.07   0.941    -548.5601    508.6108
+     Summer  |   10.06669    264.574     0.04   0.970    -512.2741    532.4075
+     Autumn  |   14.57478   274.3185     0.05   0.958    -527.0043    556.1539
+     Winter  |   16.82667   287.2328     0.06   0.953    -550.2488    583.9021
              |
-       _cons |   5239.135   368.9321    14.20   0.000     4510.763    5967.507
+       _cons |   4866.373   435.7608    11.17   0.000     4006.063    5726.683
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_mort_ethnicity_heart_failure.svg not f
+> ound)
+(file ./output/time_series/margins_mort_ethnicity_heart_failure.svg written in 
+> SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_mortality_heart_failure_ethnic.csv not f
 > ound)
@@ -328,39 +361,44 @@ file ./output/time_series/tsreg_mortality_heart_failure_ethnic.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        180
-maximum lag: 1                                  F( 12,       167) =       1.13
-                                                Prob > F          =     0.3419
+maximum lag: 1                                  F( 12,       167) =       0.86
+                                                Prob > F          =     0.5921
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   277.6126   565.0285     0.49   0.624    -837.9068    1393.132
-          3  |    340.915   618.1771     0.55   0.582     -879.534    1561.364
-          4  |   61.85594   574.1995     0.11   0.914    -1071.769    1195.481
-          5  |   1008.048   558.9933     1.80   0.073    -95.55666    2111.652
+          2  |  -199.9783   415.6374    -0.48   0.631    -1020.559    620.6025
+          3  |  -519.7687   542.3147    -0.96   0.339    -1590.445    550.9075
+          4  |  -226.4338   544.3516    -0.42   0.678    -1301.131    848.2638
+          5  |  -369.5628   461.5977    -0.80   0.424    -1280.882    541.7561
              |
- 1.postcovid |  -234.0751   534.0475    -0.44   0.662     -1288.43    820.2793
+ 1.postcovid |  -225.3657   453.1287    -0.50   0.620    -1119.965    669.2331
              |
    ethnicity#|
    postcovid |
-        2 1  |   368.6484   672.1793     0.55   0.584    -958.4157    1695.713
-        3 1  |    46.2108    721.383     0.06   0.949    -1377.995    1470.416
-        4 1  |   949.0915   719.6726     1.32   0.189    -471.7373     2369.92
-        5 1  |  -226.3415   678.0582    -0.33   0.739    -1565.012    1112.329
+        2 1  |   783.1488   571.1998     1.37   0.172    -344.5544    1910.852
+        3 1  |   313.5616    661.095     0.47   0.636    -991.6191    1618.742
+        4 1  |   10.31412   706.0901     0.01   0.988    -1383.699    1404.327
+        5 1  |  -42.66117   621.3083    -0.07   0.945    -1269.292     1183.97
              |
       season |
-     Summer  |   7.642959   263.0955     0.03   0.977    -511.7789    527.0648
-     Autumn  |    16.4918   295.1946     0.06   0.956    -566.3024     599.286
-     Winter  |   6.551118   292.1684     0.02   0.982    -570.2684    583.3706
+     Summer  |  -15.46795   292.1746    -0.05   0.958    -592.2997    561.3638
+     Autumn  |  -12.52292   305.1308    -0.04   0.967    -614.9337    589.8879
+     Winter  |   26.82091   304.0937     0.09   0.930    -573.5424    627.1842
              |
-       _cons |   4655.927   465.9253     9.99   0.000     3736.064     5575.79
+       _cons |   5266.548   371.6516    14.17   0.000     4532.807    6000.289
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_mort_ethnicity_vte.svg not found)
+(file ./output/time_series/margins_mort_ethnicity_vte.svg written in SVG format
+> )
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_mortality_vte_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_vte_ethnic.csv saved
@@ -374,39 +412,44 @@ file ./output/time_series/tsreg_mortality_vte_ethnic.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        180
-maximum lag: 1                                  F( 12,       167) =       0.54
-                                                Prob > F          =     0.8835
+maximum lag: 1                                  F( 12,       167) =       0.55
+                                                Prob > F          =     0.8790
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   74.34051   441.6016     0.17   0.867    -797.5006    946.1816
-          3  |   576.1004   390.2331     1.48   0.142    -194.3255    1346.526
-          4  |   668.9293   406.8285     1.64   0.102    -134.2604    1472.119
-          5  |   272.5955    388.929     0.70   0.484    -495.2558    1040.447
+          2  |  -359.9936   441.0814    -0.82   0.416    -1230.808    510.8205
+          3  |   10.82663   386.1293     0.03   0.978    -751.4972    773.1505
+          4  |  -669.2871   406.9856    -1.64   0.102    -1472.787    134.2128
+          5  |   294.4698   397.0907     0.74   0.459    -489.4948    1078.434
              |
- 1.postcovid |   562.7812   431.2279     1.31   0.194    -288.5795    1414.142
+ 1.postcovid |  -28.45401   392.6711    -0.07   0.942    -803.6933    746.7852
              |
    ethnicity#|
    postcovid |
-        2 1  |  -375.7144   647.5826    -0.58   0.563    -1654.218    902.7891
-        3 1  |  -1145.341   602.9573    -1.90   0.059    -2335.742    45.06013
-        4 1  |  -676.6935   627.3842    -1.08   0.282     -1915.32    561.9329
-        5 1  |  -551.3674   577.9041    -0.95   0.341    -1692.307    589.5719
+        2 1  |   60.12203   598.2116     0.10   0.920     -1120.91    1241.154
+        3 1  |  -182.5111   564.1311    -0.32   0.747    -1296.259    931.2366
+        4 1  |   732.5669   590.1162     1.24   0.216    -432.4824    1897.616
+        5 1  |  -507.2722   614.0789    -0.83   0.410     -1719.63    705.0859
              |
       season |
-     Summer  |  -25.83779   318.4145    -0.08   0.935    -654.4744    602.7988
-     Autumn  |  -3.266063   291.2222    -0.01   0.991    -578.2177    571.6856
-     Winter  |   4.147201   273.2207     0.02   0.988    -535.2645    543.5589
+     Summer  |  -9.571242   327.4715    -0.03   0.977    -656.0888    636.9463
+     Autumn  |   3.688258   273.6252     0.01   0.989    -536.5221    543.8986
+     Winter  |  -12.25622   280.2226    -0.04   0.965    -565.4916    540.9792
              |
-       _cons |   4666.143   296.0779    15.76   0.000     4081.604    5250.681
+       _cons |   5142.054   299.3423    17.18   0.000     4551.071    5733.037
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_mort_ethnicity_asthma.svg not found)
+(file ./output/time_series/margins_mort_ethnicity_asthma.svg written in SVG for
+> mat)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_mortality_asthma_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_asthma_ethnic.csv saved
@@ -420,39 +463,44 @@ file ./output/time_series/tsreg_mortality_asthma_ethnic.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        180
-maximum lag: 1                                  F( 12,       167) =       0.16
-                                                Prob > F          =     0.9994
+maximum lag: 1                                  F( 12,       167) =       1.34
+                                                Prob > F          =     0.2024
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   195.1052   483.0177     0.40   0.687    -758.5026    1148.713
-          3  |  -19.17329   482.3857    -0.04   0.968    -971.5333    933.1867
-          4  |   172.1505   470.6048     0.37   0.715    -756.9509    1101.252
-          5  |   581.5544   495.7906     1.17   0.242    -397.2706    1560.379
+          2  |     445.34   569.0814     0.78   0.435    -678.1808    1568.861
+          3  |  -81.46293   474.0604    -0.17   0.864    -1017.387    854.4607
+          4  |     289.48   537.7207     0.54   0.591    -772.1262    1351.086
+          5  |  -1177.497   492.1344    -2.39   0.018    -2149.103   -205.8898
              |
- 1.postcovid |   195.1536   343.9221     0.57   0.571    -483.8418    874.1491
+ 1.postcovid |  -326.2603   390.4145    -0.84   0.405    -1097.044    444.5237
              |
    ethnicity#|
    postcovid |
-        2 1  |  -223.5806    574.757    -0.39   0.698    -1358.307    911.1455
-        3 1  |   -35.3729   574.5452    -0.06   0.951    -1169.681    1098.935
-        4 1  |  -131.3056   597.7338    -0.22   0.826    -1311.394    1048.783
-        5 1  |  -643.4427   579.2893    -1.11   0.268    -1787.117    500.2314
+        2 1  |   .6882293   661.0408     0.00   0.999    -1304.385    1305.762
+        3 1  |   342.4013   557.6881     0.61   0.540    -758.6262    1443.429
+        4 1  |    -352.26   603.9232    -0.58   0.560    -1544.568     840.048
+        5 1  |   1721.338    644.054     2.67   0.008     449.8007    2992.875
              |
       season |
-     Summer  |  -1.053011   230.4105    -0.00   0.996    -455.9458    453.8397
-     Autumn  |   -20.5084    255.113    -0.08   0.936    -524.1707    483.1538
-     Winter  |  -13.49811   270.5726    -0.05   0.960    -547.6818    520.6856
+     Summer  |   16.96254   291.1646     0.06   0.954    -557.8753    591.8004
+     Autumn  |   13.35559    297.299     0.04   0.964    -573.5933    600.3044
+     Winter  |    22.6823   250.4802     0.09   0.928    -471.8335    517.1981
              |
-       _cons |   4828.963   327.6352    14.74   0.000     4182.122    5475.804
+       _cons |   5069.051   395.4922    12.82   0.000     4288.242    5849.859
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_mort_ethnicity_copd.svg not found)
+(file ./output/time_series/margins_mort_ethnicity_copd.svg written in SVG forma
+> t)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_mortality_copd_ethnic.csv not found)
 file ./output/time_series/tsreg_mortality_copd_ethnic.csv saved
@@ -466,39 +514,45 @@ file ./output/time_series/tsreg_mortality_copd_ethnic.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        180
-maximum lag: 1                                  F( 12,       167) =       1.00
-                                                Prob > F          =     0.4472
+maximum lag: 1                                  F( 12,       167) =       0.67
+                                                Prob > F          =     0.7773
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   974.5172   512.7738     1.90   0.059    -37.83729    1986.872
-          3  |    355.384   427.7441     0.83   0.407    -489.0988    1199.867
-          4  |   1.328212   545.3818     0.00   0.998    -1075.403     1078.06
-          5  |   441.9557   410.3286     1.08   0.283    -368.1441    1252.055
+          2  |   -593.513   520.3124    -1.14   0.256    -1620.751    433.7246
+          3  |   170.8357   570.9309     0.30   0.765    -956.3367    1298.008
+          4  |  -546.0536   579.2532    -0.94   0.347    -1689.656    597.5492
+          5  |   -620.517   454.2612    -1.37   0.174    -1517.352    276.3178
              |
- 1.postcovid |   298.0226   495.3838     0.60   0.548    -679.9992    1276.045
+ 1.postcovid |   24.14951   453.7004     0.05   0.958    -871.5781    919.8771
              |
    ethnicity#|
    postcovid |
-        2 1  |  -1555.842   695.4307    -2.24   0.027    -2928.811   -182.8734
-        3 1  |  -164.4905   667.7246    -0.25   0.806     -1482.76    1153.779
-        4 1  |    571.039   743.8615     0.77   0.444    -897.5453    2039.623
-        5 1  |  -295.8193   658.3184    -0.45   0.654    -1595.518     1003.88
+        2 1  |   358.4658   724.3383     0.49   0.621    -1071.574    1788.506
+        3 1  |  -1052.583   736.7989    -1.43   0.155    -2507.224    402.0574
+        4 1  |   210.0807   713.9872     0.29   0.769    -1199.523    1619.685
+        5 1  |   240.4843   632.4167     0.38   0.704    -1008.078    1489.046
              |
       season |
-     Summer  |   29.07902   304.5322     0.10   0.924    -572.1501    630.3081
-     Autumn  |   14.58131   312.0967     0.05   0.963    -601.5821    630.7447
-     Winter  |  -.0338596   336.1123    -0.00   1.000    -663.6107     663.543
+     Summer  |  -19.95525    329.582    -0.06   0.952    -670.6394    630.7289
+     Autumn  |  -25.15041   343.8158    -0.07   0.942     -703.936    653.6352
+     Winter  |  -32.75871   325.1904    -0.10   0.920    -674.7727    609.2552
              |
-       _cons |   4634.309   351.3906    13.19   0.000     3940.569     5328.05
+       _cons |   5349.037   367.1262    14.57   0.000      4624.23    6073.843
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_mort_ethnicity_all_cause.svg not found
+> )
+(file ./output/time_series/margins_mort_ethnicity_all_cause.svg written in SVG 
+> format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_mortality_all_cause_ethnic.csv not found
 > )
@@ -537,11 +591,15 @@ file ./output/time_series/tsreg_mortality_all_cause_ethnic.csv saved
  22.         matrix a = r(table)'
  23.         putexcel A6 = matrix(a), rownames
  24.         putexcel save
- 25.         import excel using ./output/time_series/tsreg_tables_mortality.xls
+ 25.         quietly margins imd##postcovid
+ 26.         marginsplot
+ 27.         graph export ./output/time_series/margins_mort_imd_`var'.svg, as(s
+> vg) replace
+ 28.         import excel using ./output/time_series/tsreg_tables_mortality.xls
 > x, sheet (`var'_imd) clear
- 26.     export delimited using ./output/time_series/tsreg_mortality_`var'_imd.
+ 29.     export delimited using ./output/time_series/tsreg_mortality_`var'_imd.
 > csv, replace
- 27.         }
+ 30.         }
 (5 vars, 216 obs)
 (54 real changes made)
 (54 real changes made)
@@ -551,41 +609,45 @@ file ./output/time_series/tsreg_mortality_all_cause_ethnic.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        216
-maximum lag: 1                                  F( 14,       201) =       0.69
-                                                Prob > F          =     0.7866
+maximum lag: 1                                  F( 14,       201) =       0.43
+                                                Prob > F          =     0.9654
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |   98.12275   950.3227     0.10   0.918    -1775.758    1972.004
-          2  |  -346.5395   928.3029    -0.37   0.709    -2177.001    1483.922
-          3  |   293.5849   936.4396     0.31   0.754    -1552.921    2140.091
-          4  |   135.3657    937.402     0.14   0.885    -1713.038    1983.769
-          5  |   219.5053   932.5743     0.24   0.814    -1619.379    2058.389
+          1  |  -171.3197   702.4299    -0.24   0.808    -1556.397    1213.757
+          2  |  -45.51019   595.0491    -0.08   0.939     -1218.85    1127.829
+          3  |   218.8569   657.0065     0.33   0.739    -1076.652    1514.366
+          4  |   16.16625    612.921     0.03   0.979    -1192.414    1224.746
+          5  |  -125.5592   610.6371    -0.21   0.837    -1329.636    1078.517
              |
- 1.postcovid |   434.7759    952.397     0.46   0.649    -1443.195    2312.747
+ 1.postcovid |   -422.252   801.7221    -0.53   0.599    -2003.117    1158.613
              |
          imd#|
    postcovid |
-        1 1  |  -553.6732   1060.974    -0.52   0.602    -2645.741    1538.395
-        2 1  |  -552.7319   1062.155    -0.52   0.603    -2647.128    1541.665
-        3 1  |  -537.9533    1037.79    -0.52   0.605    -2584.305    1508.398
-        4 1  |  -397.0378   1032.475    -0.38   0.701    -2432.909    1638.833
-        5 1  |   -304.351   1074.595    -0.28   0.777    -2423.277    1814.575
+        1 1  |   419.6653   993.2023     0.42   0.673    -1538.767    2378.098
+        2 1  |   1035.845   927.7953     1.12   0.266    -793.6154    2865.306
+        3 1  |  -118.7959    967.795    -0.12   0.902     -2027.13    1789.538
+        4 1  |   450.5795   897.0348     0.50   0.616    -1318.226    2219.385
+        5 1  |   325.2639   922.9561     0.35   0.725    -1494.655    2145.182
              |
       season |
-     Summer  |   232.1862    299.495     0.78   0.439    -358.3691    822.7414
-     Autumn  |   64.59584   317.7843     0.20   0.839    -562.0228    691.2145
-     Winter  |   385.2051   355.2051     1.08   0.279    -315.2012    1085.611
+     Summer  |  -67.37763   279.8694    -0.24   0.810    -619.2344    484.4791
+     Autumn  |   178.4582   312.9733     0.57   0.569    -438.6739    795.5903
+     Winter  |   -21.1898   338.7025    -0.06   0.950    -689.0557    646.6761
              |
-       _cons |   4749.765   892.1578     5.32   0.000     2990.576    6508.955
+       _cons |   4989.785   516.0775     9.67   0.000     3972.165    6007.406
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_mort_imd_cvd.svg not found)
+(file ./output/time_series/margins_mort_imd_cvd.svg written in SVG format)
 (10 vars, 30 obs)
 (note: file ./output/time_series/tsreg_mortality_cvd_imd.csv not found)
 file ./output/time_series/tsreg_mortality_cvd_imd.csv saved
@@ -598,41 +660,45 @@ file ./output/time_series/tsreg_mortality_cvd_imd.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        216
-maximum lag: 1                                  F( 14,       201) =       1.40
-                                                Prob > F          =     0.1540
+maximum lag: 1                                  F( 14,       201) =       1.96
+                                                Prob > F          =     0.0227
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |  -1232.176   647.2294    -1.90   0.058    -2508.407    44.05446
-          2  |  -364.1369   568.7135    -0.64   0.523    -1485.547    757.2732
-          3  |  -896.9651   436.7322    -2.05   0.041     -1758.13   -35.80048
-          4  |  -1204.133   573.7341    -2.10   0.037    -2335.443   -72.82306
-          5  |  -416.1428   506.6174    -0.82   0.412    -1415.109    582.8238
+          1  |   987.7509   771.1256     1.28   0.202    -532.7826    2508.284
+          2  |   346.5889   716.1559     0.48   0.629    -1065.553    1758.731
+          3  |   1466.943   774.6694     1.89   0.060    -60.57813    2994.465
+          4  |   766.3772   827.1538     0.93   0.355    -864.6348    2397.389
+          5  |   892.3547   780.6571     1.14   0.254    -646.9735    2431.683
              |
- 1.postcovid |  -740.9906   669.8348    -1.11   0.270    -2061.795    579.8141
+ 1.postcovid |  -256.6082   888.7829    -0.29   0.773    -2009.143    1495.926
              |
          imd#|
    postcovid |
-        1 1  |     1997.5   938.9005     2.13   0.035     146.1415    3848.858
-        2 1  |   454.4295   850.0659     0.53   0.594    -1221.761     2130.62
-        3 1  |   529.5876   741.9211     0.71   0.476    -933.3595    1992.535
-        4 1  |   556.2533   848.4614     0.66   0.513    -1116.774     2229.28
-        5 1  |   230.3456   802.2302     0.29   0.774    -1351.521    1812.212
+        1 1  |    654.699    979.693     0.67   0.505    -1277.095    2586.493
+        2 1  |   729.3567    967.304     0.75   0.452    -1178.009    2636.722
+        3 1  |   .4396489   1006.983     0.00   1.000    -1985.165    1986.045
+        4 1  |   -100.241   1025.877    -0.10   0.922    -2123.103    1922.621
+        5 1  |   78.16846   998.8156     0.08   0.938    -1891.333     2047.67
              |
       season |
-     Summer  |   243.0177   304.2024     0.80   0.425    -356.8198    842.8551
-     Autumn  |   134.8373   315.4633     0.43   0.670    -487.2048    756.8794
-     Winter  |   184.7343   297.8817     0.62   0.536    -402.6398    772.1084
+     Summer  |   6.401753   307.3362     0.02   0.983    -599.6149    612.4184
+     Autumn  |   117.4707   319.0451     0.37   0.713    -511.6341    746.5754
+     Winter  |   142.9546    318.209     0.45   0.654    -484.5014    770.4107
              |
-       _cons |   5651.859    416.531    13.57   0.000     4830.528     6473.19
+       _cons |   4091.513   712.1818     5.75   0.000     2687.207    5495.819
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_mort_imd_resp.svg not found)
+(file ./output/time_series/margins_mort_imd_resp.svg written in SVG format)
 (10 vars, 30 obs)
 (note: file ./output/time_series/tsreg_mortality_resp_imd.csv not found)
 file ./output/time_series/tsreg_mortality_resp_imd.csv saved
@@ -645,41 +711,45 @@ file ./output/time_series/tsreg_mortality_resp_imd.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        216
-maximum lag: 1                                  F( 14,       201) =       0.48
-                                                Prob > F          =     0.9436
+maximum lag: 1                                  F( 14,       201) =       1.28
+                                                Prob > F          =     0.2214
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |  -90.13946   1187.139    -0.08   0.940    -2430.984    2250.705
-          2  |   260.3056   1096.127     0.24   0.813    -1901.078    2421.689
-          3  |  -68.55451   1103.983    -0.06   0.951    -2245.429     2108.32
-          4  |  -53.34753   1118.025    -0.05   0.962     -2257.91    2151.215
-          5  |  -436.1086   1079.752    -0.40   0.687    -2565.203    1692.985
+          1  |   1764.286   747.2142     2.36   0.019     290.9021     3237.67
+          2  |   2199.969   776.0283     2.83   0.005     669.7682     3730.17
+          3  |   1892.287   696.5917     2.72   0.007      518.722    3265.852
+          4  |   1519.942   695.0183     2.19   0.030     149.4797    2890.404
+          5  |   1609.555   789.9218     2.04   0.043     51.95789    3167.151
              |
- 1.postcovid |  -377.6239   1159.582    -0.33   0.745    -2664.129    1908.881
+ 1.postcovid |   2098.813   1009.841     2.08   0.039     107.5721    4090.054
              |
          imd#|
    postcovid |
-        1 1  |   800.6455   1323.704     0.60   0.546    -1809.482    3410.773
-        2 1  |  -93.03176   1252.069    -0.07   0.941    -2561.907    2375.844
-        3 1  |     235.95   1262.988     0.19   0.852    -2254.455    2726.355
-        4 1  |   248.3126   1263.124     0.20   0.844    -2242.362    2738.987
-        5 1  |    632.118   1211.842     0.52   0.603    -1757.436    3021.672
+        1 1  |  -2062.953   1130.896    -1.82   0.070    -4292.896    166.9892
+        2 1  |   -2602.86   1119.202    -2.33   0.021    -4809.743    -395.976
+        3 1  |  -2042.546     1099.8    -1.86   0.065    -4211.171    126.0791
+        4 1  |  -2686.643   1107.173    -2.43   0.016    -4869.807   -503.4787
+        5 1  |  -1834.994   1141.214    -1.61   0.109    -4085.282    415.2932
              |
       season |
-     Summer  |   29.88166   326.9361     0.09   0.927    -614.7829    674.5462
-     Autumn  |  -181.8889   318.0214    -0.57   0.568    -808.9752    445.1974
-     Winter  |  -92.22631   333.1724    -0.28   0.782    -749.1879    564.7353
+     Summer  |   127.8901   337.6965     0.38   0.705    -537.9922    793.7724
+     Autumn  |   519.2599   401.3015     1.29   0.197    -272.0411    1310.561
+     Winter  |   89.48866   351.4828     0.25   0.799     -603.578    782.5553
              |
-       _cons |   5152.479   1035.745     4.97   0.000      3110.16    7194.798
+       _cons |    3131.34   687.5323     4.55   0.000     1775.639    4487.042
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_mort_imd_mh.svg not found)
+(file ./output/time_series/margins_mort_imd_mh.svg written in SVG format)
 (10 vars, 30 obs)
 (note: file ./output/time_series/tsreg_mortality_mh_imd.csv not found)
 file ./output/time_series/tsreg_mortality_mh_imd.csv saved
@@ -692,41 +762,45 @@ file ./output/time_series/tsreg_mortality_mh_imd.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        216
-maximum lag: 1                                  F( 14,       201) =       1.04
-                                                Prob > F          =     0.4177
+maximum lag: 1                                  F( 14,       201) =       1.60
+                                                Prob > F          =     0.0813
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |    1057.45   904.8899     1.17   0.244    -726.8448    2841.745
-          2  |   1923.006   873.7586     2.20   0.029     200.0969    3645.915
-          3  |   1163.229   880.4248     1.32   0.188     -572.825    2899.283
-          4  |   1484.274   871.3359     1.70   0.090    -233.8578    3202.406
-          5  |   1340.469   983.7731     1.36   0.175    -599.3707    3280.309
+          1  |  -1646.176   1060.158    -1.55   0.122    -3736.635    444.2823
+          2  |  -1799.518     1071.7    -1.68   0.095    -3912.735    313.6986
+          3  |  -1451.996   1075.664    -1.35   0.179    -3573.029    669.0373
+          4  |  -1505.297   1129.611    -1.33   0.184    -3732.705    722.1122
+          5  |  -372.8186   1147.485    -0.32   0.746    -2635.471    1889.834
              |
- 1.postcovid |   2363.764   1091.379     2.17   0.031     211.7437    4515.784
+ 1.postcovid |  -1090.763   1318.912    -0.83   0.409    -3691.442    1509.916
              |
          imd#|
    postcovid |
-        1 1  |   -2396.04   1196.538    -2.00   0.047    -4755.417   -36.66344
-        2 1  |  -3126.172    1180.86    -2.65   0.009    -5454.634   -797.7097
-        3 1  |  -1768.374   1242.464    -1.42   0.156     -4218.31    681.5608
-        4 1  |   -2389.11   1180.349    -2.02   0.044    -4716.565   -61.65484
-        5 1  |  -2838.311   1263.114    -2.25   0.026    -5328.965   -347.6578
+        1 1  |   1001.466   1346.214     0.74   0.458    -1653.048     3655.98
+        2 1  |   1852.426   1416.024     1.31   0.192    -939.7422    4644.595
+        3 1  |   1895.257   1418.265     1.34   0.183    -901.3295    4691.844
+        4 1  |   1578.246   1425.564     1.11   0.270    -1232.733    4389.225
+        5 1  |  -670.2946   1437.947    -0.47   0.642    -3505.691    2165.102
              |
       season |
-     Summer  |   63.01558   349.2848     0.18   0.857     -625.717    751.7482
-     Autumn  |   404.9747   425.5963     0.95   0.342    -434.2317    1244.181
-     Winter  |   86.10022   365.3281     0.24   0.814    -634.2671    806.4676
+     Summer  |   78.31032   419.2903     0.19   0.852    -748.4616    905.0822
+     Autumn  |   80.39544   404.8508     0.20   0.843    -717.9042     878.695
+     Winter  |  -170.2733   368.6196    -0.46   0.645    -897.1309    556.5843
              |
-       _cons |   3569.209   849.3746     4.20   0.000     1894.381    5244.037
+       _cons |    6288.79   1035.422     6.07   0.000     4247.108    8330.472
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_mort_imd_mi.svg not found)
+(file ./output/time_series/margins_mort_imd_mi.svg written in SVG format)
 (10 vars, 30 obs)
 (note: file ./output/time_series/tsreg_mortality_mi_imd.csv not found)
 file ./output/time_series/tsreg_mortality_mi_imd.csv saved
@@ -739,41 +813,45 @@ file ./output/time_series/tsreg_mortality_mi_imd.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        216
-maximum lag: 1                                  F( 14,       201) =       1.36
-                                                Prob > F          =     0.1767
+maximum lag: 1                                  F( 14,       201) =       3.07
+                                                Prob > F          =     0.0003
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |   1356.857   769.9688     1.76   0.080     -161.395     2875.11
-          2  |   1924.713   725.9105     2.65   0.009      493.336     3356.09
-          3  |   2131.481   689.0799     3.09   0.002     772.7282    3490.234
-          4  |   1744.842   655.3807     2.66   0.008     452.5387    3037.146
-          5  |    1205.13   760.4273     1.58   0.115    -294.3082    2704.568
+          1  |   211.4547   487.0076     0.43   0.665    -748.8447    1171.754
+          2  |   537.9277   668.8622     0.80   0.422    -780.9591    1856.815
+          3  |   113.6742   542.5921     0.21   0.834    -956.2287    1183.577
+          4  |   1014.253   478.0015     2.12   0.035     71.71258    1956.794
+          5  |   126.6677    468.858     0.27   0.787    -797.8436    1051.179
              |
- 1.postcovid |   2120.286   709.1041     2.99   0.003     722.0487    3518.524
+ 1.postcovid |   1652.973   742.4956     2.23   0.027     188.8933    3117.053
              |
          imd#|
    postcovid |
-        1 1  |  -2041.875   895.4005    -2.28   0.024    -3807.458   -276.2915
-        2 1  |  -2172.362   858.4478    -2.53   0.012     -3865.08   -479.6428
-        3 1  |  -2652.159   821.5543    -3.23   0.001     -4272.13   -1032.189
-        4 1  |  -2188.764   766.6475    -2.85   0.005    -3700.468   -677.0605
-        5 1  |  -2239.639   910.9907    -2.46   0.015    -4035.963   -443.3139
+        1 1  |  -1278.364   834.2792    -1.53   0.127    -2923.426     366.698
+        2 1  |  -964.9042   961.7276    -1.00   0.317    -2861.274    931.4654
+        3 1  |   -1668.11   857.6357    -1.95   0.053    -3359.227     23.0078
+        4 1  |  -3217.688    811.811    -3.96   0.000    -4818.447    -1616.93
+        5 1  |  -1320.182   808.8601    -1.63   0.104    -2915.122    274.7577
              |
       season |
-     Summer  |  -49.71354    304.423    -0.16   0.870     -649.986    550.5589
-     Autumn  |   97.07652   296.4054     0.33   0.744    -487.3864    681.5394
-     Winter  |   17.42688   276.4708     0.06   0.950    -527.7283     562.582
+     Summer  |  -204.1101   292.6578    -0.70   0.486    -781.1834    372.9632
+     Autumn  |  -.0401706   285.7728    -0.00   1.000    -563.5374     563.457
+     Winter  |  -5.041786   269.9764    -0.02   0.985    -537.3912    527.3076
              |
-       _cons |   3406.316    677.798     5.03   0.000     2069.809    4742.823
+       _cons |   4659.884   433.8815    10.74   0.000      3804.34    5515.427
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_mort_imd_stroke.svg not found)
+(file ./output/time_series/margins_mort_imd_stroke.svg written in SVG format)
 (10 vars, 30 obs)
 (note: file ./output/time_series/tsreg_mortality_stroke_imd.csv not found)
 file ./output/time_series/tsreg_mortality_stroke_imd.csv saved
@@ -786,41 +864,46 @@ file ./output/time_series/tsreg_mortality_stroke_imd.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        216
-maximum lag: 1                                  F( 14,       201) =       0.95
-                                                Prob > F          =     0.5061
+maximum lag: 1                                  F( 14,       201) =       1.77
+                                                Prob > F          =     0.0451
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |   956.4616   1062.551     0.90   0.369    -1138.716    3051.639
-          2  |   1631.475   1049.436     1.55   0.122    -437.8409     3700.79
-          3  |   75.91342   1128.778     0.07   0.946    -2149.853     2301.68
-          4  |   1055.766   1098.124     0.96   0.337    -1109.554    3221.087
-          5  |   1116.164   1083.826     1.03   0.304    -1020.964    3253.292
+          1  |   1824.337   653.4985     2.79   0.006     535.7447    3112.929
+          2  |   1578.338   602.5627     2.62   0.009     390.1833    2766.493
+          3  |   983.4502   713.7258     1.38   0.170    -423.9005    2390.801
+          4  |   1716.051   735.5701     2.33   0.021     265.6269    3166.475
+          5  |   613.3514   687.8227     0.89   0.374    -742.9226    1969.625
              |
- 1.postcovid |   607.8688    1204.85     0.50   0.614    -1767.898    2983.636
+ 1.postcovid |   765.9472   744.4217     1.03   0.305    -701.9307    2233.825
              |
          imd#|
    postcovid |
-        1 1  |  -1011.575   1299.458    -0.78   0.437    -3573.893    1550.742
-        2 1  |  -1159.186   1263.802    -0.92   0.360    -3651.197    1332.825
-        3 1  |   298.7175   1331.737     0.22   0.823    -2327.251    2924.686
-        4 1  |  -515.6488   1299.007    -0.40   0.692    -3077.077     2045.78
-        5 1  |  -726.1331   1290.289    -0.56   0.574    -3270.373    1818.107
+        1 1  |   -1048.69   873.8067    -1.20   0.231    -2771.694    674.3144
+        2 1  |  -1389.441   819.4348    -1.70   0.092    -3005.233    226.3501
+        3 1  |  -982.3861   908.5719    -1.08   0.281    -2773.941    809.1691
+        4 1  |  -798.8977   944.3426    -0.85   0.399    -2660.987    1063.191
+        5 1  |   175.9448   919.0875     0.19   0.848    -1636.345    1988.235
              |
       season |
-     Summer  |  -222.8132   351.4004    -0.63   0.527    -915.7174    470.0911
-     Autumn  |  -454.0336   365.3833    -1.24   0.215     -1174.51    266.4426
-     Winter  |  -358.7445   348.8472    -1.03   0.305    -1046.614    329.1252
+     Summer  |   -60.5383   357.4515    -0.17   0.866    -765.3741    644.2975
+     Autumn  |  -189.2769   347.1466    -0.55   0.586    -873.7932    495.2394
+     Winter  |  -76.42422   340.6182    -0.22   0.823    -748.0677    595.2193
              |
-       _cons |   4327.039   1034.514     4.18   0.000     2287.148    6366.931
+       _cons |   3807.418   645.1952     5.90   0.000     2535.199    5079.638
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_mort_imd_heart_failure.svg not found)
+(file ./output/time_series/margins_mort_imd_heart_failure.svg written in SVG fo
+> rmat)
 (10 vars, 30 obs)
 (note: file ./output/time_series/tsreg_mortality_heart_failure_imd.csv not foun
 > d)
@@ -834,41 +917,45 @@ file ./output/time_series/tsreg_mortality_heart_failure_imd.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        216
-maximum lag: 1                                  F( 14,       201) =       1.08
-                                                Prob > F          =     0.3800
+maximum lag: 1                                  F( 14,       201) =       2.38
+                                                Prob > F          =     0.0043
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |  -1741.987   891.1074    -1.95   0.052    -3499.105    15.13115
-          2  |  -896.3074   915.5624    -0.98   0.329    -2701.647     909.032
-          3  |  -1213.294    887.477    -1.37   0.173    -2963.253    536.6658
-          4  |  -1618.712   867.4183    -1.87   0.063    -3329.119      91.695
-          5  |  -1316.368   874.9338    -1.50   0.134    -3041.595     408.858
+          1  |  -994.2795   834.4351    -1.19   0.235    -2639.649    651.0901
+          2  |  -950.4091   793.0122    -1.20   0.232      -2514.1    613.2813
+          3  |  -842.9406   733.5606    -1.15   0.252    -2289.402     603.521
+          4  |  -912.0324   799.2701    -1.14   0.255    -2488.062    663.9976
+          5  |   318.5462   848.1416     0.38   0.708     -1353.85    1990.943
              |
- 1.postcovid |  -863.6538   1100.835    -0.78   0.434    -3034.321    1307.014
+ 1.postcovid |  -2524.719   868.1515    -2.91   0.004    -4236.572   -812.8665
              |
          imd#|
    postcovid |
-        1 1  |   997.9391   1188.839     0.84   0.402    -1346.258    3342.136
-        2 1  |   582.9467   1268.089     0.46   0.646    -1917.517     3083.41
-        3 1  |   246.3799   1191.369     0.21   0.836    -2102.805    2595.565
-        4 1  |   1675.801   1190.095     1.41   0.161    -670.8714    4022.474
-        5 1  |   1126.617   1214.619     0.93   0.355    -1268.412    3521.646
+        1 1  |    3423.13   1027.887     3.33   0.001     1396.305    5449.956
+        2 1  |   2450.004   947.1108     2.59   0.010     582.4563    4317.552
+        3 1  |   2682.952   923.4621     2.91   0.004     862.0361    4503.869
+        4 1  |   2724.523   976.9798     2.79   0.006     798.0781    4650.967
+        5 1  |   2058.905   1011.225     2.04   0.043     64.93515    4052.876
              |
       season |
-     Summer  |   60.40461   360.2566     0.17   0.867    -649.9626    770.7718
-     Autumn  |  -2.399397   381.8804    -0.01   0.995    -755.4051    750.6063
-     Winter  |  -97.27565   389.2068    -0.25   0.803    -864.7279    670.1766
+     Summer  |  -51.89473   280.9833    -0.18   0.854    -605.9479    502.1584
+     Autumn  |  -276.3546    307.429    -0.90   0.370    -882.5545    329.8452
+     Winter  |  -70.78027   354.4601    -0.20   0.842    -769.7176     628.157
              |
-       _cons |   6287.778   798.7849     7.87   0.000     4712.705    7862.852
+       _cons |   5734.847   759.1978     7.55   0.000     4237.833    7231.861
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_mort_imd_vte.svg not found)
+(file ./output/time_series/margins_mort_imd_vte.svg written in SVG format)
 (10 vars, 30 obs)
 (note: file ./output/time_series/tsreg_mortality_vte_imd.csv not found)
 file ./output/time_series/tsreg_mortality_vte_imd.csv saved
@@ -881,41 +968,45 @@ file ./output/time_series/tsreg_mortality_vte_imd.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        216
-maximum lag: 1                                  F( 14,       201) =       2.60
-                                                Prob > F          =     0.0018
+maximum lag: 1                                  F( 14,       201) =       1.41
+                                                Prob > F          =     0.1489
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |   1606.021    585.864     2.74   0.007     450.7926    2761.249
-          2  |   2464.214    503.501     4.89   0.000     1471.393    3457.036
-          3  |   1536.453   461.6098     3.33   0.001     626.2343    2446.672
-          4  |   1132.057   475.1946     2.38   0.018     195.0511    2069.063
-          5  |   1412.038   456.6343     3.09   0.002     511.6297    2312.446
+          1  |   366.2542   1145.227     0.32   0.749    -1891.946    2624.455
+          2  |  -461.6928   1135.099    -0.41   0.685    -2699.922    1776.536
+          3  |  -206.2999   1110.197    -0.19   0.853    -2395.428    1982.828
+          4  |  -145.4376   1097.934    -0.13   0.895    -2310.385     2019.51
+          5  |   457.3813   1112.173     0.41   0.681    -1735.642    2650.405
              |
- 1.postcovid |   1084.022   665.8973     1.63   0.105    -229.0186    2397.063
+ 1.postcovid |    1308.49   1215.732     1.08   0.283    -1088.734    3705.714
              |
          imd#|
    postcovid |
-        1 1  |   -820.446   869.0167    -0.94   0.346    -2534.005    893.1129
-        2 1  |  -1768.818   795.6361    -2.22   0.027    -3337.682   -199.9536
-        3 1  |  -808.5498   834.5089    -0.97   0.334    -2454.065    836.9652
-        4 1  |  -655.5738   767.6996    -0.85   0.394    -2169.352    858.2043
-        5 1  |  -1685.262   777.8579    -2.17   0.031     -3219.07   -151.4532
+        1 1  |  -1097.043   1331.672    -0.82   0.411    -3722.883    1528.797
+        2 1  |  -1176.581   1338.091    -0.88   0.380    -3815.077    1461.914
+        3 1  |  -1518.471   1281.075    -1.19   0.237    -4044.541      1007.6
+        4 1  |  -1487.729   1266.017    -1.18   0.241    -3984.108    1008.649
+        5 1  |   -1647.23   1284.456    -1.28   0.201    -4179.968    885.5071
              |
       season |
-     Summer  |   159.3145   339.8328     0.47   0.640    -510.7802    829.4092
-     Autumn  |  -10.84841   323.8397    -0.03   0.973    -649.4073    627.7104
-     Winter  |  -109.6926   295.2694    -0.37   0.711    -691.9155    472.5304
+     Summer  |   58.87498   307.7109     0.19   0.848    -547.8806    665.6305
+     Autumn  |   97.44795   364.4985     0.27   0.789    -621.2834    816.1794
+     Winter  |   364.6723   364.2152     1.00   0.318    -353.5005    1082.845
              |
-       _cons |   3447.283    404.887     8.51   0.000     2648.912    4245.654
+       _cons |   4877.885    1067.87     4.57   0.000      2772.22     6983.55
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_mort_imd_asthma.svg not found)
+(file ./output/time_series/margins_mort_imd_asthma.svg written in SVG format)
 (10 vars, 30 obs)
 (note: file ./output/time_series/tsreg_mortality_asthma_imd.csv not found)
 file ./output/time_series/tsreg_mortality_asthma_imd.csv saved
@@ -928,41 +1019,45 @@ file ./output/time_series/tsreg_mortality_asthma_imd.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        216
-maximum lag: 1                                  F( 14,       201) =       0.58
-                                                Prob > F          =     0.8782
+maximum lag: 1                                  F( 14,       201) =       0.57
+                                                Prob > F          =     0.8853
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |  -841.5981   1007.082    -0.84   0.404    -2827.399    1144.202
-          2  |  -726.0176   1005.362    -0.72   0.471    -2708.427    1256.392
-          3  |  -614.5914   1030.233    -0.60   0.551    -2646.042    1416.859
-          4  |  -1271.547   1032.568    -1.23   0.220    -3307.603     764.508
-          5  |   -1293.67    1033.29    -1.25   0.212     -3331.15     743.809
+          1  |  -842.6415    916.769    -0.92   0.359     -2650.36    965.0771
+          2  |  -1317.309   906.0728    -1.45   0.148    -3103.936    469.3187
+          3  |  -246.4215   937.0058    -0.26   0.793    -2094.044    1601.201
+          4  |  -684.9832   947.0996    -0.72   0.470    -2552.509    1182.542
+          5  |  -571.2535   948.5101    -0.60   0.548     -2441.56    1299.053
              |
- 1.postcovid |  -1306.205   1055.218    -1.24   0.217    -3386.922    774.5121
+ 1.postcovid |  -787.9382   1012.047    -0.78   0.437     -2783.53    1207.653
              |
          imd#|
    postcovid |
-        1 1  |   1206.373   1170.892     1.03   0.304    -1102.435     3515.18
-        2 1  |   1009.947   1128.997     0.89   0.372    -1216.251    3236.146
-        3 1  |   792.3613   1146.538     0.69   0.490    -1468.424    3053.147
-        4 1  |   2282.625   1215.905     1.88   0.062    -114.9411    4680.192
-        5 1  |   1761.546   1159.275     1.52   0.130    -524.3551    4047.448
+        1 1  |   878.9627   1114.681     0.79   0.431    -1319.005     3076.93
+        2 1  |   1041.051    1126.16     0.92   0.356    -1179.551    3261.654
+        3 1  |   471.3046   1170.054     0.40   0.688    -1835.851    2778.461
+        4 1  |   856.8283   1152.033     0.74   0.458    -1414.793     3128.45
+        5 1  |   1011.645   1187.175     0.85   0.395    -1329.269     3352.56
              |
       season |
-     Summer  |  -117.8251   371.4595    -0.32   0.751    -850.2825    614.6323
-     Autumn  |  -291.0787   387.0446    -0.75   0.453    -1054.267    472.1099
-     Winter  |  -250.1218   358.5889    -0.70   0.486    -957.2005    456.9569
+     Summer  |  -246.4997   400.2243    -0.62   0.539    -1035.677    542.6773
+     Autumn  |  -145.7645   347.4918    -0.42   0.675    -830.9616    539.4325
+     Winter  |  -313.4215   351.0911    -0.89   0.373    -1005.716    378.8727
              |
-       _cons |   6043.259   1067.256     5.66   0.000     3938.804    8147.713
+       _cons |   5844.286   921.2508     6.34   0.000      4027.73    7660.842
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_mort_imd_copd.svg not found)
+(file ./output/time_series/margins_mort_imd_copd.svg written in SVG format)
 (10 vars, 30 obs)
 (note: file ./output/time_series/tsreg_mortality_copd_imd.csv not found)
 file ./output/time_series/tsreg_mortality_copd_imd.csv saved
@@ -975,41 +1070,46 @@ file ./output/time_series/tsreg_mortality_copd_imd.csv saved
                 delta:  1 month
 
 Regression with Newey-West standard errors      Number of obs     =        216
-maximum lag: 1                                  F( 14,       201) =       1.35
-                                                Prob > F          =     0.1815
+maximum lag: 1                                  F( 14,       201) =       0.91
+                                                Prob > F          =     0.5469
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          1  |  -761.0652   1022.511    -0.74   0.458     -2777.29    1255.159
-          2  |   -758.501   1064.062    -0.71   0.477    -2856.657    1339.655
-          3  |  -495.8514   961.3871    -0.52   0.607     -2391.55    1399.847
-          4  |  -620.5228   1034.905    -0.60   0.549    -2661.187    1420.141
-          5  |  -1703.216   979.2802    -1.74   0.084    -3634.196    227.7649
+          1  |    1082.32   559.2309     1.94   0.054    -20.39219    2185.032
+          2  |   1352.179   665.5658     2.03   0.044     39.79222    2664.566
+          3  |   1510.073   669.6708     2.25   0.025     189.5922    2830.555
+          4  |    1396.18   605.6365     2.31   0.022     201.9643    2590.397
+          5  |   2037.463   700.0907     2.91   0.004     656.9988    3417.928
              |
- 1.postcovid |  -1260.439   1014.012    -1.24   0.215    -3259.904    739.0264
+ 1.postcovid |   728.8842   957.9644     0.76   0.448    -1160.065    2617.833
              |
          imd#|
    postcovid |
-        1 1  |   1112.031   1145.438     0.97   0.333    -1146.586    3370.648
-        2 1  |   1414.358   1182.099     1.20   0.233    -916.5483    3745.265
-        3 1  |   589.6987   1094.905     0.54   0.591    -1569.274    2748.672
-        4 1  |   1687.608    1156.33     1.46   0.146    -592.4852    3967.701
-        5 1  |   2057.981   1137.799     1.81   0.072    -185.5713    4301.534
+        1 1  |  -348.2236   1040.626    -0.33   0.738    -2400.167     1703.72
+        2 1  |  -475.2523   1102.566    -0.43   0.667    -2649.331    1698.827
+        3 1  |  -999.9102   1108.385    -0.90   0.368    -3185.465    1185.645
+        4 1  |  -828.9776   1073.008    -0.77   0.441    -2944.774    1286.819
+        5 1  |   -1337.75   1097.954    -1.22   0.224    -3502.735    827.2351
              |
       season |
-     Summer  |  -197.2626   310.4843    -0.64   0.526     -809.487    414.9617
-     Autumn  |  -206.0014   311.8792    -0.66   0.510    -820.9762    408.9734
-     Winter  |  -54.52512   380.3888    -0.14   0.886    -804.5896    695.5393
+     Summer  |   67.65192   384.6904     0.18   0.861    -690.8947    826.1986
+     Autumn  |   196.0105   386.7705     0.51   0.613    -566.6377    958.6587
+     Winter  |  -126.3369   364.2925    -0.35   0.729    -844.6621    591.9883
              |
-       _cons |   5911.959   863.4274     6.85   0.000     4209.421    7614.496
+       _cons |   3580.152   520.5448     6.88   0.000     2553.723    4606.582
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
 file ./output/time_series/tsreg_tables_mortality.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_mort_imd_all_cause.svg not found)
+(file ./output/time_series/margins_mort_imd_all_cause.svg written in SVG format
+> )
 (10 vars, 30 obs)
 (note: file ./output/time_series/tsreg_mortality_all_cause_imd.csv not found)
 file ./output/time_series/tsreg_mortality_all_cause_imd.csv saved
@@ -1018,5 +1118,5 @@ file ./output/time_series/tsreg_mortality_all_cause_imd.csv saved
       name:  <unnamed>
        log:  /workspace/logs/tsreg_mortality.log
   log type:  text
- closed on:  23 May 2022, 12:33:26
+ closed on:   7 Jun 2022, 15:14:41
 -------------------------------------------------------------------------------

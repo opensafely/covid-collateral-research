@@ -25,7 +25,7 @@ drop dereg_date
 
 * Format dates
 local a "mi_primary_admission stroke_primary_admission heart_failure_primary_admission vte_primary_admission t1dm_admission_primary t2dm_admission_primary dm_keto_admission_primary asthma_exacerbation depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission cvd_admission_date dm_admission copd_hospitalisation_date mh_admission" 
-local b "mi__admit_date stroke_admit_date hf_admit_date vte_admit_date t1dm_admit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_admit_date anx_admit_date smi_admit_date sh_admit_date cvd_admit_date dm_admit_date copd_admit_date mh_admit_date" 
+local b "mi_admit_date stroke_admit_date hf_admit_date vte_admit_date t1dm_admit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_admit_date anx_admit_date smi_admit_date sh_admit_date cvd_admit_date dm_admit_date copd_admit_date mh_admit_date" 
 forvalues i=1/16 {
     local c: word `i' of `a'
     local d: word `i' of `b' 
@@ -121,7 +121,7 @@ file write tablecontent ("Association between ethnicity and outcomes pre-pandemi
 file write tablecontent _tab ("Denominator") _tab ("Event") _tab ("Total person-weeks") _tab ("Rate per 1,000") _tab ("Crude") _tab _tab ("Age/Sex Adjusted") _tab _tab ("Fully Adjusted") _tab _tab  _n
 file write tablecontent _tab _tab _tab _tab _tab   ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab _tab  _n
 
-foreach sub in cvd dm copd mh {
+foreach sub in cvd dm copd mh mi stroke hf vte t1dm t2dm dm_keto asthma depress anx smi sh  {
     * Cox model for each outcome category
     * Generate flags and end dates for each outcome
     gen `sub'_admit=(`sub'_admit_date!=.)
@@ -225,7 +225,7 @@ drop dereg_date
 
 * Format dates
 local a "mi_primary_admission stroke_primary_admission heart_failure_primary_admission vte_primary_admission t1dm_admission_primary t2dm_admission_primary dm_keto_admission_primary asthma_exacerbation depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission cvd_admission_date dm_admission copd_hospitalisation_date mh_admission" 
-local b "mi__admit_date stroke_admit_date hf_admit_date vte_admit_date t1dm_admit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_admit_date anx_admit_date smi_admit_date sh_admit_date cvd_admit_date dm_admit_date copd_admit_date mh_admit_date" 
+local b "mi_admit_date stroke_admit_date hf_admit_date vte_admit_date t1dm_admit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_admit_date anx_admit_date smi_admit_date sh_admit_date cvd_admit_date dm_admit_date copd_admit_date mh_admit_date" 
 forvalues i=1/16 {
     local c: word `i' of `a'
     local d: word `i' of `b' 
@@ -321,7 +321,7 @@ file write tablecontent ("Association between ethnicity and outcomes pandemic") 
 file write tablecontent _tab ("Denominator") _tab ("Event") _tab ("Total person-weeks") _tab ("Rate per 1,000") _tab ("Crude") _tab _tab ("Age/Sex Adjusted") _tab _tab ("Fully Adjusted") _tab _tab  _n
 file write tablecontent _tab _tab _tab _tab _tab   ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab _tab  _n
 
-foreach sub in cvd dm copd mh {
+foreach sub in cvd dm copd mh mi stroke hf vte t1dm t2dm dm_keto asthma depress anx smi sh {
     * Cox model for each outcome category
     * Generate flags and end dates for each outcome
     gen `sub'_admit=(`sub'_admit_date!=.)

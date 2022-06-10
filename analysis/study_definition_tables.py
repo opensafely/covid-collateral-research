@@ -36,10 +36,11 @@ study = StudyDefinition(
                "category": {"ratios": {"STP1": 0.3, "STP2": 0.2, "STP3": 0.5}},
             },
         ),
-        household=patients.household_as_of(
+    ),
+    household=patients.household_as_of(
             "2020-02-01",
             returning="household_size",
+            return_expectations={"int" : {"distribution": "normal", "mean": 25, "stddev": 5}, "incidence" : 0.5}
         ),
-    ),
     **common_variables
 )

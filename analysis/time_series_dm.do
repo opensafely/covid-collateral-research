@@ -47,6 +47,9 @@ forvalues i=1/8 {
 		matrix a = r(table)'
 		putexcel A6 = matrix(a), rownames
 		putexcel save
+		quietly margins `d'##postcovid
+        marginsplot
+        graph export ./output/time_series/margins_dm_`c'_`d'.svg, as(svg) replace
 		import excel using ./output/time_series/tsreg_tables_dm.xlsx, sheet (`c'_`d') clear
         export delimited using ./output/time_series/tsreg_dm_`c'_`d'.csv, replace
 		}

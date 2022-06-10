@@ -3,7 +3,8 @@ from cohortextractor import (
     StudyDefinition,
     Measure,
     patients,
-    combine_codelists
+    combine_codelists,
+    filter_codes_by_category,
 )
 from codelists import *
 
@@ -153,13 +154,13 @@ study = StudyDefinition(
     returning="binary_flag",
     ),
     mi_mortality = patients.with_these_codes_on_death_certificate(
-    mi_icd_codes,
+    filter_codes_by_category(mi_icd_codes, include=["1"]),
     between=["index_date", "last_day_of_month(index_date)"],
     match_only_underlying_cause=True,
     returning="binary_flag",
     ),
     heart_failure_mortality = patients.with_these_codes_on_death_certificate(
-    heart_failure_icd_codes,
+    filter_codes_by_category(heart_failure_icd_codes, include=["1"]),
     between=["index_date", "last_day_of_month(index_date)"],
     match_only_underlying_cause=True,
     returning="binary_flag",

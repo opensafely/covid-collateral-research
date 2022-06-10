@@ -38,12 +38,16 @@
  24.         matrix a = r(table)'
  25.         putexcel A6 = matrix(a), rownames
  26.         putexcel save
- 27.         import excel using ./output/time_series/tsreg_tables_resp.xlsx, sh
+ 27.         quietly margins `strata'##postcovid
+ 28.     marginsplot
+ 29.     graph export ./output/time_series/margins_resp_`var'_`strata'.svg, as(
+> svg) replace
+ 30.         import excel using ./output/time_series/tsreg_tables_resp.xlsx, sh
 > eet (`var'_`strata') clear
- 28.     export delimited using ./output/time_series/tsreg_resp_`var'_`strata'.
+ 31.     export delimited using ./output/time_series/tsreg_resp_`var'_`strata'.
 > csv, replace
- 29.         }
- 30. }
+ 32.         }
+ 33. }
 (5 vars, 235 obs)
 (0 observations deleted)
 (60 real changes made)
@@ -87,6 +91,12 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_resp_asthma_monitoring_ethnicity.svg n
+> ot found)
+(file ./output/time_series/margins_resp_asthma_monitoring_ethnicity.svg written
+>  in SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_resp_asthma_monitoring_ethnicity.csv not
 >  found)
@@ -134,6 +144,12 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_resp_asthma_monitoring_imd.svg not fou
+> nd)
+(file ./output/time_series/margins_resp_asthma_monitoring_imd.svg written in SV
+> G format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_resp_asthma_monitoring_imd.csv not found
 > )
@@ -181,6 +197,12 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_resp_copd_monitoring_ethnicity.svg not
+>  found)
+(file ./output/time_series/margins_resp_copd_monitoring_ethnicity.svg written i
+> n SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_resp_copd_monitoring_ethnicity.csv not f
 > ound)
@@ -228,6 +250,12 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_resp_copd_monitoring_imd.svg not found
+> )
+(file ./output/time_series/margins_resp_copd_monitoring_imd.svg written in SVG 
+> format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_resp_copd_monitoring_imd.csv not found)
 file ./output/time_series/tsreg_resp_copd_monitoring_imd.csv saved
@@ -274,6 +302,12 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_resp_asthma_exacerbation_ethnicity.svg
+>  not found)
+(file ./output/time_series/margins_resp_asthma_exacerbation_ethnicity.svg writt
+> en in SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_resp_asthma_exacerbation_ethnicity.csv n
 > ot found)
@@ -321,6 +355,12 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_resp_asthma_exacerbation_imd.svg not f
+> ound)
+(file ./output/time_series/margins_resp_asthma_exacerbation_imd.svg written in 
+> SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_resp_asthma_exacerbation_imd.csv not fou
 > nd)
@@ -368,6 +408,12 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
+
+  Variables that uniquely identify margins: ethnicity postcovid
+(note: file ./output/time_series/margins_resp_copd_exacerbation_ethnicity.svg n
+> ot found)
+(file ./output/time_series/margins_resp_copd_exacerbation_ethnicity.svg written
+>  in SVG format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_resp_copd_exacerbation_ethnicity.csv not
 >  found)
@@ -415,6 +461,12 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
+
+  Variables that uniquely identify margins: imd postcovid
+(note: file ./output/time_series/margins_resp_copd_exacerbation_imd.svg not fou
+> nd)
+(file ./output/time_series/margins_resp_copd_exacerbation_imd.svg written in SV
+> G format)
 (10 vars, 27 obs)
 (note: file ./output/time_series/tsreg_resp_copd_exacerbation_imd.csv not found
 > )
@@ -425,5 +477,5 @@ file ./output/time_series/tsreg_resp_copd_exacerbation_imd.csv saved
       name:  <unnamed>
        log:  /workspace/logs/tsreg_resp.log
   log type:  text
- closed on:  23 May 2022, 12:34:24
+ closed on:   7 Jun 2022, 14:59:10
 -------------------------------------------------------------------------------
