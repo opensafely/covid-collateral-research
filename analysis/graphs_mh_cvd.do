@@ -376,6 +376,10 @@ forvalues i=1/3 {
     * IMD
     clear 
     import delimited using ./output/measures/mh/measure_`this_group'_emergency_imd_rate.csv, numericcols(4)
+    * IMD should not have missings as . on server but could be in dummy data
+    count if imd==.
+    * Drop missings
+    drop if imd==. | imd==0
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
