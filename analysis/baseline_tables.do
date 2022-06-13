@@ -28,12 +28,9 @@ cap mkdir ./output/tables
 forvalues i=2019/2021 {
   * Import csv file
     import delimited ./output/measures/tables/input_tables_`i'-01-01.csv, clear
-    * Check how often household is zero
-    sum household, d
-    count if household==0
-    *update variable with missing so that . is shown as unknown (just for this table)
+    *update variable with missing so that 0 is shown as unknown (just for this table)
     *(1) ethnicity
-    replace ethnicity=6 if ethnicity==.
+    replace ethnicity=6 if ethnicity==0
     label define eth5 			1 "White"  					///
                                 2 "Mixed"				///						
                                 3 "Asian"  					///
@@ -51,10 +48,16 @@ forvalues i=2019/2021 {
     egen age_cat = cut(age), at(18, 40, 60, 80, 120) icodes
     label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years" 3 ">80 years"
     label values age_cat age
+    bys age_cat: sum age
+
+    * Create categories of household size
+    egen household_cat = cut(household), at(0, 1, 16, 100) icodes
+    label define house 0 "missing" 1 "1-15 people" 2 "over 15 people"
+    bys household_cat: sum household
 
     preserve
     * Create baseline table
-    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate \ urban_rural cate \  ///
+    table1_mc, vars(age_cat cate \ sex cate \ ethnicity cate \ eth cate \ ethnicity_sus cate \ imd cate \ region cate \ urban_rural cate \ household_cat cate \ care_home cate \  ///
     has_t1_diabetes cate  \ has_t2_diabetes cate \ has_asthma cate \ has_copd cate \ cvd_subgroup cate \ mh_subgroup cate) clear
     export delimited using ./output/tables/baseline_table_`i'.csv
     restore
@@ -68,14 +71,14 @@ forvalues i=2019/2021 {
     tempfile tempfile
     preserve
     keep if ethnicity==1
-    table1_mc, vars(age_cat cate \ sex cate \ imd cate \ region cate \ urban_rural cate   ///
+    table1_mc, vars(age_cat cate \ sex cate \ imd cate \ region cate \ urban_rural cate \ household_cat cate \ care_home cate ///
     \ has_t1_diabetes cate \ has_t2_diabetes cate \ has_asthma cate \ has_copd cate \ cvd_subgroup cate \ mh_subgroup cate) clear
     save `tempfile', replace
     restore
     forvalues j=2/5 {
       preserve
       keep if ethnicity==`j'
-      table1_mc, vars(age_cat cate \ sex cate \ imd cate \ region cate \ urban_rural cate  ///
+      table1_mc, vars(age_cat cate \ sex cate \ imd cate \ region cate \ urban_rural cate \ household_cat cate \ care_home cate ///
       \ has_t1_diabetes cate \ has_t2_diabetes cate \ has_asthma cate \ has_copd cate \ cvd_subgroup cate \ mh_subgroup cate) clear
       append using `tempfile'
       save `tempfile', replace
