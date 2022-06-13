@@ -13,6 +13,10 @@ cap mkdir ./output/graphs
 foreach this_group in cvd mh {
 * Ethnicity
         import delimited using ./output/measures/`this_group'/measure_systolic_bp_`this_group'_ethnicity_rate.csv, numericcols(4) clear
+        * Shouldn't be missing on server but is in dummy data
+        count if ethnicity==.
+        * Drop missings as not required
+        drop if ethnicity==0 | ethnicity==.
         * Generate rate per 100,000
         gen rate = value*100000 
         * Format date
@@ -38,6 +42,10 @@ foreach this_group in cvd mh {
     * IMD
     clear 
     import delimited using ./output/measures/`this_group'/measure_systolic_bp_`this_group'_imd_rate.csv, numericcols(4)
+    * IMD should not have missings as . on server but could be in dummy data
+    count if imd==.
+    * Drop missings
+    drop if imd==. | imd==0
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -69,6 +77,10 @@ forvalues i=1/4 {
 * Ethnicity
     clear 
     import delimited using ./output/measures/cvd/measure_`this_group'_admission_ethnicity_rate.csv, numericcols(4)
+     * Shouldn't be missing on server but is in dummy data
+    count if ethnicity==.
+    * Drop missings as not required
+    drop if ethnicity==0 | ethnicity==.
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -95,6 +107,10 @@ forvalues i=1/4 {
     * IMD
     clear 
     import delimited using ./output/measures/cvd/measure_`this_group'_admission_imd_rate.csv, numericcols(4)
+    * IMD should not have missings as . on server but could be in dummy data
+    count if imd==.
+    * Drop missings
+    drop if imd==. | imd==0
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -126,6 +142,10 @@ forvalues i=1/6 {
 * Ethnicity
     clear 
     import delimited using ./output/measures/mh/measure_`this_group'_admission_ethnicity_rate.csv, numericcols(4)
+     * Shouldn't be missing on server but is in dummy data
+    count if ethnicity==.
+    * Drop missings as not required
+    drop if ethnicity==0 | ethnicity==.
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -152,6 +172,10 @@ forvalues i=1/6 {
     * IMD
     clear 
     import delimited using ./output/measures/mh/measure_`this_group'_admission_imd_rate.csv, numericcols(4)
+    * IMD should not have missings as . on server but could be in dummy data
+    count if imd==.
+    * Drop missings
+    drop if imd==. | imd==0
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -184,6 +208,10 @@ forvalues i=1/4 {
 * Ethnicity
     clear 
     import delimited using ./output/measures/cvd/measure_`this_group'_primary_admission_ethnicity_rate.csv, numericcols(4)
+     * Shouldn't be missing on server but is in dummy data
+    count if ethnicity==.
+    * Drop missings as not required
+    drop if ethnicity==0 | ethnicity==.
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -210,6 +238,10 @@ forvalues i=1/4 {
     * IMD
     clear 
     import delimited using ./output/measures/cvd/measure_`this_group'_primary_admission_imd_rate.csv, numericcols(4)
+    * IMD should not have missings as . on server but could be in dummy data
+    count if imd==.
+    * Drop missings
+    drop if imd==. | imd==0
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -314,6 +346,10 @@ forvalues i=1/3 {
 * Ethnicity
     clear 
     import delimited using ./output/measures/mh/measure_`this_group'_emergency_ethnicity_rate.csv, numericcols(4)
+     * Shouldn't be missing on server but is in dummy data
+    count if ethnicity==.
+    * Drop missings as not required
+    drop if ethnicity==0 | ethnicity==.
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -340,6 +376,10 @@ forvalues i=1/3 {
     * IMD
     clear 
     import delimited using ./output/measures/mh/measure_`this_group'_emergency_imd_rate.csv, numericcols(4)
+    * IMD should not have missings as . on server but could be in dummy data
+    count if imd==.
+    * Drop missings
+    drop if imd==. | imd==0
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
