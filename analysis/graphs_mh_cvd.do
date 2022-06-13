@@ -19,7 +19,6 @@ foreach this_group in cvd mh {
         gen dateA = date(date, "YMD")
         drop date
         format dateA %dD/M/Y
-        tab dateA 
         * reshape dataset so columns with rates for each ethnicity 
         reshape wide value rate `this_group'_subgroup systolic_bp, i(dateA) j(ethnicity)
         describe
@@ -45,7 +44,6 @@ foreach this_group in cvd mh {
     gen dateA = date(date, "YMD")
     drop date
     format dateA %dD/M/Y
-    tab dateA 
     * reshape dataset so columns with rates for each ethnicity 
     reshape wide value rate `this_group'_subgroup systolic_bp, i(dateA) j(imd)
     describe
