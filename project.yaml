@@ -274,7 +274,7 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/tsreg_mortality.log
-        output: output/time_series/tsreg_tables_mortality*.csv
+        output: output/time_series/tsreg_mortality*.csv
         graph: output/time_series/margins_mort*.svg
 
   # Study definition for pre-pandemic survival analysis
