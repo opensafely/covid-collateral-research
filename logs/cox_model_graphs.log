@@ -1,0 +1,4233 @@
+
+. cap mkdir ./output/survival
+
+. cap mkdir ./output/tempdata
+
+. * Pre-pandemic
+. import delimited using ./output/survival/input_survival_pre.csv, clear
+(39 vars, 1,000 obs)
+
+. * First preparing dataset
+. * Drop variables that make up COPD hospitalisation as not required
+. drop copd_exacerbation_hospital copd_hospital lrti_hospital copd_any eth ethn
+> icity_sus
+
+. 
+. * Assume deregistered on 1st of month
+. gen dereg_dateA = date(dereg_date, "YM")
+(950 missing values generated)
+
+. format %dD/N/CY dereg_dateA
+
+. drop dereg_date
+
+. 
+. * Format dates
+. local a "mi_primary_admission stroke_primary_admission heart_failure_primary_
+> admission vte_primary_admission t1dm_admission_primary t2dm_admission_primary
+>  dm_keto_admission_primary asthma_exacerbation depression_primary_admission a
+> nxiety_primary_admission smi_primary_admission self_harm_primary_admission cv
+> d_admission_date dm_admission copd_hospitalisation_date mh_admission" 
+
+. local b "mi_admit_date stroke_admit_date hf_admit_date vte_admit_date t1dm_ad
+> mit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_admit_d
+> ate anx_admit_date smi_admit_date sh_admit_date cvd_admit_date dm_admit_date 
+> copd_admit_date mh_admit_date" 
+
+. forvalues i=1/16 {
+  2.     local c: word `i' of `a'
+  3.     local d: word `i' of `b' 
+  4.     count if `c'!=""   
+  5.     gen `d'=date(`c', "YMD")
+  6.     format %dD/N/CY `d'
+  7.     drop `c'
+  8.     }
+  21
+(979 missing values generated)
+  33
+(967 missing values generated)
+  26
+(974 missing values generated)
+  28
+(972 missing values generated)
+  19
+(981 missing values generated)
+  26
+(974 missing values generated)
+  29
+(971 missing values generated)
+  27
+(973 missing values generated)
+  27
+(973 missing values generated)
+  23
+(977 missing values generated)
+  24
+(976 missing values generated)
+  22
+(978 missing values generated)
+  101
+(899 missing values generated)
+  72
+(928 missing values generated)
+  87
+(913 missing values generated)
+  94
+(906 missing values generated)
+
+. 
+. * Define index date
+. gen index_date = date("01/03/2018", "DMY")
+
+. * Define end of follow-up
+. gen end_study = date("22/03/2020", "DMY")
+
+. format %dD/N/CY index_date end_study
+
+. egen end_date = rowmin(dereg_dateA end_study)
+
+. format %dD/N/CY end_date
+
+. 
+. * Reorder ethnicity - white, asian, black, mixed, other
+. *re-order ethnicity
+.  gen eth5=1 if ethnicity==1
+(790 missing values generated)
+
+.  replace eth5=2 if ethnicity==3
+(210 real changes made)
+
+.  replace eth5=3 if ethnicity==4
+(183 real changes made)
+
+.  replace eth5=4 if ethnicity==2
+(195 real changes made)
+
+.  replace eth5=5 if ethnicity==5
+(202 real changes made)
+
+.  replace eth5=. if ethnicity==.
+(0 real changes made)
+
+. 
+.  label define eth5                      1 "White"                            
+>            ///
+>                                                         2 "South Asian"      
+>                    ///                                             
+>                                                         3 "Black"            
+>                            ///
+>                                                         4 "Mixed"            
+>                            ///
+>                                                         5 "Other"            
+>                            
+
+.                                         
+. 
+. label values eth5 eth5
+
+. safetab eth5, m
+5
+
+       eth5 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+      White |        210       21.00       21.00
+South Asian |        210       21.00       42.00
+      Black |        183       18.30       60.30
+      Mixed |        195       19.50       79.80
+      Other |        202       20.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+
+. 
+. * Make gender numeric
+. gen male = 1 if sex == "M"
+(512 missing values generated)
+
+. replace male = 0 if sex == "F"
+(501 real changes made)
+
+. label define male 0"Female" 1"Male"
+
+. label values male male
+
+. safetab male, miss
+5
+
+       male |      Freq.     Percent        Cum.
+------------+-----------------------------------
+     Female |        501       50.10       50.10
+       Male |        488       48.80       98.90
+          . |         11        1.10      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+
+. drop sex
+
+. 
+. * Make region numeric
+. generate region2=.
+(1,000 missing values generated)
+
+. replace region2=0 if region=="East"
+(0 real changes made)
+
+. replace region2=1 if region=="East Midlands"
+(94 real changes made)
+
+. replace region2=2 if region=="London"
+(211 real changes made)
+
+. replace region2=3 if region=="North East"
+(109 real changes made)
+
+. replace region2=4 if region=="North West"
+(117 real changes made)
+
+. replace region2=5 if region=="South East"
+(181 real changes made)
+
+. replace region2=6 if region=="South West"
+(0 real changes made)
+
+. replace region2=7 if region=="West Midlands"
+(97 real changes made)
+
+. replace region2=8 if region=="Yorkshire and The Humber"
+(0 real changes made)
+
+. drop region
+
+. rename region2 region
+
+. label var region "region of England"
+
+. label define region 0 "East" 1 "East Midlands"  2 "London" 3 "North East" 4 "
+> North West" 5 "South East" 6 "South West" 7 "West Midlands" 8 "Yorkshire and 
+> The Humber"
+
+. label values region region
+
+. safetab region, miss
+7
+
+       region of England |      Freq.     Percent        Cum.
+-------------------------+-----------------------------------
+           East Midlands |         94        9.40        9.40
+                  London |        211       21.10       30.50
+              North East |        109       10.90       41.40
+              North West |        117       11.70       53.10
+              South East |        181       18.10       71.20
+           West Midlands |         97        9.70       80.90
+                       . |        191       19.10      100.00
+-------------------------+-----------------------------------
+                   Total |      1,000      100.00
+
+. 
+. *create a 4 category rural urban variable 
+. generate urban_rural_5=.
+(1,000 missing values generated)
+
+. la var urban_rural_5 "Rural Urban in five categories"
+
+. replace urban_rural_5=1 if urban_rural==1
+(112 real changes made)
+
+. replace urban_rural_5=2 if urban_rural==2
+(94 real changes made)
+
+. replace urban_rural_5=3 if urban_rural==3|urban_rural==4
+(200 real changes made)
+
+. replace urban_rural_5=4 if urban_rural==5|urban_rural==6
+(204 real changes made)
+
+. replace urban_rural_5=5 if urban_rural==7|urban_rural==8
+(390 real changes made)
+
+. label define urban_rural_5 1 "Urban major conurbation" 2 "Urban minor conurba
+> tion" 3 "Urban city and town" 4 "Rural town and fringe" 5 "Rural village and 
+> dispersed"
+
+. label values urban_rural_5 urban_rural_5
+
+. safetab urban_rural_5, miss
+14
+
+        Rural Urban in five |
+                 categories |      Freq.     Percent        Cum.
+----------------------------+-----------------------------------
+    Urban major conurbation |        112       11.20       11.20
+    Urban minor conurbation |         94        9.40       20.60
+        Urban city and town |        200       20.00       40.60
+      Rural town and fringe |        204       20.40       61.00
+Rural village and dispersed |        390       39.00      100.00
+----------------------------+-----------------------------------
+                      Total |      1,000      100.00
+
+. 
+. *generate a binary rural urban (with missing assigned to urban)
+. generate urban_rural_bin=.
+(1,000 missing values generated)
+
+. replace urban_rural_bin=1 if urban_rural<=4|urban_rural==.
+(406 real changes made)
+
+. replace urban_rural_bin=0 if urban_rural>4 & urban_rural!=.
+(594 real changes made)
+
+. label define urban_rural_bin 0 "Rural" 1 "Urban"
+
+. label values urban_rural_bin urban_rural_bin
+
+. safetab urban_rural_bin urban_rural, miss
+28
+
+urban_rura |                      urban_rural
+     l_bin |         1          2          3          4          5 |     Total
+-----------+-------------------------------------------------------+----------
+     Rural |         0          0          0          0         96 |       594 
+     Urban |       112         94         93        107          0 |       406 
+-----------+-------------------------------------------------------+----------
+     Total |       112         94         93        107         96 |     1,000 
+
+
+urban_rura |           urban_rural
+     l_bin |         6          7          8 |     Total
+-----------+---------------------------------+----------
+     Rural |       108        202        188 |       594 
+     Urban |         0          0          0 |       406 
+-----------+---------------------------------+----------
+     Total |       108        202        188 |     1,000 
+
+. label var urban_rural_bin "Rural-Urban"
+
+. 
+. * Define age categories
+. * Create age categories
+. egen age_cat = cut(age), at(18, 40, 60, 80, 120) icodes
+(215 missing values generated)
+
+. label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years" 3 ">80
+>  years"
+
+. label values age_cat age
+
+. safetab age_cat, miss
+8
+
+      age_cat |      Freq.     Percent        Cum.
+--------------+-----------------------------------
+18 - 40 years |        301       30.10       30.10
+41 - 60 years |        236       23.60       53.70
+61 - 80 years |        200       20.00       73.70
+    >80 years |         48        4.80       78.50
+            . |        215       21.50      100.00
+--------------+-----------------------------------
+        Total |      1,000      100.00
+
+. 
+. * open file to write results to
+. file open tablecontent using ./output/tables/cvd_cox_models.txt, write text r
+> eplace
+(note: file ./output/tables/cvd_cox_models.txt not found)
+
+. file write tablecontent ("Association between ethnicity and outcomes pre-pand
+> emic") _n
+
+. file write tablecontent _tab ("Denominator") _tab ("Event") _tab ("Total pers
+> on-weeks") _tab ("Rate per 1,000") _tab ("Crude") _tab _tab ("Age/Sex Adjuste
+> d") _tab _tab ("Fully Adjusted") _tab _tab  _n
+
+. file write tablecontent _tab _tab _tab _tab _tab   ("HR") _tab ("95% CI") _ta
+> b ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab _tab  _n
+
+. 
+. foreach sub in cvd dm copd mh mi stroke hf vte t1dm t2dm dm_keto asthma depre
+> ss anx smi sh {
+  2.     * Cox model for each outcome category
+.     * Generate flags and end dates for each outcome
+.     gen `sub'_admit=(`sub'_admit_date!=.)
+  3.     tab `sub'_admit
+  4.     count if `sub'_admit_date==.
+  5.     gen `sub'_end = end_date
+  6.     replace `sub'_end = `sub'_admit_date if `sub'_admit==1
+  7. 
+.     stset `sub'_end, fail(`sub'_admit) id(patient_id) enter(index_date) origi
+> n(index_date) scale(365.25) 
+  8.     * Cox model - fully adjusted
+.     stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded
+  9.     * Create graph of HRs
+.     coefplot, keep(2.eth5 3.eth5 4.eth5 5.eth5) xline(1) eform xtitle("Hazard
+>  ratio") title("Pre-pandemic") graphregion(color(white)) name(`sub'_pre, repl
+> ace)
+ 10. } //end outcomes
+
+  cvd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        899       89.90       89.90
+          1 |        101       10.10      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  899
+(101 real changes made)
+
+                id:  patient_id
+     failure event:  cvd_admit != 0 & cvd_admit < .
+obs. time interval:  (cvd_end[_n-1], cvd_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+        101  failures in single-failure-per-subject data
+  1,954.103  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  cvd_admit
+   analysis time _t:  (cvd_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -501.91748
+Iteration 1:   log likelihood = -492.80542
+Iteration 2:   log likelihood = -492.48627
+Iteration 3:   log likelihood = -492.41784
+Iteration 4:   log likelihood = -492.39271
+Iteration 5:   log likelihood = -492.38347
+Iteration 6:   log likelihood = -492.38007
+Iteration 7:   log likelihood = -492.37882
+Iteration 8:   log likelihood = -492.37836
+Iteration 9:   log likelihood = -492.37819
+Iteration 10:  log likelihood = -492.37813
+Iteration 11:  log likelihood = -492.37811
+Iteration 12:  log likelihood =  -492.3781
+Iteration 13:  log likelihood =  -492.3781
+Iteration 14:  log likelihood =  -492.3781
+Iteration 15:  log likelihood =  -492.3781
+Iteration 16:  log likelihood =  -492.3781
+Iteration 17:  log likelihood =  -492.3781
+Iteration 18:  log likelihood =  -492.3781
+Iteration 19:  log likelihood =  -492.3781
+Iteration 20:  log likelihood =  -492.3781
+Iteration 21:  log likelihood =  -492.3781
+Iteration 22:  log likelihood =  -492.3781
+Iteration 23:  log likelihood =  -492.3781
+Iteration 24:  log likelihood =  -492.3781
+Iteration 25:  log likelihood =  -492.3781
+Iteration 26:  log likelihood =  -492.3781
+Iteration 27:  log likelihood =  -492.3781
+Iteration 28:  log likelihood =  -492.3781
+Iteration 29:  log likelihood =  -492.3781
+Iteration 30:  log likelihood =  -492.3781
+Iteration 31:  log likelihood =  -492.3781
+Iteration 32:  log likelihood =  -492.3781
+Iteration 33:  log likelihood =  -492.3781
+Iteration 34:  log likelihood =  -492.3781
+Refining estimates:
+Iteration 0:   log likelihood =  -492.3781
+Iteration 1:   log likelihood =  -492.3781
+Iteration 2:   log likelihood =  -492.3781
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           76
+Time at risk    =   1521.36345
+                                                LR chi2(15)      =       19.08
+Log likelihood  =    -492.3781                  Prob > chi2      =      0.2102
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .7550653   .2729221    -0.78   0.437     .3718035      1.5334
+      Black  |   1.116889    .399507     0.31   0.757      .554037     2.25155
+      Mixed  |   .6987473    .271153    -0.92   0.356     .3265926    1.494975
+      Other  |   1.263211   .4230661     0.70   0.485     .6552354    2.435312
+             |
+     age_cat |
+41 - 60 y..  |   .7380754   .2210054    -1.01   0.310     .4104133    1.327333
+61 - 80 y..  |   1.155437    .320454     0.52   0.602     .6709196    1.989859
+  >80 years  |   .8192979   .4398847    -0.37   0.710     .2860407     2.34669
+             |
+        male |
+       Male  |   1.173468   .2739204     0.69   0.493      .742638    1.854239
+             |
+urban_rura~n |
+      Urban  |   .9690524   .2298193    -0.13   0.895     .6088038    1.542472
+             |
+         imd |
+          1  |   .8524347   .5458455    -0.25   0.803     .2429994    2.990316
+          2  |   1.466883   .9032542     0.62   0.534     .4387889    4.903826
+          3  |   .5225344    .356819    -0.95   0.342     .1370444    1.992362
+          4  |   .5323577   .3574917    -0.94   0.348     .1427579    1.985213
+          5  |   1.079025   .6786067     0.12   0.904     .3145611    3.701334
+             |
+  1.shielded |   2.29e-16   1.68e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+   dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        928       92.80       92.80
+          1 |         72        7.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  928
+(72 real changes made)
+
+                id:  patient_id
+     failure event:  dm_admit != 0 & dm_admit < .
+obs. time interval:  (dm_end[_n-1], dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         72  failures in single-failure-per-subject data
+  1,991.918  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  dm_admit
+   analysis time _t:  (dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -377.17658
+Iteration 1:   log likelihood = -368.11514
+Iteration 2:   log likelihood = -367.36715
+Iteration 3:   log likelihood = -367.14668
+Iteration 4:   log likelihood = -367.06614
+Iteration 5:   log likelihood = -367.03657
+Iteration 6:   log likelihood =  -367.0257
+Iteration 7:   log likelihood =  -367.0217
+Iteration 8:   log likelihood = -367.02023
+Iteration 9:   log likelihood = -367.01969
+Iteration 10:  log likelihood = -367.01949
+Iteration 11:  log likelihood = -367.01942
+Iteration 12:  log likelihood = -367.01939
+Iteration 13:  log likelihood = -367.01938
+Iteration 14:  log likelihood = -367.01938
+Iteration 15:  log likelihood = -367.01938
+Iteration 16:  log likelihood = -367.01938
+Iteration 17:  log likelihood = -367.01938
+Iteration 18:  log likelihood = -367.01938
+Iteration 19:  log likelihood = -367.01938
+Iteration 20:  log likelihood = -367.01938
+Iteration 21:  log likelihood = -367.01938
+Iteration 22:  log likelihood = -367.01938
+Iteration 23:  log likelihood = -367.01938
+Iteration 24:  log likelihood = -367.01938
+Iteration 25:  log likelihood = -367.01938
+Iteration 26:  log likelihood = -367.01938
+Iteration 27:  log likelihood = -367.01938
+Iteration 28:  log likelihood = -367.01938
+Iteration 29:  log likelihood = -367.01938
+Iteration 30:  log likelihood = -367.01938
+Iteration 31:  log likelihood = -367.01938
+Iteration 32:  log likelihood = -367.01938
+Iteration 33:  log likelihood = -367.01938
+Iteration 34:  log likelihood = -367.01938
+Iteration 35:  log likelihood = -367.01938
+Iteration 36:  log likelihood = -367.01938
+Iteration 37:  log likelihood = -367.01938
+Iteration 38:  log likelihood = -367.01938
+Iteration 39:  log likelihood = -367.01938
+Iteration 40:  log likelihood = -367.01938
+Iteration 41:  log likelihood = -367.01938
+Iteration 42:  log likelihood = -367.01938
+Refining estimates:
+Iteration 0:   log likelihood = -367.01938
+Iteration 1:   log likelihood = -367.01938
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           57
+Time at risk    =  1542.652977
+                                                LR chi2(14)      =       20.31
+Log likelihood  =   -367.01938                  Prob > chi2      =      0.1205
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   2.445971   1.183615     1.85   0.065     .9474396    6.314676
+      Black  |   1.099339   .6689851     0.16   0.876     .3335392    3.623403
+      Mixed  |   2.857228   1.381763     2.17   0.030     1.107393    7.372048
+      Other  |   2.972774    1.42476     2.27   0.023     1.162002    7.605307
+             |
+     age_cat |
+41 - 60 y..  |   1.248371    .402255     0.69   0.491     .6638441    2.347584
+61 - 80 y..  |   .9668886   .3469622    -0.09   0.925     .4785506    1.953552
+  >80 years  |   1.621523   .8249682     0.95   0.342     .5982255    4.395229
+             |
+        male |
+       Male  |   .9919169   .2659382    -0.03   0.976     .5864941    1.677594
+             |
+urban_rura~n |
+      Urban  |   .9576312   .2624669    -0.16   0.874     .5596307    1.638683
+             |
+         imd |
+          1  |   3.80e+08   1.89e+08    39.73   0.000     1.43e+08    1.01e+09
+          2  |   5.64e+08   2.59e+08    43.87   0.000     2.29e+08    1.39e+09
+          3  |   2.91e+08          .        .       .            .           .
+          4  |   5.40e+08   2.51e+08    43.25   0.000     2.17e+08    1.34e+09
+          5  |   4.01e+08   1.95e+08    40.62   0.000     1.54e+08    1.04e+09
+             |
+  1.shielded |   1.81e-19   4.82e-10    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+ copd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        913       91.30       91.30
+          1 |         87        8.70      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  913
+(87 real changes made)
+
+                id:  patient_id
+     failure event:  copd_admit != 0 & copd_admit < .
+obs. time interval:  (copd_end[_n-1], copd_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         87  failures in single-failure-per-subject data
+  1,976.758  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  copd_admit
+   analysis time _t:  (copd_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -442.89659
+Iteration 1:   log likelihood = -437.60922
+Iteration 2:   log likelihood = -435.75153
+Iteration 3:   log likelihood =  -435.7078
+Iteration 4:   log likelihood = -435.70762
+Refining estimates:
+Iteration 0:   log likelihood = -435.70762
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           67
+Time at risk    =  1531.288159
+                                                LR chi2(15)      =       14.38
+Log likelihood  =   -435.70762                  Prob > chi2      =      0.4971
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.264117   .4547507     0.65   0.515      .624565    2.558566
+      Black  |   .7006813   .3114547    -0.80   0.424     .2931967    1.674487
+      Mixed  |   .8337238   .3245551    -0.47   0.640     .3887437    1.788056
+      Other  |   1.205735   .4456949     0.51   0.613     .5842638    2.488256
+             |
+     age_cat |
+41 - 60 y..  |   .7496813   .2243566    -0.96   0.336      .417002    1.347768
+61 - 80 y..  |   .7895044   .2484729    -0.75   0.453     .4260536    1.463001
+  >80 years  |   .6757627   .4140009    -0.64   0.522     .2033818     2.24531
+             |
+        male |
+       Male  |    .819758   .2027252    -0.80   0.422     .5048758    1.331027
+             |
+urban_rura~n |
+      Urban  |   .8326241   .2131332    -0.72   0.474     .5041507     1.37511
+             |
+         imd |
+          1  |   1.079668   .8276819     0.10   0.920      .240299    4.850964
+          2  |   1.102371   .8422743     0.13   0.898     .2465819    4.928268
+          3  |    1.61199   1.216154     0.63   0.527     .3674342    7.072043
+          4  |    .883121   .6839793    -0.16   0.873     .1935364    4.029748
+          5  |   .8088093   .6294904    -0.27   0.785      .175939    3.718178
+             |
+  1.shielded |   8.855114   5.631895     3.43   0.001      2.54581    30.80083
+------------------------------------------------------------------------------
+
+   mh_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        906       90.60       90.60
+          1 |         94        9.40      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  906
+(93 real changes made)
+
+                id:  patient_id
+     failure event:  mh_admit != 0 & mh_admit < .
+obs. time interval:  (mh_end[_n-1], mh_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         94  failures in single-failure-per-subject data
+  1,963.693  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  mh_admit
+   analysis time _t:  (mh_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -501.92016
+Iteration 1:   log likelihood =  -494.9512
+Iteration 2:   log likelihood =  -494.8347
+Iteration 3:   log likelihood = -494.83365
+Iteration 4:   log likelihood = -494.83365
+Refining estimates:
+Iteration 0:   log likelihood = -494.83365
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           76
+Time at risk    =  1522.332649
+                                                LR chi2(15)      =       14.17
+Log likelihood  =   -494.83365                  Prob > chi2      =      0.5125
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.009478   .3837414     0.02   0.980      .479206    2.126529
+      Black  |   .8406256   .3529172    -0.41   0.679      .369186    1.914079
+      Mixed  |   1.442656   .5158913     1.02   0.305     .7157721     2.90771
+      Other  |   1.591978   .5568849     1.33   0.184     .8020121    3.160045
+             |
+     age_cat |
+41 - 60 y..  |   1.031577   .2843916     0.11   0.910     .6009485    1.770787
+61 - 80 y..  |   .9599636   .2804116    -0.14   0.889     .5415185    1.701752
+  >80 years  |    .378709   .2781027    -1.32   0.186     .0897906    1.597277
+             |
+        male |
+       Male  |   .8074203    .187843    -0.92   0.358     .5117656    1.273879
+             |
+urban_rura~n |
+      Urban  |   1.175916   .2736229     0.70   0.486     .7452658    1.855418
+             |
+         imd |
+          1  |   1.590976   1.190586     0.62   0.535     .3670103    6.896822
+          2  |   .7874878   .6110054    -0.31   0.758     .1721089    3.603165
+          3  |   1.331697   1.007611     0.38   0.705     .3022423    5.867536
+          4  |   .7141479   .5589552    -0.43   0.667     .1540149    3.311415
+          5  |   1.160135   .8785633     0.20   0.845     .2629653    5.118214
+             |
+  1.shielded |   1.225848   1.246291     0.20   0.841     .1671247    8.991517
+------------------------------------------------------------------------------
+
+   mi_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        979       97.90       97.90
+          1 |         21        2.10      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  979
+(21 real changes made)
+
+                id:  patient_id
+     failure event:  mi_admit != 0 & mi_admit < .
+obs. time interval:  (mi_end[_n-1], mi_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         21  failures in single-failure-per-subject data
+  2,035.619  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  mi_admit
+   analysis time _t:  (mi_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -112.94408
+Iteration 1:   log likelihood = -104.39906
+Iteration 2:   log likelihood = -103.91654
+Iteration 3:   log likelihood = -103.82615
+Iteration 4:   log likelihood =  -103.7944
+Iteration 5:   log likelihood = -103.78271
+Iteration 6:   log likelihood =  -103.7784
+Iteration 7:   log likelihood = -103.77682
+Iteration 8:   log likelihood = -103.77624
+Iteration 9:   log likelihood = -103.77602
+Iteration 10:  log likelihood = -103.77595
+Iteration 11:  log likelihood = -103.77592
+Iteration 12:  log likelihood = -103.77591
+Iteration 13:  log likelihood =  -103.7759
+Iteration 14:  log likelihood =  -103.7759
+Iteration 15:  log likelihood =  -103.7759
+Iteration 16:  log likelihood =  -103.7759
+Iteration 17:  log likelihood =  -103.7759
+Iteration 18:  log likelihood =  -103.7759
+Iteration 19:  log likelihood =  -103.7759
+Iteration 20:  log likelihood =  -103.7759
+Iteration 21:  log likelihood =  -103.7759
+Iteration 22:  log likelihood =  -103.7759
+Iteration 23:  log likelihood =  -103.7759
+Iteration 24:  log likelihood =  -103.7759
+Iteration 25:  log likelihood =  -103.7759
+Iteration 26:  log likelihood =  -103.7759
+Iteration 27:  log likelihood =  -103.7759
+Iteration 28:  log likelihood =  -103.7759
+Iteration 29:  log likelihood =  -103.7759
+Iteration 30:  log likelihood =  -103.7759
+Iteration 31:  log likelihood =  -103.7759
+Iteration 32:  log likelihood =  -103.7759
+Iteration 33:  log likelihood =  -103.7759
+Iteration 34:  log likelihood =  -103.7759
+Refining estimates:
+Iteration 0:   log likelihood =  -103.7759
+Iteration 1:   log likelihood =  -103.7759
+
+Cox regression -- no ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           17
+Time at risk    =  1579.663244
+                                                LR chi2(15)      =       18.34
+Log likelihood  =    -103.7759                  Prob > chi2      =      0.2454
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .2353927   .2636574    -1.29   0.197      .026205    2.114474
+      Black  |   1.461391   .9861457     0.56   0.574     .3893824    5.484747
+      Mixed  |   .8345845   .6433153    -0.23   0.815      .184224    3.780893
+      Other  |   1.030846   .7342921     0.04   0.966     .2551913    4.164104
+             |
+     age_cat |
+41 - 60 y..  |   .4949285   .2954737    -1.18   0.239     .1535935    1.594822
+61 - 80 y..  |   .4617313   .3080757    -1.16   0.247     .1248682    1.707367
+  >80 years  |   3.60e-16   1.57e-08    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   1.788644   .9202943     1.13   0.258     .6524741    4.903257
+             |
+urban_rura~n |
+      Urban  |   1.801927   .9085112     1.17   0.243     .6707657    4.840646
+             |
+         imd |
+          1  |   .3304242   .4097297    -0.89   0.372     .0290785    3.754665
+          2  |   .9303882    1.02005    -0.07   0.948     .1085007    7.978035
+          3  |   .2969262   .3713774    -0.97   0.332     .0255869     3.44572
+          4  |   .1637247   .2337862    -1.27   0.205     .0099693    2.688836
+          5  |   .7775915   .8676184    -0.23   0.822     .0872973    6.926316
+             |
+  1.shielded |   6.44e-16   6.02e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        967       96.70       96.70
+          1 |         33        3.30      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  967
+(33 real changes made)
+
+                id:  patient_id
+     failure event:  stroke_admit != 0 & stroke_admit < .
+obs. time interval:  (stroke_end[_n-1], stroke_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         33  failures in single-failure-per-subject data
+  2,025.552  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -146.08956
+Iteration 1:   log likelihood = -138.78125
+Iteration 2:   log likelihood = -138.08225
+Iteration 3:   log likelihood = -137.92301
+Iteration 4:   log likelihood = -137.86471
+Iteration 5:   log likelihood =  -137.8433
+Iteration 6:   log likelihood = -137.83542
+Iteration 7:   log likelihood = -137.83252
+Iteration 8:   log likelihood = -137.83146
+Iteration 9:   log likelihood = -137.83107
+Iteration 10:  log likelihood = -137.83092
+Iteration 11:  log likelihood = -137.83087
+Iteration 12:  log likelihood = -137.83085
+Iteration 13:  log likelihood = -137.83084
+Iteration 14:  log likelihood = -137.83084
+Iteration 15:  log likelihood = -137.83084
+Iteration 16:  log likelihood = -137.83084
+Iteration 17:  log likelihood = -137.83084
+Iteration 18:  log likelihood = -137.83084
+Iteration 19:  log likelihood = -137.83084
+Iteration 20:  log likelihood = -137.83084
+Iteration 21:  log likelihood = -137.83084
+Iteration 22:  log likelihood = -137.83084
+Iteration 23:  log likelihood = -137.83084
+Iteration 24:  log likelihood = -137.83084
+Iteration 25:  log likelihood = -137.83084
+Iteration 26:  log likelihood = -137.83084
+Iteration 27:  log likelihood = -137.83084
+Iteration 28:  log likelihood = -137.83084
+Iteration 29:  log likelihood = -137.83084
+Iteration 30:  log likelihood = -137.83084
+Iteration 31:  log likelihood = -137.83084
+Iteration 32:  log likelihood = -137.83084
+Iteration 33:  log likelihood = -137.83084
+Iteration 34:  log likelihood = -137.83084
+Refining estimates:
+Iteration 0:   log likelihood = -137.83084
+Iteration 1:   log likelihood = -137.83084
+Iteration 2:   log likelihood = -137.83084
+Iteration 3:   log likelihood = -137.83084
+
+Cox regression -- no ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           22
+Time at risk    =  1575.362081
+                                                LR chi2(14)      =       16.52
+Log likelihood  =   -137.83084                  Prob > chi2      =      0.2828
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .6354034   .4111984    -0.70   0.483     .1787304    2.258919
+      Black  |   1.148266   .7040074     0.23   0.822     .3452766    3.818723
+      Mixed  |   .5400513   .3835641    -0.87   0.386     .1342396    2.172648
+      Other  |   .6943838   .4493458    -0.56   0.573     .1953326    2.468451
+             |
+     age_cat |
+41 - 60 y..  |   1.284993    .745392     0.43   0.666     .4122309    4.005542
+61 - 80 y..  |   2.407158   1.260832     1.68   0.094     .8623003    6.719713
+  >80 years  |   8.92e-17   9.28e-09    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   1.631884   .7336691     1.09   0.276     .6760869    3.938909
+             |
+urban_rura~n |
+      Urban  |   1.080816   .4738523     0.18   0.859     .4576854    2.552327
+             |
+         imd |
+          1  |   8.64e+08   7.25e+08    24.55   0.000     1.67e+08    4.47e+09
+          2  |   1.30e+09   1.03e+09    26.42   0.000     2.74e+08    6.16e+09
+          3  |   3.75e+08   3.75e+08    19.72   0.000     5.26e+07    2.67e+09
+          4  |   3.53e+08          .        .       .            .           .
+          5  |   8.66e+08   7.26e+08    24.53   0.000     1.67e+08    4.48e+09
+             |
+  1.shielded |   7.72e-17   1.99e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+   hf_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        974       97.40       97.40
+          1 |         26        2.60      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  974
+(26 real changes made)
+
+                id:  patient_id
+     failure event:  hf_admit != 0 & hf_admit < .
+obs. time interval:  (hf_end[_n-1], hf_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         26  failures in single-failure-per-subject data
+  2,033.355  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  hf_admit
+   analysis time _t:  (hf_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -139.46285
+Iteration 1:   log likelihood = -135.02139
+Iteration 2:   log likelihood = -134.68079
+Iteration 3:   log likelihood = -134.60049
+Iteration 4:   log likelihood = -134.57128
+Iteration 5:   log likelihood = -134.56056
+Iteration 6:   log likelihood = -134.55662
+Iteration 7:   log likelihood = -134.55517
+Iteration 8:   log likelihood = -134.55463
+Iteration 9:   log likelihood = -134.55444
+Iteration 10:  log likelihood = -134.55436
+Iteration 11:  log likelihood = -134.55434
+Iteration 12:  log likelihood = -134.55433
+Iteration 13:  log likelihood = -134.55432
+Iteration 14:  log likelihood = -134.55432
+Iteration 15:  log likelihood = -134.55432
+Iteration 16:  log likelihood = -134.55432
+Iteration 17:  log likelihood = -134.55432
+Iteration 18:  log likelihood = -134.55432
+Iteration 19:  log likelihood = -134.55432
+Iteration 20:  log likelihood = -134.55432
+Iteration 21:  log likelihood = -134.55432
+Iteration 22:  log likelihood = -134.55432
+Iteration 23:  log likelihood = -134.55432
+Iteration 24:  log likelihood = -134.55432
+Iteration 25:  log likelihood = -134.55432
+Iteration 26:  log likelihood = -134.55432
+Iteration 27:  log likelihood = -134.55432
+Iteration 28:  log likelihood = -134.55432
+Iteration 29:  log likelihood = -134.55432
+Iteration 30:  log likelihood = -134.55432
+Iteration 31:  log likelihood = -134.55432
+Iteration 32:  log likelihood = -134.55432
+Refining estimates:
+Iteration 0:   log likelihood = -134.55432
+Iteration 1:   log likelihood = -134.55432
+Iteration 2:   log likelihood = -134.55432
+Iteration 3:   log likelihood = -134.55432
+Iteration 4:   log likelihood = -134.55432
+Iteration 5:   log likelihood = -134.55432
+
+Cox regression -- no ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           21
+Time at risk    =  1576.876112
+                                                LR chi2(14)      =        9.82
+Log likelihood  =   -134.55432                  Prob > chi2      =      0.7754
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .3263207   .2668627    -1.37   0.171     .0656959     1.62088
+      Black  |    1.09493   .6708254     0.15   0.882     .3295223    3.638211
+      Mixed  |   .5198485   .3683895    -0.92   0.356     .1296208    2.084869
+      Other  |    .924127   .5605964    -0.13   0.897      .281432    3.034519
+             |
+     age_cat |
+41 - 60 y..  |   .5216929    .310741    -1.09   0.275     .1623325     1.67658
+61 - 80 y..  |   .7961413   .4408226    -0.41   0.681     .2689557    2.356674
+  >80 years  |    1.54004   1.213671     0.55   0.584     .3286389    7.216807
+             |
+        male |
+       Male  |   .9536746   .4237098    -0.11   0.915     .3992256    2.278149
+             |
+urban_rura~n |
+      Urban  |   .8864713   .4039401    -0.26   0.791     .3629076    2.165376
+             |
+         imd |
+          1  |   5.17e+08   4.48e+08    23.13   0.000     9.44e+07    2.83e+09
+          2  |   6.81e+08   5.73e+08    24.19   0.000     1.31e+08    3.54e+09
+          3  |   6.00e+08   5.24e+08    23.16   0.000     1.08e+08    3.32e+09
+          4  |   7.80e+08   6.42e+08    24.87   0.000     1.55e+08    3.92e+09
+          5  |   2.53e+08          .        .       .            .           .
+             |
+  1.shielded |   9.40e-17   2.09e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+  vte_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        972       97.20       97.20
+          1 |         28        2.80      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  972
+(28 real changes made)
+
+                id:  patient_id
+     failure event:  vte_admit != 0 & vte_admit < .
+obs. time interval:  (vte_end[_n-1], vte_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         28  failures in single-failure-per-subject data
+  2,033.081  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  vte_admit
+   analysis time _t:  (vte_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -126.20544
+Iteration 1:   log likelihood = -115.02979
+Iteration 2:   log likelihood = -113.42275
+Iteration 3:   log likelihood = -113.18524
+Iteration 4:   log likelihood = -113.10756
+Iteration 5:   log likelihood = -113.07914
+Iteration 6:   log likelihood = -113.06871
+Iteration 7:   log likelihood = -113.06487
+Iteration 8:   log likelihood = -113.06346
+Iteration 9:   log likelihood = -113.06294
+Iteration 10:  log likelihood = -113.06275
+Iteration 11:  log likelihood = -113.06268
+Iteration 12:  log likelihood = -113.06265
+Iteration 13:  log likelihood = -113.06264
+Iteration 14:  log likelihood = -113.06264
+Iteration 15:  log likelihood = -113.06264
+Iteration 16:  log likelihood = -113.06264
+Iteration 17:  log likelihood = -113.06264
+Iteration 18:  log likelihood = -113.06264
+Iteration 19:  log likelihood = -113.06264
+Iteration 20:  log likelihood = -113.06264
+Iteration 21:  log likelihood = -113.06264
+Iteration 22:  log likelihood = -113.06264
+Iteration 23:  log likelihood = -113.06264
+Iteration 24:  log likelihood = -113.06264
+Iteration 25:  log likelihood = -113.06264
+Iteration 26:  log likelihood = -113.06264
+Iteration 27:  log likelihood = -113.06264
+Iteration 28:  log likelihood = -113.06264
+Iteration 29:  log likelihood = -113.06264
+Iteration 30:  log likelihood = -113.06264
+Iteration 31:  log likelihood = -113.06264
+Iteration 32:  log likelihood = -113.06264
+Iteration 33:  log likelihood = -113.06264
+Iteration 34:  log likelihood = -113.06264
+Iteration 35:  log likelihood = -113.06264
+Iteration 36:  log likelihood = -113.06264
+Iteration 37:  log likelihood = -113.06264
+Iteration 38:  log likelihood = -113.06264
+Iteration 39:  log likelihood = -113.06264
+Iteration 40:  log likelihood = -113.06264
+Iteration 41:  log likelihood = -113.06264
+Refining estimates:
+Iteration 0:   log likelihood = -113.06264
+Iteration 1:   log likelihood = -113.06264
+Iteration 2:   log likelihood = -113.06264
+
+Cox regression -- no ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           19
+Time at risk    =  1581.445585
+                                                LR chi2(14)      =       26.29
+Log likelihood  =   -113.06264                  Prob > chi2      =      0.0238
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.889622   1.309388     0.92   0.358     .4858995    7.348582
+      Black  |   .3651892   .4244619    -0.87   0.386     .0374249    3.563488
+      Mixed  |    .740157   .6796095    -0.33   0.743     .1223922     4.47604
+      Other  |   2.265323   1.615027     1.15   0.251     .5601178    9.161802
+             |
+     age_cat |
+41 - 60 y..  |   1.117152   .7112193     0.17   0.862     .3207798    3.890611
+61 - 80 y..  |   1.608943    .948007     0.81   0.420     .5069949    5.105967
+  >80 years  |   1.918277   1.637538     0.76   0.445     .3599836    10.22209
+             |
+        male |
+       Male  |   .7740407   .3600699    -0.55   0.582     .3110284    1.926316
+             |
+urban_rura~n |
+      Urban  |   .4270229   .2420224    -1.50   0.133     .1406107    1.296833
+             |
+         imd |
+          1  |   .2418957   .2244588    -1.53   0.126     .0392451    1.490978
+          2  |   .4811541   .4002284    -0.88   0.379     .0942425    2.456527
+          3  |   .0923408   .1144101    -1.92   0.055     .0081425    1.047203
+          4  |   3.64e-20   5.24e-11    -0.00   1.000            0           .
+          5  |   .5095407   .4220219    -0.81   0.416     .1005032    2.583318
+             |
+  1.shielded |   4.05e-19          .        .       .            .           .
+------------------------------------------------------------------------------
+
+ t1dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        981       98.10       98.10
+          1 |         19        1.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  981
+(19 real changes made)
+
+                id:  patient_id
+     failure event:  t1dm_admit != 0 & t1dm_admit < .
+obs. time interval:  (t1dm_end[_n-1], t1dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         19  failures in single-failure-per-subject data
+  2,044.186  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  t1dm_admit
+   analysis time _t:  (t1dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -93.03887
+Iteration 1:   log likelihood =  -87.10471
+Iteration 2:   log likelihood = -86.711792
+Iteration 3:   log likelihood =  -86.65935
+Iteration 4:   log likelihood = -86.640937
+Iteration 5:   log likelihood = -86.634176
+Iteration 6:   log likelihood = -86.631691
+Iteration 7:   log likelihood = -86.630777
+Iteration 8:   log likelihood = -86.630441
+Iteration 9:   log likelihood = -86.630317
+Iteration 10:  log likelihood = -86.630272
+Iteration 11:  log likelihood = -86.630255
+Iteration 12:  log likelihood = -86.630249
+Iteration 13:  log likelihood = -86.630246
+Iteration 14:  log likelihood = -86.630246
+Iteration 15:  log likelihood = -86.630245
+Iteration 16:  log likelihood = -86.630245
+Iteration 17:  log likelihood = -86.630245
+Iteration 18:  log likelihood = -86.630245
+Iteration 19:  log likelihood = -86.630245
+Iteration 20:  log likelihood = -86.630245
+Iteration 21:  log likelihood = -86.630245
+Iteration 22:  log likelihood = -86.630245
+Iteration 23:  log likelihood = -86.630245
+Iteration 24:  log likelihood = -86.630245
+Iteration 25:  log likelihood = -86.630245
+Iteration 26:  log likelihood = -86.630245
+Iteration 27:  log likelihood = -86.630245
+Iteration 28:  log likelihood = -86.630245
+Iteration 29:  log likelihood = -86.630245
+Iteration 30:  log likelihood = -86.630245
+Iteration 31:  log likelihood = -86.630245
+Iteration 32:  log likelihood = -86.630245
+Iteration 33:  log likelihood = -86.630245
+Iteration 34:  log likelihood = -86.630245
+Iteration 35:  log likelihood = -86.630245
+Iteration 36:  log likelihood = -86.630245
+Iteration 37:  log likelihood = -86.630245
+Iteration 38:  log likelihood = -86.630245
+Iteration 39:  log likelihood = -86.630245
+Refining estimates:
+Iteration 0:   log likelihood = -86.630245
+Iteration 1:   log likelihood = -86.630245
+Iteration 2:   log likelihood = -86.630245
+Iteration 3:   log likelihood = -86.630245
+
+Cox regression -- no ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           14
+Time at risk    =  1587.767283
+                                                LR chi2(13)      =       12.82
+Log likelihood  =   -86.630245                  Prob > chi2      =      0.4620
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   5.159554   5.667756     1.49   0.135      .599197    44.42779
+      Black  |   1.599959   2.273478     0.33   0.741     .0987609    25.91985
+      Mixed  |   4.723634   5.301635     1.38   0.167     .5235022    42.62201
+      Other  |   3.416228    3.95139     1.06   0.288     .3539991    32.96792
+             |
+     age_cat |
+41 - 60 y..  |   1.401188   1.000281     0.47   0.637     .3458121    5.677445
+61 - 80 y..  |   2.116784   1.436695     1.10   0.269     .5596965    8.005722
+  >80 years  |   1.855978    2.10673     0.54   0.586     .2006177    17.17024
+             |
+        male |
+       Male  |   1.333277   .7341276     0.52   0.601     .4531405    3.922908
+             |
+urban_rura~n |
+      Urban  |   .4275517   .2794087    -1.30   0.194     .1187739    1.539062
+             |
+         imd |
+          1  |   3.92e+08   4.81e+08    16.11   0.000     3.53e+07    4.35e+09
+          2  |   7.36e+08   8.29e+08    18.12   0.000     8.09e+07    6.69e+09
+          3  |   4.87e+08   6.02e+08    16.18   0.000     4.32e+07    5.49e+09
+          4  |   1.06e+09   1.17e+09    18.84   0.000     1.22e+08    9.24e+09
+          5  |   1.86e+08          .        .       .            .           .
+             |
+  1.shielded |   5.80e-19          .        .       .            .           .
+------------------------------------------------------------------------------
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        974       97.40       97.40
+          1 |         26        2.60      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  974
+(26 real changes made)
+
+                id:  patient_id
+     failure event:  t2dm_admit != 0 & t2dm_admit < .
+obs. time interval:  (t2dm_end[_n-1], t2dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         26  failures in single-failure-per-subject data
+  2,035.384  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -139.46285
+Iteration 1:   log likelihood = -131.44253
+Iteration 2:   log likelihood = -130.73399
+Iteration 3:   log likelihood = -130.66344
+Iteration 4:   log likelihood = -130.63908
+Iteration 5:   log likelihood = -130.63013
+Iteration 6:   log likelihood = -130.62684
+Iteration 7:   log likelihood = -130.62563
+Iteration 8:   log likelihood = -130.62518
+Iteration 9:   log likelihood = -130.62502
+Iteration 10:  log likelihood = -130.62496
+Iteration 11:  log likelihood = -130.62494
+Iteration 12:  log likelihood = -130.62493
+Iteration 13:  log likelihood = -130.62493
+Iteration 14:  log likelihood = -130.62493
+Iteration 15:  log likelihood = -130.62492
+Iteration 16:  log likelihood = -130.62492
+Iteration 17:  log likelihood = -130.62492
+Iteration 18:  log likelihood = -130.62492
+Iteration 19:  log likelihood = -130.62492
+Iteration 20:  log likelihood = -130.62492
+Iteration 21:  log likelihood = -130.62492
+Iteration 22:  log likelihood = -130.62492
+Iteration 23:  log likelihood = -130.62492
+Iteration 24:  log likelihood = -130.62492
+Iteration 25:  log likelihood = -130.62492
+Iteration 26:  log likelihood = -130.62492
+Iteration 27:  log likelihood = -130.62492
+Iteration 28:  log likelihood = -130.62492
+Iteration 29:  log likelihood = -130.62492
+Iteration 30:  log likelihood = -130.62492
+Iteration 31:  log likelihood = -130.62492
+Iteration 32:  log likelihood = -130.62492
+Iteration 33:  log likelihood = -130.62492
+Iteration 34:  log likelihood = -130.62492
+Iteration 35:  log likelihood = -130.62492
+Iteration 36:  log likelihood = -130.62492
+Iteration 37:  log likelihood = -130.62492
+Refining estimates:
+Iteration 0:   log likelihood = -130.62492
+Iteration 1:   log likelihood = -130.62492
+
+Cox regression -- no ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           21
+Time at risk    =  1577.456537
+                                                LR chi2(14)      =       17.68
+Log likelihood  =   -130.62492                  Prob > chi2      =      0.2219
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   2.977776   2.439241     1.33   0.183     .5979044    14.83038
+      Black  |   1.186463   1.192541     0.17   0.865     .1654597    8.507781
+      Mixed  |   5.342511   4.195986     2.13   0.033      1.14608    24.90438
+      Other  |   1.074092   1.075763     0.07   0.943     .1508397    7.648338
+             |
+     age_cat |
+41 - 60 y..  |   .9812129   .4883192    -0.04   0.970     .3699531    2.602435
+61 - 80 y..  |   .2705293    .210488    -1.68   0.093     .0588747    1.243083
+  >80 years  |    1.13617    .901018     0.16   0.872     .2401124    5.376163
+             |
+        male |
+       Male  |   .8623808   .3804121    -0.34   0.737     .3632607    2.047292
+             |
+urban_rura~n |
+      Urban  |   1.104223   .4919006     0.22   0.824     .4611795     2.64389
+             |
+         imd |
+          1  |   4.33e+08   3.79e+08    22.70   0.000     7.77e+07    2.41e+09
+          2  |   5.38e+08   4.53e+08    23.89   0.000     1.03e+08    2.80e+09
+          3  |   4.75e+08   4.13e+08    22.98   0.000     8.64e+07    2.61e+09
+          4  |   2.11e+08          .        .       .            .           .
+          5  |   7.01e+08   5.78e+08    24.71   0.000     1.39e+08    3.52e+09
+             |
+  1.shielded |   2.50e-17   9.44e-09    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        971       97.10       97.10
+          1 |         29        2.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  971
+(29 real changes made)
+
+                id:  patient_id
+     failure event:  dm_keto_admit != 0 & dm_keto_admit < .
+obs. time interval:  (dm_keto_end[_n-1], dm_keto_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         29  failures in single-failure-per-subject data
+  2,029.284  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  dm_keto_admit
+   analysis time _t:  (dm_keto_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -159.33898
+Iteration 1:   log likelihood = -150.46119
+Iteration 2:   log likelihood = -149.22607
+Iteration 3:   log likelihood = -149.12847
+Iteration 4:   log likelihood = -149.09796
+Iteration 5:   log likelihood = -149.08676
+Iteration 6:   log likelihood = -149.08264
+Iteration 7:   log likelihood = -149.08112
+Iteration 8:   log likelihood = -149.08057
+Iteration 9:   log likelihood = -149.08036
+Iteration 10:  log likelihood = -149.08029
+Iteration 11:  log likelihood = -149.08026
+Iteration 12:  log likelihood = -149.08025
+Iteration 13:  log likelihood = -149.08024
+Iteration 14:  log likelihood = -149.08024
+Iteration 15:  log likelihood = -149.08024
+Iteration 16:  log likelihood = -149.08024
+Iteration 17:  log likelihood = -149.08024
+Iteration 18:  log likelihood = -149.08024
+Iteration 19:  log likelihood = -149.08024
+Iteration 20:  log likelihood = -149.08024
+Iteration 21:  log likelihood = -149.08024
+Iteration 22:  log likelihood = -149.08024
+Iteration 23:  log likelihood = -149.08024
+Iteration 24:  log likelihood = -149.08024
+Iteration 25:  log likelihood = -149.08024
+Iteration 26:  log likelihood = -149.08024
+Iteration 27:  log likelihood = -149.08024
+Iteration 28:  log likelihood = -149.08024
+Iteration 29:  log likelihood = -149.08024
+Iteration 30:  log likelihood = -149.08024
+Iteration 31:  log likelihood = -149.08024
+Refining estimates:
+Iteration 0:   log likelihood = -149.08024
+Iteration 1:   log likelihood = -149.08024
+Iteration 2:   log likelihood = -149.08024
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           24
+Time at risk    =  1571.994524
+                                                LR chi2(14)      =       20.52
+Log likelihood  =   -149.08024                  Prob > chi2      =      0.1147
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.637894   1.198226     0.67   0.500     .3904598     6.87061
+      Black  |   .9455982   .8682111    -0.06   0.951     .1563749    5.718029
+      Mixed  |   .7617011   .6962321    -0.30   0.766     .1269828    4.569035
+      Other  |   4.400429   2.844114     2.29   0.022     1.239769    15.61886
+             |
+     age_cat |
+41 - 60 y..  |   1.835411   .9723673     1.15   0.252     .6498038    5.184232
+61 - 80 y..  |   1.762446   .9899474     1.01   0.313     .5861446    5.299401
+  >80 years  |   2.205416   1.825489     0.96   0.339     .4354372    11.17006
+             |
+        male |
+       Male  |   1.058744   .4401504     0.14   0.891     .4687291    2.391443
+             |
+urban_rura~n |
+      Urban  |   1.106641    .462584     0.24   0.808      .487751    2.510818
+             |
+         imd |
+          1  |   4.86e+08   4.23e+08    22.97   0.000     8.82e+07    2.68e+09
+          2  |   7.27e+08   5.95e+08    24.94   0.000     1.46e+08    3.61e+09
+          3  |   2.59e+08          .        .       .            .           .
+          4  |   9.78e+08   7.75e+08    26.12   0.000     2.07e+08    4.62e+09
+          5  |   4.37e+08   3.81e+08    22.87   0.000     7.95e+07    2.41e+09
+             |
+  1.shielded |   4.52e-15   1.08e-07    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        973       97.30       97.30
+          1 |         27        2.70      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  973
+(27 real changes made)
+
+                id:  patient_id
+     failure event:  asthma_admit != 0 & asthma_admit < .
+obs. time interval:  (asthma_end[_n-1], asthma_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         27  failures in single-failure-per-subject data
+  2,030.204  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  asthma_admit
+   analysis time _t:  (asthma_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -146.09089
+Iteration 1:   log likelihood = -140.21382
+Iteration 2:   log likelihood = -139.82481
+Iteration 3:   log likelihood = -139.79903
+Iteration 4:   log likelihood = -139.79123
+Iteration 5:   log likelihood = -139.78837
+Iteration 6:   log likelihood = -139.78732
+Iteration 7:   log likelihood = -139.78693
+Iteration 8:   log likelihood = -139.78679
+Iteration 9:   log likelihood = -139.78674
+Iteration 10:  log likelihood = -139.78672
+Iteration 11:  log likelihood = -139.78671
+Iteration 12:  log likelihood = -139.78671
+Iteration 13:  log likelihood = -139.78671
+Iteration 14:  log likelihood =  -139.7867
+Iteration 15:  log likelihood =  -139.7867
+Iteration 16:  log likelihood =  -139.7867
+Iteration 17:  log likelihood =  -139.7867
+Iteration 18:  log likelihood =  -139.7867
+Iteration 19:  log likelihood =  -139.7867
+Iteration 20:  log likelihood =  -139.7867
+Iteration 21:  log likelihood =  -139.7867
+Iteration 22:  log likelihood =  -139.7867
+Iteration 23:  log likelihood =  -139.7867
+Iteration 24:  log likelihood =  -139.7867
+Iteration 25:  log likelihood =  -139.7867
+Iteration 26:  log likelihood =  -139.7867
+Iteration 27:  log likelihood =  -139.7867
+Iteration 28:  log likelihood =  -139.7867
+Iteration 29:  log likelihood =  -139.7867
+Iteration 30:  log likelihood =  -139.7867
+Iteration 31:  log likelihood =  -139.7867
+Refining estimates:
+Iteration 0:   log likelihood =  -139.7867
+Iteration 1:   log likelihood =  -139.7867
+
+Cox regression -- no ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           22
+Time at risk    =  1573.524983
+                                                LR chi2(15)      =       12.61
+Log likelihood  =    -139.7867                  Prob > chi2      =      0.6325
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.078701   .7260172     0.11   0.910     .2884044    4.034598
+      Black  |   1.688543   1.109544     0.80   0.425     .4657856    6.121222
+      Mixed  |   .8679559    .665565    -0.18   0.853     .1930991    3.901352
+      Other  |   1.005855   .7131278     0.01   0.993     .2506418    4.036616
+             |
+     age_cat |
+41 - 60 y..  |    1.82492   .9072205     1.21   0.226     .6887904    4.835047
+61 - 80 y..  |   .7958177    .503277    -0.36   0.718     .2304155    2.748625
+  >80 years  |   .7376514   .7951223    -0.28   0.778     .0891933    6.100569
+             |
+        male |
+       Male  |   .7313107   .3218993    -0.71   0.477     .3086246    1.732899
+             |
+urban_rura~n |
+      Urban  |    .632894   .2928179    -0.99   0.323     .2555699      1.5673
+             |
+         imd |
+          1  |   .9419646   1.065631    -0.05   0.958     .1025846    8.649421
+          2  |   1.052972   1.169603     0.05   0.963     .1193804     9.28754
+          3  |   .2358682   .3375008    -1.01   0.313     .0142789    3.896213
+          4  |   .6653019   .7835924    -0.35   0.729     .0661414    6.692121
+          5  |   1.895202   2.047661     0.59   0.554     .2280232    15.75186
+             |
+  1.shielded |   1.07e-14   1.92e-07    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        973       97.30       97.30
+          1 |         27        2.70      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  973
+(26 real changes made)
+
+                id:  patient_id
+     failure event:  depress_admit != 0 & depress_admit < .
+obs. time interval:  (depress_end[_n-1], depress_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         27  failures in single-failure-per-subject data
+    2,028.2  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  depress_admit
+   analysis time _t:  (depress_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -139.46285
+Iteration 1:   log likelihood =  -134.1267
+Iteration 2:   log likelihood = -133.75085
+Iteration 3:   log likelihood =  -133.6742
+Iteration 4:   log likelihood =  -133.6462
+Iteration 5:   log likelihood = -133.63591
+Iteration 6:   log likelihood = -133.63213
+Iteration 7:   log likelihood = -133.63074
+Iteration 8:   log likelihood = -133.63023
+Iteration 9:   log likelihood = -133.63004
+Iteration 10:  log likelihood = -133.62997
+Iteration 11:  log likelihood = -133.62995
+Iteration 12:  log likelihood = -133.62994
+Iteration 13:  log likelihood = -133.62994
+Iteration 14:  log likelihood = -133.62993
+Iteration 15:  log likelihood = -133.62993
+Iteration 16:  log likelihood = -133.62993
+Iteration 17:  log likelihood = -133.62993
+Iteration 18:  log likelihood = -133.62993
+Iteration 19:  log likelihood = -133.62993
+Iteration 20:  log likelihood = -133.62993
+Iteration 21:  log likelihood = -133.62993
+Iteration 22:  log likelihood = -133.62993
+Iteration 23:  log likelihood = -133.62993
+Iteration 24:  log likelihood = -133.62993
+Iteration 25:  log likelihood = -133.62993
+Iteration 26:  log likelihood = -133.62993
+Iteration 27:  log likelihood = -133.62993
+Iteration 28:  log likelihood = -133.62993
+Iteration 29:  log likelihood = -133.62993
+Iteration 30:  log likelihood = -133.62993
+Iteration 31:  log likelihood = -133.62993
+Iteration 32:  log likelihood = -133.62993
+Iteration 33:  log likelihood = -133.62993
+Iteration 34:  log likelihood = -133.62993
+Iteration 35:  log likelihood = -133.62993
+Iteration 36:  log likelihood = -133.62993
+Iteration 37:  log likelihood = -133.62993
+Iteration 38:  log likelihood = -133.62993
+Iteration 39:  log likelihood = -133.62993
+Refining estimates:
+Iteration 0:   log likelihood = -133.62993
+Iteration 1:   log likelihood = -133.62993
+Iteration 2:   log likelihood = -133.62993
+
+Cox regression -- no ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           21
+Time at risk    =  1574.327173
+                                                LR chi2(14)      =       11.67
+Log likelihood  =   -133.62993                  Prob > chi2      =      0.6331
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .5570871   .4087812    -0.80   0.425     .1322287     2.34704
+      Black  |   .4803025   .4062359    -0.87   0.386     .0915325    2.520311
+      Mixed  |   1.015146   .6470009     0.02   0.981     .2910835    3.540297
+      Other  |   1.219371   .7411964     0.33   0.744     .3704517    4.013654
+             |
+     age_cat |
+41 - 60 y..  |   1.081609   .6579717     0.13   0.897     .3282928    3.563518
+61 - 80 y..  |   2.190839   1.171698     1.47   0.143     .7680217    6.249531
+  >80 years  |   .9025639    .984387    -0.09   0.925     .1064412    7.653256
+             |
+        male |
+       Male  |     .66187   .2961545    -0.92   0.356     .2753605    1.590903
+             |
+urban_rura~n |
+      Urban  |   1.355734   .5976707     0.69   0.490     .5713799    3.216798
+             |
+         imd |
+          1  |   5.70e+08   4.79e+08    23.99   0.000     1.10e+08    2.96e+09
+          2  |   3.35e+08   3.07e+08    21.44   0.000     5.57e+07    2.02e+09
+          3  |   4.72e+08   4.10e+08    23.02   0.000     8.62e+07    2.59e+09
+          4  |   2.18e+08          .        .       .            .           .
+          5  |   7.34e+08   5.91e+08    25.35   0.000     1.51e+08    3.56e+09
+             |
+  1.shielded |   9.53e-19   1.71e-09    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        977       97.70       97.70
+          1 |         23        2.30      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  977
+(23 real changes made)
+
+                id:  patient_id
+     failure event:  anx_admit != 0 & anx_admit < .
+obs. time interval:  (anx_end[_n-1], anx_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         23  failures in single-failure-per-subject data
+  2,039.828  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  anx_admit
+   analysis time _t:  (anx_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -119.57476
+Iteration 1:   log likelihood = -112.14256
+Iteration 2:   log likelihood = -109.02571
+Iteration 3:   log likelihood = -108.54258
+Iteration 4:   log likelihood =  -108.3727
+Iteration 5:   log likelihood = -108.31034
+Iteration 6:   log likelihood = -108.28741
+Iteration 7:   log likelihood = -108.27897
+Iteration 8:   log likelihood = -108.27587
+Iteration 9:   log likelihood = -108.27473
+Iteration 10:  log likelihood = -108.27431
+Iteration 11:  log likelihood = -108.27415
+Iteration 12:  log likelihood =  -108.2741
+Iteration 13:  log likelihood = -108.27408
+Iteration 14:  log likelihood = -108.27407
+Iteration 15:  log likelihood = -108.27407
+Iteration 16:  log likelihood = -108.27406
+Iteration 17:  log likelihood = -108.27406
+Iteration 18:  log likelihood = -108.27406
+Iteration 19:  log likelihood = -108.27406
+Iteration 20:  log likelihood = -108.27406
+Iteration 21:  log likelihood = -108.27406
+Iteration 22:  log likelihood = -108.27406
+Iteration 23:  log likelihood = -108.27406
+Iteration 24:  log likelihood = -108.27406
+Iteration 25:  log likelihood = -108.27406
+Iteration 26:  log likelihood = -108.27406
+Iteration 27:  log likelihood = -108.27406
+Iteration 28:  log likelihood = -108.27406
+Iteration 29:  log likelihood = -108.27406
+Iteration 30:  log likelihood = -108.27406
+Iteration 31:  log likelihood = -108.27406
+Iteration 32:  log likelihood = -108.27406
+Iteration 33:  log likelihood = -108.27406
+Iteration 34:  log likelihood = -108.27406
+Iteration 35:  log likelihood = -108.27406
+Refining estimates:
+Iteration 0:   log likelihood = -108.27406
+Iteration 1:   log likelihood = -108.27406
+Iteration 2:   log likelihood = -108.27406
+
+Cox regression -- no ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           18
+Time at risk    =  1584.479124
+                                                LR chi2(14)      =       22.60
+Log likelihood  =   -108.27406                  Prob > chi2      =      0.0671
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .7199045   .4712394    -0.50   0.616     .1995677    2.596925
+      Black  |   7.30e-17   3.75e-09    -0.00   1.000            0           .
+      Mixed  |   .5196533   .3723788    -0.91   0.361     .1275706    2.116786
+      Other  |   .9808259   .5994412    -0.03   0.975     .2960547    3.249466
+             |
+     age_cat |
+41 - 60 y..  |   2.093473   1.324293     1.17   0.243     .6059162    7.233059
+61 - 80 y..  |   1.854946   1.211786     0.95   0.344     .5155425    6.674182
+  >80 years  |   1.089494   1.224682     0.08   0.939     .1203383    9.863838
+             |
+        male |
+       Male  |   .3918261   .1978476    -1.86   0.064     .1456431    1.054136
+             |
+urban_rura~n |
+      Urban  |   .9807271   .4787953    -0.04   0.968     .3766932    2.553339
+             |
+         imd |
+          1  |   1.65e+09   1.32e+09    26.66   0.000     3.47e+08    7.87e+09
+          2  |   3.66e+08          .        .       .            .           .
+          3  |   3.56e+08   3.58e+08    19.59   0.000     4.97e+07    2.55e+09
+          4  |   3.54e+08   3.55e+08    19.65   0.000     4.97e+07    2.52e+09
+          5  |   6.65e+08   5.81e+08    23.27   0.000     1.20e+08    3.68e+09
+             |
+  1.shielded |   4.209437   4.512907     1.34   0.180     .5148217    34.41843
+------------------------------------------------------------------------------
+(.: CI1 missing for some coefficients)
+
+  smi_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        976       97.60       97.60
+          1 |         24        2.40      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  976
+(24 real changes made)
+
+                id:  patient_id
+     failure event:  smi_admit != 0 & smi_admit < .
+obs. time interval:  (smi_end[_n-1], smi_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         24  failures in single-failure-per-subject data
+  2,035.047  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  smi_admit
+   analysis time _t:  (smi_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -132.83349
+Iteration 1:   log likelihood = -126.18538
+Iteration 2:   log likelihood = -125.71043
+Iteration 3:   log likelihood = -125.59433
+Iteration 4:   log likelihood = -125.55196
+Iteration 5:   log likelihood =  -125.5364
+Iteration 6:   log likelihood = -125.53069
+Iteration 7:   log likelihood = -125.52859
+Iteration 8:   log likelihood = -125.52781
+Iteration 9:   log likelihood = -125.52753
+Iteration 10:  log likelihood = -125.52742
+Iteration 11:  log likelihood = -125.52738
+Iteration 12:  log likelihood = -125.52737
+Iteration 13:  log likelihood = -125.52736
+Iteration 14:  log likelihood = -125.52736
+Iteration 15:  log likelihood = -125.52736
+Iteration 16:  log likelihood = -125.52736
+Iteration 17:  log likelihood = -125.52736
+Iteration 18:  log likelihood = -125.52736
+Iteration 19:  log likelihood = -125.52736
+Iteration 20:  log likelihood = -125.52736
+Iteration 21:  log likelihood = -125.52736
+Iteration 22:  log likelihood = -125.52736
+Iteration 23:  log likelihood = -125.52736
+Iteration 24:  log likelihood = -125.52736
+Iteration 25:  log likelihood = -125.52736
+Iteration 26:  log likelihood = -125.52736
+Iteration 27:  log likelihood = -125.52736
+Iteration 28:  log likelihood = -125.52736
+Iteration 29:  log likelihood = -125.52736
+Iteration 30:  log likelihood = -125.52736
+Iteration 31:  log likelihood = -125.52736
+Iteration 32:  log likelihood = -125.52736
+Iteration 33:  log likelihood = -125.52736
+Iteration 34:  log likelihood = -125.52736
+Iteration 35:  log likelihood = -125.52736
+Refining estimates:
+Iteration 0:   log likelihood = -125.52736
+Iteration 1:   log likelihood = -125.52736
+Iteration 2:   log likelihood = -125.52736
+
+Cox regression -- no ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           20
+Time at risk    =  1577.771389
+                                                LR chi2(15)      =       14.61
+Log likelihood  =   -125.52736                  Prob > chi2      =      0.4797
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .6474243    .592137    -0.48   0.635     .1078143    3.887779
+      Black  |   1.008372   .8301512     0.01   0.992      .200845    5.062676
+      Mixed  |   2.643714   1.839999     1.40   0.162     .6757513     10.3429
+      Other  |   1.771751   1.299103     0.78   0.435     .4209935    7.456417
+             |
+     age_cat |
+41 - 60 y..  |    .464641   .2695641    -1.32   0.186      .149035    1.448595
+61 - 80 y..  |   .5114172   .2984256    -1.15   0.250     .1629583    1.604997
+  >80 years  |   5.23e-17   5.30e-09    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   .8163316   .3717498    -0.45   0.656     .3343777    1.992948
+             |
+urban_rura~n |
+      Urban  |   1.822868   .8342176     1.31   0.190     .7433802    4.469914
+             |
+         imd |
+          1  |   .4626381   .5299387    -0.67   0.501     .0490021    4.367856
+          2  |   .2102386   .2630367    -1.25   0.213     .0181028    2.441628
+          3  |   .5053273   .5737847    -0.60   0.548      .054583    4.678298
+          4  |   .5363031   .6028639    -0.55   0.579     .0592333    4.855733
+          5  |   .3270449   .3860264    -0.95   0.344     .0323515    3.306134
+             |
+  1.shielded |   8.41e-17   2.04e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+   sh_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        978       97.80       97.80
+          1 |         22        2.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  978
+(22 real changes made)
+
+                id:  patient_id
+     failure event:  sh_admit != 0 & sh_admit < .
+obs. time interval:  (sh_end[_n-1], sh_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         22  failures in single-failure-per-subject data
+  2,036.244  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  sh_admit
+   analysis time _t:  (sh_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -126.20676
+Iteration 1:   log likelihood =  -119.4373
+Iteration 2:   log likelihood = -117.91853
+Iteration 3:   log likelihood = -117.78175
+Iteration 4:   log likelihood = -117.74803
+Iteration 5:   log likelihood = -117.73568
+Iteration 6:   log likelihood = -117.73114
+Iteration 7:   log likelihood = -117.72947
+Iteration 8:   log likelihood = -117.72885
+Iteration 9:   log likelihood = -117.72863
+Iteration 10:  log likelihood = -117.72854
+Iteration 11:  log likelihood = -117.72851
+Iteration 12:  log likelihood =  -117.7285
+Iteration 13:  log likelihood =  -117.7285
+Iteration 14:  log likelihood = -117.72849
+Iteration 15:  log likelihood = -117.72849
+Iteration 16:  log likelihood = -117.72849
+Iteration 17:  log likelihood = -117.72849
+Iteration 18:  log likelihood = -117.72849
+Iteration 19:  log likelihood = -117.72849
+Iteration 20:  log likelihood = -117.72849
+Iteration 21:  log likelihood = -117.72849
+Iteration 22:  log likelihood = -117.72849
+Iteration 23:  log likelihood = -117.72849
+Iteration 24:  log likelihood = -117.72849
+Iteration 25:  log likelihood = -117.72849
+Iteration 26:  log likelihood = -117.72849
+Iteration 27:  log likelihood = -117.72849
+Iteration 28:  log likelihood = -117.72849
+Iteration 29:  log likelihood = -117.72849
+Iteration 30:  log likelihood = -117.72849
+Iteration 31:  log likelihood = -117.72849
+Iteration 32:  log likelihood = -117.72849
+Iteration 33:  log likelihood = -117.72849
+Iteration 34:  log likelihood = -117.72849
+Iteration 35:  log likelihood = -117.72849
+Iteration 36:  log likelihood = -117.72849
+Iteration 37:  log likelihood = -117.72849
+Refining estimates:
+Iteration 0:   log likelihood = -117.72849
+Iteration 1:   log likelihood = -117.72849
+
+Cox regression -- no ties
+
+No. of subjects =          776                  Number of obs    =         776
+No. of failures =           19
+Time at risk    =  1577.823409
+                                                LR chi2(15)      =       16.96
+Log likelihood  =   -117.72849                  Prob > chi2      =      0.3215
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   2.395069   2.012924     1.04   0.299     .4612429    12.43673
+      Black  |   2.901714   2.453359     1.26   0.208     .5533189    15.21716
+      Mixed  |   1.666478    1.53119     0.56   0.578     .2752328    10.09018
+      Other  |   2.234821   1.939484     0.93   0.354     .4078774    12.24492
+             |
+     age_cat |
+41 - 60 y..  |    1.08015   .5291687     0.16   0.875     .4135022    2.821566
+61 - 80 y..  |   .3246194    .255222    -1.43   0.152     .0695254    1.515673
+  >80 years  |   2.26e-17   4.19e-09    -0.00   1.000            0           .
+             |
+        male |
+       Male  |    1.78153    .858545     1.20   0.231     .6927661    4.581413
+             |
+urban_rura~n |
+      Urban  |   .7964023   .3877399    -0.47   0.640     .3066993    2.068008
+             |
+         imd |
+          1  |   .4536218   .4012869    -0.89   0.372     .0801118    2.568569
+          2  |   .3852015   .3411406    -1.08   0.281     .0678969    2.185374
+          3  |   .6923587   .5896381    -0.43   0.666     .1304417    3.674902
+          4  |   .1019669   .1269821    -1.83   0.067     .0088805    1.170801
+          5  |   .2230891   .2278049    -1.47   0.142     .0301498    1.650718
+             |
+  1.shielded |   4.19e-17   2.00e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+. 
+. 
+. * Pandemic
+. import delimited using ./output/survival/input_survival_pandemic.csv, clear
+(39 vars, 1,000 obs)
+
+. * First preparing dataset
+. * Drop variables that make up COPD hospitalisation as not required
+. drop copd_exacerbation_hospital copd_hospital lrti_hospital copd_any eth ethn
+> icity_sus
+
+. 
+. * Assume deregistered on 1st of month
+. gen dereg_dateA = date(dereg_date, "YM")
+(952 missing values generated)
+
+. format %dD/N/CY dereg_dateA
+
+. drop dereg_date
+
+. 
+. * Format dates
+. local a "mi_primary_admission stroke_primary_admission heart_failure_primary_
+> admission vte_primary_admission t1dm_admission_primary t2dm_admission_primary
+>  dm_keto_admission_primary asthma_exacerbation depression_primary_admission a
+> nxiety_primary_admission smi_primary_admission self_harm_primary_admission cv
+> d_admission_date dm_admission copd_hospitalisation_date mh_admission" 
+
+. local b "mi_admit_date stroke_admit_date hf_admit_date vte_admit_date t1dm_ad
+> mit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_admit_d
+> ate anx_admit_date smi_admit_date sh_admit_date cvd_admit_date dm_admit_date 
+> copd_admit_date mh_admit_date" 
+
+. forvalues i=1/16 {
+  2.     local c: word `i' of `a'
+  3.     local d: word `i' of `b' 
+  4.     count if `c'!=""   
+  5.     gen `d'=date(`c', "YMD")
+  6.     format %dD/N/CY `d'
+  7.     drop `c'
+  8.     }
+  49
+(951 missing values generated)
+  49
+(951 missing values generated)
+  49
+(951 missing values generated)
+  50
+(950 missing values generated)
+  49
+(951 missing values generated)
+  48
+(952 missing values generated)
+  48
+(952 missing values generated)
+  48
+(952 missing values generated)
+  48
+(952 missing values generated)
+  49
+(951 missing values generated)
+  49
+(951 missing values generated)
+  50
+(950 missing values generated)
+  182
+(818 missing values generated)
+  137
+(863 missing values generated)
+  186
+(814 missing values generated)
+  175
+(825 missing values generated)
+
+. * Define index date
+. gen index_date = date("23/03/2020", "DMY")
+
+. * Define end of follow-up
+. gen end_study = date("30/04/2022", "DMY")
+
+. format %dD/N/CY index_date end_study
+
+. egen end_date = rowmin(dereg_dateA end_study)
+
+. format %dD/N/CY end_date
+
+. 
+. * Reorder ethnicity - white, asian, black, mixed, other
+. *re-order ethnicity
+.  gen eth5=1 if ethnicity==1
+(779 missing values generated)
+
+.  replace eth5=2 if ethnicity==3
+(197 real changes made)
+
+.  replace eth5=3 if ethnicity==4
+(197 real changes made)
+
+.  replace eth5=4 if ethnicity==2
+(187 real changes made)
+
+.  replace eth5=5 if ethnicity==5
+(198 real changes made)
+
+.  replace eth5=. if ethnicity==.
+(0 real changes made)
+
+. 
+.  label define eth5                      1 "White"                            
+>            ///
+>                                                         2 "South Asian"      
+>                    ///                                             
+>                                                         3 "Black"            
+>                            ///
+>                                                         4 "Mixed"            
+>                            ///
+>                                                         5 "Other"            
+>                            
+
+.                                         
+. 
+. label values eth5 eth5
+
+. safetab eth5, m
+5
+
+       eth5 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+      White |        221       22.10       22.10
+South Asian |        197       19.70       41.80
+      Black |        197       19.70       61.50
+      Mixed |        187       18.70       80.20
+      Other |        198       19.80      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+
+. 
+. * Make gender numeric
+. gen male = 1 if sex == "M"
+(504 missing values generated)
+
+. replace male = 0 if sex == "F"
+(496 real changes made)
+
+. label define male 0"Female" 1"Male"
+
+. label values male male
+
+. safetab male, miss
+5
+
+       male |      Freq.     Percent        Cum.
+------------+-----------------------------------
+     Female |        496       49.60       49.60
+       Male |        496       49.60       99.20
+          . |          8        0.80      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+
+. drop sex
+
+. 
+. * Make region numeric
+. generate region2=.
+(1,000 missing values generated)
+
+. replace region2=0 if region=="East"
+(0 real changes made)
+
+. replace region2=1 if region=="East Midlands"
+(101 real changes made)
+
+. replace region2=2 if region=="London"
+(194 real changes made)
+
+. replace region2=3 if region=="North East"
+(106 real changes made)
+
+. replace region2=4 if region=="North West"
+(114 real changes made)
+
+. replace region2=5 if region=="South East"
+(208 real changes made)
+
+. replace region2=6 if region=="South West"
+(0 real changes made)
+
+. replace region2=7 if region=="West Midlands"
+(93 real changes made)
+
+. replace region2=8 if region=="Yorkshire and The Humber"
+(0 real changes made)
+
+. drop region
+
+. rename region2 region
+
+. label var region "region of England"
+
+. label define region 0 "East" 1 "East Midlands"  2 "London" 3 "North East" 4 "
+> North West" 5 "South East" 6 "South West" 7 "West Midlands" 8 "Yorkshire and 
+> The Humber"
+
+. label values region region
+
+. safetab region, miss
+7
+
+       region of England |      Freq.     Percent        Cum.
+-------------------------+-----------------------------------
+           East Midlands |        101       10.10       10.10
+                  London |        194       19.40       29.50
+              North East |        106       10.60       40.10
+              North West |        114       11.40       51.50
+              South East |        208       20.80       72.30
+           West Midlands |         93        9.30       81.60
+                       . |        184       18.40      100.00
+-------------------------+-----------------------------------
+                   Total |      1,000      100.00
+
+. 
+. *create a 4 category rural urban variable 
+. generate urban_rural_5=.
+(1,000 missing values generated)
+
+. la var urban_rural_5 "Rural Urban in five categories"
+
+. replace urban_rural_5=1 if urban_rural==1
+(104 real changes made)
+
+. replace urban_rural_5=2 if urban_rural==2
+(95 real changes made)
+
+. replace urban_rural_5=3 if urban_rural==3|urban_rural==4
+(192 real changes made)
+
+. replace urban_rural_5=4 if urban_rural==5|urban_rural==6
+(196 real changes made)
+
+. replace urban_rural_5=5 if urban_rural==7|urban_rural==8
+(413 real changes made)
+
+. label define urban_rural_5 1 "Urban major conurbation" 2 "Urban minor conurba
+> tion" 3 "Urban city and town" 4 "Rural town and fringe" 5 "Rural village and 
+> dispersed"
+
+. label values urban_rural_5 urban_rural_5
+
+. safetab urban_rural_5, miss
+14
+
+        Rural Urban in five |
+                 categories |      Freq.     Percent        Cum.
+----------------------------+-----------------------------------
+    Urban major conurbation |        104       10.40       10.40
+    Urban minor conurbation |         95        9.50       19.90
+        Urban city and town |        192       19.20       39.10
+      Rural town and fringe |        196       19.60       58.70
+Rural village and dispersed |        413       41.30      100.00
+----------------------------+-----------------------------------
+                      Total |      1,000      100.00
+
+. 
+. *generate a binary rural urban (with missing assigned to urban)
+. generate urban_rural_bin=.
+(1,000 missing values generated)
+
+. replace urban_rural_bin=1 if urban_rural<=4|urban_rural==.
+(391 real changes made)
+
+. replace urban_rural_bin=0 if urban_rural>4 & urban_rural!=.
+(609 real changes made)
+
+. label define urban_rural_bin 0 "Rural" 1 "Urban"
+
+. label values urban_rural_bin urban_rural_bin
+
+. safetab urban_rural_bin urban_rural, miss
+28
+
+urban_rura |                      urban_rural
+     l_bin |         1          2          3          4          5 |     Total
+-----------+-------------------------------------------------------+----------
+     Rural |         0          0          0          0         93 |       609 
+     Urban |       104         95         95         97          0 |       391 
+-----------+-------------------------------------------------------+----------
+     Total |       104         95         95         97         93 |     1,000 
+
+
+urban_rura |           urban_rural
+     l_bin |         6          7          8 |     Total
+-----------+---------------------------------+----------
+     Rural |       103        186        227 |       609 
+     Urban |         0          0          0 |       391 
+-----------+---------------------------------+----------
+     Total |       103        186        227 |     1,000 
+
+. label var urban_rural_bin "Rural-Urban"
+
+. 
+. * Define age categories
+. * Create age categories
+. egen age_cat = cut(age), at(18, 40, 60, 80, 120) icodes
+(228 missing values generated)
+
+. label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years" 3 ">80
+>  years"
+
+. label values age_cat age
+
+. safetab age_cat, miss
+8
+
+      age_cat |      Freq.     Percent        Cum.
+--------------+-----------------------------------
+18 - 40 years |        294       29.40       29.40
+41 - 60 years |        260       26.00       55.40
+61 - 80 years |        169       16.90       72.30
+    >80 years |         49        4.90       77.20
+            . |        228       22.80      100.00
+--------------+-----------------------------------
+        Total |      1,000      100.00
+
+. 
+. foreach sub in cvd dm copd mh mi stroke hf vte t1dm t2dm dm_keto asthma depre
+> ss anx smi sh {
+  2.     * Cox model for each outcome category
+.     * Generate flags and end dates for each outcome
+.     gen `sub'_admit=(`sub'_admit_date!=.)
+  3.     tab `sub'_admit
+  4.     count if `sub'_admit_date==.
+  5.     gen `sub'_end = end_date
+  6.     replace `sub'_end = `sub'_admit_date if `sub'_admit==1
+  7. 
+.     stset `sub'_end, fail(`sub'_admit) id(patient_id) enter(index_date) origi
+> n(index_date) scale(365.25) 
+  8.     * Cox model - fully adjusted
+.     stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded
+  9.     * Create graph of HRs
+.     coefplot, keep(2.eth5 3.eth5 4.eth5 5.eth5) xline(1) eform xtitle("Hazard
+>  ratio") title("Pandemic") graphregion(color(white)) name(`sub'_pan, replace)
+ 10. } //end outcomes
+
+  cvd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        818       81.80       81.80
+          1 |        182       18.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  818
+(182 real changes made)
+
+                id:  patient_id
+     failure event:  cvd_admit != 0 & cvd_admit < .
+obs. time interval:  (cvd_end[_n-1], cvd_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+        104  observations end on or before enter()
+------------------------------------------------------------------------------
+        896  observations remaining, representing
+        896  subjects
+         79  failures in single-failure-per-subject data
+  1,755.948  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  cvd_admit
+   analysis time _t:  (cvd_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -440.06463
+Iteration 1:   log likelihood = -435.48091
+Iteration 2:   log likelihood = -433.48048
+Iteration 3:   log likelihood = -433.24227
+Iteration 4:   log likelihood = -433.23472
+Iteration 5:   log likelihood = -433.23471
+Refining estimates:
+Iteration 0:   log likelihood = -433.23471
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          693                  Number of obs    =         693
+No. of failures =           68
+Time at risk    =  1345.793292
+                                                LR chi2(15)      =       13.66
+Log likelihood  =   -433.23471                  Prob > chi2      =      0.5515
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .8703929   .3367863    -0.36   0.720     .4077133    1.858129
+      Black  |   1.155348   .4197167     0.40   0.691     .5668748    2.354717
+      Mixed  |    .531458   .2352174    -1.43   0.153     .2232218    1.265323
+      Other  |   1.109296   .4046169     0.28   0.776      .542714    2.267379
+             |
+     age_cat |
+41 - 60 y..  |   .9451097   .2936201    -0.18   0.856     .5140874    1.737511
+61 - 80 y..  |   1.631427   .4947365     1.61   0.107     .9004039    2.955954
+  >80 years  |   1.245294   .6288107     0.43   0.664     .4628688    3.350316
+             |
+        male |
+       Male  |   1.182007    .290643     0.68   0.496     .7299928     1.91391
+             |
+urban_rura~n |
+      Urban  |   1.086062   .2715904     0.33   0.741     .6652665     1.77302
+             |
+         imd |
+          1  |   .5863976   .3423724    -0.91   0.361     .1867292    1.841502
+          2  |   .8310989   .4684478    -0.33   0.743      .275343      2.5086
+          3  |    .446986   .2673915    -1.35   0.178     .1383874    1.443748
+          4  |   .4843477   .2864098    -1.23   0.220     .1519901    1.543473
+          5  |   .7055483   .4040175    -0.61   0.542     .2296698    2.167452
+             |
+  1.shielded |   4.332387   3.199583     1.99   0.047     1.018808    18.42308
+------------------------------------------------------------------------------
+
+   dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        863       86.30       86.30
+          1 |        137       13.70      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  863
+(137 real changes made)
+
+                id:  patient_id
+     failure event:  dm_admit != 0 & dm_admit < .
+obs. time interval:  (dm_end[_n-1], dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         69  observations end on or before enter()
+------------------------------------------------------------------------------
+        931  observations remaining, representing
+        931  subjects
+         69  failures in single-failure-per-subject data
+  1,848.701  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  dm_admit
+   analysis time _t:  (dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -338.40724
+Iteration 1:   log likelihood = -327.85622
+Iteration 2:   log likelihood = -327.67775
+Iteration 3:   log likelihood = -327.67698
+Iteration 4:   log likelihood = -327.67698
+Refining estimates:
+Iteration 0:   log likelihood = -327.67698
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          709                  Number of obs    =         709
+No. of failures =           52
+Time at risk    =  1408.665298
+                                                LR chi2(15)      =       21.46
+Log likelihood  =   -327.67698                  Prob > chi2      =      0.1227
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .8258737    .350856    -0.45   0.652      .359168    1.899021
+      Black  |   1.041467   .4242119     0.10   0.921     .4687407    2.313972
+      Mixed  |   .5621085   .2708593    -1.20   0.232     .2186038    1.445382
+      Other  |   .6757194   .3007562    -0.88   0.378      .282426    1.616695
+             |
+     age_cat |
+41 - 60 y..  |   2.492792   .9158298     2.49   0.013     1.213283    5.121651
+61 - 80 y..  |   2.762414   1.088266     2.58   0.010     1.276303    5.978931
+  >80 years  |   1.357539   1.045646     0.40   0.691     .2999944    6.143153
+             |
+        male |
+       Male  |   1.387533    .397422     1.14   0.253     .7914789     2.43247
+             |
+urban_rura~n |
+      Urban  |   1.360552   .3832196     1.09   0.274     .7833604    2.363027
+             |
+         imd |
+          1  |    .395931   .2579202    -1.42   0.155     .1104393    1.419434
+          2  |    1.01794   .5773072     0.03   0.975     .3349482    3.093617
+          3  |   .4737268   .2931555    -1.21   0.227     .1408577    1.593219
+          4  |   .6617991   .3866841    -0.71   0.480     .2105599    2.080064
+          5  |   .4549808    .288656    -1.24   0.215     .1312081    1.577704
+             |
+  1.shielded |   2.812095   2.884884     1.01   0.314     .3765268    21.00217
+------------------------------------------------------------------------------
+
+ copd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        814       81.40       81.40
+          1 |        186       18.60      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  814
+(186 real changes made)
+
+                id:  patient_id
+     failure event:  copd_admit != 0 & copd_admit < .
+obs. time interval:  (copd_end[_n-1], copd_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         97  observations end on or before enter()
+------------------------------------------------------------------------------
+        903  observations remaining, representing
+        903  subjects
+         89  failures in single-failure-per-subject data
+  1,769.057  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  copd_admit
+   analysis time _t:  (copd_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -466.35179
+Iteration 1:   log likelihood = -463.50233
+Iteration 2:   log likelihood = -455.02757
+Iteration 3:   log likelihood = -453.82286
+Iteration 4:   log likelihood = -453.74004
+Iteration 5:   log likelihood =  -453.7393
+Iteration 6:   log likelihood =  -453.7393
+Refining estimates:
+Iteration 0:   log likelihood =  -453.7393
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          698                  Number of obs    =         698
+No. of failures =           72
+Time at risk    =  1362.726899
+                                                LR chi2(15)      =       25.22
+Log likelihood  =    -453.7393                  Prob > chi2      =      0.0470
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.850612   .7741567     1.47   0.141     .8151489      4.2014
+      Black  |   1.766938   .7645183     1.32   0.188     .7567002    4.125903
+      Mixed  |   1.410457   .6194969     0.78   0.434     .5963446     3.33597
+      Other  |   2.472589   1.017718     2.20   0.028     1.103563    5.539962
+             |
+     age_cat |
+41 - 60 y..  |   .8127638   .2366346    -0.71   0.476     .4593447    1.438103
+61 - 80 y..  |   .9447226   .2989066    -0.18   0.857     .5081447    1.756391
+  >80 years  |    1.33924   .5764877     0.68   0.497      .576038     3.11362
+             |
+        male |
+       Male  |   .8344634   .1998641    -0.76   0.450     .5218362    1.334383
+             |
+urban_rura~n |
+      Urban  |   .9633426   .2364329    -0.15   0.879     .5954846    1.558443
+             |
+         imd |
+          1  |   1.712129   .9351914     0.98   0.325     .5869442    4.994315
+          2  |   .9915826   .5575131    -0.02   0.988     .3294158    2.984787
+          3  |   .5319972   .3189779    -1.05   0.293     .1642635     1.72297
+          4  |   .5529593   .3337928    -0.98   0.326     .1693819    1.805175
+          5  |    .623986   .3730261    -0.79   0.430     .1933377    2.013877
+             |
+  1.shielded |    5.32102    3.20896     2.77   0.006     1.631769    17.35126
+------------------------------------------------------------------------------
+
+   mh_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        825       82.50       82.50
+          1 |        175       17.50      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  825
+(175 real changes made)
+
+                id:  patient_id
+     failure event:  mh_admit != 0 & mh_admit < .
+obs. time interval:  (mh_end[_n-1], mh_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         94  observations end on or before enter()
+------------------------------------------------------------------------------
+        906  observations remaining, representing
+        906  subjects
+         82  failures in single-failure-per-subject data
+  1,792.361  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  mh_admit
+   analysis time _t:  (mh_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -407.43811
+Iteration 1:   log likelihood = -403.64658
+Iteration 2:   log likelihood = -403.39654
+Iteration 3:   log likelihood = -403.34282
+Iteration 4:   log likelihood = -403.32318
+Iteration 5:   log likelihood = -403.31596
+Iteration 6:   log likelihood = -403.31331
+Iteration 7:   log likelihood = -403.31233
+Iteration 8:   log likelihood = -403.31197
+Iteration 9:   log likelihood = -403.31184
+Iteration 10:  log likelihood = -403.31179
+Iteration 11:  log likelihood = -403.31177
+Iteration 12:  log likelihood = -403.31176
+Iteration 13:  log likelihood = -403.31176
+Iteration 14:  log likelihood = -403.31176
+Iteration 15:  log likelihood = -403.31176
+Iteration 16:  log likelihood = -403.31176
+Iteration 17:  log likelihood = -403.31176
+Iteration 18:  log likelihood = -403.31176
+Iteration 19:  log likelihood = -403.31176
+Iteration 20:  log likelihood = -403.31176
+Iteration 21:  log likelihood = -403.31176
+Iteration 22:  log likelihood = -403.31176
+Iteration 23:  log likelihood = -403.31176
+Iteration 24:  log likelihood = -403.31176
+Iteration 25:  log likelihood = -403.31176
+Iteration 26:  log likelihood = -403.31176
+Iteration 27:  log likelihood = -403.31176
+Iteration 28:  log likelihood = -403.31176
+Iteration 29:  log likelihood = -403.31176
+Iteration 30:  log likelihood = -403.31176
+Iteration 31:  log likelihood = -403.31176
+Iteration 32:  log likelihood = -403.31176
+Iteration 33:  log likelihood = -403.31176
+Iteration 34:  log likelihood = -403.31176
+Iteration 35:  log likelihood = -403.31176
+Iteration 36:  log likelihood = -403.31176
+Iteration 37:  log likelihood = -403.31176
+Iteration 38:  log likelihood = -403.31176
+Iteration 39:  log likelihood = -403.31176
+Iteration 40:  log likelihood = -403.31176
+Iteration 41:  log likelihood = -403.31176
+Iteration 42:  log likelihood = -403.31176
+Refining estimates:
+Iteration 0:   log likelihood = -403.31176
+Iteration 1:   log likelihood = -403.31176
+Iteration 2:   log likelihood = -403.31176
+
+Cox regression -- no ties
+
+No. of subjects =          689                  Number of obs    =         689
+No. of failures =           63
+Time at risk    =  1357.508556
+                                                LR chi2(14)      =        8.25
+Log likelihood  =   -403.31176                  Prob > chi2      =      0.8757
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.037969   .4052038     0.10   0.924      .482938    2.230887
+      Black  |    1.15571   .4429134     0.38   0.706     .5452993    2.449417
+      Mixed  |    .693542   .3034836    -0.84   0.403     .2941709    1.635105
+      Other  |   .8860175   .3580087    -0.30   0.765     .4013299    1.956064
+             |
+     age_cat |
+41 - 60 y..  |   1.086456   .3259594     0.28   0.782     .6034395    1.956097
+61 - 80 y..  |   .8111743   .2939633    -0.58   0.564     .3986992    1.650376
+  >80 years  |   1.363786   .6352215     0.67   0.505     .5473629    3.397952
+             |
+        male |
+       Male  |    1.10983   .2825467     0.41   0.682     .6738343    1.827932
+             |
+urban_rura~n |
+      Urban  |   .8895682    .236091    -0.44   0.659     .5287748    1.496538
+             |
+         imd |
+          1  |   .6578306   .3492051    -0.79   0.430     .2324123    1.861954
+          2  |   .4591199   .2536578    -1.41   0.159     .1554706    1.355826
+          3  |   .6455469   .3401259    -0.83   0.406      .229851    1.813047
+          4  |   .5574236    .295951    -1.10   0.271     .1969064    1.578014
+          5  |    .375051   .2159301    -1.70   0.088     .1213455    1.159196
+             |
+  1.shielded |   7.92e-20          .        .       .            .           .
+------------------------------------------------------------------------------
+
+   mi_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        951       95.10       95.10
+          1 |         49        4.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  951
+(49 real changes made)
+
+                id:  patient_id
+     failure event:  mi_admit != 0 & mi_admit < .
+obs. time interval:  (mi_end[_n-1], mi_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         22  observations end on or before enter()
+------------------------------------------------------------------------------
+        978  observations remaining, representing
+        978  subjects
+         28  failures in single-failure-per-subject data
+  1,986.675  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  mi_admit
+   analysis time _t:  (mi_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -171.1359
+Iteration 1:   log likelihood = -164.18898
+Iteration 2:   log likelihood = -160.31029
+Iteration 3:   log likelihood = -159.71346
+Iteration 4:   log likelihood = -159.64557
+Iteration 5:   log likelihood = -159.63491
+Iteration 6:   log likelihood = -159.63117
+Iteration 7:   log likelihood = -159.62979
+Iteration 8:   log likelihood = -159.62929
+Iteration 9:   log likelihood =  -159.6291
+Iteration 10:  log likelihood = -159.62903
+Iteration 11:  log likelihood = -159.62901
+Iteration 12:  log likelihood =   -159.629
+Iteration 13:  log likelihood = -159.62899
+Iteration 14:  log likelihood = -159.62899
+Iteration 15:  log likelihood = -159.62899
+Iteration 16:  log likelihood = -159.62899
+Iteration 17:  log likelihood = -159.62899
+Iteration 18:  log likelihood = -159.62899
+Iteration 19:  log likelihood = -159.62899
+Iteration 20:  log likelihood = -159.62899
+Refining estimates:
+Iteration 0:   log likelihood = -159.62899
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          751                  Number of obs    =         751
+No. of failures =           26
+Time at risk    =  1520.501027
+                                                LR chi2(14)      =       23.01
+Log likelihood  =   -159.62899                  Prob > chi2      =      0.0600
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .5984717   .3502954    -0.88   0.380     .1900296    1.884803
+      Black  |   1.114568   .5677611     0.21   0.831     .4106811    3.024884
+      Mixed  |   .2808875   .2240301    -1.59   0.111     .0588344    1.341014
+      Other  |   .3521169    .240723    -1.53   0.127     .0922077    1.344642
+             |
+     age_cat |
+41 - 60 y..  |   1.082971   .6266316     0.14   0.890     .3484115    3.366211
+61 - 80 y..  |   3.111876   1.592054     2.22   0.026     1.141675    8.482072
+  >80 years  |   3.028072   2.226555     1.51   0.132     .7165954    12.79554
+             |
+        male |
+       Male  |   1.235567   .5014426     0.52   0.602     .5577178    2.737272
+             |
+urban_rura~n |
+      Urban  |   .7692584   .3324495    -0.61   0.544     .3297688    1.794465
+             |
+         imd |
+          1  |   2.77e+08          .        .       .            .           .
+          2  |   9.42e+08   7.95e+08    24.49   0.000     1.80e+08    4.92e+09
+          3  |   6.98e+08   5.86e+08    24.29   0.000     1.35e+08    3.61e+09
+          4  |   1.00e+09   8.10e+08    25.60   0.000     2.05e+08    4.89e+09
+          5  |   1.00e+09   8.12e+08    25.65   0.000     2.06e+08    4.90e+09
+             |
+  1.shielded |   3.119648   3.359782     1.06   0.291     .3779055    25.75301
+------------------------------------------------------------------------------
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        951       95.10       95.10
+          1 |         49        4.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  951
+(49 real changes made)
+
+                id:  patient_id
+     failure event:  stroke_admit != 0 & stroke_admit < .
+obs. time interval:  (stroke_end[_n-1], stroke_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         28  observations end on or before enter()
+------------------------------------------------------------------------------
+        972  observations remaining, representing
+        972  subjects
+         22  failures in single-failure-per-subject data
+  1,974.593  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -112.06483
+Iteration 1:   log likelihood = -105.29145
+Iteration 2:   log likelihood = -104.39381
+Iteration 3:   log likelihood = -104.36528
+Iteration 4:   log likelihood = -104.35708
+Iteration 5:   log likelihood = -104.35407
+Iteration 6:   log likelihood = -104.35296
+Iteration 7:   log likelihood = -104.35256
+Iteration 8:   log likelihood = -104.35241
+Iteration 9:   log likelihood = -104.35235
+Iteration 10:  log likelihood = -104.35233
+Iteration 11:  log likelihood = -104.35232
+Iteration 12:  log likelihood = -104.35232
+Iteration 13:  log likelihood = -104.35232
+Iteration 14:  log likelihood = -104.35232
+Iteration 15:  log likelihood = -104.35232
+Iteration 16:  log likelihood = -104.35232
+Iteration 17:  log likelihood = -104.35232
+Iteration 18:  log likelihood = -104.35232
+Iteration 19:  log likelihood = -104.35232
+Iteration 20:  log likelihood = -104.35232
+Iteration 21:  log likelihood = -104.35232
+Iteration 22:  log likelihood = -104.35232
+Iteration 23:  log likelihood = -104.35232
+Iteration 24:  log likelihood = -104.35232
+Iteration 25:  log likelihood = -104.35232
+Iteration 26:  log likelihood = -104.35232
+Iteration 27:  log likelihood = -104.35232
+Iteration 28:  log likelihood = -104.35232
+Iteration 29:  log likelihood = -104.35232
+Iteration 30:  log likelihood = -104.35232
+Iteration 31:  log likelihood = -104.35232
+Iteration 32:  log likelihood = -104.35232
+Iteration 33:  log likelihood = -104.35232
+Iteration 34:  log likelihood = -104.35232
+Iteration 35:  log likelihood = -104.35232
+Refining estimates:
+Iteration 0:   log likelihood = -104.35232
+Iteration 1:   log likelihood = -104.35232
+Iteration 2:   log likelihood = -104.35232
+
+Cox regression -- no ties
+
+No. of subjects =          746                  Number of obs    =         746
+No. of failures =           17
+Time at risk    =  1511.028063
+                                                LR chi2(15)      =       15.43
+Log likelihood  =   -104.35232                  Prob > chi2      =      0.4213
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.149323   1.067668     0.15   0.881     .1860867    7.098539
+      Black  |   1.972301   1.682783     0.80   0.426     .3704427    10.50087
+      Mixed  |   2.068236   1.754048     0.86   0.392      .392379    10.90171
+      Other  |    .926262   .9318503    -0.08   0.939     .1289427    6.653817
+             |
+     age_cat |
+41 - 60 y..  |   .5321586   .3775065    -0.89   0.374     .1324981    2.137335
+61 - 80 y..  |   1.316004   .8054881     0.45   0.654     .3965164    4.367704
+  >80 years  |    3.50368   2.535292     1.73   0.083     .8483755    14.46974
+             |
+        male |
+       Male  |   .9346458   .4595474    -0.14   0.891     .3565559    2.450003
+             |
+urban_rura~n |
+      Urban  |   1.529005   .7537685     0.86   0.389     .5818137    4.018223
+             |
+         imd |
+          1  |   .1860941   .1457249    -2.15   0.032     .0401034    .8635431
+          2  |   .2130341   .1660287    -1.98   0.047     .0462448     .981376
+          3  |   .1254362   .1106025    -2.35   0.019     .0222783    .7062589
+          4  |   .2099491   .1629248    -2.01   0.044     .0458737    .9608687
+          5  |    .148898   .1317434    -2.15   0.031     .0262878    .8433795
+             |
+  1.shielded |   1.15e-16   2.43e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+   hf_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        951       95.10       95.10
+          1 |         49        4.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  951
+(49 real changes made)
+
+                id:  patient_id
+     failure event:  hf_admit != 0 & hf_admit < .
+obs. time interval:  (hf_end[_n-1], hf_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         28  observations end on or before enter()
+------------------------------------------------------------------------------
+        972  observations remaining, representing
+        972  subjects
+         22  failures in single-failure-per-subject data
+  1,974.527  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  hf_admit
+   analysis time _t:  (hf_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -131.6409
+Iteration 1:   log likelihood = -126.81587
+Iteration 2:   log likelihood = -126.47165
+Iteration 3:   log likelihood = -126.45072
+Iteration 4:   log likelihood = -126.44489
+Iteration 5:   log likelihood = -126.44275
+Iteration 6:   log likelihood = -126.44196
+Iteration 7:   log likelihood = -126.44167
+Iteration 8:   log likelihood = -126.44157
+Iteration 9:   log likelihood = -126.44153
+Iteration 10:  log likelihood = -126.44151
+Iteration 11:  log likelihood = -126.44151
+Iteration 12:  log likelihood = -126.44151
+Iteration 13:  log likelihood = -126.44151
+Iteration 14:  log likelihood = -126.44151
+Iteration 15:  log likelihood = -126.44151
+Iteration 16:  log likelihood = -126.44151
+Iteration 17:  log likelihood = -126.44151
+Iteration 18:  log likelihood = -126.44151
+Iteration 19:  log likelihood = -126.44151
+Iteration 20:  log likelihood = -126.44151
+Iteration 21:  log likelihood = -126.44151
+Iteration 22:  log likelihood = -126.44151
+Iteration 23:  log likelihood = -126.44151
+Iteration 24:  log likelihood = -126.44151
+Iteration 25:  log likelihood = -126.44151
+Iteration 26:  log likelihood = -126.44151
+Iteration 27:  log likelihood = -126.44151
+Iteration 28:  log likelihood = -126.44151
+Iteration 29:  log likelihood = -126.44151
+Iteration 30:  log likelihood = -126.44151
+Iteration 31:  log likelihood = -126.44151
+Refining estimates:
+Iteration 0:   log likelihood = -126.44151
+Iteration 1:   log likelihood = -126.44151
+Iteration 2:   log likelihood = -126.44151
+
+Cox regression -- no ties
+
+No. of subjects =          745                  Number of obs    =         745
+No. of failures =           20
+Time at risk    =  1508.071184
+                                                LR chi2(15)      =       10.40
+Log likelihood  =   -126.44151                  Prob > chi2      =      0.7939
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.251076   .9664362     0.29   0.772     .2752609    5.686214
+      Black  |   1.724619   1.269186     0.74   0.459     .4076382    7.296451
+      Mixed  |   .3207467   .3717913    -0.98   0.327     .0330749    3.110472
+      Other  |   2.338879   1.631014     1.22   0.223      .596243    9.174703
+             |
+     age_cat |
+41 - 60 y..  |   1.539296   .8348698     0.80   0.426     .5316859    4.456453
+61 - 80 y..  |   1.493848   .9081723     0.66   0.509     .4537593    4.917985
+  >80 years  |   1.024264   1.112234     0.02   0.982     .1219282    8.604382
+             |
+        male |
+       Male  |   1.163244   .5328851     0.33   0.741     .4739509    2.855016
+             |
+urban_rura~n |
+      Urban  |   .6413145   .3156652    -0.90   0.367     .2443971    1.682852
+             |
+         imd |
+          1  |   1.047092    1.17705     0.04   0.967     .1156478    9.480521
+          2  |   1.386402   1.506264     0.30   0.764     .1648529    11.65955
+          3  |   .4354683   .5367095    -0.67   0.500      .038892    4.875873
+          4  |   .8832326   .9916811    -0.11   0.912     .0978043     7.97613
+          5  |    .717653    .835662    -0.28   0.776     .0732392    7.032106
+             |
+  1.shielded |   6.83e-15   2.33e-07    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+  vte_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        950       95.00       95.00
+          1 |         50        5.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  950
+(50 real changes made)
+
+                id:  patient_id
+     failure event:  vte_admit != 0 & vte_admit < .
+obs. time interval:  (vte_end[_n-1], vte_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         31  observations end on or before enter()
+------------------------------------------------------------------------------
+        969  observations remaining, representing
+        969  subjects
+         20  failures in single-failure-per-subject data
+   1,973.29  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  vte_admit
+   analysis time _t:  (vte_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -105.32896
+Iteration 1:   log likelihood = -100.47425
+Iteration 2:   log likelihood = -97.850815
+Iteration 3:   log likelihood = -97.508346
+Iteration 4:   log likelihood = -97.428508
+Iteration 5:   log likelihood = -97.399819
+Iteration 6:   log likelihood = -97.389289
+Iteration 7:   log likelihood = -97.385418
+Iteration 8:   log likelihood = -97.383995
+Iteration 9:   log likelihood = -97.383471
+Iteration 10:  log likelihood = -97.383278
+Iteration 11:  log likelihood = -97.383208
+Iteration 12:  log likelihood = -97.383181
+Iteration 13:  log likelihood = -97.383172
+Iteration 14:  log likelihood = -97.383168
+Iteration 15:  log likelihood = -97.383167
+Iteration 16:  log likelihood = -97.383167
+Iteration 17:  log likelihood = -97.383166
+Iteration 18:  log likelihood = -97.383166
+Iteration 19:  log likelihood = -97.383166
+Iteration 20:  log likelihood = -97.383166
+Iteration 21:  log likelihood = -97.383166
+Iteration 22:  log likelihood = -97.383166
+Iteration 23:  log likelihood = -97.383166
+Iteration 24:  log likelihood = -97.383166
+Iteration 25:  log likelihood = -97.383166
+Iteration 26:  log likelihood = -97.383166
+Iteration 27:  log likelihood = -97.383166
+Iteration 28:  log likelihood = -97.383166
+Iteration 29:  log likelihood = -97.383166
+Iteration 30:  log likelihood = -97.383166
+Iteration 31:  log likelihood = -97.383166
+Iteration 32:  log likelihood = -97.383166
+Iteration 33:  log likelihood = -97.383166
+Refining estimates:
+Iteration 0:   log likelihood = -97.383166
+Iteration 1:   log likelihood = -97.383166
+Iteration 2:   log likelihood = -97.383166
+
+Cox regression -- no ties
+
+No. of subjects =          745                  Number of obs    =         745
+No. of failures =           16
+Time at risk    =  1514.784394
+                                                LR chi2(14)      =       15.89
+Log likelihood  =   -97.383166                  Prob > chi2      =      0.3200
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.261906   1.060723     0.28   0.782     .2429575    6.554259
+      Black  |   .4472834   .5228539    -0.69   0.491     .0452446    4.421796
+      Mixed  |   1.134095   .9380459     0.15   0.879     .2241784    5.737268
+      Other  |   2.624586   1.919553     1.32   0.187     .6259135    11.00544
+             |
+     age_cat |
+41 - 60 y..  |   1.013603   .5701913     0.02   0.981     .3365377    3.052826
+61 - 80 y..  |   .7503426   .5200137    -0.41   0.679     .1929066    2.918583
+  >80 years  |   9.41e-16   3.10e-08    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   .9043856   .4642953    -0.20   0.845     .3306451     2.47369
+             |
+urban_rura~n |
+      Urban  |   2.608577   1.362783     1.84   0.066     .9369485    7.262591
+             |
+         imd |
+          1  |   1.82e+09   1.55e+09    25.13   0.000     3.45e+08    9.61e+09
+          2  |   9.29e+08   8.54e+08    22.46   0.000     1.53e+08    5.63e+09
+          3  |   9.68e+08   8.90e+08    22.51   0.000     1.60e+08    5.86e+09
+          4  |   5.74e+08          .        .       .            .           .
+          5  |   1.02e+09   9.37e+08    22.64   0.000     1.70e+08    6.16e+09
+             |
+  1.shielded |   6.191524    6.94003     1.63   0.104     .6881647    55.70609
+------------------------------------------------------------------------------
+
+ t1dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        951       95.10       95.10
+          1 |         49        4.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  951
+(49 real changes made)
+
+                id:  patient_id
+     failure event:  t1dm_admit != 0 & t1dm_admit < .
+obs. time interval:  (t1dm_end[_n-1], t1dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         20  observations end on or before enter()
+------------------------------------------------------------------------------
+        980  observations remaining, representing
+        980  subjects
+         30  failures in single-failure-per-subject data
+  1,987.272  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  t1dm_admit
+   analysis time _t:  (t1dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -131.6881
+Iteration 1:   log likelihood = -123.99479
+Iteration 2:   log likelihood = -123.36056
+Iteration 3:   log likelihood = -123.27103
+Iteration 4:   log likelihood = -123.23858
+Iteration 5:   log likelihood = -123.22667
+Iteration 6:   log likelihood =  -123.2223
+Iteration 7:   log likelihood = -123.22069
+Iteration 8:   log likelihood =  -123.2201
+Iteration 9:   log likelihood = -123.21988
+Iteration 10:  log likelihood =  -123.2198
+Iteration 11:  log likelihood = -123.21977
+Iteration 12:  log likelihood = -123.21976
+Iteration 13:  log likelihood = -123.21975
+Iteration 14:  log likelihood = -123.21975
+Iteration 15:  log likelihood = -123.21975
+Iteration 16:  log likelihood = -123.21975
+Iteration 17:  log likelihood = -123.21975
+Iteration 18:  log likelihood = -123.21975
+Iteration 19:  log likelihood = -123.21975
+Iteration 20:  log likelihood = -123.21975
+Iteration 21:  log likelihood = -123.21975
+Iteration 22:  log likelihood = -123.21975
+Iteration 23:  log likelihood = -123.21975
+Iteration 24:  log likelihood = -123.21975
+Iteration 25:  log likelihood = -123.21975
+Iteration 26:  log likelihood = -123.21975
+Iteration 27:  log likelihood = -123.21975
+Iteration 28:  log likelihood = -123.21975
+Iteration 29:  log likelihood = -123.21975
+Iteration 30:  log likelihood = -123.21975
+Iteration 31:  log likelihood = -123.21975
+Iteration 32:  log likelihood = -123.21975
+Iteration 33:  log likelihood = -123.21975
+Refining estimates:
+Iteration 0:   log likelihood = -123.21975
+Iteration 1:   log likelihood = -123.21975
+Iteration 2:   log likelihood = -123.21975
+
+Cox regression -- no ties
+
+No. of subjects =          750                  Number of obs    =         750
+No. of failures =           20
+Time at risk    =  1526.015058
+                                                LR chi2(14)      =       16.94
+Log likelihood  =   -123.21975                  Prob > chi2      =      0.2596
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .5998528   .4108153    -0.75   0.456     .1567078    2.296142
+      Black  |   1.409513   .8353221     0.58   0.562     .4411841    4.503168
+      Mixed  |    .388911   .3279336    -1.12   0.263     .0744918    2.030448
+      Other  |   .3388874   .2849581    -1.29   0.198     .0652095    1.761164
+             |
+     age_cat |
+41 - 60 y..  |   1.377165   .8354011     0.53   0.598     .4194101    4.522023
+61 - 80 y..  |   2.622234   1.548241     1.63   0.103     .8243243    8.341514
+  >80 years  |   2.815017   2.376042     1.23   0.220       .53829    14.72128
+             |
+        male |
+       Male  |   .9188421   .4209411    -0.18   0.853     .3743582    2.255249
+             |
+urban_rura~n |
+      Urban  |   1.293651   .5891536     0.57   0.572     .5298631    3.158426
+             |
+         imd |
+          1  |   4.79e+08   4.41e+08    21.74   0.000     7.91e+07    2.91e+09
+          2  |   1.66e+09   1.33e+09    26.54   0.000     3.46e+08    7.96e+09
+          3  |   4.70e+08   4.32e+08    21.73   0.000     7.76e+07    2.85e+09
+          4  |   6.51e+08   5.68e+08    23.28   0.000     1.18e+08    3.60e+09
+          5  |   3.58e+08          .        .       .            .           .
+             |
+  1.shielded |   6.82e-16   6.07e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        952       95.20       95.20
+          1 |         48        4.80      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  952
+(48 real changes made)
+
+                id:  patient_id
+     failure event:  t2dm_admit != 0 & t2dm_admit < .
+obs. time interval:  (t2dm_end[_n-1], t2dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         25  observations end on or before enter()
+------------------------------------------------------------------------------
+        975  observations remaining, representing
+        975  subjects
+         24  failures in single-failure-per-subject data
+  1,983.537  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -144.75024
+Iteration 1:   log likelihood = -139.87253
+Iteration 2:   log likelihood = -135.18889
+Iteration 3:   log likelihood = -134.62266
+Iteration 4:   log likelihood = -134.55626
+Iteration 5:   log likelihood = -134.54421
+Iteration 6:   log likelihood = -134.53992
+Iteration 7:   log likelihood = -134.53834
+Iteration 8:   log likelihood = -134.53776
+Iteration 9:   log likelihood = -134.53754
+Iteration 10:  log likelihood = -134.53746
+Iteration 11:  log likelihood = -134.53743
+Iteration 12:  log likelihood = -134.53742
+Iteration 13:  log likelihood = -134.53742
+Iteration 14:  log likelihood = -134.53742
+Iteration 15:  log likelihood = -134.53742
+Iteration 16:  log likelihood = -134.53742
+Iteration 17:  log likelihood = -134.53742
+Iteration 18:  log likelihood = -134.53742
+Iteration 19:  log likelihood = -134.53742
+Iteration 20:  log likelihood = -134.53742
+Iteration 21:  log likelihood = -134.53742
+Iteration 22:  log likelihood = -134.53742
+Iteration 23:  log likelihood = -134.53742
+Iteration 24:  log likelihood = -134.53742
+Iteration 25:  log likelihood = -134.53742
+Iteration 26:  log likelihood = -134.53742
+Iteration 27:  log likelihood = -134.53742
+Iteration 28:  log likelihood = -134.53742
+Iteration 29:  log likelihood = -134.53742
+Iteration 30:  log likelihood = -134.53742
+Iteration 31:  log likelihood = -134.53742
+Iteration 32:  log likelihood = -134.53742
+Refining estimates:
+Iteration 0:   log likelihood = -134.53742
+Iteration 1:   log likelihood = -134.53742
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          746                  Number of obs    =         746
+No. of failures =           22
+Time at risk    =  1511.392197
+                                                LR chi2(15)      =       20.43
+Log likelihood  =   -134.53742                  Prob > chi2      =      0.1562
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |    1.89609   1.356383     0.89   0.371     .4666001    7.705005
+      Black  |    1.25583   .9775806     0.29   0.770     .2731032    5.774773
+      Mixed  |   .8418177   .7054408    -0.21   0.837     .1628972    4.350333
+      Other  |   2.080124   1.493312     1.02   0.308     .5093489    8.494996
+             |
+     age_cat |
+41 - 60 y..  |   4.569278    2.96797     2.34   0.019     1.279235    16.32092
+61 - 80 y..  |   4.276079    2.97232     2.09   0.037     1.094894    16.70011
+  >80 years  |   1.04e-14   1.52e-07    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   1.601606   .7140623     1.06   0.291     .6684279    3.837573
+             |
+urban_rura~n |
+      Urban  |   1.353745   .5871759     0.70   0.485     .5785424     3.16766
+             |
+         imd |
+          1  |   .3618917   .2809411    -1.31   0.190     .0790278    1.657208
+          2  |   .4241398   .3129786    -1.16   0.245     .0998609    1.801451
+          3  |   .2631184   .2188022    -1.61   0.108     .0515602    1.342726
+          4  |   .3340485   .2487223    -1.47   0.141     .0776303    1.437435
+          5  |   .1880161   .1734154    -1.81   0.070     .0308386    1.146292
+             |
+  1.shielded |   7.316293    7.80928     1.86   0.062     .9030957    59.27184
+------------------------------------------------------------------------------
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        952       95.20       95.20
+          1 |         48        4.80      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  952
+(48 real changes made)
+
+                id:  patient_id
+     failure event:  dm_keto_admit != 0 & dm_keto_admit < .
+obs. time interval:  (dm_keto_end[_n-1], dm_keto_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         27  observations end on or before enter()
+------------------------------------------------------------------------------
+        973  observations remaining, representing
+        973  subjects
+         22  failures in single-failure-per-subject data
+  1,985.177  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  dm_keto_admit
+   analysis time _t:  (dm_keto_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -111.86612
+Iteration 1:   log likelihood = -108.39069
+Iteration 2:   log likelihood = -108.26223
+Iteration 3:   log likelihood = -108.24953
+Iteration 4:   log likelihood = -108.24496
+Iteration 5:   log likelihood = -108.24328
+Iteration 6:   log likelihood = -108.24266
+Iteration 7:   log likelihood = -108.24244
+Iteration 8:   log likelihood = -108.24235
+Iteration 9:   log likelihood = -108.24232
+Iteration 10:  log likelihood = -108.24231
+Iteration 11:  log likelihood = -108.24231
+Iteration 12:  log likelihood = -108.24231
+Iteration 13:  log likelihood = -108.24231
+Iteration 14:  log likelihood =  -108.2423
+Iteration 15:  log likelihood =  -108.2423
+Iteration 16:  log likelihood =  -108.2423
+Iteration 17:  log likelihood =  -108.2423
+Iteration 18:  log likelihood =  -108.2423
+Iteration 19:  log likelihood =  -108.2423
+Iteration 20:  log likelihood =  -108.2423
+Iteration 21:  log likelihood =  -108.2423
+Iteration 22:  log likelihood =  -108.2423
+Iteration 23:  log likelihood =  -108.2423
+Iteration 24:  log likelihood =  -108.2423
+Iteration 25:  log likelihood =  -108.2423
+Iteration 26:  log likelihood =  -108.2423
+Iteration 27:  log likelihood =  -108.2423
+Iteration 28:  log likelihood =  -108.2423
+Iteration 29:  log likelihood =  -108.2423
+Iteration 30:  log likelihood =  -108.2423
+Iteration 31:  log likelihood =  -108.2423
+Iteration 32:  log likelihood =  -108.2423
+Iteration 33:  log likelihood =  -108.2423
+Refining estimates:
+Iteration 0:   log likelihood =  -108.2423
+Iteration 1:   log likelihood =  -108.2423
+
+Cox regression -- no ties
+
+No. of subjects =          742                  Number of obs    =         742
+No. of failures =           17
+Time at risk    =  1512.542094
+                                                LR chi2(15)      =        7.25
+Log likelihood  =    -108.2423                  Prob > chi2      =      0.9504
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .5156294   .3817059    -0.89   0.371     .1208418     2.20018
+      Black  |   .7567136   .5122726    -0.41   0.680     .2007675    2.852132
+      Mixed  |   .5518476    .407941    -0.80   0.421     .1295947    2.349908
+      Other  |   .3391879   .2853512    -1.29   0.199     .0652144    1.764157
+             |
+     age_cat |
+41 - 60 y..  |   2.195979   1.347215     1.28   0.200     .6598159    7.308587
+61 - 80 y..  |   1.292914   .9937173     0.33   0.738     .2866464    5.831663
+  >80 years  |   3.596406   3.126291     1.47   0.141     .6545373    19.76073
+             |
+        male |
+       Male  |   1.146153   .5635102     0.28   0.781     .4372666     3.00427
+             |
+urban_rura~n |
+      Urban  |   1.055631   .5296642     0.11   0.914     .3948397    2.822303
+             |
+         imd |
+          1  |   .4972324   .6124589    -0.57   0.571     .0444738    5.559232
+          2  |   1.040892   1.171736     0.04   0.972     .1146055    9.453795
+          3  |   .4761506   .5882297    -0.60   0.548     .0422846     5.36175
+          4  |   1.159118   1.281494     0.13   0.894     .1327573    10.12037
+          5  |   .7215347   .8413305    -0.28   0.780      .073406    7.092233
+             |
+  1.shielded |   1.91e-15   1.21e-07    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        952       95.20       95.20
+          1 |         48        4.80      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  952
+(48 real changes made)
+
+                id:  patient_id
+     failure event:  asthma_admit != 0 & asthma_admit < .
+obs. time interval:  (asthma_end[_n-1], asthma_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         21  observations end on or before enter()
+------------------------------------------------------------------------------
+        979  observations remaining, representing
+        979  subjects
+         28  failures in single-failure-per-subject data
+  1,984.589  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  asthma_admit
+   analysis time _t:  (asthma_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -118.48398
+Iteration 1:   log likelihood = -108.27962
+Iteration 2:   log likelihood = -103.17329
+Iteration 3:   log likelihood = -102.52012
+Iteration 4:   log likelihood = -102.33275
+Iteration 5:   log likelihood = -102.26497
+Iteration 6:   log likelihood = -102.24013
+Iteration 7:   log likelihood = -102.23101
+Iteration 8:   log likelihood = -102.22765
+Iteration 9:   log likelihood = -102.22642
+Iteration 10:  log likelihood = -102.22596
+Iteration 11:  log likelihood =  -102.2258
+Iteration 12:  log likelihood = -102.22573
+Iteration 13:  log likelihood = -102.22571
+Iteration 14:  log likelihood =  -102.2257
+Iteration 15:  log likelihood =  -102.2257
+Iteration 16:  log likelihood =  -102.2257
+Iteration 17:  log likelihood =  -102.2257
+Iteration 18:  log likelihood =  -102.2257
+Iteration 19:  log likelihood =  -102.2257
+Iteration 20:  log likelihood =  -102.2257
+Iteration 21:  log likelihood =  -102.2257
+Iteration 22:  log likelihood =  -102.2257
+Iteration 23:  log likelihood =  -102.2257
+Iteration 24:  log likelihood =  -102.2257
+Iteration 25:  log likelihood =  -102.2257
+Iteration 26:  log likelihood =  -102.2257
+Iteration 27:  log likelihood =  -102.2257
+Iteration 28:  log likelihood =  -102.2257
+Iteration 29:  log likelihood =  -102.2257
+Iteration 30:  log likelihood =  -102.2257
+Iteration 31:  log likelihood =  -102.2257
+Iteration 32:  log likelihood =  -102.2257
+Iteration 33:  log likelihood =  -102.2257
+Iteration 34:  log likelihood =  -102.2257
+Iteration 35:  log likelihood =  -102.2257
+Refining estimates:
+Iteration 0:   log likelihood =  -102.2257
+Iteration 1:   log likelihood =  -102.2257
+Iteration 2:   log likelihood =  -102.2257
+Iteration 3:   log likelihood =  -102.2257
+
+Cox regression -- no ties
+
+No. of subjects =          746                  Number of obs    =         746
+No. of failures =           18
+Time at risk    =  1516.796715
+                                                LR chi2(14)      =       32.52
+Log likelihood  =    -102.2257                  Prob > chi2      =      0.0034
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.453927   .8489284     0.64   0.522     .4629533    4.566125
+      Black  |   2.87e-17   2.42e-09    -0.00   1.000            0           .
+      Mixed  |   .2746096   .2418027    -1.47   0.142     .0488883    1.542504
+      Other  |   .4435501   .3347641    -1.08   0.281     .1010435    1.947049
+             |
+     age_cat |
+41 - 60 y..  |   1.129482   .7005191     0.20   0.844     .3349295    3.808951
+61 - 80 y..  |   1.746537    1.02877     0.95   0.344     .5505425    5.540701
+  >80 years  |    1.47738   1.630553     0.35   0.724     .1698395    12.85126
+             |
+        male |
+       Male  |   .8301611   .4036436    -0.38   0.702      .320102    2.152962
+             |
+urban_rura~n |
+      Urban  |   .1548132   .1191887    -2.42   0.015     .0342357    .7000632
+             |
+         imd |
+          1  |   5.52e+08   5.55e+08    20.01   0.000     7.68e+07    3.96e+09
+          2  |   2.70e+09   2.17e+09    27.06   0.000     5.61e+08    1.30e+10
+          3  |   7.91e+08   7.34e+08    22.08   0.000     1.28e+08    4.88e+09
+          4  |   7.65e+08   7.16e+08    21.85   0.000     1.22e+08    4.79e+09
+          5  |   6.09e+08          .        .       .            .           .
+             |
+  1.shielded |   24.10036   27.83636     2.76   0.006      2.50536     231.834
+------------------------------------------------------------------------------
+(.: CI1 missing for some coefficients)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        952       95.20       95.20
+          1 |         48        4.80      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  952
+(48 real changes made)
+
+                id:  patient_id
+     failure event:  depress_admit != 0 & depress_admit < .
+obs. time interval:  (depress_end[_n-1], depress_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         23  observations end on or before enter()
+------------------------------------------------------------------------------
+        977  observations remaining, representing
+        977  subjects
+         26  failures in single-failure-per-subject data
+  1,981.615  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  depress_admit
+   analysis time _t:  (depress_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -151.50499
+Iteration 1:   log likelihood = -143.68178
+Iteration 2:   log likelihood = -142.87556
+Iteration 3:   log likelihood = -142.84149
+Iteration 4:   log likelihood = -142.83399
+Iteration 5:   log likelihood = -142.83126
+Iteration 6:   log likelihood = -142.83025
+Iteration 7:   log likelihood = -142.82988
+Iteration 8:   log likelihood = -142.82975
+Iteration 9:   log likelihood =  -142.8297
+Iteration 10:  log likelihood = -142.82968
+Iteration 11:  log likelihood = -142.82967
+Iteration 12:  log likelihood = -142.82967
+Iteration 13:  log likelihood = -142.82967
+Iteration 14:  log likelihood = -142.82967
+Iteration 15:  log likelihood = -142.82967
+Iteration 16:  log likelihood = -142.82967
+Iteration 17:  log likelihood = -142.82967
+Iteration 18:  log likelihood = -142.82967
+Iteration 19:  log likelihood = -142.82967
+Iteration 20:  log likelihood = -142.82967
+Iteration 21:  log likelihood = -142.82967
+Iteration 22:  log likelihood = -142.82967
+Iteration 23:  log likelihood = -142.82967
+Iteration 24:  log likelihood = -142.82967
+Iteration 25:  log likelihood = -142.82967
+Iteration 26:  log likelihood = -142.82967
+Iteration 27:  log likelihood = -142.82967
+Iteration 28:  log likelihood = -142.82967
+Iteration 29:  log likelihood = -142.82967
+Iteration 30:  log likelihood = -142.82967
+Iteration 31:  log likelihood = -142.82967
+Refining estimates:
+Iteration 0:   log likelihood = -142.82967
+Iteration 1:   log likelihood = -142.82967
+Iteration 2:   log likelihood = -142.82967
+
+Cox regression -- no ties
+
+No. of subjects =          749                  Number of obs    =         749
+No. of failures =           23
+Time at risk    =  1513.511294
+                                                LR chi2(15)      =       17.35
+Log likelihood  =   -142.82967                  Prob > chi2      =      0.2983
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .3624538   .2192489    -1.68   0.093      .110754    1.186167
+      Black  |   .2685304   .1796982    -1.96   0.049     .0723397    .9968046
+      Mixed  |   .1877642   .1469549    -2.14   0.033     .0404962    .8705857
+      Other  |   .3372523     .20187    -1.82   0.069     .1043396    1.090086
+             |
+     age_cat |
+41 - 60 y..  |   .8092406   .4019374    -0.43   0.670     .3057025    2.142182
+61 - 80 y..  |   .6589931   .3963912    -0.69   0.488     .2027096    2.142335
+  >80 years  |   1.286779   1.004834     0.32   0.747     .2784893    5.945653
+             |
+        male |
+       Male  |    1.39136   .5932782     0.77   0.439      .603234    3.209174
+             |
+urban_rura~n |
+      Urban  |   .8986307   .3974495    -0.24   0.809     .3776669    2.138226
+             |
+         imd |
+          1  |   .3646606   .3217201    -1.14   0.253     .0647024    2.055215
+          2  |   .3846899   .3379611    -1.09   0.277     .0687553    2.152363
+          3  |   .6811555   .5531292    -0.47   0.636     .1386858    3.345496
+          4  |   .0820556   .1015132    -2.02   0.043     .0072621    .9271549
+          5  |   .3428386    .302541    -1.21   0.225      .060805    1.933037
+             |
+  1.shielded |   3.96e-15   1.19e-07    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        951       95.10       95.10
+          1 |         49        4.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  951
+(49 real changes made)
+
+                id:  patient_id
+     failure event:  anx_admit != 0 & anx_admit < .
+obs. time interval:  (anx_end[_n-1], anx_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         26  observations end on or before enter()
+------------------------------------------------------------------------------
+        974  observations remaining, representing
+        974  subjects
+         24  failures in single-failure-per-subject data
+  1,987.236  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  anx_admit
+   analysis time _t:  (anx_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -118.47413
+Iteration 1:   log likelihood = -115.05627
+Iteration 2:   log likelihood = -114.75768
+Iteration 3:   log likelihood = -114.66772
+Iteration 4:   log likelihood = -114.63493
+Iteration 5:   log likelihood = -114.62289
+Iteration 6:   log likelihood = -114.61847
+Iteration 7:   log likelihood = -114.61684
+Iteration 8:   log likelihood = -114.61625
+Iteration 9:   log likelihood = -114.61603
+Iteration 10:  log likelihood = -114.61594
+Iteration 11:  log likelihood = -114.61591
+Iteration 12:  log likelihood =  -114.6159
+Iteration 13:  log likelihood =  -114.6159
+Iteration 14:  log likelihood =  -114.6159
+Iteration 15:  log likelihood =  -114.6159
+Iteration 16:  log likelihood =  -114.6159
+Iteration 17:  log likelihood =  -114.6159
+Iteration 18:  log likelihood =  -114.6159
+Iteration 19:  log likelihood =  -114.6159
+Iteration 20:  log likelihood =  -114.6159
+Iteration 21:  log likelihood =  -114.6159
+Iteration 22:  log likelihood =  -114.6159
+Iteration 23:  log likelihood =  -114.6159
+Iteration 24:  log likelihood =  -114.6159
+Iteration 25:  log likelihood =  -114.6159
+Iteration 26:  log likelihood =  -114.6159
+Iteration 27:  log likelihood =  -114.6159
+Iteration 28:  log likelihood =  -114.6159
+Iteration 29:  log likelihood =  -114.6159
+Iteration 30:  log likelihood =  -114.6159
+Iteration 31:  log likelihood =  -114.6159
+Refining estimates:
+Iteration 0:   log likelihood =  -114.6159
+Iteration 1:   log likelihood =  -114.6159
+
+Cox regression -- no ties
+
+No. of subjects =          746                  Number of obs    =         746
+No. of failures =           18
+Time at risk    =   1520.72553
+                                                LR chi2(14)      =        7.72
+Log likelihood  =    -114.6159                  Prob > chi2      =      0.9036
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.215443   .9424736     0.25   0.801     .2658886    5.556095
+      Black  |   1.635967   1.199616     0.67   0.502     .3886942    6.885585
+      Mixed  |   1.107211   .9086614     0.12   0.901     .2216511    5.530839
+      Other  |   .9633944   .7901136    -0.05   0.964     .1930651    4.807335
+             |
+     age_cat |
+41 - 60 y..  |   1.492543   .8775092     0.68   0.496      .471499    4.724685
+61 - 80 y..  |   1.469378   .9909603     0.57   0.568      .391811    5.510495
+  >80 years  |   2.394975   2.018538     1.04   0.300     .4590814    12.49431
+             |
+        male |
+       Male  |    1.02115   .4877144     0.04   0.965     .4004471     2.60396
+             |
+urban_rura~n |
+      Urban  |   1.984899   .9496042     1.43   0.152     .7771616    5.069504
+             |
+         imd |
+          1  |   1.38e+09   1.27e+09    22.86   0.000     2.27e+08    8.40e+09
+          2  |   1.86e+09   1.63e+09    24.44   0.000     3.36e+08    1.03e+10
+          3  |   1.72e+09   1.50e+09    24.47   0.000     3.14e+08    9.46e+09
+          4  |   2.00e+09   1.69e+09    25.47   0.000     3.86e+08    1.04e+10
+          5  |   9.45e+08          .        .       .            .           .
+             |
+  1.shielded |   1.11e-14   2.43e-07    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+  smi_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        951       95.10       95.10
+          1 |         49        4.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  951
+(49 real changes made)
+
+                id:  patient_id
+     failure event:  smi_admit != 0 & smi_admit < .
+obs. time interval:  (smi_end[_n-1], smi_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         28  observations end on or before enter()
+------------------------------------------------------------------------------
+        972  observations remaining, representing
+        972  subjects
+         22  failures in single-failure-per-subject data
+  1,986.242  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  smi_admit
+   analysis time _t:  (smi_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -111.85812
+Iteration 1:   log likelihood = -110.43985
+Iteration 2:   log likelihood = -105.93272
+Iteration 3:   log likelihood = -105.76653
+Iteration 4:   log likelihood = -105.76279
+Iteration 5:   log likelihood = -105.76161
+Iteration 6:   log likelihood = -105.76118
+Iteration 7:   log likelihood = -105.76102
+Iteration 8:   log likelihood = -105.76096
+Iteration 9:   log likelihood = -105.76094
+Iteration 10:  log likelihood = -105.76093
+Iteration 11:  log likelihood = -105.76093
+Iteration 12:  log likelihood = -105.76093
+Iteration 13:  log likelihood = -105.76093
+Iteration 14:  log likelihood = -105.76093
+Iteration 15:  log likelihood = -105.76093
+Iteration 16:  log likelihood = -105.76093
+Iteration 17:  log likelihood = -105.76093
+Iteration 18:  log likelihood = -105.76093
+Iteration 19:  log likelihood = -105.76093
+Iteration 20:  log likelihood = -105.76093
+Iteration 21:  log likelihood = -105.76093
+Iteration 22:  log likelihood = -105.76093
+Iteration 23:  log likelihood = -105.76093
+Iteration 24:  log likelihood = -105.76093
+Iteration 25:  log likelihood = -105.76093
+Iteration 26:  log likelihood = -105.76093
+Iteration 27:  log likelihood = -105.76093
+Iteration 28:  log likelihood = -105.76093
+Iteration 29:  log likelihood = -105.76093
+Iteration 30:  log likelihood = -105.76093
+Iteration 31:  log likelihood = -105.76093
+Iteration 32:  log likelihood = -105.76093
+Refining estimates:
+Iteration 0:   log likelihood = -105.76093
+Iteration 1:   log likelihood = -105.76093
+Iteration 2:   log likelihood = -105.76093
+
+Cox regression -- no ties
+
+No. of subjects =          744                  Number of obs    =         744
+No. of failures =           17
+Time at risk    =  1517.360712
+                                                LR chi2(15)      =       12.19
+Log likelihood  =   -105.76093                  Prob > chi2      =      0.6643
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   4.105474   4.539983     1.28   0.202     .4699736    35.86354
+      Black  |   4.655594    5.14129     1.39   0.164     .5345298    40.54884
+      Mixed  |   1.829704   2.251838     0.49   0.623     .1639825     20.4157
+      Other  |   3.798196   4.269033     1.19   0.235     .4196219    34.37927
+             |
+     age_cat |
+41 - 60 y..  |   1.313544   .7993803     0.45   0.654     .3985022    4.329705
+61 - 80 y..  |   .9800353   .7205146    -0.03   0.978     .2319769    4.140366
+  >80 years  |   3.010391   2.237925     1.48   0.138     .7011964    12.92428
+             |
+        male |
+       Male  |   .6027888   .3098083    -0.98   0.325     .2201319    1.650621
+             |
+urban_rura~n |
+      Urban  |   .8516244   .4400179    -0.31   0.756     .3093489    2.344485
+             |
+         imd |
+          1  |   .3017688   .2481513    -1.46   0.145      .060216    1.512295
+          2  |   .1968286    .181483    -1.76   0.078     .0323035    1.199296
+          3  |    .260041   .2140932    -1.64   0.102     .0517896    1.305692
+          4  |   .2884699   .2386621    -1.50   0.133     .0569993    1.459929
+          5  |   .2893979   .2403481    -1.49   0.135     .0568281    1.473763
+             |
+  1.shielded |   1.47e-15   1.11e-07    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+   sh_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        950       95.00       95.00
+          1 |         50        5.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  950
+(50 real changes made)
+
+                id:  patient_id
+     failure event:  sh_admit != 0 & sh_admit < .
+obs. time interval:  (sh_end[_n-1], sh_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+         26  observations end on or before enter()
+------------------------------------------------------------------------------
+        974  observations remaining, representing
+        974  subjects
+         25  failures in single-failure-per-subject data
+  1,985.336  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  sh_admit
+   analysis time _t:  (sh_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -98.524542
+Iteration 1:   log likelihood = -91.199315
+Iteration 2:   log likelihood = -90.086033
+Iteration 3:   log likelihood = -89.789159
+Iteration 4:   log likelihood = -89.682366
+Iteration 5:   log likelihood = -89.643223
+Iteration 6:   log likelihood = -89.628842
+Iteration 7:   log likelihood = -89.623554
+Iteration 8:   log likelihood = -89.621609
+Iteration 9:   log likelihood = -89.620893
+Iteration 10:  log likelihood =  -89.62063
+Iteration 11:  log likelihood = -89.620533
+Iteration 12:  log likelihood = -89.620498
+Iteration 13:  log likelihood = -89.620485
+Iteration 14:  log likelihood =  -89.62048
+Iteration 15:  log likelihood = -89.620478
+Iteration 16:  log likelihood = -89.620477
+Iteration 17:  log likelihood = -89.620477
+Iteration 18:  log likelihood = -89.620477
+Iteration 19:  log likelihood = -89.620477
+Iteration 20:  log likelihood = -89.620477
+Iteration 21:  log likelihood = -89.620477
+Iteration 22:  log likelihood = -89.620477
+Iteration 23:  log likelihood = -89.620477
+Iteration 24:  log likelihood = -89.620477
+Iteration 25:  log likelihood = -89.620477
+Iteration 26:  log likelihood = -89.620477
+Iteration 27:  log likelihood = -89.620477
+Iteration 28:  log likelihood = -89.620477
+Iteration 29:  log likelihood = -89.620477
+Iteration 30:  log likelihood = -89.620477
+Iteration 31:  log likelihood = -89.620477
+Iteration 32:  log likelihood = -89.620477
+Iteration 33:  log likelihood = -89.620477
+Iteration 34:  log likelihood = -89.620477
+Iteration 35:  log likelihood = -89.620477
+Refining estimates:
+Iteration 0:   log likelihood = -89.620477
+Iteration 1:   log likelihood = -89.620477
+
+Cox regression -- no ties
+
+No. of subjects =          741                  Number of obs    =         741
+No. of failures =           15
+Time at risk    =  1512.733744
+                                                LR chi2(15)      =       17.81
+Log likelihood  =   -89.620477                  Prob > chi2      =      0.2729
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   2.881064   3.350225     0.91   0.363     .2949439    28.14275
+      Black  |   6.027906   6.618731     1.64   0.102     .7007036    51.85595
+      Mixed  |   3.039536   3.526907     0.96   0.338     .3126951    29.54565
+      Other  |   3.729142   4.337247     1.13   0.258     .3815956    36.44303
+             |
+     age_cat |
+41 - 60 y..  |   .8449972   .5143012    -0.28   0.782     .2563173    2.785689
+61 - 80 y..  |   .9449751   .6178514    -0.09   0.931     .2623498    3.403768
+  >80 years  |   1.95e-16   1.28e-08    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   .6507256   .3462047    -0.81   0.419     .2293688    1.846127
+             |
+urban_rura~n |
+      Urban  |   .5454811   .3223329    -1.03   0.305     .1713137     1.73687
+             |
+         imd |
+          1  |   1.618084   1.781257     0.44   0.662     .1870515    13.99718
+          2  |   .8441446   .9814899    -0.15   0.884     .0864414    8.243504
+          3  |   1.48e-16   6.53e-09    -0.00   1.000            0           .
+          4  |   1.405545   1.547395     0.31   0.757      .162457    12.16049
+          5  |   .2810403    .399865    -0.89   0.372     .0172853    4.569416
+             |
+  1.shielded |   2.22e-16   3.83e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+
+. 
+. 
+. * Combine pre and pandemic graphs
+. local var "cvd dm copd mh mi stroke hf vte t1dm t2dm dm_keto asthma depress a
+> nx smi sh"
+
+. local title "CVD-overall MI Stroke Heart-failure VTE Diabetes(T1) Diabetes(T2
+> ) DKA Asthma Depression Anxiety Serious_mental_illess Self-harm "
+
+. forvalues i=1/16 {
+  2.     local sub: word `i' of `var'
+  3.     local name: word `i' of `title'
+  4.     graph combine `sub'_pre `sub'_pan, graphregion(color(white)) title(`na
+> me')
+  5.     graph export ./output/survival/estimates_combine_`sub'.svg, as(svg) re
+> place
+  6. }
+(note: file ./output/survival/estimates_combine_cvd.svg not found)
+(file ./output/survival/estimates_combine_cvd.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_dm.svg not found)
+(file ./output/survival/estimates_combine_dm.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_copd.svg not found)
+(file ./output/survival/estimates_combine_copd.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_mh.svg not found)
+(file ./output/survival/estimates_combine_mh.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_mi.svg not found)
+(file ./output/survival/estimates_combine_mi.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_stroke.svg not found)
+(file ./output/survival/estimates_combine_stroke.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_hf.svg not found)
+(file ./output/survival/estimates_combine_hf.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_vte.svg not found)
+(file ./output/survival/estimates_combine_vte.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_t1dm.svg not found)
+(file ./output/survival/estimates_combine_t1dm.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_t2dm.svg not found)
+(file ./output/survival/estimates_combine_t2dm.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_dm_keto.svg not found)
+(file ./output/survival/estimates_combine_dm_keto.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_asthma.svg not found)
+(file ./output/survival/estimates_combine_asthma.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_depress.svg not found)
+(file ./output/survival/estimates_combine_depress.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_anx.svg not found)
+(file ./output/survival/estimates_combine_anx.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_smi.svg not found)
+(file ./output/survival/estimates_combine_smi.svg written in SVG format)
+(note: file ./output/survival/estimates_combine_sh.svg not found)
+(file ./output/survival/estimates_combine_sh.svg written in SVG format)
+
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/cox_model_graphs.log
+  log type:  text
+ closed on:  15 Jun 2022, 09:36:15
+-------------------------------------------------------------------------------
