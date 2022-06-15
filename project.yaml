@@ -300,4 +300,13 @@ actions:
         log: logs/cox_model_checks.log
         output: output/tables/*.txt
         graph: output/graphs/km*.svg
+
+  cox_models_graphs:
+    run: stata-mp:latest analysis/cox_models_graphs.do
+    needs: [generate_study_population_survival_pre, generate_study_population_survival_pandemic]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_graphs.log
+        graph: output/survival/estimates_*.svg
+       
         
