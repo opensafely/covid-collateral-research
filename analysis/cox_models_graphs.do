@@ -115,12 +115,6 @@ label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years" 3 ">80 ye
 label values age_cat age
 safetab age_cat, miss
 
-* open file to write results to
-file open tablecontent using ./output/tables/cvd_cox_models.txt, write text replace
-file write tablecontent ("Association between ethnicity and outcomes pre-pandemic") _n
-file write tablecontent _tab ("Denominator") _tab ("Event") _tab ("Total person-weeks") _tab ("Rate per 1,000") _tab ("Crude") _tab _tab ("Age/Sex Adjusted") _tab _tab ("Fully Adjusted") _tab _tab  _n
-file write tablecontent _tab _tab _tab _tab _tab   ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab _tab  _n
-
 foreach sub in cvd dm copd mh mi stroke hf vte t1dm t2dm dm_keto asthma depress anx smi sh {
     * Cox model for each outcome category
     * Generate flags and end dates for each outcome
