@@ -56,16 +56,15 @@
 > _`strata'_4 ac_`strata'_5, altshrink
  30.                 graph export ./output/time_series/resp_ac_`var'_`strata'.s
 > vg, as(svg) replace
- 31.                 
-.                 graph combine pac_`strata'_1 pac_`strata'_2 pac_`strata'_3 pa
-> c_`strata'_4 pac_`strata'_5, altshrink
+ 31.                 graph combine pac_`strata'_1 pac_`strata'_2 pac_`strata'_3
+>  pac_`strata'_4 pac_`strata'_5, altshrink
  32.                 graph export ./output/time_series/resp_pac_`var'_`strata'.
 > svg, as(svg) replace
  33.         }
  34. }       
-(5 vars, 175 obs)
+(5 vars, 235 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2019m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
 (note: file ./output/time_series/resp_kd_asthma_monitoring_ethnicity.svg not fo
 > und)
@@ -79,9 +78,9 @@
 > ound)
 (file ./output/time_series/resp_pac_asthma_monitoring_ethnicity.svg written in 
 > SVG format)
-(5 vars, 210 obs)
+(5 vars, 282 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2019m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
 (note: file ./output/time_series/resp_kd_asthma_monitoring_imd.svg not found)
 (file ./output/time_series/resp_kd_asthma_monitoring_imd.svg written in SVG for
@@ -92,9 +91,9 @@
 (note: file ./output/time_series/resp_pac_asthma_monitoring_imd.svg not found)
 (file ./output/time_series/resp_pac_asthma_monitoring_imd.svg written in SVG fo
 > rmat)
-(5 vars, 175 obs)
+(5 vars, 235 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2019m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
 (note: file ./output/time_series/resp_kd_copd_monitoring_ethnicity.svg not foun
 > d)
@@ -108,10 +107,10 @@
 > nd)
 (file ./output/time_series/resp_pac_copd_monitoring_ethnicity.svg written in SV
 > G format)
-(5 vars, 210 obs)
-(6 missing values generated)
+(5 vars, 282 obs)
+(7 missing values generated)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2019m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
 (note: file ./output/time_series/resp_kd_copd_monitoring_imd.svg not found)
 (file ./output/time_series/resp_kd_copd_monitoring_imd.svg written in SVG forma
@@ -122,9 +121,9 @@
 (note: file ./output/time_series/resp_pac_copd_monitoring_imd.svg not found)
 (file ./output/time_series/resp_pac_copd_monitoring_imd.svg written in SVG form
 > at)
-(5 vars, 175 obs)
+(5 vars, 235 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2019m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
 (note: file ./output/time_series/resp_kd_asthma_exacerbation_ethnicity.svg not 
 > found)
@@ -138,9 +137,9 @@
 >  found)
 (file ./output/time_series/resp_pac_asthma_exacerbation_ethnicity.svg written i
 > n SVG format)
-(5 vars, 210 obs)
+(5 vars, 282 obs)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2019m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
 (note: file ./output/time_series/resp_kd_asthma_exacerbation_imd.svg not found)
 (file ./output/time_series/resp_kd_asthma_exacerbation_imd.svg written in SVG f
@@ -152,9 +151,9 @@
 > )
 (file ./output/time_series/resp_pac_asthma_exacerbation_imd.svg written in SVG 
 > format)
-(5 vars, 175 obs)
+(5 vars, 235 obs)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2019m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
 (note: file ./output/time_series/resp_kd_copd_exacerbation_ethnicity.svg not fo
 > und)
@@ -168,10 +167,10 @@
 > ound)
 (file ./output/time_series/resp_pac_copd_exacerbation_ethnicity.svg written in 
 > SVG format)
-(5 vars, 210 obs)
-(6 missing values generated)
+(5 vars, 282 obs)
+(7 missing values generated)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2019m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
 (note: file ./output/time_series/resp_kd_copd_exacerbation_imd.svg not found)
 (file ./output/time_series/resp_kd_copd_exacerbation_imd.svg written in SVG for
@@ -189,5 +188,5 @@
       name:  <unnamed>
        log:  /workspace/logs/model_checks_resp.log
   log type:  text
- closed on:   5 May 2022, 10:20:44
+ closed on:   6 Jul 2022, 10:23:08
 -------------------------------------------------------------------------------

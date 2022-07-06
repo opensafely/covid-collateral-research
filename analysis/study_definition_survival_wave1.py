@@ -6,14 +6,13 @@ from cohortextractor import (
 )
 from codelists import *
 from common_variables import common_variables
-import datetime
 
 # Create ICD-10 codelists for type 1 and type 2 diabetes
 # Remove once codelists are on opencodelists
 t1dm_icd_codes = codelist(["E10"], system="icd10")
 t2dm_icd_codes = codelist(["E11"], system="icd10")
 
-end_date="2022-04-30"
+end_date="2020-05-30"
 
 study = StudyDefinition(
     default_expectations={
@@ -51,7 +50,7 @@ study = StudyDefinition(
         ),
     ),
     dereg_date=patients.date_deregistered_from_all_supported_practices(
-        on_or_after="2020-03-23",
+        on_or_after="index_date",
         date_format="YYYY-MM",
         return_expectations={"date": {"earliest": "2020-03-01"}}
     ),

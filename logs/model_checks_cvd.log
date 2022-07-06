@@ -67,20 +67,20 @@
  38.                 }
  39.         }
 (5 vars, 282 obs)
-(90 missing values generated)
+(88 missing values generated)
        panel variable:  ethnicity (weakly balanced)
         time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
 (note: time series has 12 gaps)
-(note: time series has 8 gaps)
 (note: time series has 10 gaps)
 (note: time series has 9 gaps)
-(note: time series has 11 gaps)
+(note: time series has 7 gaps)
+(note: time series has 10 gaps)
 (note: time series has 12 gaps)
-(note: time series has 8 gaps)
 (note: time series has 10 gaps)
 (note: time series has 9 gaps)
-(note: time series has 11 gaps)
+(note: time series has 7 gaps)
+(note: time series has 10 gaps)
 (note: file ./output/time_series/cvd_kd_ethnicity_systolic_bp_cvd.svg not found
 > )
 (file ./output/time_series/cvd_kd_ethnicity_systolic_bp_cvd.svg written in SVG 
@@ -92,20 +92,20 @@
 (note: file ./output/time_series/cvd_pac_ethnicity_bp_cvd.svg not found)
 (file ./output/time_series/cvd_pac_ethnicity_bp_cvd.svg written in SVG format)
 (5 vars, 329 obs)
-(130 missing values generated)
+(132 missing values generated)
        panel variable:  imd (weakly balanced)
         time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
-(note: time series has 8 gaps)
-(note: time series has 10 gaps)
-(note: time series has 12 gaps)
-(note: time series has 13 gaps)
-(note: time series has 9 gaps)
-(note: time series has 8 gaps)
-(note: time series has 10 gaps)
-(note: time series has 12 gaps)
-(note: time series has 13 gaps)
-(note: time series has 9 gaps)
+(note: time series has 11 gaps)
+(note: time series has 15 gaps)
+(note: time series has 11 gaps)
+(note: time series has 11 gaps)
+(note: time series has 11 gaps)
+(note: time series has 11 gaps)
+(note: time series has 15 gaps)
+(note: time series has 11 gaps)
+(note: time series has 11 gaps)
+(note: time series has 11 gaps)
 (note: file ./output/time_series/cvd_kd_imd_systolic_bp_cvd.svg not found)
 (file ./output/time_series/cvd_kd_imd_systolic_bp_cvd.svg written in SVG format
 > )
@@ -332,5 +332,5 @@
       name:  <unnamed>
        log:  /workspace/logs/model_checks_cvd.log
   log type:  text
- closed on:  19 May 2022, 14:26:47
+ closed on:   6 Jul 2022, 10:52:22
 -------------------------------------------------------------------------------

@@ -27,7 +27,7 @@
  15.     label var rate5 "Other"
  16. 
 .     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
+.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Feb2019(18
 > 0)01Jan2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
@@ -58,7 +58,7 @@
  31.     label var rate5 "IMD - 5"
  32. 
 .     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
+.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Feb2019(18
 > 0)01Jan2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
@@ -1648,7 +1648,7 @@ Sorted by: dateA
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.3zmqX9xKzE", write text replace
+. . file open output using "/tmp/tmp.Cb0yYc5jhS", write text replace
 
 . . file write output "success" 
 

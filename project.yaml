@@ -109,7 +109,7 @@ actions:
   
   # Generates baseline tables
   create_baseline_tables:
-    run: stata-mp:latest analysis/baseline_tables.do
+    run: stata-mp:latest analysis/101_baseline_tables.do
     needs: [generate_study_population_tables_2019, generate_study_population_tables_2020, generate_study_population_tables_2021]
     outputs:
       moderately_sensitive:
@@ -156,7 +156,7 @@ actions:
   
   # Generates graphs for CVD & mental health outcomes
   graphs_mh_cvd:
-    run: stata-mp:latest analysis/graphs_mh_cvd.do 
+    run: stata-mp:latest analysis/102_graphs_mh_cvd.do 
     needs: [calculate_measures, calculate_measures_mh]
     outputs: 
       moderately_sensitive:
@@ -165,7 +165,7 @@ actions:
      
   # Generates graphs for diabetes outcomes
   graphs_dm:
-    run: stata-mp:latest analysis/graphs_dm.do 
+    run: stata-mp:latest analysis/103_graphs_dm.do 
     needs: [calculate_measures_dm]
     outputs: 
       moderately_sensitive:
@@ -175,7 +175,7 @@ actions:
         output: output/collapsed/collapse_measure_dm_*
   # Generate graphs for respiratory outcomes
   graphs_resp:
-    run: stata-mp:latest analysis/graphs_resp.do 
+    run: stata-mp:latest analysis/104_graphs_resp.do 
     needs: [calculate_measures_resp]
     outputs: 
       moderately_sensitive:
@@ -184,7 +184,7 @@ actions:
 
   # Generate graphs for mortality
   graphs_mortality:
-    run: stata-mp:latest analysis/graphs_mortality.do 
+    run: stata-mp:latest analysis/105_graphs_mortality.do 
     needs: [calculate_measures_mortality]
     outputs: 
       moderately_sensitive:
@@ -193,7 +193,7 @@ actions:
         
   # Running analysis scripts
   model_checks_dm:
-    run: stata-mp:latest analysis/model_check_dm.do
+    run: stata-mp:latest analysis/201_model_check_dm.do
     needs: [calculate_measures_dm]
     outputs:
       moderately_sensitive: 
@@ -201,7 +201,7 @@ actions:
         output: output/time_series/dm_*.svg
 
   model_checks_resp:
-    run: stata-mp:latest analysis/model_check_resp.do
+    run: stata-mp:latest analysis/202_model_check_resp.do
     needs: [calculate_measures_resp]
     outputs:
       moderately_sensitive: 
@@ -209,7 +209,7 @@ actions:
         output: output/time_series/resp_*.svg
 
   model_checks_cvd:
-    run: stata-mp:latest analysis/model_check_cvd.do
+    run: stata-mp:latest analysis/203_model_check_cvd.do
     needs: [calculate_measures]
     outputs:
       moderately_sensitive: 
@@ -217,7 +217,7 @@ actions:
         output: output/time_series/cvd_*.svg
 
   model_checks_mh:
-    run: stata-mp:latest analysis/model_check_mh.do
+    run: stata-mp:latest analysis/204_model_check_mh.do
     needs: [calculate_measures_mh]
     outputs:
       moderately_sensitive: 
@@ -225,7 +225,7 @@ actions:
         output: output/time_series/mh_*.svg
 
   model_checks_mortality:
-    run: stata-mp:latest analysis/model_check_mortality.do
+    run: stata-mp:latest analysis/205_model_check_mortality.do
     needs: [calculate_measures_mortality]
     outputs:
       moderately_sensitive: 
@@ -233,7 +233,7 @@ actions:
         output: output/time_series/mortality_*.svg
   
   time_series_resp:
-    run: stata-mp:latest analysis/time_series_resp.do
+    run: stata-mp:latest analysis/206_time_series_resp.do
     needs: [calculate_measures_resp]
     outputs:
       moderately_sensitive:
@@ -242,7 +242,7 @@ actions:
         graph: output/time_series/margins_resp*.svg
 
   time_series_dm:
-    run: stata-mp:latest analysis/time_series_dm.do
+    run: stata-mp:latest analysis/207_time_series_dm.do
     needs: [calculate_measures_dm]
     outputs:
       moderately_sensitive:
@@ -251,7 +251,7 @@ actions:
         graph: output/time_series/margins_dm*.svg
 
   time_series_cvd:
-    run: stata-mp:latest analysis/time_series_cvd.do
+    run: stata-mp:latest analysis/208_time_series_cvd.do
     needs: [calculate_measures]
     outputs:
       moderately_sensitive:
@@ -260,7 +260,7 @@ actions:
         graphs: output/time_series/margins_cvd*.svg
 
   time_series_mh:
-    run: stata-mp:latest analysis/time_series_mh.do
+    run: stata-mp:latest analysis/209_time_series_mh.do
     needs: [calculate_measures_mh]
     outputs:
       moderately_sensitive:
@@ -269,7 +269,7 @@ actions:
         graphs: output/time_series/margins_mh*.svg
 
   time_series_mortality:
-    run: stata-mp:latest analysis/time_series_mortality.do
+    run: stata-mp:latest analysis/210_time_series_mortality.do
     needs: [calculate_measures_mortality]
     outputs:
       moderately_sensitive:
@@ -291,18 +291,200 @@ actions:
       highly_sensitive:
         cohort: output/survival/input_survival_pandemic*.csv
 
+  # Study definition for pandemic waves
+  # Using dates: wave 1 2020-03-23 to 2020-05-30, wave 2 2020-09-07 to 2021-04-24, wave 3 2021-05-28 to 2021-12-14
+  # Easing period after each wave
+  # dates match covid_mortality_over_time study - wave 1 & 2 based on ONS COVID infection survey, wave 3 based on >50% prevalence
+  generate_study_population_survival_wave1:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_survival_wave1 --output-dir=output/survival --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/survival/input_survival_wave1*.csv
+
+  # Study definition for pandemic survival analysis
+  generate_study_population_survival_easing1:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_survival_easing1 --output-dir=output/survival --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/survival/input_survival_easing1*.csv
+
+  # Study definition for pandemic survival analysis
+  generate_study_population_survival_wave2:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_survival_wave2 --output-dir=output/survival --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/survival/input_survival_wave2*.csv
+
+  # Study definition for pandemic survival analysis
+  generate_study_population_survival_easing2:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_survival_easing2 --output-dir=output/survival --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/survival/input_survival_easing2*.csv
+
+  # Study definition for pandemic survival analysis
+  generate_study_population_survival_wave3:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_survival_wave3 --output-dir=output/survival --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/survival/input_survival_wave3*.csv
+
+  # Study definition for pandemic survival analysis
+  generate_study_population_survival_easing3:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_survival_easing3 --output-dir=output/survival --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/survival/input_survival_easing3*.csv
+
   # Cox models
-  cox_models:
-    run: stata-mp:latest analysis/cox_models.do
-    needs: [generate_study_population_survival_pre, generate_study_population_survival_pandemic]
+  # Perpare datasets
+  cox_model_prep:
+    run: stata-mp:latest analysis/301_cox_model_prep.do
+    needs: [generate_study_population_survival_pre, generate_study_population_survival_pandemic, generate_study_population_survival_wave1, generate_study_population_survival_easing1, generate_study_population_survival_wave2, generate_study_population_survival_easing2, generate_study_population_survival_wave3, generate_study_population_survival_easing3]
+    outputs:
+      highly_sensitive:
+        output: output/prep_survival*.dta
+      moderately_sensitive:
+        log: logs/cox_model_prep.log
+
+# Repeat for each outcome
+  cox_models_cvd:
+    run: stata-mp:latest analysis/302_cox_models.do "cvd"
+    needs: [cox_model_prep]
     outputs:
       moderately_sensitive:
-        log: logs/cox_model_checks.log
-        output: output/tables/*.txt
-        graph: output/graphs/km*.svg
+        log: logs/cox_model_cvd.log
+        output: output/tables/cvd*.txt
+        graph: output/graphs/km_cvd*.svg
+
+  cox_models_mi:
+    run: stata-mp:latest analysis/302_cox_models.do "mi"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_mi.log
+        output: output/tables/mi*.txt
+        graph: output/graphs/km_mi*.svg
+  
+  cox_models_stroke:
+    run: stata-mp:latest analysis/302_cox_models.do "stroke"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_stroke.log
+        output: output/tables/stroke*.txt
+        graph: output/graphs/km_stroke*.svg
+
+  cox_models_heart_failure:
+    run: stata-mp:latest analysis/302_cox_models.do "hf"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_hf.log
+        output: output/tables/hf*.txt
+        graph: output/graphs/km_hf*.svg
+
+  cox_models_vte:
+    run: stata-mp:latest analysis/302_cox_models.do "vte"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_vte.log
+        output: output/tables/vte*.txt
+        graph: output/graphs/km_vte*.svg
+
+  cox_models_t1dm:
+    run: stata-mp:latest analysis/302_cox_models.do "t1dm"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_t1dm.log
+        output: output/tables/t1dm*.txt
+        graph: output/graphs/km_t1dm*.svg
+
+  cox_models_t2dm:
+    run: stata-mp:latest analysis/302_cox_models.do "t2dm"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_t2dm.log
+        output: output/tables/t2dm*.txt
+        graph: output/graphs/km_t2dm*.svg
+
+  cox_models_dm_keto:
+    run: stata-mp:latest analysis/302_cox_models.do "dm_keto"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_dm_keto.log
+        output: output/tables/dm_keto*.txt
+        graph: output/graphs/km_dm_keto*.svg
+
+  cox_models_dm:
+    run: stata-mp:latest analysis/302_cox_models.do "dm"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_dm.log
+        output: output/tables/dm*.txt
+        graph: output/graphs/km_dm*.svg
+
+  cox_models_asthma:
+    run: stata-mp:latest analysis/302_cox_models.do "asthma"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_asthma.log
+        output: output/tables/asthma*.txt
+        graph: output/graphs/km_asthma*.svg
+
+  cox_models_copd:
+    run: stata-mp:latest analysis/302_cox_models.do "copd"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_copd.log
+        output: output/tables/copd*.txt
+        graph: output/graphs/km_copd*.svg
+
+  cox_models_depress:
+    run: stata-mp:latest analysis/302_cox_models.do "depress"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_depress.log
+        output: output/tables/depress*.txt
+        graph: output/graphs/km_depress*.svg
+
+  cox_models_anx:
+    run: stata-mp:latest analysis/302_cox_models.do "anx"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_anx.log
+        output: output/tables/anx*.txt
+        graph: output/graphs/km_anx*.svg
+
+  cox_models_smi:
+    run: stata-mp:latest analysis/302_cox_models.do "smi"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_smi.log
+        output: output/tables/smi*.txt
+        graph: output/graphs/km_smi*.svg
+
+  cox_models_mh:
+    run: stata-mp:latest analysis/302_cox_models.do "mh"
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_mh.log
+        output: output/tables/mh*.txt
+        graph: output/graphs/km_mh*.svg
 
   cox_models_graphs:
-    run: stata-mp:latest analysis/cox_models_graphs.do
+    run: stata-mp:latest analysis/303_cox_models_graphs.do
     needs: [generate_study_population_survival_pre, generate_study_population_survival_pandemic]
     outputs:
       moderately_sensitive:

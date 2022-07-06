@@ -1,0 +1,727 @@
+
+. cap mkdir ./output/graphs
+
+. cap mkdir ./output/tempdata
+
+. cap mkdir ./output/tables
+
+. 
+. * open file to write results to
+. file open tablecontent using ./output/tables/`outcome'_cox_models.txt, write 
+> text replace
+(note: file ./output/tables/stroke_cox_models.txt not found)
+
+. file write tablecontent ("Period") _tab ("Denominator") _tab ("Events") _tab 
+> ("Total person-weeks") _tab ("Rate per 1000") _tab ("Crude HR") _tab _tab ("A
+> ge/Sex Adjusted") _tab _tab ("Fully Adjusted") _tab _tab  _n
+
+. file write tablecontent _tab _tab _tab _tab _tab _tab _tab   ("HR") _tab ("95
+> % CI") _tab ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab _tab  _n
+
+. 
+. foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
+  2. use ./output/prep_survival_`period', clear
+  3. 
+.     * Drop events that occur on index date
+.     drop if `outcome'_admit_date==index_date
+  4.     * Cox model for each outcome category
+.     * Generate flags and end dates for each outcome
+.     gen `outcome'_admit=(`outcome'_admit_date!=.)
+  5.     tab `outcome'_admit
+  6.     count if `outcome'_admit_date!=.
+  7.     if r(N) > 10 {
+  8.         gen `outcome'_end = end_date
+  9.         replace `outcome'_end = `outcome'_admit_date if `outcome'_admit==1
+ 10. 
+.         stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index
+> _date) origin(index_date) scale(365.25) 
+ 11.         * Kaplan-Meier plot
+.         sts graph, by(eth5)
+ 12.         graph export ./output/graphs/km_`outcome'_`period'_eth.svg, as(svg
+> ) replace
+ 13.         * Cox model - crude
+.         stcox i.eth5
+ 14.         estimates save "./output/tempdata/crude_`outcome'_eth", replace 
+ 15.         eststo model1
+ 16.         parmest, label eform format(estimate p lb ub) saving("./output/tem
+> pdata/surv_crude_`outcome'_eth", replace) idstr("crude_`outcome'_eth") 
+ 17.         estat phtest, detail
+ 18.         * Cox model - age and gender adjusted
+.         stcox i.eth5 i.age_cat i.male
+ 19.         estimates save "./output/tempdata/model1_`outcome'_eth", replace 
+ 20.         eststo model2
+ 21.         parmest, label eform format(estimate p lb ub) saving("./output/tem
+> pdata/surv_model1_`outcome'_eth", replace) idstr("model1_`outcome'_eth") 
+ 22.         estat phtest, detail
+ 23.         * Cox model - fully adjusted
+.         stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded
+ 24.         estimates save "./output/tempdata/model2_`outcome'_eth", replace 
+ 25.         eststo model3
+ 26.         parmest, label eform format(estimate p lb ub) saving("./output/tem
+> pdata/surv_model2_`outcome'_eth", replace) idstr("model2_`outcome'_eth") 
+ 27.         estat phtest, detail
+ 28.         esttab model1 model2 model3 using "./output/tables/`outcome'_estou
+> t_table_eth_`period'.txt", b(a2) ci(2) label wide compress eform ///
+>         title ("`outcome'") ///
+>         varlabels(`e(labels)') ///
+>         stats(N_outcome) ///
+>         append 
+ 29.         eststo clear
+ 30.     * Write results to table
+.         * eth16 labelled columns
+. 
+.         local lab1: label eth5 1
+ 31.         local lab2: label eth5 2
+ 32.         local lab3: label eth5 3
+ 33.         local lab4: label eth5 4
+ 34.         local lab5: label eth5 5
+ 35.         /* counts */
+.         
+.         * First row, eth16 = 1 (White British) reference cat
+.         qui safecount if eth5==1
+ 36.         local denominator = r(N)
+ 37.         qui safecount if eth5 == 1 & `outcome'_admit == 1
+ 38.         local event = r(N)
+ 39.         bysort eth5: egen total_follow_up = total(_t)
+ 40.         qui su total_follow_up if eth5 == 1
+ 41.         local person_week = r(mean)/7
+ 42.         local rate = 1000*(`event'/`person_week')
+ 43.         
+.         file write tablecontent  ("`period'") _tab ("`lab1'") _tab (`denomina
+> tor') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _tab
+ 44.         file write tablecontent ("1.00") _tab _tab ("1.00") _tab _tab ("1.
+> 00") _n
+ 45. 
+.     * outcomesequent ethnic groups
+.         forvalues eth=2/5 {
+ 46.             qui safecount if eth5==`eth'
+ 47.             local denominator = r(N)
+ 48.             qui safecount if eth5 == `eth' & `outcome'_admit == 1
+ 49.             local event = r(N)
+ 50.             qui su total_follow_up if eth5 == `eth'
+ 51.             local person_week = r(mean)/7
+ 52.             local rate = 1000*(`event'/`person_week')
+ 53.             file write tablecontent ("`period'") _tab ("`lab`eth''") _tab 
+> (`denominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate'
+> ) _tab  
+ 54.             cap estimates use "./output/tempdata/crude_`outcome'_eth" 
+ 55.             cap lincom `eth'.eth5, eform
+ 56.             file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f 
+> (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab 
+ 57.             cap estimates clear
+ 58.             cap estimates use "./output/tempdata/model1_`outcome'_eth" 
+ 59.             cap lincom `eth'.eth5, eform
+ 60.             file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f 
+> (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab 
+ 61.             cap estimates clear
+ 62.             cap estimates use "./output/tempdata/model2_`outcome'_eth" 
+ 63.             cap lincom `eth'.eth5, eform
+ 64.             file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f 
+> (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab _n
+ 65.             cap estimates clear
+ 66.         }  //end ethnic group
+ 67. drop total_follow_up
+ 68.     }
+ 69. else { 
+ 70.     continue
+ 71. }
+ 72. } //end outcomes
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        979       97.90       97.90
+          1 |         21        2.10      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  21
+(21 real changes made)
+
+                id:  patient_id
+     failure event:  stroke_admit != 0 & stroke_admit < .
+obs. time interval:  (stroke_end[_n-1], stroke_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         21  failures in single-failure-per-subject data
+  2,040.186  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_stroke_pre_eth.svg not found)
+(file ./output/graphs/km_stroke_pre_eth.svg written in SVG format)
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -144.85141
+Iteration 1:   log likelihood = -144.23018
+Iteration 2:   log likelihood = -144.22111
+Iteration 3:   log likelihood = -144.22111
+Refining estimates:
+Iteration 0:   log likelihood = -144.22111
+
+Cox regression -- no ties
+
+No. of subjects =        1,000                  Number of obs    =       1,000
+No. of failures =           21
+Time at risk    =  2040.186174
+                                                LR chi2(4)       =        1.26
+Log likelihood  =   -144.22111                  Prob > chi2      =      0.8680
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .7783242   .5503585    -0.35   0.723      .194657    3.112082
+      Black  |   .6322943   .4829228    -0.60   0.548     .1415152     2.82511
+      Mixed  |   .7762552   .5488956    -0.36   0.720     .1941394    3.103811
+      Other  |   1.264955    .816529     0.36   0.716     .3569639    4.482559
+------------------------------------------------------------------------------
+(note: file ./output/tempdata/crude_stroke_eth.ster not found)
+file ./output/tempdata/crude_stroke_eth.ster saved
+(note: file ./output/tempdata/surv_crude_stroke_eth.dta not found)
+file ./output/tempdata/surv_crude_stroke_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |      0.16710         0.59        1         0.4441
+      3.eth5      |     -0.07569         0.12        1         0.7288
+      4.eth5      |     -0.23482         1.16        1         0.2821
+      5.eth5      |     -0.10681         0.24        1         0.6248
+      ------------+---------------------------------------------------
+      global test |                      3.69        4         0.4499
+      ----------------------------------------------------------------
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -113.2512
+Iteration 1:   log likelihood = -111.65186
+Iteration 2:   log likelihood = -111.43439
+Iteration 3:   log likelihood = -111.43067
+Iteration 4:   log likelihood = -111.43067
+Refining estimates:
+Iteration 0:   log likelihood = -111.43067
+
+Cox regression -- no ties
+
+No. of subjects =          790                  Number of obs    =         790
+No. of failures =           17
+Time at risk    =  1611.019849
+                                                LR chi2(8)       =        3.64
+Log likelihood  =   -111.43067                  Prob > chi2      =      0.8880
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .7737259   .6329144    -0.31   0.754      .155703    3.844831
+      Black  |   .8222128   .6738362    -0.24   0.811     .1649646    4.098056
+      Mixed  |   .8016343   .6571189    -0.27   0.787     .1607778    3.996931
+      Other  |   1.309217   .9600215     0.37   0.713     .3110594     5.51036
+             |
+     age_cat |
+41 - 60 y..  |   1.397371   .9383355     0.50   0.618     .3747391    5.210677
+61 - 80 y..  |   2.163079   1.401083     1.19   0.234     .6077526    7.698707
+  >80 years  |   3.698392   3.209703     1.51   0.132     .6749717    20.26471
+             |
+        male |
+       Male  |     .92615   .4538196    -0.16   0.876     .3544761    2.419779
+------------------------------------------------------------------------------
+(note: file ./output/tempdata/model1_stroke_eth.ster not found)
+file ./output/tempdata/model1_stroke_eth.ster saved
+(note: file ./output/tempdata/surv_model1_stroke_eth.dta not found)
+file ./output/tempdata/surv_model1_stroke_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |      0.22443         0.84        1         0.3604
+      3.eth5      |      0.01423         0.00        1         0.9531
+      4.eth5      |     -0.01531         0.00        1         0.9497
+      5.eth5      |     -0.01536         0.00        1         0.9495
+      0b.age_cat  |            .            .        1             .
+      1.age_cat   |     -0.36413         2.21        1         0.1374
+      2.age_cat   |     -0.40197         2.85        1         0.0914
+      3.age_cat   |      0.10326         0.18        1         0.6688
+      0b.male     |            .            .        1             .
+      1.male      |     -0.09272         0.15        1         0.6975
+      ------------+---------------------------------------------------
+      global test |                      7.07        8         0.5295
+      ----------------------------------------------------------------
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -113.2512
+Iteration 1:   log likelihood = -109.36579
+Iteration 2:   log likelihood = -107.98387
+Iteration 3:   log likelihood = -107.85331
+Iteration 4:   log likelihood = -107.81575
+Iteration 5:   log likelihood = -107.80201
+Iteration 6:   log likelihood = -107.79697
+Iteration 7:   log likelihood = -107.79511
+Iteration 8:   log likelihood = -107.79443
+Iteration 9:   log likelihood = -107.79418
+Iteration 10:  log likelihood = -107.79408
+Iteration 11:  log likelihood = -107.79405
+Iteration 12:  log likelihood = -107.79404
+Iteration 13:  log likelihood = -107.79403
+Iteration 14:  log likelihood = -107.79403
+Iteration 15:  log likelihood = -107.79403
+Iteration 16:  log likelihood = -107.79403
+Iteration 17:  log likelihood = -107.79403
+Iteration 18:  log likelihood = -107.79403
+Iteration 19:  log likelihood = -107.79403
+Iteration 20:  log likelihood = -107.79403
+Iteration 21:  log likelihood = -107.79403
+Refining estimates:
+Iteration 0:   log likelihood = -107.79403
+
+Cox regression -- no ties
+
+No. of subjects =          790                  Number of obs    =         790
+No. of failures =           17
+Time at risk    =  1611.019849
+                                                LR chi2(14)      =       10.91
+Log likelihood  =   -107.79403                  Prob > chi2      =      0.6928
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .9217359    .762667    -0.10   0.922     .1820964    4.665645
+      Black  |   .9286516   .7644949    -0.09   0.928     .1849768    4.662174
+      Mixed  |   .8228215   .6776022    -0.24   0.813     .1638069     4.13313
+      Other  |   1.582247   1.179316     0.62   0.538     .3671451    6.818846
+             |
+     age_cat |
+41 - 60 y..  |   1.453221   .9814326     0.55   0.580     .3867877    5.459973
+61 - 80 y..  |   2.060006   1.340018     1.11   0.267      .575663    7.371717
+  >80 years  |   3.499973    3.06409     1.43   0.152     .6293188    19.46519
+             |
+        male |
+       Male  |   .9333292   .4592468    -0.14   0.888     .3557944    2.448333
+             |
+urban_rura~n |
+      Urban  |   1.605663    .788293     0.96   0.335     .6134238    4.202889
+             |
+         imd |
+          1  |   1.10e+09   1.21e+09    18.88   0.000     1.26e+08    9.52e+09
+          2  |   1.10e+09   1.21e+09    18.87   0.000     1.26e+08    9.54e+09
+          3  |   2.54e+08          .        .       .            .           .
+          4  |   7.33e+08   8.49e+08    17.62   0.000     7.57e+07    7.10e+09
+          5  |   8.00e+08   9.28e+08    17.68   0.000     8.24e+07    7.77e+09
+             |
+  1.shielded |   5.536916   6.036583     1.57   0.116     .6535089    46.91204
+------------------------------------------------------------------------------
+(note: file ./output/tempdata/model2_stroke_eth.ster not found)
+file ./output/tempdata/model2_stroke_eth.ster saved
+(note: file ./output/tempdata/surv_model2_stroke_eth.dta not found)
+file ./output/tempdata/surv_model2_stroke_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |      0.15799         0.42        1         0.5163
+      3.eth5      |     -0.04702         0.04        1         0.8479
+      4.eth5      |     -0.02126         0.01        1         0.9340
+      5.eth5      |     -0.10887         0.20        1         0.6581
+      0b.age_cat  |            .            .        1             .
+      1.age_cat   |     -0.38019         2.29        1         0.1305
+      2.age_cat   |     -0.41053         2.87        1         0.0903
+      3.age_cat   |      0.07564         0.09        1         0.7623
+      0b.male     |            .            .        1             .
+      1.male      |     -0.07653         0.10        1         0.7566
+      0b.urban_r~n|            .            .        1             .
+      1.urban_ru~n|     -0.09095         0.14        1         0.7046
+      0b.imd      |            .            .        1             .
+      1.imd       |      0.11237         0.20        1         0.6528
+      2.imd       |     -0.20903         0.69        1         0.4051
+      3.imd       |            .            .        1             .
+      4.imd       |     -0.02644         0.01        1         0.9140
+      5.imd       |     -0.04600         0.04        1         0.8497
+      0b.shielded |            .            .        1             .
+      1.shielded  |     -0.27921         1.32        1         0.2508
+      ------------+---------------------------------------------------
+      global test |                     13.39       14         0.4960
+      ----------------------------------------------------------------
+(note: file ./output/tables/stroke_estout_table_eth_pre.txt not found)
+(output written to ./output/tables/stroke_estout_table_eth_pre.txt)
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        975       97.50       97.50
+          1 |         25        2.50      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  25
+(25 real changes made)
+
+                id:  patient_id
+     failure event:  stroke_admit != 0 & stroke_admit < .
+obs. time interval:  (stroke_end[_n-1], stroke_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          1  observation ends on or before enter()
+------------------------------------------------------------------------------
+        999  observations remaining, representing
+        999  subjects
+         25  failures in single-failure-per-subject data
+  1,977.361  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_stroke_pandemic_eth.svg not found)
+(file ./output/graphs/km_stroke_pandemic_eth.svg written in SVG format)
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -171.17975
+Iteration 1:   log likelihood = -168.28886
+Iteration 2:   log likelihood = -168.10445
+Iteration 3:   log likelihood = -168.10431
+Refining estimates:
+Iteration 0:   log likelihood = -168.10431
+
+Cox regression -- no ties
+
+No. of subjects =          999                  Number of obs    =         999
+No. of failures =           25
+Time at risk    =  1977.360712
+                                                LR chi2(4)       =        6.15
+Log likelihood  =   -168.10431                  Prob > chi2      =      0.1882
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |    3.15726   2.078375     1.75   0.081     .8689158    11.47211
+      Black  |   1.573924   1.149442     0.62   0.535     .3761391    6.585962
+      Mixed  |   .7252367   .6620484    -0.35   0.725      .121183    4.340282
+      Other  |   1.682845   1.228983     0.71   0.476     .4021714    7.041693
+------------------------------------------------------------------------------
+file ./output/tempdata/crude_stroke_eth.ster saved
+file ./output/tempdata/surv_crude_stroke_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |      0.22460         1.26        1         0.2615
+      3.eth5      |      0.01766         0.01        1         0.9297
+      4.eth5      |      0.28682         2.06        1         0.1517
+      5.eth5      |      0.38820         3.76        1         0.0524
+      ------------+---------------------------------------------------
+      global test |                      6.81        4         0.1462
+      ----------------------------------------------------------------
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -118.8589
+Iteration 1:   log likelihood = -116.11019
+Iteration 2:   log likelihood = -115.96293
+Iteration 3:   log likelihood = -115.95985
+Iteration 4:   log likelihood = -115.95985
+Refining estimates:
+Iteration 0:   log likelihood = -115.95985
+
+Cox regression -- no ties
+
+No. of subjects =          780                  Number of obs    =         780
+No. of failures =           18
+Time at risk    =  1546.562628
+                                                LR chi2(8)       =        5.80
+Log likelihood  =   -115.95985                  Prob > chi2      =      0.6698
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   5.813722   6.282985     1.63   0.103     .6991121    48.34613
+      Black  |   4.643328    5.08737     1.40   0.161     .5422848    39.75863
+      Mixed  |   2.135286   2.617348     0.62   0.536     .1932357    23.59526
+      Other  |   4.078409   4.566288     1.26   0.209     .4544271    36.60305
+             |
+     age_cat |
+41 - 60 y..  |   .6881379   .3723237    -0.69   0.490     .2383003    1.987131
+61 - 80 y..  |   .5508145   .3731451    -0.88   0.379     .1460042    2.077999
+  >80 years  |   .6813411   .7237115    -0.36   0.718     .0849629    5.463861
+             |
+        male |
+       Male  |   1.080307   .5104735     0.16   0.870     .4278902    2.727485
+------------------------------------------------------------------------------
+file ./output/tempdata/model1_stroke_eth.ster saved
+file ./output/tempdata/surv_model1_stroke_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |      0.24282         1.05        1         0.3061
+      3.eth5      |      0.10477         0.20        1         0.6576
+      4.eth5      |      0.33527         1.94        1         0.1634
+      5.eth5      |      0.34788         2.13        1         0.1448
+      0b.age_cat  |            .            .        1             .
+      1.age_cat   |      0.23622         1.00        1         0.3177
+      2.age_cat   |      0.24305         1.05        1         0.3055
+      3.age_cat   |      0.26022         1.16        1         0.2813
+      0b.male     |            .            .        1             .
+      1.male      |     -0.41833         3.22        1         0.0728
+      ------------+---------------------------------------------------
+      global test |                     10.99        8         0.2024
+      ----------------------------------------------------------------
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -118.8589
+Iteration 1:   log likelihood = -114.09096
+Iteration 2:   log likelihood = -113.64221
+Iteration 3:   log likelihood = -113.53469
+Iteration 4:   log likelihood = -113.49661
+Iteration 5:   log likelihood = -113.48264
+Iteration 6:   log likelihood =  -113.4775
+Iteration 7:   log likelihood = -113.47561
+Iteration 8:   log likelihood = -113.47492
+Iteration 9:   log likelihood = -113.47466
+Iteration 10:  log likelihood = -113.47457
+Iteration 11:  log likelihood = -113.47453
+Iteration 12:  log likelihood = -113.47452
+Iteration 13:  log likelihood = -113.47452
+Iteration 14:  log likelihood = -113.47451
+Iteration 15:  log likelihood = -113.47451
+Iteration 16:  log likelihood = -113.47451
+Iteration 17:  log likelihood = -113.47451
+Iteration 18:  log likelihood = -113.47451
+Iteration 19:  log likelihood = -113.47451
+Iteration 20:  log likelihood = -113.47451
+Iteration 21:  log likelihood = -113.47451
+Iteration 22:  log likelihood = -113.47451
+Iteration 23:  log likelihood = -113.47451
+Iteration 24:  log likelihood = -113.47451
+Iteration 25:  log likelihood = -113.47451
+Iteration 26:  log likelihood = -113.47451
+Iteration 27:  log likelihood = -113.47451
+Iteration 28:  log likelihood = -113.47451
+Iteration 29:  log likelihood = -113.47451
+Iteration 30:  log likelihood = -113.47451
+Iteration 31:  log likelihood = -113.47451
+Iteration 32:  log likelihood = -113.47451
+Iteration 33:  log likelihood = -113.47451
+Iteration 34:  log likelihood = -113.47451
+Iteration 35:  log likelihood = -113.47451
+Refining estimates:
+Iteration 0:   log likelihood = -113.47451
+Iteration 1:   log likelihood = -113.47451
+Iteration 2:   log likelihood = -113.47451
+
+Cox regression -- no ties
+
+No. of subjects =          780                  Number of obs    =         780
+No. of failures =           18
+Time at risk    =  1546.562628
+                                                LR chi2(14)      =       10.77
+Log likelihood  =   -113.47451                  Prob > chi2      =      0.7041
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   5.661457   6.130069     1.60   0.109      .678064    47.27002
+      Black  |   4.354474   4.778413     1.34   0.180     .5068315    37.41173
+      Mixed  |   1.964088    2.40985     0.55   0.582     .1773267    21.75444
+      Other  |   4.004616   4.494232     1.24   0.216     .4439038    36.12708
+             |
+     age_cat |
+41 - 60 y..  |   .7206082   .3911181    -0.60   0.546     .2487139    2.087845
+61 - 80 y..  |   .5733815    .389818    -0.82   0.413     .1512682    2.173401
+  >80 years  |   .6936016   .7391207    -0.34   0.731     .0859106    5.599814
+             |
+        male |
+       Male  |   1.069171   .5079813     0.14   0.888     .4213346    2.713111
+             |
+urban_rura~n |
+      Urban  |   1.032409   .5085404     0.06   0.948     .3931607    2.711026
+             |
+         imd |
+          1  |   2.05e+09   1.72e+09    25.51   0.000     3.94e+08    1.06e+10
+          2  |   8.03e+08          .        .       .            .           .
+          3  |   2.10e+09   1.77e+09    25.55   0.000     4.05e+08    1.09e+10
+          4  |   9.69e+08   9.73e+08    20.62   0.000     1.36e+08    6.93e+09
+          5  |   1.64e+09   1.43e+09    24.35   0.000     2.98e+08    9.08e+09
+             |
+  1.shielded |   9.27e-17   2.29e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+file ./output/tempdata/model2_stroke_eth.ster saved
+file ./output/tempdata/surv_model2_stroke_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |      0.23892         1.06        1         0.3025
+      3.eth5      |      0.11781         0.24        1         0.6255
+      4.eth5      |      0.35039         2.08        1         0.1497
+      5.eth5      |      0.37682         2.41        1         0.1204
+      0b.age_cat  |            .            .        1             .
+      1.age_cat   |      0.21145         0.85        1         0.3565
+      2.age_cat   |      0.26492         1.19        1         0.2753
+      3.age_cat   |      0.27362         1.35        1         0.2445
+      0b.male     |            .            .        1             .
+      1.male      |     -0.40183         2.98        1         0.0842
+      0b.urban_r~n|            .            .        1             .
+      1.urban_ru~n|      0.06722         0.09        1         0.7683
+      0b.imd      |            .            .        1             .
+      1.imd       |     -0.22891         0.90        1         0.3438
+      2.imd       |            .            .        1             .
+      3.imd       |     -0.16409         0.49        1         0.4859
+      4.imd       |     -0.12908         0.32        1         0.5688
+      5.imd       |     -0.45283         3.96        1         0.0466
+      0b.shielded |            .            .        1             .
+      1.shielded  |      0.28473         0.00        1         1.0000
+      ------------+---------------------------------------------------
+      global test |                     16.06       14         0.3099
+      ----------------------------------------------------------------
+(note: file ./output/tables/stroke_estout_table_eth_pandemic.txt not found)
+(output written to ./output/tables/stroke_estout_table_eth_pandemic.txt)
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        997       99.70       99.70
+          1 |          3        0.30      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  3
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        992       99.20       99.20
+          1 |          8        0.80      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  8
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        994       99.40       99.40
+          1 |          6        0.60      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  6
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,000      100.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  0
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        996       99.60       99.60
+          1 |          4        0.40      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  4
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        995       99.50       99.50
+          1 |          5        0.50      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  5
+
+. file close tablecontent
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/cox_model_stroke.log
+  log type:  text
+ closed on:   6 Jul 2022, 13:58:39
+-------------------------------------------------------------------------------

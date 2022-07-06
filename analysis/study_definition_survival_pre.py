@@ -20,6 +20,7 @@ study = StudyDefinition(
         "incidence": 0.05,
     },
     index_date="2018-03-01",
+    end_date="2020-03-22",
     population=patients.satisfying(
         """
         has_follow_up AND
@@ -53,11 +54,17 @@ study = StudyDefinition(
         date_format="YYYY-MM",
         return_expectations={"date": {"earliest": "2020-03-01"}}
     ),
+    died_fu=patients.died_from_any_cause(
+            on_or_after="index_date",
+            returning="date_of_death",
+            date_format="YYYY-MM-DD",
+            return_expectations={"date": {"earliest": "2020-03-01"}}
+    ),
     # Hospitalisation with primary reason CVD (inc. MI, stroke, heart failure, VTE)
     # MI
     mi_primary_admission=patients.admitted_to_hospital(
         with_these_primary_diagnoses=filter_codes_by_category(mi_icd_codes, include=["1"]),
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -66,7 +73,7 @@ study = StudyDefinition(
     # Stroke
     stroke_primary_admission=patients.admitted_to_hospital(
         with_these_primary_diagnoses=stroke_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -75,7 +82,7 @@ study = StudyDefinition(
     # Heart failure
     heart_failure_primary_admission=patients.admitted_to_hospital(
         with_these_primary_diagnoses=filter_codes_by_category(heart_failure_icd_codes, include=["1"]),
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -84,7 +91,7 @@ study = StudyDefinition(
     # VTE
     vte_primary_admission=patients.admitted_to_hospital(
         with_these_primary_diagnoses=vte_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -99,7 +106,7 @@ study = StudyDefinition(
     # Type 1 DM
     t1dm_admission_primary=patients.admitted_to_hospital(
         with_these_primary_diagnoses=t1dm_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -108,7 +115,7 @@ study = StudyDefinition(
     # Type 2 DM
     t2dm_admission_primary=patients.admitted_to_hospital(
         with_these_primary_diagnoses=t2dm_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -117,7 +124,7 @@ study = StudyDefinition(
     # Ketoacidosis
     dm_keto_admission_primary=patients.admitted_to_hospital(
         with_these_primary_diagnoses=dm_keto_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -131,7 +138,7 @@ study = StudyDefinition(
     # Hospital admission - COPD exacerbation      
     copd_exacerbation_hospital=patients.admitted_to_hospital(
         with_these_diagnoses=copd_exacerbation_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -139,7 +146,7 @@ study = StudyDefinition(
     ),
     copd_hospital=patients.admitted_to_hospital(
         with_these_primary_diagnoses=copd_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -147,7 +154,7 @@ study = StudyDefinition(
         ),
     lrti_hospital=patients.admitted_to_hospital(
         with_these_primary_diagnoses=lrti_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -155,7 +162,7 @@ study = StudyDefinition(
         ),
     copd_any=patients.admitted_to_hospital(
         with_these_diagnoses=copd_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -170,7 +177,7 @@ study = StudyDefinition(
     
     asthma_exacerbation=patients.admitted_to_hospital(
         with_these_primary_diagnoses=asthma_exacerbation_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -179,7 +186,7 @@ study = StudyDefinition(
     # Hospital admissions - mental health
     depression_primary_admission=patients.admitted_to_hospital(
         with_these_primary_diagnoses=depression_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -187,7 +194,7 @@ study = StudyDefinition(
         ),
     anxiety_primary_admission=patients.admitted_to_hospital(
         with_these_primary_diagnoses=anxiety_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -195,7 +202,7 @@ study = StudyDefinition(
         ),
     smi_primary_admission=patients.admitted_to_hospital(
         with_these_primary_diagnoses=severe_mental_illness_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
@@ -203,7 +210,7 @@ study = StudyDefinition(
         ),
     self_harm_primary_admission=patients.admitted_to_hospital(
         with_these_primary_diagnoses=self_harm_icd_codes,
-        between=["index_date", "2020-03-22"],
+        between=["index_date", "end_date"],
         returning="date_admitted",
         find_first_match_in_period=True,
         date_format="YYYY-MM-DD",
