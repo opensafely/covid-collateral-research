@@ -80,7 +80,7 @@
 (5 vars, 282 obs)
   47
 (47 observations deleted)
-(84 missing values generated)
+(88 missing values generated)
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -129,10 +129,10 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/graphs/line_bp_cvd_ethnic.svg not found)
 (file ./output/graphs/line_bp_cvd_ethnic.svg written in SVG format)
-(5 vars, 328 obs)
+(5 vars, 329 obs)
   47
-(93 observations deleted)
-(92 missing values generated)
+(94 observations deleted)
+(99 missing values generated)
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -184,7 +184,7 @@ Sorted by: dateA
 (5 vars, 282 obs)
   47
 (47 observations deleted)
-(5 missing values generated)
+(8 missing values generated)
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -233,10 +233,10 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/graphs/line_bp_mh_ethnic.svg not found)
 (file ./output/graphs/line_bp_mh_ethnic.svg written in SVG format)
-(5 vars, 329 obs)
+(5 vars, 328 obs)
   47
-(94 observations deleted)
-(2 missing values generated)
+(93 observations deleted)
+(8 missing values generated)
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -470,9 +470,9 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/graphs/line_mi_admission_ethnicity.svg not found)
 (file ./output/graphs/line_mi_admission_ethnicity.svg written in SVG format)
-(5 vars, 328 obs)
+(5 vars, 329 obs)
   47
-(93 observations deleted)
+(94 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -677,9 +677,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_stroke_admission_ethnicity.svg not found)
 (file ./output/graphs/line_stroke_admission_ethnicity.svg written in SVG format
 > )
-(5 vars, 328 obs)
+(5 vars, 329 obs)
   47
-(93 observations deleted)
+(94 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -885,9 +885,9 @@ Sorted by: dateA
 > d)
 (file ./output/graphs/line_heart_failure_admission_ethnicity.svg written in SVG
 >  format)
-(5 vars, 328 obs)
+(5 vars, 329 obs)
   47
-(93 observations deleted)
+(94 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -1092,9 +1092,9 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/graphs/line_vte_admission_ethnicity.svg not found)
 (file ./output/graphs/line_vte_admission_ethnicity.svg written in SVG format)
-(5 vars, 328 obs)
+(5 vars, 329 obs)
   47
-(93 observations deleted)
+(94 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -1379,9 +1379,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_depression_admission_ethnicity.svg not found)
 (file ./output/graphs/line_depression_admission_ethnicity.svg written in SVG fo
 > rmat)
-(5 vars, 329 obs)
+(5 vars, 328 obs)
   47
-(94 observations deleted)
+(93 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -1586,9 +1586,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_anxiety_admission_ethnicity.svg not found)
 (file ./output/graphs/line_anxiety_admission_ethnicity.svg written in SVG forma
 > t)
-(5 vars, 329 obs)
+(5 vars, 328 obs)
   47
-(94 observations deleted)
+(93 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -1792,9 +1792,9 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/graphs/line_smi_admission_ethnicity.svg not found)
 (file ./output/graphs/line_smi_admission_ethnicity.svg written in SVG format)
-(5 vars, 329 obs)
+(5 vars, 328 obs)
   47
-(94 observations deleted)
+(93 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -1999,9 +1999,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_self_harm_admission_ethnicity.svg not found)
 (file ./output/graphs/line_self_harm_admission_ethnicity.svg written in SVG for
 > mat)
-(5 vars, 329 obs)
+(5 vars, 328 obs)
   47
-(94 observations deleted)
+(93 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -2206,9 +2206,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_eating_dis_admission_ethnicity.svg not found)
 (file ./output/graphs/line_eating_dis_admission_ethnicity.svg written in SVG fo
 > rmat)
-(5 vars, 329 obs)
+(5 vars, 328 obs)
   47
-(94 observations deleted)
+(93 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -2412,9 +2412,9 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/graphs/line_ocd_admission_ethnicity.svg not found)
 (file ./output/graphs/line_ocd_admission_ethnicity.svg written in SVG format)
-(5 vars, 329 obs)
+(5 vars, 328 obs)
   47
-(94 observations deleted)
+(93 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -2700,9 +2700,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_mi_primary_admission_ethnicity.svg not found)
 (file ./output/graphs/line_mi_primary_admission_ethnicity.svg written in SVG fo
 > rmat)
-(5 vars, 328 obs)
+(5 vars, 329 obs)
   47
-(93 observations deleted)
+(94 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -2908,9 +2908,9 @@ Sorted by: dateA
 > nd)
 (file ./output/graphs/line_stroke_primary_admission_ethnicity.svg written in SV
 > G format)
-(5 vars, 328 obs)
+(5 vars, 329 obs)
   47
-(93 observations deleted)
+(94 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -3117,9 +3117,9 @@ Sorted by: dateA
 > not found)
 (file ./output/graphs/line_heart_failure_primary_admission_ethnicity.svg writte
 > n in SVG format)
-(5 vars, 328 obs)
+(5 vars, 329 obs)
   47
-(93 observations deleted)
+(94 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -3326,9 +3326,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_vte_primary_admission_ethnicity.svg not found)
 (file ./output/graphs/line_vte_primary_admission_ethnicity.svg written in SVG f
 > ormat)
-(5 vars, 328 obs)
+(5 vars, 329 obs)
   47
-(93 observations deleted)
+(94 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -3703,9 +3703,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_anxiety_emergency_ethnicity.svg not found)
 (file ./output/graphs/line_anxiety_emergency_ethnicity.svg written in SVG forma
 > t)
-(5 vars, 329 obs)
+(5 vars, 328 obs)
   47
-(94 observations deleted)
+(93 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -3909,9 +3909,9 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/graphs/line_smi_emergency_ethnicity.svg not found)
 (file ./output/graphs/line_smi_emergency_ethnicity.svg written in SVG format)
-(5 vars, 329 obs)
+(5 vars, 328 obs)
   47
-(94 observations deleted)
+(93 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -4116,9 +4116,9 @@ Sorted by: dateA
 (note: file ./output/graphs/line_self_harm_emergency_ethnicity.svg not found)
 (file ./output/graphs/line_self_harm_emergency_ethnicity.svg written in SVG for
 > mat)
-(5 vars, 329 obs)
+(5 vars, 328 obs)
   47
-(94 observations deleted)
+(93 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -4298,7 +4298,7 @@ Sorted by: dateA
 
 end of do-file
 
-. . file open output using "/tmp/tmp.ntpruktrPq", write text replace
+. . file open output using "/tmp/tmp.KkVz3vSt36", write text replace
 
 . . file write output "success" 
 

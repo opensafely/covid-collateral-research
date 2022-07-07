@@ -1,0 +1,737 @@
+
+. cap mkdir ./output/graphs
+
+. cap mkdir ./output/tempdata
+
+. cap mkdir ./output/tables
+
+. 
+. * open file to write results to
+. file open tablecontent using ./output/tables/`outcome'_cox_models.txt, write 
+> text replace
+(note: file ./output/tables/t2dm_cox_models.txt not found)
+
+. file write tablecontent ("Period") _tab ("Denominator") _tab ("Events") _tab 
+> ("Total person-weeks") _tab ("Rate per 1000") _tab ("Crude HR") _tab _tab ("A
+> ge/Sex Adjusted") _tab _tab ("Fully Adjusted") _tab _tab  _n
+
+. file write tablecontent _tab _tab _tab _tab _tab _tab _tab   ("HR") _tab ("95
+> % CI") _tab ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab _tab  _n
+
+. 
+. foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
+  2. use ./output/prep_survival_`period', clear
+  3. 
+.     * Drop events that occur on index date
+.     drop if `outcome'_admit_date==index_date
+  4.     * Cox model for each outcome category
+.     * Generate flags and end dates for each outcome
+.     gen `outcome'_admit=(`outcome'_admit_date!=.)
+  5.     tab `outcome'_admit
+  6.     count if `outcome'_admit_date!=.
+  7.     if r(N) > 10 {
+  8.         gen `outcome'_end = end_date
+  9.         replace `outcome'_end = `outcome'_admit_date if `outcome'_admit==1
+ 10. 
+.         stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index
+> _date) origin(index_date) scale(365.25) 
+ 11.         * Kaplan-Meier plot
+.         sts graph, by(eth5)
+ 12.         graph export ./output/graphs/km_`outcome'_`period'_eth.svg, as(svg
+> ) replace
+ 13.         * Cox model - crude
+.         stcox i.eth5
+ 14.         estimates save "./output/tempdata/crude_`outcome'_eth", replace 
+ 15.         eststo model1
+ 16.         parmest, label eform format(estimate p lb ub) saving("./output/tem
+> pdata/surv_crude_`outcome'_eth", replace) idstr("crude_`outcome'_eth") 
+ 17.         estat phtest, detail
+ 18.         * Cox model - age and gender adjusted
+.         stcox i.eth5 i.age_cat i.male
+ 19.         estimates save "./output/tempdata/model1_`outcome'_eth", replace 
+ 20.         eststo model2
+ 21.         parmest, label eform format(estimate p lb ub) saving("./output/tem
+> pdata/surv_model1_`outcome'_eth", replace) idstr("model1_`outcome'_eth") 
+ 22.         estat phtest, detail
+ 23.         * Cox model - fully adjusted
+.         stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded
+ 24.         estimates save "./output/tempdata/model2_`outcome'_eth", replace 
+ 25.         eststo model3
+ 26.         parmest, label eform format(estimate p lb ub) saving("./output/tem
+> pdata/surv_model2_`outcome'_eth", replace) idstr("model2_`outcome'_eth") 
+ 27.         estat phtest, detail
+ 28.         esttab model1 model2 model3 using "./output/tables/`outcome'_estou
+> t_table_eth_`period'.txt", b(a2) ci(2) label wide compress eform ///
+>         title ("`outcome'") ///
+>         varlabels(`e(labels)') ///
+>         stats(N_outcome) ///
+>         append 
+ 29.         eststo clear
+ 30.     * Write results to table
+.         * eth16 labelled columns
+. 
+.         local lab1: label eth5 1
+ 31.         local lab2: label eth5 2
+ 32.         local lab3: label eth5 3
+ 33.         local lab4: label eth5 4
+ 34.         local lab5: label eth5 5
+ 35.         /* counts */
+.         
+.         * First row, eth16 = 1 (White British) reference cat
+.         qui safecount if eth5==1
+ 36.         local denominator = r(N)
+ 37.         qui safecount if eth5 == 1 & `outcome'_admit == 1
+ 38.         local event = r(N)
+ 39.         bysort eth5: egen total_follow_up = total(_t)
+ 40.         qui su total_follow_up if eth5 == 1
+ 41.         local person_week = r(mean)/7
+ 42.         local rate = 1000*(`event'/`person_week')
+ 43.         
+.         file write tablecontent  ("`period'") _tab ("`lab1'") _tab (`denomina
+> tor') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _tab
+ 44.         file write tablecontent ("1.00") _tab _tab ("1.00") _tab _tab ("1.
+> 00") _n
+ 45. 
+.     * outcomesequent ethnic groups
+.         forvalues eth=2/5 {
+ 46.             qui safecount if eth5==`eth'
+ 47.             local denominator = r(N)
+ 48.             qui safecount if eth5 == `eth' & `outcome'_admit == 1
+ 49.             local event = r(N)
+ 50.             qui su total_follow_up if eth5 == `eth'
+ 51.             local person_week = r(mean)/7
+ 52.             local rate = 1000*(`event'/`person_week')
+ 53.             file write tablecontent ("`period'") _tab ("`lab`eth''") _tab 
+> (`denominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate'
+> ) _tab  
+ 54.             cap estimates use "./output/tempdata/crude_`outcome'_eth" 
+ 55.             cap lincom `eth'.eth5, eform
+ 56.             file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f 
+> (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab 
+ 57.             cap estimates clear
+ 58.             cap estimates use "./output/tempdata/model1_`outcome'_eth" 
+ 59.             cap lincom `eth'.eth5, eform
+ 60.             file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f 
+> (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab 
+ 61.             cap estimates clear
+ 62.             cap estimates use "./output/tempdata/model2_`outcome'_eth" 
+ 63.             cap lincom `eth'.eth5, eform
+ 64.             file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f 
+> (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab _n
+ 65.             cap estimates clear
+ 66.         }  //end ethnic group
+ 67. drop total_follow_up
+ 68.     }
+ 69. else { 
+ 70.     continue
+ 71. }
+ 72. } //end outcomes
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        979       97.90       97.90
+          1 |         21        2.10      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  21
+(21 real changes made)
+
+                id:  patient_id
+     failure event:  t2dm_admit != 0 & t2dm_admit < .
+obs. time interval:  (t2dm_end[_n-1], t2dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         21  failures in single-failure-per-subject data
+  2,041.728  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.058864
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_t2dm_pre_eth.svg not found)
+(file ./output/graphs/km_t2dm_pre_eth.svg written in SVG format)
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -144.85141
+Iteration 1:   log likelihood = -144.31629
+Iteration 2:   log likelihood = -144.30733
+Iteration 3:   log likelihood = -144.30733
+Refining estimates:
+Iteration 0:   log likelihood = -144.30733
+
+Cox regression -- no ties
+
+No. of subjects =        1,000                  Number of obs    =       1,000
+No. of failures =           21
+Time at risk    =  2041.727584
+                                                LR chi2(4)       =        1.09
+Log likelihood  =   -144.30733                  Prob > chi2      =      0.8961
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .7795259   .4930158    -0.39   0.694     .2256748    2.692638
+      Black  |   .6716216   .4505377    -0.59   0.553      .180352    2.501084
+      Mixed  |    .617247   .4140621    -0.72   0.472     .1657507    2.298596
+      Other  |   .4975845   .3633846    -0.96   0.339      .118915    2.082078
+------------------------------------------------------------------------------
+(note: file ./output/tempdata/crude_t2dm_eth.ster not found)
+file ./output/tempdata/crude_t2dm_eth.ster saved
+(note: file ./output/tempdata/surv_crude_t2dm_eth.dta not found)
+file ./output/tempdata/surv_crude_t2dm_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |     -0.00111         0.00        1         0.9959
+      3.eth5      |      0.06511         0.09        1         0.7656
+      4.eth5      |     -0.11761         0.29        1         0.5901
+      5.eth5      |      0.05774         0.07        1         0.7914
+      ------------+---------------------------------------------------
+      global test |                      0.79        4         0.9392
+      ----------------------------------------------------------------
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -113.2512
+Iteration 1:   log likelihood = -109.58159
+Iteration 2:   log likelihood = -109.19764
+Iteration 3:   log likelihood = -109.19173
+Iteration 4:   log likelihood = -109.19173
+Refining estimates:
+Iteration 0:   log likelihood = -109.19173
+
+Cox regression -- no ties
+
+No. of subjects =          790                  Number of obs    =         790
+No. of failures =           17
+Time at risk    =  1612.958248
+                                                LR chi2(8)       =        8.12
+Log likelihood  =   -109.19173                  Prob > chi2      =      0.4219
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .8100328   .5754807    -0.30   0.767     .2012676    3.260103
+      Black  |     .41718   .3623762    -1.01   0.314     .0760224    2.289313
+      Mixed  |   .7853304   .5577569    -0.34   0.734     .1952147     3.15931
+      Other  |   .6769614   .5185497    -0.51   0.611     .1508506    3.037952
+             |
+     age_cat |
+41 - 60 y..  |   2.015733   1.126526     1.25   0.210     .6741006    6.027555
+61 - 80 y..  |   .2944508    .322904    -1.11   0.265     .0343209    2.526197
+  >80 years  |    3.16929   2.658657     1.38   0.169      .612217     16.4066
+             |
+        male |
+       Male  |   .8464252   .4142832    -0.34   0.733     .3243154    2.209071
+------------------------------------------------------------------------------
+(note: file ./output/tempdata/model1_t2dm_eth.ster not found)
+file ./output/tempdata/model1_t2dm_eth.ster saved
+(note: file ./output/tempdata/surv_model1_t2dm_eth.dta not found)
+file ./output/tempdata/surv_model1_t2dm_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |     -0.22006         0.83        1         0.3628
+      3.eth5      |      0.02433         0.01        1         0.9181
+      4.eth5      |     -0.25099         0.99        1         0.3210
+      5.eth5      |     -0.06114         0.07        1         0.7967
+      0b.age_cat  |            .            .        1             .
+      1.age_cat   |     -0.01594         0.00        1         0.9468
+      2.age_cat   |      0.15016         0.39        1         0.5346
+      3.age_cat   |     -0.04026         0.03        1         0.8643
+      0b.male     |            .            .        1             .
+      1.male      |     -0.51940         4.28        1         0.0386
+      ------------+---------------------------------------------------
+      global test |                      7.18        8         0.5168
+      ----------------------------------------------------------------
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -113.2512
+Iteration 1:   log likelihood = -103.92036
+Iteration 2:   log likelihood =  -102.5184
+Iteration 3:   log likelihood = -102.21172
+Iteration 4:   log likelihood = -102.10389
+Iteration 5:   log likelihood = -102.06455
+Iteration 6:   log likelihood = -102.05012
+Iteration 7:   log likelihood = -102.04482
+Iteration 8:   log likelihood = -102.04287
+Iteration 9:   log likelihood = -102.04215
+Iteration 10:  log likelihood = -102.04189
+Iteration 11:  log likelihood = -102.04179
+Iteration 12:  log likelihood = -102.04176
+Iteration 13:  log likelihood = -102.04174
+Iteration 14:  log likelihood = -102.04174
+Iteration 15:  log likelihood = -102.04174
+Iteration 16:  log likelihood = -102.04173
+Iteration 17:  log likelihood = -102.04173
+Iteration 18:  log likelihood = -102.04173
+Iteration 19:  log likelihood = -102.04173
+Iteration 20:  log likelihood = -102.04173
+Iteration 21:  log likelihood = -102.04173
+Iteration 22:  log likelihood = -102.04173
+Iteration 23:  log likelihood = -102.04173
+Iteration 24:  log likelihood = -102.04173
+Iteration 25:  log likelihood = -102.04173
+Iteration 26:  log likelihood = -102.04173
+Iteration 27:  log likelihood = -102.04173
+Iteration 28:  log likelihood = -102.04173
+Iteration 29:  log likelihood = -102.04173
+Iteration 30:  log likelihood = -102.04173
+Iteration 31:  log likelihood = -102.04173
+Iteration 32:  log likelihood = -102.04173
+Iteration 33:  log likelihood = -102.04173
+Iteration 34:  log likelihood = -102.04173
+Iteration 35:  log likelihood = -102.04173
+Iteration 36:  log likelihood = -102.04173
+Iteration 37:  log likelihood = -102.04173
+Iteration 38:  log likelihood = -102.04173
+Iteration 39:  log likelihood = -102.04173
+Iteration 40:  log likelihood = -102.04173
+Refining estimates:
+Iteration 0:   log likelihood = -102.04173
+Iteration 1:   log likelihood = -102.04173
+Iteration 2:   log likelihood = -102.04173
+Iteration 3:   log likelihood = -102.04173
+Iteration 4:   log likelihood = -102.04173
+Iteration 5:   log likelihood = -102.04173
+
+Cox regression -- no ties
+
+No. of subjects =          790                  Number of obs    =         790
+No. of failures =           17
+Time at risk    =  1612.958248
+                                                LR chi2(12)      =       22.42
+Log likelihood  =   -102.04173                  Prob > chi2      =      0.0331
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .8537905   .6120746    -0.22   0.825     .2094752    3.479925
+      Black  |   .3816177   .3325384    -1.11   0.269      .069167    2.105514
+      Mixed  |    .806739   .5779833    -0.30   0.764     .1981047    3.285271
+      Other  |   .6312605   .4864836    -0.60   0.551     .1393884    2.858845
+             |
+     age_cat |
+41 - 60 y..  |   1.862807   1.042994     1.11   0.267     .6216933    5.581607
+61 - 80 y..  |   .2450405   .2692351    -1.28   0.201      .028444    2.110984
+  >80 years  |   3.003478   2.587188     1.28   0.202     .5551389    16.24977
+             |
+        male |
+       Male  |   .8136467   .4000592    -0.42   0.675     .3103927     2.13285
+             |
+urban_rura~n |
+      Urban  |   .7967433   .4082397    -0.44   0.657     .2918604    2.175012
+             |
+         imd |
+          1  |   1.14e+10   9.32e+09    28.20   0.000     2.27e+09    5.68e+10
+          2  |   1.17e-10          .        .       .            .           .
+          3  |   1.03e+10   8.70e+09    27.28   0.000     1.96e+09    5.40e+10
+          4  |   3.46e+09          .        .       .            .           .
+          5  |   7.47e+09   6.51e+09    26.08   0.000     1.35e+09    4.12e+10
+             |
+  1.shielded |   5.38e-19          .        .       .            .           .
+------------------------------------------------------------------------------
+(note: file ./output/tempdata/model2_t2dm_eth.ster not found)
+file ./output/tempdata/model2_t2dm_eth.ster saved
+(note: file ./output/tempdata/surv_model2_t2dm_eth.dta not found)
+file ./output/tempdata/surv_model2_t2dm_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |     -0.18970         0.70        1         0.4014
+      3.eth5      |      0.04337         0.03        1         0.8526
+      4.eth5      |     -0.21147         0.80        1         0.3710
+      5.eth5      |     -0.03327         0.02        1         0.8875
+      0b.age_cat  |            .            .        1             .
+      1.age_cat   |     -0.01823         0.01        1         0.9366
+      2.age_cat   |      0.16156         0.47        1         0.4947
+      3.age_cat   |      0.02172         0.01        1         0.9207
+      0b.male     |            .            .        1             .
+      1.male      |     -0.50549         3.99        1         0.0458
+      0b.urban_r~n|            .            .        1             .
+      1.urban_ru~n|      0.24289         1.12        1         0.2893
+      0b.imd      |            .            .        1             .
+      1.imd       |     -0.30595         1.75        1         0.1858
+      2.imd       |            .            .        1             .
+      3.imd       |     -0.27859         1.39        1         0.2392
+      4.imd       |            .            .        1             .
+      5.imd       |     -0.04625         0.04        1         0.8361
+      0b.shielded |            .            .        1             .
+      1.shielded  |            .            .        1             .
+      ------------+---------------------------------------------------
+      global test |                     11.12       12         0.5186
+      ----------------------------------------------------------------
+(note: file ./output/tables/t2dm_estout_table_eth_pre.txt not found)
+(output written to ./output/tables/t2dm_estout_table_eth_pre.txt)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        975       97.50       97.50
+          1 |         25        2.50      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  25
+(25 real changes made)
+
+                id:  patient_id
+     failure event:  t2dm_admit != 0 & t2dm_admit < .
+obs. time interval:  (t2dm_end[_n-1], t2dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)/365.25
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          1  observation ends on or before enter()
+------------------------------------------------------------------------------
+        999  observations remaining, representing
+        999  subjects
+         25  failures in single-failure-per-subject data
+  1,977.862  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =  2.102669
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_t2dm_pandemic_eth.svg not found)
+(file ./output/graphs/km_t2dm_pandemic_eth.svg written in SVG format)
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood = -171.13264
+Iteration 1:   log likelihood = -170.28419
+Iteration 2:   log likelihood = -170.25985
+Iteration 3:   log likelihood = -170.25982
+Refining estimates:
+Iteration 0:   log likelihood = -170.25982
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          999                  Number of obs    =         999
+No. of failures =           25
+Time at risk    =  1977.861739
+                                                LR chi2(4)       =        1.75
+Log likelihood  =   -170.25982                  Prob > chi2      =      0.7824
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .5578315   .4073836    -0.80   0.424     .1333127    2.334181
+      Black  |   1.131264   .6850235     0.20   0.839     .3452463    3.706799
+      Mixed  |   1.312232   .7945984     0.45   0.654     .4004799    4.299722
+      Other  |   1.009942   .6387484     0.02   0.988      .292378    3.488573
+------------------------------------------------------------------------------
+file ./output/tempdata/crude_t2dm_eth.ster saved
+file ./output/tempdata/surv_crude_t2dm_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |      0.25186         1.58        1         0.2082
+      3.eth5      |      0.01362         0.00        1         0.9458
+      4.eth5      |      0.01372         0.00        1         0.9453
+      5.eth5      |      0.06077         0.09        1         0.7613
+      ------------+---------------------------------------------------
+      global test |                      2.03        4         0.7305
+      ----------------------------------------------------------------
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -145.2139
+Iteration 1:   log likelihood = -142.06958
+Iteration 2:   log likelihood = -142.05673
+Iteration 3:   log likelihood = -142.05672
+Refining estimates:
+Iteration 0:   log likelihood = -142.05672
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          780                  Number of obs    =         780
+No. of failures =           22
+Time at risk    =  1545.379877
+                                                LR chi2(8)       =        6.31
+Log likelihood  =   -142.05672                  Prob > chi2      =      0.6121
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .9861491    .805745    -0.02   0.986     .1988191    4.891331
+      Black  |   1.840131   1.301248     0.86   0.388     .4601738    7.358266
+      Mixed  |   1.772078    1.29587     0.78   0.434     .4226912    7.429206
+      Other  |   1.620132    1.18434     0.66   0.509     .3866425    6.788768
+             |
+     age_cat |
+41 - 60 y..  |   2.359772   1.243787     1.63   0.103     .8398841     6.63011
+61 - 80 y..  |   .9012902    .658937    -0.14   0.887     .2150541    3.777301
+  >80 years  |   1.099527   1.206421     0.09   0.931     .1280125     9.44408
+             |
+        male |
+       Male  |   1.284018   .5505877     0.58   0.560      .554084    2.975547
+------------------------------------------------------------------------------
+file ./output/tempdata/model1_t2dm_eth.ster saved
+file ./output/tempdata/surv_model1_t2dm_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |      0.24528         1.33        1         0.2489
+      3.eth5      |      0.02494         0.01        1         0.9071
+      4.eth5      |     -0.06403         0.09        1         0.7648
+      5.eth5      |      0.06581         0.09        1         0.7600
+      0b.age_cat  |            .            .        1             .
+      1.age_cat   |     -0.16350         0.58        1         0.4449
+      2.age_cat   |     -0.24834         1.38        1         0.2404
+      3.age_cat   |     -0.22265         1.05        1         0.3063
+      0b.male     |            .            .        1             .
+      1.male      |     -0.42912         4.14        1         0.0420
+      ------------+---------------------------------------------------
+      global test |                      8.74        8         0.3648
+      ----------------------------------------------------------------
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)/365.25
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Iteration 0:   log likelihood =  -145.2139
+Iteration 1:   log likelihood = -139.13476
+Iteration 2:   log likelihood = -138.65028
+Iteration 3:   log likelihood = -138.63627
+Iteration 4:   log likelihood = -138.63134
+Iteration 5:   log likelihood = -138.62953
+Iteration 6:   log likelihood = -138.62886
+Iteration 7:   log likelihood = -138.62862
+Iteration 8:   log likelihood = -138.62853
+Iteration 9:   log likelihood = -138.62849
+Iteration 10:  log likelihood = -138.62848
+Iteration 11:  log likelihood = -138.62848
+Iteration 12:  log likelihood = -138.62848
+Iteration 13:  log likelihood = -138.62848
+Iteration 14:  log likelihood = -138.62848
+Iteration 15:  log likelihood = -138.62848
+Iteration 16:  log likelihood = -138.62847
+Iteration 17:  log likelihood = -138.62847
+Iteration 18:  log likelihood = -138.62847
+Iteration 19:  log likelihood = -138.62847
+Iteration 20:  log likelihood = -138.62847
+Iteration 21:  log likelihood = -138.62847
+Iteration 22:  log likelihood = -138.62847
+Iteration 23:  log likelihood = -138.62847
+Iteration 24:  log likelihood = -138.62847
+Iteration 25:  log likelihood = -138.62847
+Iteration 26:  log likelihood = -138.62847
+Iteration 27:  log likelihood = -138.62847
+Iteration 28:  log likelihood = -138.62847
+Iteration 29:  log likelihood = -138.62847
+Iteration 30:  log likelihood = -138.62847
+Refining estimates:
+Iteration 0:   log likelihood = -138.62847
+Iteration 1:   log likelihood = -138.62847
+
+Cox regression -- Breslow method for ties
+
+No. of subjects =          780                  Number of obs    =         780
+No. of failures =           22
+Time at risk    =  1545.379877
+                                                LR chi2(15)      =       13.17
+Log likelihood  =   -138.62847                  Prob > chi2      =      0.5891
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.002824   .8244775     0.00   0.997     .2001723    5.023948
+      Black  |   1.753721   1.245279     0.79   0.429     .4360547    7.053104
+      Mixed  |   1.650547   1.212134     0.68   0.495     .3913089    6.962033
+      Other  |   1.616656   1.185225     0.66   0.512     .3842139      6.8024
+             |
+     age_cat |
+41 - 60 y..  |   2.348742      1.242     1.61   0.106     .8331544     6.62133
+61 - 80 y..  |   .9488305    .696559    -0.07   0.943     .2250616    4.000146
+  >80 years  |   1.154959   1.276031     0.13   0.896     .1324756    10.06926
+             |
+        male |
+       Male  |   1.317891   .5691643     0.64   0.523     .5652841    3.072502
+             |
+urban_rura~n |
+      Urban  |    1.01112   .4466755     0.03   0.980     .4253764    2.403434
+             |
+         imd |
+          1  |   .6216371   .7653389    -0.39   0.699     .0556629    6.942372
+          2  |   .8671087   1.010494    -0.12   0.903     .0883318    8.511965
+          3  |   2.725534    2.90092     0.94   0.346     .3384355    21.94963
+          4  |   1.202555   1.363237     0.16   0.871     .1303671    11.09282
+          5  |   .8456439   .9868239    -0.14   0.886     .0858773     8.32716
+             |
+  1.shielded |   4.72e-14   6.43e-07    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+file ./output/tempdata/model2_t2dm_eth.ster saved
+file ./output/tempdata/surv_model2_t2dm_eth.dta saved
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |       rho            chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      1b.eth5     |            .            .        1             .
+      2.eth5      |      0.26404         1.58        1         0.2090
+      3.eth5      |      0.04744         0.05        1         0.8266
+      4.eth5      |     -0.05043         0.05        1         0.8152
+      5.eth5      |      0.06038         0.08        1         0.7737
+      0b.age_cat  |            .            .        1             .
+      1.age_cat   |     -0.16021         0.57        1         0.4494
+      2.age_cat   |     -0.25889         1.52        1         0.2180
+      3.age_cat   |     -0.25531         1.31        1         0.2525
+      0b.male     |            .            .        1             .
+      1.male      |     -0.44996         4.64        1         0.0312
+      0b.urban_r~n|            .            .        1             .
+      1.urban_ru~n|      0.01959         0.01        1         0.9273
+      0b.imd      |            .            .        1             .
+      1.imd       |     -0.03063         0.02        1         0.8854
+      2.imd       |     -0.18831         0.79        1         0.3745
+      3.imd       |     -0.18856         0.83        1         0.3633
+      4.imd       |     -0.06511         0.10        1         0.7545
+      5.imd       |     -0.06506         0.10        1         0.7569
+      0b.shielded |            .            .        1             .
+      1.shielded  |     -0.32949         0.00        1         1.0000
+      ------------+---------------------------------------------------
+      global test |                     11.57       15         0.7115
+      ----------------------------------------------------------------
+(note: file ./output/tables/t2dm_estout_table_eth_pandemic.txt not found)
+(output written to ./output/tables/t2dm_estout_table_eth_pandemic.txt)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        997       99.70       99.70
+          1 |          3        0.30      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  3
+(1 observation deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        995       99.60       99.60
+          1 |          4        0.40      100.00
+------------+-----------------------------------
+      Total |        999      100.00
+  4
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        993       99.30       99.30
+          1 |          7        0.70      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  7
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        998       99.80       99.80
+          1 |          2        0.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  2
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        995       99.50       99.50
+          1 |          5        0.50      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  5
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        997       99.70       99.70
+          1 |          3        0.30      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  3
+
+. file close tablecontent
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/cox_model_t2dm.log
+  log type:  text
+ closed on:   6 Jul 2022, 14:11:05
+-------------------------------------------------------------------------------

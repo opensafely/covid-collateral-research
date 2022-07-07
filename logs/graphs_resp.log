@@ -84,21 +84,64 @@
 > vg, as(svg) replace
  38.     }
  39. }
-(5 vars, 20 obs)
+(5 vars, 235 obs)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-  01oct2021 |          5       25.00       25.00
-  01nov2021 |          5       25.00       50.00
-  01dec2021 |          5       25.00       75.00
-  01jan2022 |          5       25.00      100.00
+  01mar2018 |          5        2.13        2.13
+  01apr2018 |          5        2.13        4.26
+  01may2018 |          5        2.13        6.38
+  01jun2018 |          5        2.13        8.51
+  01jul2018 |          5        2.13       10.64
+  01aug2018 |          5        2.13       12.77
+  01sep2018 |          5        2.13       14.89
+  01oct2018 |          5        2.13       17.02
+  01nov2018 |          5        2.13       19.15
+  01dec2018 |          5        2.13       21.28
+  01jan2019 |          5        2.13       23.40
+  01feb2019 |          5        2.13       25.53
+  01mar2019 |          5        2.13       27.66
+  01apr2019 |          5        2.13       29.79
+  01may2019 |          5        2.13       31.91
+  01jun2019 |          5        2.13       34.04
+  01jul2019 |          5        2.13       36.17
+  01aug2019 |          5        2.13       38.30
+  01sep2019 |          5        2.13       40.43
+  01oct2019 |          5        2.13       42.55
+  01nov2019 |          5        2.13       44.68
+  01dec2019 |          5        2.13       46.81
+  01jan2020 |          5        2.13       48.94
+  01feb2020 |          5        2.13       51.06
+  01mar2020 |          5        2.13       53.19
+  01apr2020 |          5        2.13       55.32
+  01may2020 |          5        2.13       57.45
+  01jun2020 |          5        2.13       59.57
+  01jul2020 |          5        2.13       61.70
+  01aug2020 |          5        2.13       63.83
+  01sep2020 |          5        2.13       65.96
+  01oct2020 |          5        2.13       68.09
+  01nov2020 |          5        2.13       70.21
+  01dec2020 |          5        2.13       72.34
+  01jan2021 |          5        2.13       74.47
+  01feb2021 |          5        2.13       76.60
+  01mar2021 |          5        2.13       78.72
+  01apr2021 |          5        2.13       80.85
+  01may2021 |          5        2.13       82.98
+  01jun2021 |          5        2.13       85.11
+  01jul2021 |          5        2.13       87.23
+  01aug2021 |          5        2.13       89.36
+  01sep2021 |          5        2.13       91.49
+  01oct2021 |          5        2.13       93.62
+  01nov2021 |          5        2.13       95.74
+  01dec2021 |          5        2.13       97.87
+  01jan2022 |          5        2.13      100.00
 ------------+-----------------------------------
-      Total |         20      100.00
+      Total |        235      100.00
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                      235   ->      47
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -111,7 +154,7 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:            47                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
@@ -143,21 +186,64 @@ Sorted by: dateA
 (note: file ./output/graphs/line_resp_ethnic_asthma_monitoring.svg not found)
 (file ./output/graphs/line_resp_ethnic_asthma_monitoring.svg written in SVG for
 > mat)
-(5 vars, 24 obs)
+(5 vars, 282 obs)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-  01oct2021 |          6       25.00       25.00
-  01nov2021 |          6       25.00       50.00
-  01dec2021 |          6       25.00       75.00
-  01jan2022 |          6       25.00      100.00
+  01mar2018 |          6        2.13        2.13
+  01apr2018 |          6        2.13        4.26
+  01may2018 |          6        2.13        6.38
+  01jun2018 |          6        2.13        8.51
+  01jul2018 |          6        2.13       10.64
+  01aug2018 |          6        2.13       12.77
+  01sep2018 |          6        2.13       14.89
+  01oct2018 |          6        2.13       17.02
+  01nov2018 |          6        2.13       19.15
+  01dec2018 |          6        2.13       21.28
+  01jan2019 |          6        2.13       23.40
+  01feb2019 |          6        2.13       25.53
+  01mar2019 |          6        2.13       27.66
+  01apr2019 |          6        2.13       29.79
+  01may2019 |          6        2.13       31.91
+  01jun2019 |          6        2.13       34.04
+  01jul2019 |          6        2.13       36.17
+  01aug2019 |          6        2.13       38.30
+  01sep2019 |          6        2.13       40.43
+  01oct2019 |          6        2.13       42.55
+  01nov2019 |          6        2.13       44.68
+  01dec2019 |          6        2.13       46.81
+  01jan2020 |          6        2.13       48.94
+  01feb2020 |          6        2.13       51.06
+  01mar2020 |          6        2.13       53.19
+  01apr2020 |          6        2.13       55.32
+  01may2020 |          6        2.13       57.45
+  01jun2020 |          6        2.13       59.57
+  01jul2020 |          6        2.13       61.70
+  01aug2020 |          6        2.13       63.83
+  01sep2020 |          6        2.13       65.96
+  01oct2020 |          6        2.13       68.09
+  01nov2020 |          6        2.13       70.21
+  01dec2020 |          6        2.13       72.34
+  01jan2021 |          6        2.13       74.47
+  01feb2021 |          6        2.13       76.60
+  01mar2021 |          6        2.13       78.72
+  01apr2021 |          6        2.13       80.85
+  01may2021 |          6        2.13       82.98
+  01jun2021 |          6        2.13       85.11
+  01jul2021 |          6        2.13       87.23
+  01aug2021 |          6        2.13       89.36
+  01sep2021 |          6        2.13       91.49
+  01oct2021 |          6        2.13       93.62
+  01nov2021 |          6        2.13       95.74
+  01dec2021 |          6        2.13       97.87
+  01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
-      Total |         24      100.00
+      Total |        282      100.00
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                      282   ->      47
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -170,7 +256,7 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:            47                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
@@ -206,21 +292,64 @@ Sorted by: dateA
 (note: file ./output/graphs/line_resp_imd_asthma_monitoring.svg not found)
 (file ./output/graphs/line_resp_imd_asthma_monitoring.svg written in SVG format
 > )
-(5 vars, 20 obs)
+(5 vars, 235 obs)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-  01oct2021 |          5       25.00       25.00
-  01nov2021 |          5       25.00       50.00
-  01dec2021 |          5       25.00       75.00
-  01jan2022 |          5       25.00      100.00
+  01mar2018 |          5        2.13        2.13
+  01apr2018 |          5        2.13        4.26
+  01may2018 |          5        2.13        6.38
+  01jun2018 |          5        2.13        8.51
+  01jul2018 |          5        2.13       10.64
+  01aug2018 |          5        2.13       12.77
+  01sep2018 |          5        2.13       14.89
+  01oct2018 |          5        2.13       17.02
+  01nov2018 |          5        2.13       19.15
+  01dec2018 |          5        2.13       21.28
+  01jan2019 |          5        2.13       23.40
+  01feb2019 |          5        2.13       25.53
+  01mar2019 |          5        2.13       27.66
+  01apr2019 |          5        2.13       29.79
+  01may2019 |          5        2.13       31.91
+  01jun2019 |          5        2.13       34.04
+  01jul2019 |          5        2.13       36.17
+  01aug2019 |          5        2.13       38.30
+  01sep2019 |          5        2.13       40.43
+  01oct2019 |          5        2.13       42.55
+  01nov2019 |          5        2.13       44.68
+  01dec2019 |          5        2.13       46.81
+  01jan2020 |          5        2.13       48.94
+  01feb2020 |          5        2.13       51.06
+  01mar2020 |          5        2.13       53.19
+  01apr2020 |          5        2.13       55.32
+  01may2020 |          5        2.13       57.45
+  01jun2020 |          5        2.13       59.57
+  01jul2020 |          5        2.13       61.70
+  01aug2020 |          5        2.13       63.83
+  01sep2020 |          5        2.13       65.96
+  01oct2020 |          5        2.13       68.09
+  01nov2020 |          5        2.13       70.21
+  01dec2020 |          5        2.13       72.34
+  01jan2021 |          5        2.13       74.47
+  01feb2021 |          5        2.13       76.60
+  01mar2021 |          5        2.13       78.72
+  01apr2021 |          5        2.13       80.85
+  01may2021 |          5        2.13       82.98
+  01jun2021 |          5        2.13       85.11
+  01jul2021 |          5        2.13       87.23
+  01aug2021 |          5        2.13       89.36
+  01sep2021 |          5        2.13       91.49
+  01oct2021 |          5        2.13       93.62
+  01nov2021 |          5        2.13       95.74
+  01dec2021 |          5        2.13       97.87
+  01jan2022 |          5        2.13      100.00
 ------------+-----------------------------------
-      Total |         20      100.00
+      Total |        235      100.00
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                      235   ->      47
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -233,7 +362,7 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:            47                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
@@ -265,21 +394,64 @@ Sorted by: dateA
 (note: file ./output/graphs/line_resp_ethnic_asthma_exacerbation.svg not found)
 (file ./output/graphs/line_resp_ethnic_asthma_exacerbation.svg written in SVG f
 > ormat)
-(5 vars, 24 obs)
+(5 vars, 282 obs)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-  01oct2021 |          6       25.00       25.00
-  01nov2021 |          6       25.00       50.00
-  01dec2021 |          6       25.00       75.00
-  01jan2022 |          6       25.00      100.00
+  01mar2018 |          6        2.13        2.13
+  01apr2018 |          6        2.13        4.26
+  01may2018 |          6        2.13        6.38
+  01jun2018 |          6        2.13        8.51
+  01jul2018 |          6        2.13       10.64
+  01aug2018 |          6        2.13       12.77
+  01sep2018 |          6        2.13       14.89
+  01oct2018 |          6        2.13       17.02
+  01nov2018 |          6        2.13       19.15
+  01dec2018 |          6        2.13       21.28
+  01jan2019 |          6        2.13       23.40
+  01feb2019 |          6        2.13       25.53
+  01mar2019 |          6        2.13       27.66
+  01apr2019 |          6        2.13       29.79
+  01may2019 |          6        2.13       31.91
+  01jun2019 |          6        2.13       34.04
+  01jul2019 |          6        2.13       36.17
+  01aug2019 |          6        2.13       38.30
+  01sep2019 |          6        2.13       40.43
+  01oct2019 |          6        2.13       42.55
+  01nov2019 |          6        2.13       44.68
+  01dec2019 |          6        2.13       46.81
+  01jan2020 |          6        2.13       48.94
+  01feb2020 |          6        2.13       51.06
+  01mar2020 |          6        2.13       53.19
+  01apr2020 |          6        2.13       55.32
+  01may2020 |          6        2.13       57.45
+  01jun2020 |          6        2.13       59.57
+  01jul2020 |          6        2.13       61.70
+  01aug2020 |          6        2.13       63.83
+  01sep2020 |          6        2.13       65.96
+  01oct2020 |          6        2.13       68.09
+  01nov2020 |          6        2.13       70.21
+  01dec2020 |          6        2.13       72.34
+  01jan2021 |          6        2.13       74.47
+  01feb2021 |          6        2.13       76.60
+  01mar2021 |          6        2.13       78.72
+  01apr2021 |          6        2.13       80.85
+  01may2021 |          6        2.13       82.98
+  01jun2021 |          6        2.13       85.11
+  01jul2021 |          6        2.13       87.23
+  01aug2021 |          6        2.13       89.36
+  01sep2021 |          6        2.13       91.49
+  01oct2021 |          6        2.13       93.62
+  01nov2021 |          6        2.13       95.74
+  01dec2021 |          6        2.13       97.87
+  01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
-      Total |         24      100.00
+      Total |        282      100.00
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                      282   ->      47
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -292,7 +464,7 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:            47                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
@@ -328,21 +500,64 @@ Sorted by: dateA
 (note: file ./output/graphs/line_resp_imd_asthma_exacerbation.svg not found)
 (file ./output/graphs/line_resp_imd_asthma_exacerbation.svg written in SVG form
 > at)
-(5 vars, 20 obs)
+(5 vars, 235 obs)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-  01oct2021 |          5       25.00       25.00
-  01nov2021 |          5       25.00       50.00
-  01dec2021 |          5       25.00       75.00
-  01jan2022 |          5       25.00      100.00
+  01mar2018 |          5        2.13        2.13
+  01apr2018 |          5        2.13        4.26
+  01may2018 |          5        2.13        6.38
+  01jun2018 |          5        2.13        8.51
+  01jul2018 |          5        2.13       10.64
+  01aug2018 |          5        2.13       12.77
+  01sep2018 |          5        2.13       14.89
+  01oct2018 |          5        2.13       17.02
+  01nov2018 |          5        2.13       19.15
+  01dec2018 |          5        2.13       21.28
+  01jan2019 |          5        2.13       23.40
+  01feb2019 |          5        2.13       25.53
+  01mar2019 |          5        2.13       27.66
+  01apr2019 |          5        2.13       29.79
+  01may2019 |          5        2.13       31.91
+  01jun2019 |          5        2.13       34.04
+  01jul2019 |          5        2.13       36.17
+  01aug2019 |          5        2.13       38.30
+  01sep2019 |          5        2.13       40.43
+  01oct2019 |          5        2.13       42.55
+  01nov2019 |          5        2.13       44.68
+  01dec2019 |          5        2.13       46.81
+  01jan2020 |          5        2.13       48.94
+  01feb2020 |          5        2.13       51.06
+  01mar2020 |          5        2.13       53.19
+  01apr2020 |          5        2.13       55.32
+  01may2020 |          5        2.13       57.45
+  01jun2020 |          5        2.13       59.57
+  01jul2020 |          5        2.13       61.70
+  01aug2020 |          5        2.13       63.83
+  01sep2020 |          5        2.13       65.96
+  01oct2020 |          5        2.13       68.09
+  01nov2020 |          5        2.13       70.21
+  01dec2020 |          5        2.13       72.34
+  01jan2021 |          5        2.13       74.47
+  01feb2021 |          5        2.13       76.60
+  01mar2021 |          5        2.13       78.72
+  01apr2021 |          5        2.13       80.85
+  01may2021 |          5        2.13       82.98
+  01jun2021 |          5        2.13       85.11
+  01jul2021 |          5        2.13       87.23
+  01aug2021 |          5        2.13       89.36
+  01sep2021 |          5        2.13       91.49
+  01oct2021 |          5        2.13       93.62
+  01nov2021 |          5        2.13       95.74
+  01dec2021 |          5        2.13       97.87
+  01jan2022 |          5        2.13      100.00
 ------------+-----------------------------------
-      Total |         20      100.00
+      Total |        235      100.00
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                      235   ->      47
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -355,7 +570,7 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:            47                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
@@ -387,21 +602,65 @@ Sorted by: dateA
 (note: file ./output/graphs/line_resp_ethnic_copd_monitoring.svg not found)
 (file ./output/graphs/line_resp_ethnic_copd_monitoring.svg written in SVG forma
 > t)
-(5 vars, 24 obs)
+(5 vars, 282 obs)
+(7 missing values generated)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-  01oct2021 |          6       25.00       25.00
-  01nov2021 |          6       25.00       50.00
-  01dec2021 |          6       25.00       75.00
-  01jan2022 |          6       25.00      100.00
+  01mar2018 |          6        2.13        2.13
+  01apr2018 |          6        2.13        4.26
+  01may2018 |          6        2.13        6.38
+  01jun2018 |          6        2.13        8.51
+  01jul2018 |          6        2.13       10.64
+  01aug2018 |          6        2.13       12.77
+  01sep2018 |          6        2.13       14.89
+  01oct2018 |          6        2.13       17.02
+  01nov2018 |          6        2.13       19.15
+  01dec2018 |          6        2.13       21.28
+  01jan2019 |          6        2.13       23.40
+  01feb2019 |          6        2.13       25.53
+  01mar2019 |          6        2.13       27.66
+  01apr2019 |          6        2.13       29.79
+  01may2019 |          6        2.13       31.91
+  01jun2019 |          6        2.13       34.04
+  01jul2019 |          6        2.13       36.17
+  01aug2019 |          6        2.13       38.30
+  01sep2019 |          6        2.13       40.43
+  01oct2019 |          6        2.13       42.55
+  01nov2019 |          6        2.13       44.68
+  01dec2019 |          6        2.13       46.81
+  01jan2020 |          6        2.13       48.94
+  01feb2020 |          6        2.13       51.06
+  01mar2020 |          6        2.13       53.19
+  01apr2020 |          6        2.13       55.32
+  01may2020 |          6        2.13       57.45
+  01jun2020 |          6        2.13       59.57
+  01jul2020 |          6        2.13       61.70
+  01aug2020 |          6        2.13       63.83
+  01sep2020 |          6        2.13       65.96
+  01oct2020 |          6        2.13       68.09
+  01nov2020 |          6        2.13       70.21
+  01dec2020 |          6        2.13       72.34
+  01jan2021 |          6        2.13       74.47
+  01feb2021 |          6        2.13       76.60
+  01mar2021 |          6        2.13       78.72
+  01apr2021 |          6        2.13       80.85
+  01may2021 |          6        2.13       82.98
+  01jun2021 |          6        2.13       85.11
+  01jul2021 |          6        2.13       87.23
+  01aug2021 |          6        2.13       89.36
+  01sep2021 |          6        2.13       91.49
+  01oct2021 |          6        2.13       93.62
+  01nov2021 |          6        2.13       95.74
+  01dec2021 |          6        2.13       97.87
+  01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
-      Total |         24      100.00
+      Total |        282      100.00
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                      282   ->      47
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -414,7 +673,7 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:            47                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
@@ -423,47 +682,90 @@ variable name   type    format     label      variable label
 dateA           float   %dD/M/Y               
 copd_review0    byte    %8.0g                 0 copd_review
 has_copd0       byte    %8.0g                 0 has_copd
-value0          float   %9.0g                 0 value
+value0          float   %8.0g                 0 value
 rate0           float   %9.0g                 0 rate
 copd_review1    byte    %8.0g                 1 copd_review
 has_copd1       byte    %8.0g                 1 has_copd
-value1          float   %9.0g                 1 value
+value1          float   %8.0g                 1 value
 rate1           float   %9.0g                 1 rate
 copd_review2    byte    %8.0g                 2 copd_review
 has_copd2       byte    %8.0g                 2 has_copd
-value2          float   %9.0g                 2 value
+value2          float   %8.0g                 2 value
 rate2           float   %9.0g                 2 rate
 copd_review3    byte    %8.0g                 3 copd_review
 has_copd3       byte    %8.0g                 3 has_copd
-value3          float   %9.0g                 3 value
+value3          float   %8.0g                 3 value
 rate3           float   %9.0g                 3 rate
 copd_review4    byte    %8.0g                 4 copd_review
 has_copd4       byte    %8.0g                 4 has_copd
-value4          float   %9.0g                 4 value
+value4          float   %8.0g                 4 value
 rate4           float   %9.0g                 4 rate
 copd_review5    byte    %8.0g                 5 copd_review
 has_copd5       byte    %8.0g                 5 has_copd
-value5          float   %9.0g                 5 value
+value5          float   %8.0g                 5 value
 rate5           float   %9.0g                 5 rate
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/graphs/line_resp_imd_copd_monitoring.svg not found)
 (file ./output/graphs/line_resp_imd_copd_monitoring.svg written in SVG format)
-(5 vars, 20 obs)
+(5 vars, 235 obs)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-  01oct2021 |          5       25.00       25.00
-  01nov2021 |          5       25.00       50.00
-  01dec2021 |          5       25.00       75.00
-  01jan2022 |          5       25.00      100.00
+  01mar2018 |          5        2.13        2.13
+  01apr2018 |          5        2.13        4.26
+  01may2018 |          5        2.13        6.38
+  01jun2018 |          5        2.13        8.51
+  01jul2018 |          5        2.13       10.64
+  01aug2018 |          5        2.13       12.77
+  01sep2018 |          5        2.13       14.89
+  01oct2018 |          5        2.13       17.02
+  01nov2018 |          5        2.13       19.15
+  01dec2018 |          5        2.13       21.28
+  01jan2019 |          5        2.13       23.40
+  01feb2019 |          5        2.13       25.53
+  01mar2019 |          5        2.13       27.66
+  01apr2019 |          5        2.13       29.79
+  01may2019 |          5        2.13       31.91
+  01jun2019 |          5        2.13       34.04
+  01jul2019 |          5        2.13       36.17
+  01aug2019 |          5        2.13       38.30
+  01sep2019 |          5        2.13       40.43
+  01oct2019 |          5        2.13       42.55
+  01nov2019 |          5        2.13       44.68
+  01dec2019 |          5        2.13       46.81
+  01jan2020 |          5        2.13       48.94
+  01feb2020 |          5        2.13       51.06
+  01mar2020 |          5        2.13       53.19
+  01apr2020 |          5        2.13       55.32
+  01may2020 |          5        2.13       57.45
+  01jun2020 |          5        2.13       59.57
+  01jul2020 |          5        2.13       61.70
+  01aug2020 |          5        2.13       63.83
+  01sep2020 |          5        2.13       65.96
+  01oct2020 |          5        2.13       68.09
+  01nov2020 |          5        2.13       70.21
+  01dec2020 |          5        2.13       72.34
+  01jan2021 |          5        2.13       74.47
+  01feb2021 |          5        2.13       76.60
+  01mar2021 |          5        2.13       78.72
+  01apr2021 |          5        2.13       80.85
+  01may2021 |          5        2.13       82.98
+  01jun2021 |          5        2.13       85.11
+  01jul2021 |          5        2.13       87.23
+  01aug2021 |          5        2.13       89.36
+  01sep2021 |          5        2.13       91.49
+  01oct2021 |          5        2.13       93.62
+  01nov2021 |          5        2.13       95.74
+  01dec2021 |          5        2.13       97.87
+  01jan2022 |          5        2.13      100.00
 ------------+-----------------------------------
-      Total |         20      100.00
+      Total |        235      100.00
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       20   ->       4
+Number of obs.                      235   ->      47
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -476,7 +778,7 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:            47                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
@@ -508,21 +810,65 @@ Sorted by: dateA
 (note: file ./output/graphs/line_resp_ethnic_copd_exacerbation.svg not found)
 (file ./output/graphs/line_resp_ethnic_copd_exacerbation.svg written in SVG for
 > mat)
-(5 vars, 24 obs)
+(5 vars, 282 obs)
+(7 missing values generated)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-  01oct2021 |          6       25.00       25.00
-  01nov2021 |          6       25.00       50.00
-  01dec2021 |          6       25.00       75.00
-  01jan2022 |          6       25.00      100.00
+  01mar2018 |          6        2.13        2.13
+  01apr2018 |          6        2.13        4.26
+  01may2018 |          6        2.13        6.38
+  01jun2018 |          6        2.13        8.51
+  01jul2018 |          6        2.13       10.64
+  01aug2018 |          6        2.13       12.77
+  01sep2018 |          6        2.13       14.89
+  01oct2018 |          6        2.13       17.02
+  01nov2018 |          6        2.13       19.15
+  01dec2018 |          6        2.13       21.28
+  01jan2019 |          6        2.13       23.40
+  01feb2019 |          6        2.13       25.53
+  01mar2019 |          6        2.13       27.66
+  01apr2019 |          6        2.13       29.79
+  01may2019 |          6        2.13       31.91
+  01jun2019 |          6        2.13       34.04
+  01jul2019 |          6        2.13       36.17
+  01aug2019 |          6        2.13       38.30
+  01sep2019 |          6        2.13       40.43
+  01oct2019 |          6        2.13       42.55
+  01nov2019 |          6        2.13       44.68
+  01dec2019 |          6        2.13       46.81
+  01jan2020 |          6        2.13       48.94
+  01feb2020 |          6        2.13       51.06
+  01mar2020 |          6        2.13       53.19
+  01apr2020 |          6        2.13       55.32
+  01may2020 |          6        2.13       57.45
+  01jun2020 |          6        2.13       59.57
+  01jul2020 |          6        2.13       61.70
+  01aug2020 |          6        2.13       63.83
+  01sep2020 |          6        2.13       65.96
+  01oct2020 |          6        2.13       68.09
+  01nov2020 |          6        2.13       70.21
+  01dec2020 |          6        2.13       72.34
+  01jan2021 |          6        2.13       74.47
+  01feb2021 |          6        2.13       76.60
+  01mar2021 |          6        2.13       78.72
+  01apr2021 |          6        2.13       80.85
+  01may2021 |          6        2.13       82.98
+  01jun2021 |          6        2.13       85.11
+  01jul2021 |          6        2.13       87.23
+  01aug2021 |          6        2.13       89.36
+  01sep2021 |          6        2.13       91.49
+  01oct2021 |          6        2.13       93.62
+  01nov2021 |          6        2.13       95.74
+  01dec2021 |          6        2.13       97.87
+  01jan2022 |          6        2.13      100.00
 ------------+-----------------------------------
-      Total |         24      100.00
+      Total |        282      100.00
 (note: j = 0 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                       24   ->       4
+Number of obs.                      282   ->      47
 Number of variables                   6   ->      25
 j variable (6 values)               imd   ->   (dropped)
 xij variables:
@@ -535,7 +881,7 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:             4                          
+  obs:            47                          
  vars:            25                          
 -------------------------------------------------------------------------------
               storage   display    value
@@ -544,27 +890,27 @@ variable name   type    format     label      variable label
 dateA           float   %dD/M/Y               
 copd_exacerba~0 byte    %8.0g                 0 copd_exacerbation
 has_copd0       byte    %8.0g                 0 has_copd
-value0          float   %9.0g                 0 value
+value0          float   %8.0g                 0 value
 rate0           float   %9.0g                 0 rate
 copd_exacerba~1 byte    %8.0g                 1 copd_exacerbation
 has_copd1       byte    %8.0g                 1 has_copd
-value1          float   %9.0g                 1 value
+value1          float   %8.0g                 1 value
 rate1           float   %9.0g                 1 rate
 copd_exacerba~2 byte    %8.0g                 2 copd_exacerbation
 has_copd2       byte    %8.0g                 2 has_copd
-value2          float   %9.0g                 2 value
+value2          float   %8.0g                 2 value
 rate2           float   %9.0g                 2 rate
 copd_exacerba~3 byte    %8.0g                 3 copd_exacerbation
 has_copd3       byte    %8.0g                 3 has_copd
-value3          float   %9.0g                 3 value
+value3          float   %8.0g                 3 value
 rate3           float   %9.0g                 3 rate
 copd_exacerba~4 byte    %8.0g                 4 copd_exacerbation
 has_copd4       byte    %8.0g                 4 has_copd
-value4          float   %9.0g                 4 value
+value4          float   %8.0g                 4 value
 rate4           float   %9.0g                 4 rate
 copd_exacerba~5 byte    %8.0g                 5 copd_exacerbation
 has_copd5       byte    %8.0g                 5 has_copd
-value5          float   %9.0g                 5 value
+value5          float   %8.0g                 5 value
 rate5           float   %9.0g                 5 rate
 -------------------------------------------------------------------------------
 Sorted by: dateA
@@ -614,7 +960,7 @@ Sorted by: dateA
 
 end of do-file
 
-. . file open output using "/tmp/tmp.GzeX3sYpLC", write text replace
+. . file open output using "/tmp/tmp.LmtFDmNxlS", write text replace
 
 . . file write output "success" 
 
