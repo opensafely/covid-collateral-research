@@ -23,9 +23,9 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
     drop dereg_date
 
     * Format dates
-    local a "mi_primary_admission stroke_primary_admission heart_failure_primary_admission vte_primary_admission t1dm_admission_primary t2dm_admission_primary dm_keto_admission_primary asthma_exacerbation depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission cvd_admission_date dm_admission copd_hospitalisation_date mh_admission died_fu" 
-    local b "mi_admit_date stroke_admit_date hf_admit_date vte_admit_date t1dm_admit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_admit_date anx_admit_date smi_admit_date sh_admit_date cvd_admit_date dm_admit_date copd_admit_date mh_admit_date date_died" 
-    forvalues i=1/17 {
+    local a "mi_primary_admission stroke_primary_admission heart_failure_primary_admission vte_primary_admission t1dm_admission_primary t2dm_admission_primary dm_keto_admission_primary asthma_exacerbation depression_primary_admission anxiety_primary_admission smi_primary_admission cvd_admission_date dm_admission copd_hospitalisation_date mh_admission died_fu" 
+    local b "mi_admit_date stroke_admit_date hf_admit_date vte_admit_date t1dm_admit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_admit_date anx_admit_date smi_admit_date cvd_admit_date dm_admit_date copd_admit_date mh_admit_date date_died" 
+    forvalues i=1/16 {
         local c: word `i' of `a'
         local d: word `i' of `b' 
         di "number of missing values"
