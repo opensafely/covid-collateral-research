@@ -57,3 +57,6 @@ user/hjforbes/anxiety-symptoms-and-diagnoses/3088a1b6
 user/hjforbes/obsessive-compulsive-disorder-ocd/17792e81
 user/hjforbes/undetermined-intent-self-harm-aged15-years/4d66c4bc
 user/hjforbes/diagnoses-eating-disorder/62a78820
+
+# New blood pressure codelist
+nhsd-primary-care-domain-refsets/bp_cod/20200812

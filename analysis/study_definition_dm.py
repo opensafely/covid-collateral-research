@@ -67,6 +67,12 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
+    bp_meas=patients.with_these_clinical_events(
+        codelist=bp_codes,
+        between=["index_date - 12 months", "index_date"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+        ),
     # Inpatient admission with primary code of diabetes 
     # Type 1 DM
     t1dm_admission_primary=patients.admitted_to_hospital(
@@ -148,6 +154,12 @@ measures = [
     Measure(
         id="dm_systolic_bp_ethnicity_rate",
         numerator="systolic_bp",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
+    Measure(
+        id="dm_bp_meas_ethnicity_rate",
+        numerator="bp_meas",
         denominator="population",
         group_by=["ethnicity"],
     ),
@@ -234,6 +246,12 @@ measures = [
         id="dm_t1_primary_imd_rate",
         numerator="t1dm_admission_primary",
         denominator="has_t1_diabetes",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="dm_bp_meas_imd_rate",
+        numerator="bp_meas",
+        denominator="population",
         group_by=["imd"],
     ),
     # Primary admission code type 2 DM

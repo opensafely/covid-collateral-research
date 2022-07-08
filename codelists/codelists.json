@@ -191,6 +191,12 @@
       "url": "https://codelists.opensafely.org/codelist/user/hjforbes/diagnoses-eating-disorder/62a78820/",
       "downloaded_at": "2022-03-18 13:14:43.991291Z",
       "sha": "7e6ed67c391b24de8f85adcca66813026596f67d"
+    },
+    "nhsd-primary-care-domain-refsets-bp_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/bp_cod/20200812",
+      "url": "https://codelists.opensafely.org/codelist/nhsd-primary-care-domain-refsets/bp_cod/20200812/",
+      "downloaded_at": "2022-07-07 08:27:09.662769Z",
+      "sha": "6e49b65b40408d38b438cc2481fce122b710c49a"
     }
   }
 }

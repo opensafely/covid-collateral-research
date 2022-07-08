@@ -66,6 +66,11 @@ systolic_bp_codes = codelist_from_csv(
     system="snomed",
     column="code",)
 
+bp_codes = codelist_from_csv(
+    "codelists/nhsd-primary-care-domain-refsets-bp_cod.csv",
+    system="snomed",
+    column="code",)
+
 # ICD codes for hospitalisations and deaths
 # Diabetes outcomes - DM or ketoacidosis
 dm_keto_icd_codes = codelist_from_csv(
