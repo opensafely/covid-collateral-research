@@ -76,8 +76,8 @@
 > 0)01Jan2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
->     angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) tit
-> le("IMD categories", size(small)))
+>     angle(0)) yscale(titlegap(*10)) ytick(0(5000)800000) xmtick(##6) legend(r
+> ow(1) size(small) title("IMD categories", size(small)))
  37. 
 . 
 .     graph export ./output/graphs/line_resp_imd_`this_outcome'_`this_strata'.s
@@ -960,7 +960,7 @@ Sorted by: dateA
 
 end of do-file
 
-. . file open output using "/tmp/tmp.LmtFDmNxlS", write text replace
+. . file open output using "/tmp/tmp.k2zrYRlVKz", write text replace
 
 . . file write output "success" 
 
