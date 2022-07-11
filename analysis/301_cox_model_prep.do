@@ -84,6 +84,8 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
                                     gen end_study = date("30/04/2022", "DMY")
                                     } 
         format %dD/N/CY index_date end_study
+       list index_date in 1/5 
+       list end_study in 1/5
         egen end_date = rowmin(dereg_dateA end_study date_died)
         format %dD/N/CY end_date
 
