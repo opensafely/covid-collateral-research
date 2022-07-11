@@ -18,7 +18,7 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
     drop copd_exacerbation_hospital copd_hospital lrti_hospital copd_any eth ethnicity_sus
 
     * Assume deregistered on 1st of month
-    gen dereg_dateA = date(dereg_date, "YM")
+    gen dereg_dateA = date(dereg_date, "YMD")
     format %dD/N/CY dereg_dateA
     drop dereg_date
 
@@ -88,6 +88,8 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
        list end_study in 1/5
         egen end_date = rowmin(dereg_dateA end_study date_died)
         format %dD/N/CY end_date
+        di "Number where end date is prior to index"
+        count if end_date<index_date
 
     * Reorder ethnicity - white, asian, black, mixed, other
     *re-order ethnicity
