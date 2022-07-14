@@ -38,17 +38,17 @@ study = StudyDefinition(
         died=patients.died_from_any_cause(
             on_or_before="index_date"
         ),
-        stp=patients.registered_practice_as_of(
+        household=patients.household_as_of(
+            "2020-02-01",
+            returning="household_size",
+        ),
+    ),
+    stp=patients.registered_practice_as_of(
             "index_date",
             returning="stp_code",
             return_expectations={
                "category": {"ratios": {"STP1": 0.3, "STP2": 0.2, "STP3": 0.5}},
             },
-        ),
-        household=patients.household_as_of(
-            "2020-02-01",
-            returning="household_size",
-        ),
     ),
     dereg_date=patients.date_deregistered_from_all_supported_practices(
         on_or_after="2020-03-23",

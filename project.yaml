@@ -346,7 +346,15 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_prep.log
 
-# Repeat for each outcome
+  # Check data
+  cox_data_check:
+    run: stata-mp:latest analysis/301_1_variable_check.do
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/variable_check.log
+        
+  # Repeat for each outcome
   cox_models_cvd:
     run: stata-mp:latest analysis/302_cox_models.do "cvd"
     needs: [cox_model_prep]
@@ -489,5 +497,5 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_graphs.log
         graph: output/survival/estimates_*.svg
-       
+      
         
