@@ -171,8 +171,7 @@ actions:
       moderately_sensitive:
         log: logs/graphs_dm.log
         output: output/graphs/line_dm_*.svg
-      highly_sensitive:
-        output: output/collapsed/collapse_measure_dm_*
+    
   # Generate graphs for respiratory outcomes
   graphs_resp:
     run: stata-mp:latest analysis/104_graphs_resp.do 

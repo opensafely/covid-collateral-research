@@ -36,9 +36,9 @@ foreach this_group in cvd mh {
         * Generate line graph
         graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
         format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-        angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+        angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
 
-        graph export ./output/graphs/line_bp_`this_group'_ethnic.svg, as(svg) replace
+        graph export ./output/graphs/line_`this_group'_bp_ethnic.svg, as(svg) replace
     * IMD
     clear 
     import delimited using ./output/measures/`this_group'/measure_systolic_bp_`this_group'_imd_rate.csv, numericcols(4)
@@ -65,12 +65,12 @@ foreach this_group in cvd mh {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
 
-    graph export ./output/graphs/line_bp_`this_group'_imd.svg, as(svg) replace
+    graph export ./output/graphs/line_`this_group'_bp_imd.svg, as(svg) replace
     }
 
-* Hospital admission graphs
+/* Hospital admission graphs
 local groups "mi stroke heart_failure vte"
 forvalues i=1/4 {
     local this_group :word `i' of `groups'
@@ -101,7 +101,7 @@ forvalues i=1/4 {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
 
     graph export ./output/graphs/line_`this_group'_admission_ethnicity.svg, as(svg) replace
     * IMD
@@ -131,7 +131,7 @@ forvalues i=1/4 {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
 
     graph export ./output/graphs/line_`this_group'_admission_imd.svg, as(svg) replace
 
@@ -166,7 +166,7 @@ forvalues i=1/6 {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
 
     graph export ./output/graphs/line_`this_group'_admission_ethnicity.svg, as(svg) replace
     * IMD
@@ -196,12 +196,13 @@ forvalues i=1/6 {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
 
     graph export ./output/graphs/line_`this_group'_admission_imd.svg, as(svg) replace
 
 }
-* Hospital admissions - primary diagnosis
+*/
+* Hospital admissions - primary diagnosis CVD
 local groups "mi stroke heart_failure vte"
 forvalues i=1/4 {
     local this_group :word `i' of `groups'
@@ -232,9 +233,9 @@ forvalues i=1/4 {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small))) 
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small))) 
 
-    graph export ./output/graphs/line_`this_group'_primary_admission_ethnicity.svg, as(svg) replace
+    graph export ./output/graphs/line_cvd_`this_group'_primary_admission_ethnicity.svg, as(svg) replace
     * IMD
     clear 
     import delimited using ./output/measures/cvd/measure_`this_group'_primary_admission_imd_rate.csv, numericcols(4)
@@ -262,9 +263,9 @@ forvalues i=1/4 {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
 
-    graph export ./output/graphs/line_`this_group'_primary_admission_imd.svg, as(svg) replace
+    graph export ./output/graphs/line_cvd_`this_group'_primary_admission_imd.svg, as(svg) replace
 
 }
 /* Mental health measures - 3 monthly rates for primary admissions
@@ -339,7 +340,7 @@ forvalues i=1/6 {
 
 }
 */
-* Emergency admissions - small numbers for eating disorders and ocd so those not included
+/* Emergency admissions - small numbers for eating disorders and ocd so those not included
 local groups "anxiety smi self_harm"
 forvalues i=1/3 {
     local this_group :word `i' of `groups'
@@ -468,3 +469,6 @@ forvalues i=1/2 {
     graph export ./output/graphs/line_resp_imd_`this_outcome'_`this_strata'.svg, as(svg) replace
     }
 }
+*/
+*/
+log close

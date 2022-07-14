@@ -49,7 +49,7 @@ count if sex==""
 count if region==""
 */
 
-* Checking dates survival analysis
+/* Checking dates survival analysis
 foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
     use ./output/prep_survival_`period', clear
     list anx_admit_date in 1/5 if anx_admit_date!=.
@@ -61,6 +61,6 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
 
     gen anx_end = end_date
     replace anx_end = anx_admit_date if anx_admit==1
-}
+}*/
 
 log close

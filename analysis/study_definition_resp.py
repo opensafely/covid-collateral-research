@@ -94,16 +94,16 @@ study = StudyDefinition(
     ),
     copd_exacerbation_nolrti=patients.satisfying(
         """
-        copd_exacerbation_hospital OR 
-        copd_hospital
+        copd_exacerbation_hospital2 OR 
+        copd_hospital2
         """,
-        copd_exacerbation_hospital=patients.admitted_to_hospital(
+        copd_exacerbation_hospital2=patients.admitted_to_hospital(
             with_these_primary_diagnoses=copd_exacerbation_icd_codes,
             between=["index_date", "last_day_of_month(index_date)"],
             returning="binary_flag",
             return_expectations={"incidence": 0.1},
         ),
-        copd_hospital=patients.admitted_to_hospital(
+        copd_hospital2=patients.admitted_to_hospital(
             with_these_primary_diagnoses=copd_icd_codes,
             between=["index_date", "last_day_of_month(index_date)"],
             returning="binary_flag",
