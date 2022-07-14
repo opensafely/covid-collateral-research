@@ -63,12 +63,12 @@ actions:
         cohort: output/measures/mh/input_mh_*.csv
 
   # Check join
-  join_check:
-    run: stata-mp:latest analysis/variable_check.do 
-    needs: [join_cohorts_cvd, join_cohorts_mh, join_cohorts_cvd_2020]
-    outputs: 
-      moderately_sensitive:
-        log: logs/missing_check.log
+  #join_check:
+   # run: stata-mp:latest analysis/variable_check.do 
+    #needs: [join_cohorts_cvd, join_cohorts_mh, join_cohorts_cvd_2020]
+    #outputs: 
+    #  moderately_sensitive:
+    #    log: logs/missing_check.log
   # Generates study population for diabetes outcomes
   generate_study_population_dm:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_dm --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures/dm --output-format=csv 
