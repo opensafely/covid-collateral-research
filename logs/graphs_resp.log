@@ -43,8 +43,8 @@
 > 0)01Jan2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
->     angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) tit
-> le("Ethnic categories", size(small)))
+>     angle(0)) yscale(r(0) titlegap(*10)) ytick(0(1000)8000) xmtick(##6) legen
+> d(row(1) size(small) title("Ethnic categories", size(small)))
  21. 
 . 
 .     graph export ./output/graphs/line_resp_ethnic_`this_outcome'_`this_strata
@@ -76,8 +76,8 @@
 > 0)01Jan2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
->     angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) tit
-> le("IMD categories", size(small)))
+>     angle(0)) yscale(titlegap(*10)) ytick(0(1000)8000) xmtick(##6) legend(row
+> (1) size(small) title("IMD categories", size(small)))
  37. 
 . 
 .     graph export ./output/graphs/line_resp_imd_`this_outcome'_`this_strata'.s
@@ -603,7 +603,7 @@ Sorted by: dateA
 (file ./output/graphs/line_resp_ethnic_copd_monitoring.svg written in SVG forma
 > t)
 (5 vars, 282 obs)
-(7 missing values generated)
+(4 missing values generated)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -811,7 +811,7 @@ Sorted by: dateA
 (file ./output/graphs/line_resp_ethnic_copd_exacerbation.svg written in SVG for
 > mat)
 (5 vars, 282 obs)
-(7 missing values generated)
+(4 missing values generated)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -960,7 +960,7 @@ Sorted by: dateA
 
 end of do-file
 
-. . file open output using "/tmp/tmp.LmtFDmNxlS", write text replace
+. . file open output using "/tmp/tmp.y01rVK8dPR", write text replace
 
 . . file write output "success" 
 
