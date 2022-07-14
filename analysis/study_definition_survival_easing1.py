@@ -138,7 +138,7 @@ study = StudyDefinition(
     # Hospitalisation for COPD exacerbation
     # Hospital admission - COPD exacerbation      
     copd_exacerbation_hospital=patients.admitted_to_hospital(
-        with_these_diagnoses=copd_exacerbation_icd_codes,
+        with_these_primary_diagnoses=copd_exacerbation_icd_codes,
         between=["index_date", end_date],
         returning="date_admitted",
         find_first_match_in_period=True,
@@ -170,9 +170,8 @@ study = StudyDefinition(
         return_expectations={"date": {"earliest": "2018-03-01"}},
         ),
     
+    #Only include primary reason as COPD or COPD exacerbation
     copd_hospitalisation_date=patients.minimum_of(
-        "copd_any", 
-        "lrti_hospital", 
         "copd_hospital", 
         "copd_exacerbation_hospital"),
     

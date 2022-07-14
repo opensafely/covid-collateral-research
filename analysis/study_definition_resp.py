@@ -51,14 +51,14 @@ study = StudyDefinition(
     # Clinical monitoring - COPD review in the last 12 months
     copd_review=patients.with_these_clinical_events(
         codelist=copd_review_codes,
-        between=["index_date - 12 months", "index_date"],
+        between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
     # Clinical monitoring - asthma review in the last 12 months
     asthma_review=patients.with_these_clinical_events(
         codelist=asthma_review_codes,
-        between=["index_date - 12 months", "index_date"],
+        between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
@@ -68,7 +68,7 @@ study = StudyDefinition(
         copd_hospital OR 
         (lrti_hospital AND copd_any)""",
         copd_exacerbation_hospital=patients.admitted_to_hospital(
-            with_these_diagnoses=copd_exacerbation_icd_codes,
+            with_these_primary_diagnoses=copd_exacerbation_icd_codes,
             between=["index_date", "last_day_of_month(index_date)"],
             returning="binary_flag",
             return_expectations={"incidence": 0.1},
@@ -91,6 +91,24 @@ study = StudyDefinition(
             returning="binary_flag",
             return_expectations={"incidence": 0.1},
         ),
+    ),
+    copd_exacerbation_nolrti=patients.satisfying(
+        """
+        copd_exacerbation_hospital OR 
+        copd_hospital
+        """,
+        copd_exacerbation_hospital=patients.admitted_to_hospital(
+            with_these_primary_diagnoses=copd_exacerbation_icd_codes,
+            between=["index_date", "last_day_of_month(index_date)"],
+            returning="binary_flag",
+            return_expectations={"incidence": 0.1},
+        ),
+        copd_hospital=patients.admitted_to_hospital(
+            with_these_primary_diagnoses=copd_icd_codes,
+            between=["index_date", "last_day_of_month(index_date)"],
+            returning="binary_flag",
+            return_expectations={"incidence": 0.1},
+            ),
     ),
     asthma_exacerbation=patients.admitted_to_hospital(
         with_these_primary_diagnoses=asthma_exacerbation_icd_codes,
@@ -165,6 +183,19 @@ measures = [
     Measure(
         id="copd_exacerbation_imd_rate",
         numerator="copd_exacerbation",
+        denominator="has_copd",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="copd_exac_nolrti_ethnicity_rate",
+        numerator="copd_exacerbation_nolrti",
+        denominator="has_copd",
+        group_by=["ethnicity"],
+    ),
+    # by IMD
+    Measure(
+        id="copd_exac_nolrti_imd_rate",
+        numerator="copd_exacerbation_nolrti",
         denominator="has_copd",
         group_by=["imd"],
     ),

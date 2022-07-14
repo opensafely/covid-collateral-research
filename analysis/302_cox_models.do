@@ -15,8 +15,8 @@ cap mkdir ./output/tables
 
 * open file to write results to
 file open tablecontent using ./output/tables/`outcome'_cox_models.txt, write text replace
-file write tablecontent ("Period") _tab ("Denominator") _tab ("Events") _tab ("Total person-weeks") _tab ("Rate per 1000") _tab ("Crude HR") _tab _tab ("Age/Sex Adjusted") _tab _tab ("Fully Adjusted") _tab _tab  _n
-file write tablecontent _tab _tab _tab _tab _tab _tab _tab   ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab _tab  _n
+file write tablecontent ("Period") _tab ("Ethnic group") _tab ("Denominator") _tab ("Events") _tab ("Total person-weeks") _tab ("Rate per 1000") _tab ("Crude HR") _tab _tab ("Age/Sex Adjusted") _tab _tab ("Fully Adjusted") _tab _tab  _n
+file write tablecontent _tab _tab _tab _tab _tab _tab   ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab _tab  _n
 
 foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
 use ./output/prep_survival_`period', clear
@@ -78,7 +78,7 @@ use ./output/prep_survival_`period', clear
         bysort eth5: egen total_follow_up = total(_t)
         qui su total_follow_up if eth5 == 1
         local person_week = r(mean)/7
-        local rate = 1000*(`event'/`person_week')
+        local rate = 100000*(`event'/`person_week')
         if `event'>10 & `event'!=. {
             file write tablecontent  ("`period'") _tab ("`lab1'") _tab (`denominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _tab
             file write tablecontent ("1.00") _tab _tab ("1.00") _tab _tab ("1.00") _n
@@ -95,7 +95,7 @@ use ./output/prep_survival_`period', clear
             local event = r(N)
             qui su total_follow_up if eth5 == `eth'
             local person_week = r(mean)/7
-            local rate = 1000*(`event'/`person_week')
+            local rate = 100000*(`event'/`person_week')
             if `event'>10 & `event'!=. {
                 file write tablecontent ("`period'") _tab ("`lab`eth''") _tab (`denominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _tab  
                 cap estimates use "./output/tempdata/crude_`outcome'_eth" 
