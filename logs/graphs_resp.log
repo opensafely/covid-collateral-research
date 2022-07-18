@@ -43,8 +43,8 @@
 > 0)01Jan2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
->     angle(0)) yscale(r(0) titlegap(*10)) ytick(0(1000)8000) xmtick(##6) legen
-> d(row(1) size(small) title("Ethnic categories", size(small)))
+>     angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small
+> ) title("Ethnic categories", size(small)))
  21. 
 . 
 .     graph export ./output/graphs/line_resp_ethnic_`this_outcome'_`this_strata
@@ -76,8 +76,8 @@
 > 0)01Jan2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
->     angle(0)) yscale(titlegap(*10)) ytick(0(1000)8000) xmtick(##6) legend(row
-> (1) size(small) title("IMD categories", size(small)))
+>     angle(0)) yscale(range(0) titlegap(*10)) xmtick(##6) legend(row(1) size(s
+> mall) title("IMD categories", size(small)))
  37. 
 . 
 .     graph export ./output/graphs/line_resp_imd_`this_outcome'_`this_strata'.s
@@ -603,7 +603,6 @@ Sorted by: dateA
 (file ./output/graphs/line_resp_ethnic_copd_monitoring.svg written in SVG forma
 > t)
 (5 vars, 282 obs)
-(4 missing values generated)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -682,27 +681,27 @@ variable name   type    format     label      variable label
 dateA           float   %dD/M/Y               
 copd_review0    byte    %8.0g                 0 copd_review
 has_copd0       byte    %8.0g                 0 has_copd
-value0          float   %8.0g                 0 value
+value0          float   %9.0g                 0 value
 rate0           float   %9.0g                 0 rate
 copd_review1    byte    %8.0g                 1 copd_review
 has_copd1       byte    %8.0g                 1 has_copd
-value1          float   %8.0g                 1 value
+value1          float   %9.0g                 1 value
 rate1           float   %9.0g                 1 rate
 copd_review2    byte    %8.0g                 2 copd_review
 has_copd2       byte    %8.0g                 2 has_copd
-value2          float   %8.0g                 2 value
+value2          float   %9.0g                 2 value
 rate2           float   %9.0g                 2 rate
 copd_review3    byte    %8.0g                 3 copd_review
 has_copd3       byte    %8.0g                 3 has_copd
-value3          float   %8.0g                 3 value
+value3          float   %9.0g                 3 value
 rate3           float   %9.0g                 3 rate
 copd_review4    byte    %8.0g                 4 copd_review
 has_copd4       byte    %8.0g                 4 has_copd
-value4          float   %8.0g                 4 value
+value4          float   %9.0g                 4 value
 rate4           float   %9.0g                 4 rate
 copd_review5    byte    %8.0g                 5 copd_review
 has_copd5       byte    %8.0g                 5 has_copd
-value5          float   %8.0g                 5 value
+value5          float   %9.0g                 5 value
 rate5           float   %9.0g                 5 rate
 -------------------------------------------------------------------------------
 Sorted by: dateA
@@ -811,7 +810,6 @@ Sorted by: dateA
 (file ./output/graphs/line_resp_ethnic_copd_exacerbation.svg written in SVG for
 > mat)
 (5 vars, 282 obs)
-(4 missing values generated)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -890,27 +888,27 @@ variable name   type    format     label      variable label
 dateA           float   %dD/M/Y               
 copd_exacerba~0 byte    %8.0g                 0 copd_exacerbation
 has_copd0       byte    %8.0g                 0 has_copd
-value0          float   %8.0g                 0 value
+value0          float   %9.0g                 0 value
 rate0           float   %9.0g                 0 rate
 copd_exacerba~1 byte    %8.0g                 1 copd_exacerbation
 has_copd1       byte    %8.0g                 1 has_copd
-value1          float   %8.0g                 1 value
+value1          float   %9.0g                 1 value
 rate1           float   %9.0g                 1 rate
 copd_exacerba~2 byte    %8.0g                 2 copd_exacerbation
 has_copd2       byte    %8.0g                 2 has_copd
-value2          float   %8.0g                 2 value
+value2          float   %9.0g                 2 value
 rate2           float   %9.0g                 2 rate
 copd_exacerba~3 byte    %8.0g                 3 copd_exacerbation
 has_copd3       byte    %8.0g                 3 has_copd
-value3          float   %8.0g                 3 value
+value3          float   %9.0g                 3 value
 rate3           float   %9.0g                 3 rate
 copd_exacerba~4 byte    %8.0g                 4 copd_exacerbation
 has_copd4       byte    %8.0g                 4 has_copd
-value4          float   %8.0g                 4 value
+value4          float   %9.0g                 4 value
 rate4           float   %9.0g                 4 rate
 copd_exacerba~5 byte    %8.0g                 5 copd_exacerbation
 has_copd5       byte    %8.0g                 5 has_copd
-value5          float   %8.0g                 5 value
+value5          float   %9.0g                 5 value
 rate5           float   %9.0g                 5 rate
 -------------------------------------------------------------------------------
 Sorted by: dateA
@@ -960,7 +958,7 @@ Sorted by: dateA
 
 end of do-file
 
-. . file open output using "/tmp/tmp.y01rVK8dPR", write text replace
+. . file open output using "/tmp/tmp.nmybftHIWw", write text replace
 
 . . file write output "success" 
 

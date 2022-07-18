@@ -53,10 +53,18 @@ study = StudyDefinition(
             },
         ),
     ),
+    has_msoa=patients.satisfying(
+        "NOT (msoa = '')",
+        msoa=patients.address_as_of(
+         "index_date",
+         returning="msoa",
+        ),
+        return_expectations={"incidence": 0.95}
+    ),
     imd=patients.categorised_as(
         {
         "0": "DEFAULT",
-        "1": """index_of_multiple_deprivation >=0 AND index_of_multiple_deprivation < 32844*1/5""",
+        "1": """index_of_multiple_deprivation >=0 AND index_of_multiple_deprivation < 32844*1/5 AND has_msoa""",
         "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
         "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
         "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",

@@ -63,12 +63,12 @@ actions:
         cohort: output/measures/mh/input_mh_*.csv
 
   # Check join
-  join_check:
-    run: stata-mp:latest analysis/variable_check.do 
-    needs: [join_cohorts_cvd, join_cohorts_mh, join_cohorts_cvd_2020]
-    outputs: 
-      moderately_sensitive:
-        log: logs/missing_check.log
+  #join_check:
+   # run: stata-mp:latest analysis/variable_check.do 
+    #needs: [join_cohorts_cvd, join_cohorts_mh, join_cohorts_cvd_2020]
+    #outputs: 
+    #  moderately_sensitive:
+    #    log: logs/missing_check.log
   # Generates study population for diabetes outcomes
   generate_study_population_dm:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_dm --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures/dm --output-format=csv 
@@ -171,8 +171,7 @@ actions:
       moderately_sensitive:
         log: logs/graphs_dm.log
         output: output/graphs/line_dm_*.svg
-      highly_sensitive:
-        output: output/collapsed/collapse_measure_dm_*
+    
   # Generate graphs for respiratory outcomes
   graphs_resp:
     run: stata-mp:latest analysis/104_graphs_resp.do 
@@ -347,7 +346,15 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_prep.log
 
-# Repeat for each outcome
+  # Check data
+  cox_data_check:
+    run: stata-mp:latest analysis/301_1_variable_check.do
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/variable_check.log
+        
+  # Repeat for each outcome
   cox_models_cvd:
     run: stata-mp:latest analysis/302_cox_models.do "cvd"
     needs: [cox_model_prep]
@@ -490,5 +497,5 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_graphs.log
         graph: output/survival/estimates_*.svg
-       
+      
         

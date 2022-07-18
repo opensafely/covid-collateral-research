@@ -1,5 +1,22 @@
+* Sense checking
 * Checking missingness for static variables
-cap log using ./logs/missing_check.log, replace
+cap log using ./logs/variable_check.log, replace
+foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
+use ./output/prep_survival_`period', clear
+di "`period'""
+* Display missing STP
+di "Missing STP"
+count if stp==""
+* Check variables
+sum age
+* Check all those with IMD has hsoa
+tab has_msoa imd
+* Check comorbidities
+foreach var in has_t1_diabetes has_t2_diabetes cvd_subgroup has_asthma has_copd resp_subgroup mh_subgroup {
+    tab `var', m
+    }
+}
+
 /* Check files from 2018
 import delimited "./output/measures/cvd/input_2018-03-01.csv", clear
 misstable summarize imd 
@@ -49,7 +66,7 @@ count if sex==""
 count if region==""
 */
 
-* Checking dates survival analysis
+/* Checking dates survival analysis
 foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
     use ./output/prep_survival_`period', clear
     list anx_admit_date in 1/5 if anx_admit_date!=.
@@ -61,6 +78,6 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
 
     gen anx_end = end_date
     replace anx_end = anx_admit_date if anx_admit==1
-
+}*/
 
 log close

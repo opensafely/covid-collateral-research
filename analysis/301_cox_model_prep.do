@@ -12,7 +12,7 @@ cap log using ./logs/cox_model_prep.log, replace
 
 * Prepare datasets
 foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
-    import delimited using ./output/survival/input_survival_`period'.csv, clear stringcols(3/18 36 37 38 39)
+    import delimited using ./output/survival/input_survival_`period'.csv, clear stringcols(3/18 38 39 40 41)
     * First preparing dataset
     * Drop variables that make up COPD hospitalisation as not required
     drop copd_exacerbation_hospital copd_hospital lrti_hospital copd_any eth ethnicity_sus

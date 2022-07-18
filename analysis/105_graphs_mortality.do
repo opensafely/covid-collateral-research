@@ -34,7 +34,7 @@ forvalues i=1/11 {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Feb2019(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
 
     graph export "./output/graphs/line_mortality_`b'_ethnic.svg", as(svg) replace
     * IMD
@@ -60,7 +60,7 @@ forvalues i=1/11 {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Feb2019(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
     * save graph
     graph export "./output/graphs/line_mortality_`b'_imd.svg", as(svg) replace
 }

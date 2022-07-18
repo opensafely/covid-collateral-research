@@ -56,14 +56,20 @@ study = StudyDefinition(
     # Clinical monitoring - HbA1c in the last 3 months
     hba1c=patients.with_these_clinical_events(
         codelist=hba1c_codes,
-        between=["index_date - 3 months", "index_date"],
+        between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
     # Clinical monitoring - blood pressure measured in last year
     systolic_bp=patients.with_these_clinical_events(
         codelist=systolic_bp_codes,
-        between=["index_date - 12 months", "index_date"],
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+        ),
+    bp_meas=patients.with_these_clinical_events(
+        codelist=bp_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
@@ -151,6 +157,12 @@ measures = [
         denominator="population",
         group_by=["ethnicity"],
     ),
+    Measure(
+        id="dm_bp_meas_ethnicity_rate",
+        numerator="bp_meas",
+        denominator="population",
+        group_by=["ethnicity"],
+    ),
     # Primary admission code type 1 DM
     Measure(
         id="dm_t1_primary_ethnicity_rate",
@@ -234,6 +246,12 @@ measures = [
         id="dm_t1_primary_imd_rate",
         numerator="t1dm_admission_primary",
         denominator="has_t1_diabetes",
+        group_by=["imd"],
+    ),
+    Measure(
+        id="dm_bp_meas_imd_rate",
+        numerator="bp_meas",
+        denominator="population",
         group_by=["imd"],
     ),
     # Primary admission code type 2 DM

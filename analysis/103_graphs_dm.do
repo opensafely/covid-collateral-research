@@ -10,7 +10,7 @@ cap mkdir ./output/collapsed
 cap mkdir ./output/graphs
 
 * Generates graphs for clinical monitoring measures
-foreach v in hba1c systolic_bp {
+foreach v in hba1c systolic_bp bp_meas {
     * Ethnicity
     clear 
     import delimited using ./output/measures/dm/measure_dm_`v'_ethnicity_rate.csv, numericcols(4)
@@ -34,11 +34,11 @@ foreach v in hba1c systolic_bp {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
  
 
     graph export ./output/graphs/line_dm_ethnic_`v'.svg, as(svg) replace
-    * IMD
+    /* IMD
     clear 
     import delimited using ./output/measures/dm/measure_dm_`v'_imd_rate.csv, numericcols(4)
     * Generate rate per 100,000
@@ -65,9 +65,9 @@ foreach v in hba1c systolic_bp {
 
 
     graph export ./output/graphs/line_dm_imd_`v'.svg, as(svg) replace
-
+*/
 }
-* Generates graphs for DM hospital admissions
+/* Generates graphs for DM hospital admissions
 foreach v in primary any /*emergency*/ {
     * Ethnicity - Type 1 DM
     clear 

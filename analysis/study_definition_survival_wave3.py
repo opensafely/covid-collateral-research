@@ -37,17 +37,17 @@ study = StudyDefinition(
         died=patients.died_from_any_cause(
             on_or_before="index_date"
         ),
-        stp=patients.registered_practice_as_of(
+        household=patients.household_as_of(
+            "2020-02-01",
+            returning="household_size",
+        ),
+    ),
+    stp=patients.registered_practice_as_of(
             "index_date",
             returning="stp_code",
             return_expectations={
                "category": {"ratios": {"STP1": 0.3, "STP2": 0.2, "STP3": 0.5}},
             },
-        ),
-        household=patients.household_as_of(
-            "2020-02-01",
-            returning="household_size",
-        ),
     ),
     dereg_date=patients.date_deregistered_from_all_supported_practices(
         on_or_after="index_date",
@@ -137,7 +137,7 @@ study = StudyDefinition(
     # Hospitalisation for COPD exacerbation
     # Hospital admission - COPD exacerbation      
     copd_exacerbation_hospital=patients.admitted_to_hospital(
-        with_these_diagnoses=copd_exacerbation_icd_codes,
+        with_these_primary_diagnoses=copd_exacerbation_icd_codes,
         between=["index_date", end_date],
         returning="date_admitted",
         find_first_match_in_period=True,
@@ -169,9 +169,8 @@ study = StudyDefinition(
         return_expectations={"date": {"earliest": "2018-03-01"}},
         ),
     
+   #Only include primary reason as COPD or COPD exacerbation
     copd_hospitalisation_date=patients.minimum_of(
-        "copd_any", 
-        "lrti_hospital", 
         "copd_hospital", 
         "copd_exacerbation_hospital"),
     
