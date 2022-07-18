@@ -4,8 +4,8 @@
 . * Diabetes outcomes
 . * Clinical monitoring: hba1c and BP measurement, hospital admissions: t1, t2 
 > & keto both primary and any code
-. local a "hba1c systolic_bp t1_primary t2_primary keto_primary t1_any t2_any k
-> eto_any"
+. local a "hba1c bp_meas t1_primary t2_primary keto_primary t1_any t2_any keto_
+> any"
 
 . forvalues i=1/8 {
   2.     local c: word `i' of `a' 
@@ -87,25 +87,22 @@
        panel variable:  ethnicity (strongly balanced)
         time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
-(note: file ./output/time_series/dm_kd_systolic_bp_ethnicity.svg not found)
-(file ./output/time_series/dm_kd_systolic_bp_ethnicity.svg written in SVG forma
-> t)
-(note: file ./output/time_series/dm_ac_systolic_bp_ethnicity.svg not found)
-(file ./output/time_series/dm_ac_systolic_bp_ethnicity.svg written in SVG forma
-> t)
-(note: file ./output/time_series/dm_pac_systolic_bp_ethnicity.svg not found)
-(file ./output/time_series/dm_pac_systolic_bp_ethnicity.svg written in SVG form
-> at)
+(note: file ./output/time_series/dm_kd_bp_meas_ethnicity.svg not found)
+(file ./output/time_series/dm_kd_bp_meas_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_bp_meas_ethnicity.svg not found)
+(file ./output/time_series/dm_ac_bp_meas_ethnicity.svg written in SVG format)
+(note: file ./output/time_series/dm_pac_bp_meas_ethnicity.svg not found)
+(file ./output/time_series/dm_pac_bp_meas_ethnicity.svg written in SVG format)
 (5 vars, 282 obs)
        panel variable:  imd (strongly balanced)
         time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
-(note: file ./output/time_series/dm_kd_systolic_bp_imd.svg not found)
-(file ./output/time_series/dm_kd_systolic_bp_imd.svg written in SVG format)
-(note: file ./output/time_series/dm_ac_systolic_bp_imd.svg not found)
-(file ./output/time_series/dm_ac_systolic_bp_imd.svg written in SVG format)
-(note: file ./output/time_series/dm_pac_systolic_bp_imd.svg not found)
-(file ./output/time_series/dm_pac_systolic_bp_imd.svg written in SVG format)
+(note: file ./output/time_series/dm_kd_bp_meas_imd.svg not found)
+(file ./output/time_series/dm_kd_bp_meas_imd.svg written in SVG format)
+(note: file ./output/time_series/dm_ac_bp_meas_imd.svg not found)
+(file ./output/time_series/dm_ac_bp_meas_imd.svg written in SVG format)
+(note: file ./output/time_series/dm_pac_bp_meas_imd.svg not found)
+(file ./output/time_series/dm_pac_bp_meas_imd.svg written in SVG format)
 (5 vars, 235 obs)
        panel variable:  ethnicity (strongly balanced)
         time variable:  month, 2018m3 to 2022m1
@@ -335,5 +332,5 @@
       name:  <unnamed>
        log:  /workspace/logs/model_checks_dm.log
   log type:  text
- closed on:   6 Jul 2022, 09:53:40
+ closed on:  18 Jul 2022, 10:12:44
 -------------------------------------------------------------------------------

@@ -6,9 +6,9 @@
 . * Clinical monitoring: BP measurement
 . * Hospital admissions: any code and primary code for MI, stroke, heart failur
 > e and vte
-. local a "systolic_bp_cvd mi_admission stroke_admission heart_failure_admissio
-> n vte_admission mi_primary_admission stroke_primary_admission heart_failure_p
-> rimary_admission vte_primary_admission"
+. local a "bp_meas_cvd mi_admission stroke_admission heart_failure_admission vt
+> e_admission mi_primary_admission stroke_primary_admission heart_failure_prima
+> ry_admission vte_primary_admission"
 
 . local z "bp_cvd mi_admit stroke_admit hf_admit vte_admit mi_pri stroke_pri hf
 > _pri vte_pri"
@@ -67,51 +67,47 @@
  38.                 }
  39.         }
 (5 vars, 282 obs)
-(88 missing values generated)
+(85 missing values generated)
        panel variable:  ethnicity (weakly balanced)
         time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
-(note: time series has 12 gaps)
+(note: time series has 10 gaps)
 (note: time series has 10 gaps)
 (note: time series has 9 gaps)
-(note: time series has 7 gaps)
-(note: time series has 10 gaps)
 (note: time series has 12 gaps)
+(note: time series has 9 gaps)
+(note: time series has 10 gaps)
 (note: time series has 10 gaps)
 (note: time series has 9 gaps)
-(note: time series has 7 gaps)
-(note: time series has 10 gaps)
-(note: file ./output/time_series/cvd_kd_ethnicity_systolic_bp_cvd.svg not found
-> )
-(file ./output/time_series/cvd_kd_ethnicity_systolic_bp_cvd.svg written in SVG 
-> format)
-(note: file ./output/time_series/cvd_ac_ethnicity_systolic_bp_cvd.svg not found
-> )
-(file ./output/time_series/cvd_ac_ethnicity_systolic_bp_cvd.svg written in SVG 
-> format)
+(note: time series has 12 gaps)
+(note: time series has 9 gaps)
+(note: file ./output/time_series/cvd_kd_ethnicity_bp_meas_cvd.svg not found)
+(file ./output/time_series/cvd_kd_ethnicity_bp_meas_cvd.svg written in SVG form
+> at)
+(note: file ./output/time_series/cvd_ac_ethnicity_bp_meas_cvd.svg not found)
+(file ./output/time_series/cvd_ac_ethnicity_bp_meas_cvd.svg written in SVG form
+> at)
 (note: file ./output/time_series/cvd_pac_ethnicity_bp_cvd.svg not found)
 (file ./output/time_series/cvd_pac_ethnicity_bp_cvd.svg written in SVG format)
 (5 vars, 329 obs)
-(132 missing values generated)
+(124 missing values generated)
        panel variable:  imd (weakly balanced)
         time variable:  month, 2018m3 to 2022m1
                 delta:  1 month
+(note: time series has 12 gaps)
 (note: time series has 11 gaps)
-(note: time series has 15 gaps)
+(note: time series has 12 gaps)
+(note: time series has 10 gaps)
+(note: time series has 9 gaps)
+(note: time series has 12 gaps)
 (note: time series has 11 gaps)
-(note: time series has 11 gaps)
-(note: time series has 11 gaps)
-(note: time series has 11 gaps)
-(note: time series has 15 gaps)
-(note: time series has 11 gaps)
-(note: time series has 11 gaps)
-(note: time series has 11 gaps)
-(note: file ./output/time_series/cvd_kd_imd_systolic_bp_cvd.svg not found)
-(file ./output/time_series/cvd_kd_imd_systolic_bp_cvd.svg written in SVG format
-> )
-(note: file ./output/time_series/cvd_ac_imd_systolic_bp_cvd.svg not found)
-(file ./output/time_series/cvd_ac_imd_systolic_bp_cvd.svg written in SVG format
-> )
+(note: time series has 12 gaps)
+(note: time series has 10 gaps)
+(note: time series has 9 gaps)
+(note: file ./output/time_series/cvd_kd_imd_bp_meas_cvd.svg not found)
+(file ./output/time_series/cvd_kd_imd_bp_meas_cvd.svg written in SVG format)
+(note: file ./output/time_series/cvd_ac_imd_bp_meas_cvd.svg not found)
+(file ./output/time_series/cvd_ac_imd_bp_meas_cvd.svg written in SVG format)
 (note: file ./output/time_series/cvd_pac_imd_bp_cvd.svg not found)
 (file ./output/time_series/cvd_pac_imd_bp_cvd.svg written in SVG format)
 (5 vars, 282 obs)
@@ -332,5 +328,5 @@
       name:  <unnamed>
        log:  /workspace/logs/model_checks_cvd.log
   log type:  text
- closed on:   6 Jul 2022, 10:52:22
+ closed on:  18 Jul 2022, 10:15:53
 -------------------------------------------------------------------------------

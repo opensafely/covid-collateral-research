@@ -11,7 +11,7 @@ cap log using ./logs/model_checks_dm.log, replace
 cap mkdir ./output/time_series
 * Diabetes outcomes
 * Clinical monitoring: hba1c and BP measurement, hospital admissions: t1, t2 & keto both primary and any code
-local a "hba1c systolic_bp t1_primary t2_primary keto_primary t1_any t2_any keto_any"
+local a "hba1c bp_meas t1_primary t2_primary keto_primary t1_any t2_any keto_any"
 forvalues i=1/8 {
     local c: word `i' of `a' 
 	local b "ethnicity imd"

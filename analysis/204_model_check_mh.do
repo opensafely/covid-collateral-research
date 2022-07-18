@@ -14,7 +14,7 @@ cap mkdir ./output/time_series
 * Clinical monitoring: BP measurement
 * Hospital admissions: any code and primary code for depression, anxiety, smi, self harm, eating disorders, OCD
 * Likely to need to update file paths as ethnicity 3-monthly
-local a "systolic_bp_mh depression_admission anxiety_admission smi_admission self_harm_admission eating_dis_admission ocd_admission" 
+local a "bp_meas_mh depression_admission anxiety_admission smi_admission self_harm_admission eating_dis_admission ocd_admission" 
 local z "bp_mh depress_admit anx_admit smi_admit sh_admit eat_dis_admit ocd_admit"
 forvalues i=1/7 {
     local c: word `i' of `a' 

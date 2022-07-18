@@ -19,7 +19,7 @@ actions:
         cohort: output/input_static_2020.csv
   # Generates study population for CV - start date = 2018-03-01
   generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures --output-format=csv
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2018-03-01 to 2022-04-30 by month" --output-dir=output/measures --output-format=csv
     outputs:
       highly_sensitive:
         cohort: output/measures/input_*.csv
@@ -46,7 +46,7 @@ actions:
         cohort: output/measures/cvd/test/input_*.csv
   # Generates study population for mental health outcomes - start date = 2018-03-01
   generate_study_population_mh:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_mh --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures --output-format=csv
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_mh --index-date-range "2018-03-01 to 2022-04-30 by month" --output-dir=output/measures --output-format=csv
     outputs:
       highly_sensitive:
         cohort: output/measures/input_mh_*.csv
@@ -71,21 +71,21 @@ actions:
     #    log: logs/missing_check.log
   # Generates study population for diabetes outcomes
   generate_study_population_dm:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_dm --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures/dm --output-format=csv 
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_dm --index-date-range "2018-03-01 to 2022-04-30 by month" --output-dir=output/measures/dm --output-format=csv 
     outputs:
       highly_sensitive:
         cohort: output/measures/dm/input_dm_*.csv
 
   # Generates study population for respiratory outcomes
   generate_study_population_resp:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_resp --index-date-range "2018-03-01 to 2022-01-31 by month" --output-dir=output/measures/resp --output-format=csv --skip-existing
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_resp --index-date-range "2018-03-01 to 2022-04-30 by month" --output-dir=output/measures/resp --output-format=csv --skip-existing
     outputs:
       highly_sensitive:
         cohort: output/measures/resp/input_resp_*.csv
 
   # Generates study population for mortality
   generate_study_population_mortality:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_mortality --index-date-range "2019-02-01 to 2022-01-31 by month" --output-dir=output/measures/mortality --output-format=csv --skip-existing
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_mortality --index-date-range "2019-02-01 to 2022-04-30 by month" --output-dir=output/measures/mortality --output-format=csv --skip-existing
     outputs:
       highly_sensitive:
         cohort: output/measures/mortality/input_mortality_*.csv

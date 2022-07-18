@@ -12,7 +12,7 @@ cap mkdir ./output/time_series
 * Time series analysis CVD outcomes
 * Clinical monitoring: BP measurement
 * Hospital admissions: any code and primary code for MI, stroke, heart failure and vte
-local a "systolic_bp_mh depression_admission anxiety_admission smi_admission self_harm_admission eating_dis_admission ocd_admission" 
+local a "bp_meas_mh depression_admission anxiety_admission smi_admission self_harm_admission eating_dis_admission ocd_admission" 
 forvalues i=1/7 {
     local c: word `i' of `a' 
 	local b "ethnicity imd"

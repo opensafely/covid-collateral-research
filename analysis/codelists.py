@@ -3,10 +3,10 @@ from cohortextractor import codelist_from_csv, codelist
 
 # Ethnicity
 ethnicity_codes = codelist_from_csv(
-    "codelists/opensafely-ethnicity-with-categories-snomed.csv",
+    "codelists/opensafely-ethnicity-snomed-0removed.csv",
     system="snomed",
-    column="Code",
-    category_column="6_group",
+    column="snomedcode",
+    category_column="Grouping_6",
 )
 # Diagnosis codes for GP records - update to SNOMED?
 # Diabetes - type 1 & 2
