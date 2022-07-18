@@ -11,13 +11,12 @@
 > text replace
 (note: file ./output/tables/cvd_cox_models.txt not found)
 
-. file write tablecontent ("Period") _tab ("Ethnic group") _tab ("Denominator")
->  _tab ("Events") _tab ("Total person-weeks") _tab ("Rate per 1000") _tab ("Cr
-> ude HR") _tab _tab ("Age/Sex Adjusted") _tab _tab ("Fully Adjusted") _tab _ta
-> b  _n
-
-. file write tablecontent _tab _tab _tab _tab _tab _tab   ("HR") _tab ("95% CI"
-> ) _tab ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab _tab  _n
+. file write tablecontent ("period") _tab ("ethnic_group") _tab ("denominator")
+>  _tab ("events") _tab ("total_person_wks") _tab ("Rate") _tab ("unadj_hr") _t
+> ab ///
+> ("unadj_ci") _tab ("unadj_lci") _tab ("unadj_uci") _tab ("p_adj_hr") _tab ("p
+> _adj_ci") _tab ("p_adj_lci") _tab ("p_adj_uci") _tab ("f_adj_hr") _tab ("f_ad
+> j_ci") _tab ("f_adj_lci") _tab ("f_adj_uci") _tab  _n
 
 . 
 . foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
@@ -93,7 +92,7 @@
 > enominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _
 > tab
  42.             file write tablecontent ("1.00") _tab _tab ("1.00") _tab _tab 
-> ("1.00") _n
+> _tab _tab ("1.00") _n
  43.             }
  44.         else {
  45.             file write tablecontent ("`period'") _tab ("`lab`eth''") _tab 
@@ -116,19 +115,22 @@
  58.                 cap estimates use "./output/tempdata/crude_`outcome'_eth" 
  59.                 cap lincom `eth'.eth5, eform
  60.                 file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4
-> .2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab 
+> .2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab %4.2f (r(lb)) _tab %4.2f (r(ub))
+>  _tab
  61.                 cap estimates clear
  62.                 cap estimates use "./output/tempdata/model1_`outcome'_eth"
 >  
  63.                 cap lincom `eth'.eth5, eform
  64.                 file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4
-> .2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab 
+> .2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab %4.2f (r(lb)) _tab %4.2f (r(ub))
+>   _tab
  65.                 cap estimates clear
  66.                 cap estimates use "./output/tempdata/model2_`outcome'_eth"
 >  
  67.                 cap lincom `eth'.eth5, eform
  68.                 file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4
-> .2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab _n
+> .2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab %4.2f (r(lb)) _tab %4.2f (r(ub))
+>  _n
  69.                 cap estimates clear
  70.             }
  71.             else {
@@ -1862,5 +1864,5 @@ file ./output/tempdata/surv_model2_cvd_eth.dta saved
       name:  <unnamed>
        log:  /workspace/logs/cox_model_cvd.log
   log type:  text
- closed on:  14 Jul 2022, 15:16:50
+ closed on:  18 Jul 2022, 15:38:44
 -------------------------------------------------------------------------------
