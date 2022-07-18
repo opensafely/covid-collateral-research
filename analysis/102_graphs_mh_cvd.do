@@ -12,7 +12,7 @@ cap mkdir ./output/graphs
 * Generates graphs for clinical monitoring measures
 foreach this_group in cvd mh {
 * Ethnicity
-        import delimited using ./output/measures/`this_group'/measure_systolic_bp_`this_group'_ethnicity_rate.csv, numericcols(4) clear
+        import delimited using ./output/measures/`this_group'/measure_bp_meas_`this_group'_ethnicity_rate.csv, numericcols(4) clear
         * Shouldn't be missing on server but is in dummy data
         count if ethnicity==.
         * Drop missings as not required
@@ -24,7 +24,7 @@ foreach this_group in cvd mh {
         drop date
         format dateA %dD/M/Y
         * reshape dataset so columns with rates for each ethnicity 
-        reshape wide value rate `this_group'_subgroup systolic_bp, i(dateA) j(ethnicity)
+        reshape wide value rate `this_group'_subgroup bp_meas, i(dateA) j(ethnicity)
         describe
         * Labelling ethnicity variables
         label var rate1 "White"
@@ -41,7 +41,7 @@ foreach this_group in cvd mh {
         graph export ./output/graphs/line_`this_group'_bp_ethnic.svg, as(svg) replace
     * IMD
     clear 
-    import delimited using ./output/measures/`this_group'/measure_systolic_bp_`this_group'_imd_rate.csv, numericcols(4)
+    import delimited using ./output/measures/`this_group'/measure_bp_meas_`this_group'_imd_rate.csv, numericcols(4)
     * IMD should not have missings as . on server but could be in dummy data
     count if imd==.
     * Drop missings
@@ -53,7 +53,7 @@ foreach this_group in cvd mh {
     drop date
     format dateA %dD/M/Y
     * reshape dataset so columns with rates for each ethnicity 
-    reshape wide value rate `this_group'_subgroup systolic_bp, i(dateA) j(imd)
+    reshape wide value rate `this_group'_subgroup bp_meas, i(dateA) j(imd)
     describe
     * Labelling ethnicity variables
     label var rate1 "IMD - 1"

@@ -120,7 +120,12 @@ study = StudyDefinition(
         returning="binary_flag",
         return_expectations={"incidence": 0.1},
         ),
-    
+    bp_meas=patients.with_these_clinical_events(
+        codelist=bp_codes,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+        ),
     # Hospital admissions primary diagnosis - CVD
     # MI
     mi_primary_admission=patients.admitted_to_hospital(
@@ -202,14 +207,14 @@ study = StudyDefinition(
 measures = [
     # Clinical monitoring
     Measure(
-        id="systolic_bp_cvd_ethnicity_rate",
-        numerator="systolic_bp",
+        id="bp_meas_cvd_ethnicity_rate",
+        numerator="bp_meas",
         denominator="cvd_subgroup",
         group_by=["ethnicity"],
     ),
     Measure(
-        id="systolic_bp_cvd_imd_rate",
-        numerator="systolic_bp",
+        id="bp_meas_cvd_imd_rate",
+        numerator="bp_meas",
         denominator="cvd_subgroup",
         group_by=["imd"],
     ),

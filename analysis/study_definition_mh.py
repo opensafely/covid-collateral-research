@@ -229,14 +229,14 @@ study = StudyDefinition(
 measures = [
     # Clinical monitoring
     Measure(
-        id="systolic_bp_mh_ethnicity_rate",
-        numerator="systolic_bp",
+        id="bp_meas_mh_ethnicity_rate",
+        numerator="bp_meas",
         denominator="mh_subgroup",
         group_by=["ethnicity"],
     ),
     Measure(
-        id="systolic_bp_mh_imd_rate",
-        numerator="systolic_bp",
+        id="bp_meas_mh_imd_rate",
+        numerator="bp_meas",
         denominator="mh_subgroup",
         group_by=["imd"],
     ),

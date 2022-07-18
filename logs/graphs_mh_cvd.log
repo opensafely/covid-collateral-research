@@ -7,8 +7,8 @@
 . * Generates graphs for clinical monitoring measures
 . foreach this_group in cvd mh {
   2. * Ethnicity
-.         import delimited using ./output/measures/`this_group'/measure_systoli
-> c_bp_`this_group'_ethnicity_rate.csv, numericcols(4) clear
+.         import delimited using ./output/measures/`this_group'/measure_bp_meas
+> _`this_group'_ethnicity_rate.csv, numericcols(4) clear
   3.         * Shouldn't be missing on server but is in dummy data
 .         count if ethnicity==.
   4.         * Drop missings as not required
@@ -20,8 +20,8 @@
   7.         drop date
   8.         format dateA %dD/M/Y
   9.         * reshape dataset so columns with rates for each ethnicity 
-.         reshape wide value rate `this_group'_subgroup systolic_bp, i(dateA) j
-> (ethnicity)
+.         reshape wide value rate `this_group'_subgroup bp_meas, i(dateA) j(eth
+> nicity)
  10.         describe
  11.         * Labelling ethnicity variables
 .         label var rate1 "White"
@@ -42,8 +42,8 @@
 >  replace
  18.     * IMD
 .     clear 
- 19.     import delimited using ./output/measures/`this_group'/measure_systolic
-> _bp_`this_group'_imd_rate.csv, numericcols(4)
+ 19.     import delimited using ./output/measures/`this_group'/measure_bp_meas_
+> `this_group'_imd_rate.csv, numericcols(4)
  20.     * IMD should not have missings as . on server but could be in dummy da
 > ta
 .     count if imd==.
@@ -56,8 +56,7 @@
  24.     drop date
  25.     format dateA %dD/M/Y
  26.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate `this_group'_subgroup systolic_bp, i(dateA) j(imd
-> )
+.     reshape wide value rate `this_group'_subgroup bp_meas, i(dateA) j(imd)
  27.     describe
  28.     * Labelling ethnicity variables
 .     label var rate1 "IMD - 1"
@@ -80,7 +79,7 @@
 (5 vars, 282 obs)
   47
 (47 observations deleted)
-(88 missing values generated)
+(85 missing values generated)
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -93,8 +92,7 @@ xij variables:
                                    rate   ->   rate1 rate2 ... rate5
                            cvd_subgroup   ->   cvd_subgroup1 cvd_subgroup2 ... 
 > cvd_subgroup5
-                            systolic_bp   ->   systolic_bp1 systolic_bp2 ... sy
-> stolic_bp5
+                                bp_meas   ->   bp_meas1 bp_meas2 ... bp_meas5
 -----------------------------------------------------------------------------
 
 Contains data
@@ -105,23 +103,23 @@ Contains data
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
 dateA           float   %dD/M/Y               
-systolic_bp1    byte    %8.0g                 1 systolic_bp
+bp_meas1        byte    %8.0g                 1 bp_meas
 cvd_subgroup1   byte    %8.0g                 1 cvd_subgroup
 value1          float   %8.0g                 1 value
 rate1           float   %9.0g                 1 rate
-systolic_bp2    byte    %8.0g                 2 systolic_bp
+bp_meas2        byte    %8.0g                 2 bp_meas
 cvd_subgroup2   byte    %8.0g                 2 cvd_subgroup
 value2          float   %8.0g                 2 value
 rate2           float   %9.0g                 2 rate
-systolic_bp3    byte    %8.0g                 3 systolic_bp
+bp_meas3        byte    %8.0g                 3 bp_meas
 cvd_subgroup3   byte    %8.0g                 3 cvd_subgroup
 value3          float   %8.0g                 3 value
 rate3           float   %9.0g                 3 rate
-systolic_bp4    byte    %8.0g                 4 systolic_bp
+bp_meas4        byte    %8.0g                 4 bp_meas
 cvd_subgroup4   byte    %8.0g                 4 cvd_subgroup
 value4          float   %8.0g                 4 value
 rate4           float   %9.0g                 4 rate
-systolic_bp5    byte    %8.0g                 5 systolic_bp
+bp_meas5        byte    %8.0g                 5 bp_meas
 cvd_subgroup5   byte    %8.0g                 5 cvd_subgroup
 value5          float   %8.0g                 5 value
 rate5           float   %9.0g                 5 rate
@@ -132,7 +130,7 @@ Sorted by: dateA
 (5 vars, 329 obs)
   47
 (94 observations deleted)
-(99 missing values generated)
+(89 missing values generated)
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -145,8 +143,7 @@ xij variables:
                                    rate   ->   rate1 rate2 ... rate5
                            cvd_subgroup   ->   cvd_subgroup1 cvd_subgroup2 ... 
 > cvd_subgroup5
-                            systolic_bp   ->   systolic_bp1 systolic_bp2 ... sy
-> stolic_bp5
+                                bp_meas   ->   bp_meas1 bp_meas2 ... bp_meas5
 -----------------------------------------------------------------------------
 
 Contains data
@@ -157,23 +154,23 @@ Contains data
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
 dateA           float   %dD/M/Y               
-systolic_bp1    byte    %8.0g                 1 systolic_bp
+bp_meas1        byte    %8.0g                 1 bp_meas
 cvd_subgroup1   byte    %8.0g                 1 cvd_subgroup
 value1          float   %8.0g                 1 value
 rate1           float   %9.0g                 1 rate
-systolic_bp2    byte    %8.0g                 2 systolic_bp
+bp_meas2        byte    %8.0g                 2 bp_meas
 cvd_subgroup2   byte    %8.0g                 2 cvd_subgroup
 value2          float   %8.0g                 2 value
 rate2           float   %9.0g                 2 rate
-systolic_bp3    byte    %8.0g                 3 systolic_bp
+bp_meas3        byte    %8.0g                 3 bp_meas
 cvd_subgroup3   byte    %8.0g                 3 cvd_subgroup
 value3          float   %8.0g                 3 value
 rate3           float   %9.0g                 3 rate
-systolic_bp4    byte    %8.0g                 4 systolic_bp
+bp_meas4        byte    %8.0g                 4 bp_meas
 cvd_subgroup4   byte    %8.0g                 4 cvd_subgroup
 value4          float   %8.0g                 4 value
 rate4           float   %9.0g                 4 rate
-systolic_bp5    byte    %8.0g                 5 systolic_bp
+bp_meas5        byte    %8.0g                 5 bp_meas
 cvd_subgroup5   byte    %8.0g                 5 cvd_subgroup
 value5          float   %8.0g                 5 value
 rate5           float   %9.0g                 5 rate
@@ -184,7 +181,7 @@ Sorted by: dateA
 (5 vars, 282 obs)
   47
 (47 observations deleted)
-(8 missing values generated)
+(1 missing value generated)
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -197,8 +194,7 @@ xij variables:
                                    rate   ->   rate1 rate2 ... rate5
                             mh_subgroup   ->   mh_subgroup1 mh_subgroup2 ... mh
 > _subgroup5
-                            systolic_bp   ->   systolic_bp1 systolic_bp2 ... sy
-> stolic_bp5
+                                bp_meas   ->   bp_meas1 bp_meas2 ... bp_meas5
 -----------------------------------------------------------------------------
 
 Contains data
@@ -209,23 +205,23 @@ Contains data
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
 dateA           float   %dD/M/Y               
-systolic_bp1    byte    %8.0g                 1 systolic_bp
+bp_meas1        byte    %8.0g                 1 bp_meas
 mh_subgroup1    int     %8.0g                 1 mh_subgroup
 value1          float   %8.0g                 1 value
 rate1           float   %9.0g                 1 rate
-systolic_bp2    byte    %8.0g                 2 systolic_bp
+bp_meas2        byte    %8.0g                 2 bp_meas
 mh_subgroup2    int     %8.0g                 2 mh_subgroup
 value2          float   %8.0g                 2 value
 rate2           float   %9.0g                 2 rate
-systolic_bp3    byte    %8.0g                 3 systolic_bp
+bp_meas3        byte    %8.0g                 3 bp_meas
 mh_subgroup3    int     %8.0g                 3 mh_subgroup
 value3          float   %8.0g                 3 value
 rate3           float   %9.0g                 3 rate
-systolic_bp4    byte    %8.0g                 4 systolic_bp
+bp_meas4        byte    %8.0g                 4 bp_meas
 mh_subgroup4    int     %8.0g                 4 mh_subgroup
 value4          float   %8.0g                 4 value
 rate4           float   %9.0g                 4 rate
-systolic_bp5    byte    %8.0g                 5 systolic_bp
+bp_meas5        byte    %8.0g                 5 bp_meas
 mh_subgroup5    int     %8.0g                 5 mh_subgroup
 value5          float   %8.0g                 5 value
 rate5           float   %9.0g                 5 rate
@@ -233,10 +229,10 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/graphs/line_mh_bp_ethnic.svg not found)
 (file ./output/graphs/line_mh_bp_ethnic.svg written in SVG format)
-(5 vars, 328 obs)
+(5 vars, 329 obs)
   47
-(93 observations deleted)
-(8 missing values generated)
+(94 observations deleted)
+(4 missing values generated)
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
@@ -249,8 +245,7 @@ xij variables:
                                    rate   ->   rate1 rate2 ... rate5
                             mh_subgroup   ->   mh_subgroup1 mh_subgroup2 ... mh
 > _subgroup5
-                            systolic_bp   ->   systolic_bp1 systolic_bp2 ... sy
-> stolic_bp5
+                                bp_meas   ->   bp_meas1 bp_meas2 ... bp_meas5
 -----------------------------------------------------------------------------
 
 Contains data
@@ -261,23 +256,23 @@ Contains data
 variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
 dateA           float   %dD/M/Y               
-systolic_bp1    byte    %8.0g                 1 systolic_bp
+bp_meas1        byte    %8.0g                 1 bp_meas
 mh_subgroup1    int     %8.0g                 1 mh_subgroup
 value1          float   %8.0g                 1 value
 rate1           float   %9.0g                 1 rate
-systolic_bp2    byte    %8.0g                 2 systolic_bp
+bp_meas2        byte    %8.0g                 2 bp_meas
 mh_subgroup2    int     %8.0g                 2 mh_subgroup
 value2          float   %8.0g                 2 value
 rate2           float   %9.0g                 2 rate
-systolic_bp3    byte    %8.0g                 3 systolic_bp
+bp_meas3        byte    %8.0g                 3 bp_meas
 mh_subgroup3    int     %8.0g                 3 mh_subgroup
 value3          float   %8.0g                 3 value
 rate3           float   %9.0g                 3 rate
-systolic_bp4    byte    %8.0g                 4 systolic_bp
+bp_meas4        byte    %8.0g                 4 bp_meas
 mh_subgroup4    int     %8.0g                 4 mh_subgroup
 value4          float   %8.0g                 4 value
 rate4           float   %9.0g                 4 rate
-systolic_bp5    byte    %8.0g                 5 systolic_bp
+bp_meas5        byte    %8.0g                 5 bp_meas
 mh_subgroup5    int     %8.0g                 5 mh_subgroup
 value5          float   %8.0g                 5 value
 rate5           float   %9.0g                 5 rate
@@ -1610,5 +1605,5 @@ Sorted by: dateA
       name:  <unnamed>
        log:  /workspace/logs/graphs_mh_cvd.log
   log type:  text
- closed on:  14 Jul 2022, 11:15:22
+ closed on:  18 Jul 2022, 09:38:14
 -------------------------------------------------------------------------------

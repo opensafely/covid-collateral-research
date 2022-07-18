@@ -11,7 +11,7 @@ cap log using ./logs/tsreg_dm.log, replace
 cap mkdir ./output/time_series
 * Time series analysis for t1DM, t2DM & keto by ethnicity & IMD
 * Clinical monitoring measures first as these have not been collapsed
-local a "hba1c systolic_bp t1_primary t2_primary keto_primary t1_any t2_any keto_any"
+local a "hba1c bp_meas t1_primary t2_primary keto_primary t1_any t2_any keto_any"
 forvalues i=1/8 {
     local c: word `i' of `a' 
 	local b "ethnicity imd"

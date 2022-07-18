@@ -1,7 +1,7 @@
 # MI & VTE - ICD codes
 opensafely/cardiovascular-secondary-care/20b63bd4/
 # Ethnicity - SNOMED
-opensafely/ethnicity-with-categories-snomed/5eb3345b/
+opensafely/ethnicity-snomed-0removed/2e641f61/
 # Clinical monitoring
 opensafely/asthma-annual-review-qof/33eeb7da
 opensafely/chronic-obstructive-pulmonary-disease-copd-review-qof/01cfd170
