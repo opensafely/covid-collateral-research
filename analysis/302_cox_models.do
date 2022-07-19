@@ -15,8 +15,8 @@ cap mkdir ./output/tables
 
 * open file to write results to
 file open tablecontent using ./output/tables/`outcome'_cox_models.txt, write text replace
-file write tablecontent ("Period") _tab ("Ethnic group") _tab ("Denominator") _tab ("Events") _tab ("Total person-weeks") _tab ("Rate per 1000") _tab ("Crude HR") _tab _tab ("Age/Sex Adjusted") _tab _tab ("Fully Adjusted") _tab _tab  _n
-file write tablecontent _tab _tab _tab _tab _tab _tab   ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab ("HR") _tab ("95% CI") _tab _tab  _n
+file write tablecontent ("period") _tab ("ethnic_group") _tab ("denominator") _tab ("events") _tab ("total_person_wks") _tab ("Rate") _tab ("unadj_hr") _tab ///
+("unadj_ci") _tab ("unadj_lci") _tab ("unadj_uci") _tab ("p_adj_hr") _tab ("p_adj_ci") _tab ("p_adj_lci") _tab ("p_adj_uci") _tab ("f_adj_hr") _tab ("f_adj_ci") _tab ("f_adj_lci") _tab ("f_adj_uci") _tab  _n
 
 foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
 use ./output/prep_survival_`period', clear
@@ -81,7 +81,7 @@ use ./output/prep_survival_`period', clear
         local rate = 100000*(`event'/`person_week')
         if `event'>10 & `event'!=. {
             file write tablecontent  ("`period'") _tab ("`lab1'") _tab (`denominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _tab
-            file write tablecontent ("1.00") _tab _tab ("1.00") _tab _tab ("1.00") _n
+            file write tablecontent ("1.00") _tab _tab ("1.00") _tab _tab _tab _tab ("1.00") _n
             }
         else {
             file write tablecontent ("`period'") _tab ("`lab`eth''") _tab ("redact") _n
@@ -100,15 +100,15 @@ use ./output/prep_survival_`period', clear
                 file write tablecontent ("`period'") _tab ("`lab`eth''") _tab (`denominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _tab  
                 cap estimates use "./output/tempdata/crude_`outcome'_eth" 
                 cap lincom `eth'.eth5, eform
-                file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab 
+                file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab
                 cap estimates clear
                 cap estimates use "./output/tempdata/model1_`outcome'_eth" 
                 cap lincom `eth'.eth5, eform
-                file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab 
+                file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab %4.2f (r(lb)) _tab %4.2f (r(ub))  _tab
                 cap estimates clear
                 cap estimates use "./output/tempdata/model2_`outcome'_eth" 
                 cap lincom `eth'.eth5, eform
-                file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab _n
+                file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _n
                 cap estimates clear
             }
             else {
