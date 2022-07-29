@@ -39,7 +39,7 @@ forvalues i=1/2 {
     label var rate5 "Other"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(120)01Apr2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
     angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", ///
     size(small))) graphregion(fcolor(white))
@@ -67,7 +67,7 @@ forvalues i=1/2 {
     label var rate5 "IMD - 5"
 
     * Generate line graph
-    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
+    graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(120)01Apr2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
     angle(0)) yscale(range(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) ///
     title("IMD categories", size(small))) graphregion(fcolor(white))

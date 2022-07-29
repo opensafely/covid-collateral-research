@@ -39,8 +39,8 @@
  19.     label var rate5 "Other"
  20. 
 .     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
-> 0)01Jan2022, angle(45) ///
+.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
+> 0)01Apr2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(#5, labsize(small) ///
 >     angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small
@@ -73,12 +73,13 @@
  35.     label var rate5 "IMD - 5"
  36. 
 .     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
-> 0)01Jan2022, angle(45) ///
+.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
+> 0)01Apr2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
-> ylabel(, labsize(small) ///
+> ylabel(#5, labsize(small) ///
 >     angle(0)) yscale(range(0) titlegap(*10)) xmtick(##6) legend(row(1) size(s
-> mall) title("IMD categories", size(small)))
+> mall) ///
+>     title("IMD categories", size(small))) graphregion(fcolor(white))
  37. 
 . 
 .     graph export ./output/graphs/line_resp_imd_`this_outcome'_`this_strata'.s
@@ -983,7 +984,7 @@ Sorted by: dateA
 
 end of do-file
 
-. . file open output using "/tmp/tmp.Li4FUFI6EU", write text replace
+. . file open output using "/tmp/tmp.wvjAUKY0xR", write text replace
 
 . . file write output "success" 
 
