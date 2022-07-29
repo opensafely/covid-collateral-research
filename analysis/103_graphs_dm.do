@@ -62,7 +62,7 @@ foreach v in hba1c systolic_bp bp_meas {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) ///
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) ///
     graphregion(fcolor(white))
 
 
@@ -100,7 +100,7 @@ foreach v in primary any /*emergency*/ {
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
 
 
     graph export ./output/graphs/line_dm_ethnic_t1_`v'.svg, as(svg) replace
