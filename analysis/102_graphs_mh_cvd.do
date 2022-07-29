@@ -35,8 +35,9 @@ foreach this_group in cvd mh {
 
         * Generate line graph
         graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
-        format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-        angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+        format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
+        angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) ///
+        title("Ethnic categories", size(small))) graphregion(fcolor(white))
 
         graph export ./output/graphs/line_`this_group'_bp_ethnic.svg, as(svg) replace
     * IMD
@@ -64,8 +65,9 @@ foreach this_group in cvd mh {
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
-    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) ///
+    title("IMD categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_`this_group'_bp_imd.svg, as(svg) replace
     }
@@ -100,8 +102,9 @@ forvalues i=1/4 {
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
-    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) ///
+    title("Ethnic categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_`this_group'_admission_ethnicity.svg, as(svg) replace
     * IMD
@@ -130,8 +133,9 @@ forvalues i=1/4 {
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
-    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) ///
+    title("IMD categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_`this_group'_admission_imd.svg, as(svg) replace
 
@@ -165,8 +169,9 @@ forvalues i=1/6 {
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
-    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small)))
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) ///
+    title("Ethnic categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_`this_group'_admission_ethnicity.svg, as(svg) replace
     * IMD
@@ -195,8 +200,9 @@ forvalues i=1/6 {
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
-    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small))) 
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) ///
+    title("IMD categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_`this_group'_admission_imd.svg, as(svg) replace
 
@@ -232,8 +238,9 @@ forvalues i=1/4 {
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
-    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("Ethnic categories", size(small))) 
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) ///
+    title("Ethnic categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_cvd_`this_group'_primary_admission_ethnicity.svg, as(svg) replace
     * IMD
@@ -262,8 +269,9 @@ forvalues i=1/4 {
 
     * Generate line graph
     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(180)01Jan2022, angle(45) ///
-    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(, labsize(small) ///
-    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) title("IMD categories", size(small)))
+    format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) ///
+    title("IMD categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_cvd_`this_group'_primary_admission_imd.svg, as(svg) replace
 
