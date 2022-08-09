@@ -21,8 +21,8 @@ file write tablecontent ("period") _tab ("ethnic_group") _tab ("denominator") _t
 ("unadj_ci") _tab ("unadj_lci") _tab ("unadj_uci") _tab ("p_adj_hr") _tab ("p_adj_ci") _tab ("p_adj_lci") _tab ("p_adj_uci") _tab ("f_adj_hr") _tab ("f_adj_ci") _tab ("f_adj_lci") _tab ("f_adj_uci") _tab  _n
 
 foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
-use ./output/prep_survival_`period', clear
-
+    use ./output/prep_survival_`period', clear
+    describe
     * Drop events that occur on index date
     drop if `outcome'_admit_date==index_date
 
@@ -31,7 +31,7 @@ use ./output/prep_survival_`period', clear
     drop if has_t2_diabetes==0 & "`outcome'"=="t2dm"
     drop if diabetes_subgroup==0 & "`outcome'"=="dm_keto"
     drop if has_asthma==0 & "`outcome'"=="asthma"
-    drop if has_copd==1 & "`outcome'"=="copd"
+    drop if has_copd==0 & "`outcome'"=="copd"
 
     * Cox model for each outcome category
     * Generate flags and end dates for each outcome
