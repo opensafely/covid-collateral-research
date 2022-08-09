@@ -14,8 +14,8 @@ cap log using ./logs/cox_model_prep.log, replace
 foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
     import delimited using ./output/survival/input_survival_`period'.csv, clear stringcols(3/18 38 39 40 41)
     * First preparing dataset
-    * Drop variables that make up COPD hospitalisation as not required
-    drop copd_exacerbation_hospital copd_hospital lrti_hospital copd_any eth ethnicity_sus
+    * Drop variables that are not required
+    drop copd_exacerbation_hospital copd_hospital eth ethnicity_sus
 
     * Assume deregistered on 1st of month
     gen dereg_dateA = date(dereg_date, "YMD")
@@ -23,9 +23,9 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
     drop dereg_date
 
     * Format dates
-    local a "mi_primary_admission stroke_primary_admission heart_failure_primary_admission vte_primary_admission t1dm_admission_primary t2dm_admission_primary dm_keto_admission_primary asthma_exacerbation depression_primary_admission anxiety_primary_admission smi_primary_admission cvd_admission_date dm_admission copd_hospitalisation_date mh_admission died_fu" 
-    local b "mi_admit_date stroke_admit_date hf_admit_date vte_admit_date t1dm_admit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_admit_date anx_admit_date smi_admit_date cvd_admit_date dm_admit_date copd_admit_date mh_admit_date date_died" 
-    forvalues i=1/16 {
+    local a "mi_primary_admission stroke_primary_admission heart_failure_primary_admission vte_primary_admission t1dm_admission_primary t2dm_admission_primary dm_keto_admission_primary asthma_exacerbation depression_primary_admission anxiety_primary_admission smi_primary_admission cvd_admission_date dm_admission copd_hospitalisation_date mh_admission died_fu lrti_hospital copd_any" 
+    local b "mi_admit_date stroke_admit_date hf_admit_date vte_admit_date t1dm_admit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_admit_date anx_admit_date smi_admit_date cvd_admit_date dm_admit_date copd_admit_date mh_admit_date date_died lrti_admit_date copd_any_date" 
+    forvalues i=1/18 {
         local c: word `i' of `a'
         local d: word `i' of `b' 
         di "number of missing values"
@@ -34,7 +34,12 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
         format %dD/N/CY `d'
         drop `c'
         }
-   
+    
+    * Update COPD exacerbation date if hospitalised with LRTI primary and COPD any position
+    gen lrti_copd = lrti_admit_date==copd_any_date & copd_any_date!=.
+    tab lrti_copd
+    replace copd_admit_date = lrti_admit_date if lrti_copd==1 & lrti_admit_date<copd_admit_date
+
     if "`period'"=="pre" {
         * Define index date
         gen index_date = date("01/03/2018", "DMY")

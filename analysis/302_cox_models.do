@@ -13,6 +13,8 @@ cap mkdir ./output/graphs
 cap mkdir ./output/tempdata
 cap mkdir ./output/tables
 
+di "`outcome'"
+
 * open file to write results to
 file open tablecontent using ./output/tables/`outcome'_cox_models.txt, write text replace
 file write tablecontent ("period") _tab ("ethnic_group") _tab ("denominator") _tab ("events") _tab ("total_person_wks") _tab ("Rate") _tab ("unadj_hr") _tab ///
@@ -23,6 +25,14 @@ use ./output/prep_survival_`period', clear
 
     * Drop events that occur on index date
     drop if `outcome'_admit_date==index_date
+
+    * Update study population for diabetes and respiratory outcomes
+    drop if has_t1_diabetes==0 & "`outcome'"=="t1dm"
+    drop if has_t2_diabetes==0 & "`outcome'"=="t2dm"
+    drop if diabetes_subgroup==0 & "`outcome'"=="dm_keto"
+    drop if has_asthma==0 & "`outcome'"=="asthma"
+    drop if has_copd==1 & "`outcome'"=="copd"
+
     * Cox model for each outcome category
     * Generate flags and end dates for each outcome
     gen `outcome'_admit=(`outcome'_admit_date!=.)
