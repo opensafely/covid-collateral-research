@@ -13,6 +13,8 @@ cap mkdir ./output/graphs
 cap mkdir ./output/tempdata
 cap mkdir ./output/tables
 
+di "`outcome'"
+
 * open file to write results to
 file open tablecontent using ./output/tables/`outcome'_cox_models.txt, write text replace
 file write tablecontent ("period") _tab ("ethnic_group") _tab ("denominator") _tab ("events") _tab ("total_person_wks") _tab ("Rate") _tab ("unadj_hr") _tab ///
@@ -23,6 +25,14 @@ use ./output/prep_survival_`period', clear
 
     * Drop events that occur on index date
     drop if `outcome'_admit_date==index_date
+
+    * Update study population for diabetes and respiratory outcomes
+    drop if has_t1_diabetes==0 & "`outcome'"=="t1dm"
+    drop if has_t2_diabetes==0 & "`outcome'"=="t2dm"
+    drop if diabetes_subgroup==0 & "`outcome'"=="dm_keto"
+    drop if has_asthma==0 & "`outcome'"=="asthma"
+    drop if has_copd==1 & "`outcome'"=="copd"
+
     * Cox model for each outcome category
     * Generate flags and end dates for each outcome
     gen `outcome'_admit=(`outcome'_admit_date!=.)
@@ -77,10 +87,10 @@ use ./output/prep_survival_`period', clear
         local event = r(N)
         bysort eth5: egen total_follow_up = total(_t)
         qui su total_follow_up if eth5 == 1
-        local person_week = r(mean)/7
-        local rate = 100000*(`event'/`person_week')
+        local person_mth = r(mean)/30
+        local rate = 100000*(`event'/`person_mth')
         if `event'>10 & `event'!=. {
-            file write tablecontent  ("`period'") _tab ("`lab1'") _tab (`denominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _tab
+            file write tablecontent  ("`period'") _tab ("`lab1'") _tab (`denominator') _tab (`event') _tab %10.0f (`person_mth') _tab %3.2f (`rate') _tab
             file write tablecontent ("1.00") _tab _tab ("1.00") _tab _tab _tab _tab ("1.00") _n
             }
         else {
@@ -94,10 +104,10 @@ use ./output/prep_survival_`period', clear
             qui safecount if eth5 == `eth' & `outcome'_admit == 1
             local event = r(N)
             qui su total_follow_up if eth5 == `eth'
-            local person_week = r(mean)/7
-            local rate = 100000*(`event'/`person_week')
+            local person_mth = r(mean)/30
+            local rate = 100000*(`event'/`person_mth')
             if `event'>10 & `event'!=. {
-                file write tablecontent ("`period'") _tab ("`lab`eth''") _tab (`denominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _tab  
+                file write tablecontent ("`period'") _tab ("`lab`eth''") _tab (`denominator') _tab (`event') _tab %10.0f (`person_mth') _tab %3.2f (`rate') _tab  
                 cap estimates use "./output/tempdata/crude_`outcome'_eth" 
                 cap lincom `eth'.eth5, eform
                 file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab

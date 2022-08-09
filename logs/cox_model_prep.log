@@ -5,9 +5,8 @@
   2.     import delimited using ./output/survival/input_survival_`period'.csv, 
 > clear stringcols(3/18 38 39 40 41)
   3.     * First preparing dataset
-.     * Drop variables that make up COPD hospitalisation as not required
-.     drop copd_exacerbation_hospital copd_hospital lrti_hospital copd_any eth 
-> ethnicity_sus
+.     * Drop variables that are not required
+.     drop copd_exacerbation_hospital copd_hospital eth ethnicity_sus
   4. 
 .     * Assume deregistered on 1st of month
 .     gen dereg_dateA = date(dereg_date, "YMD")
@@ -19,12 +18,12 @@
 > ary_admission vte_primary_admission t1dm_admission_primary t2dm_admission_pri
 > mary dm_keto_admission_primary asthma_exacerbation depression_primary_admissi
 > on anxiety_primary_admission smi_primary_admission cvd_admission_date dm_admi
-> ssion copd_hospitalisation_date mh_admission died_fu" 
+> ssion copd_hospitalisation_date mh_admission died_fu lrti_hospital copd_any" 
   8.     local b "mi_admit_date stroke_admit_date hf_admit_date vte_admit_date 
 > t1dm_admit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_
 > admit_date anx_admit_date smi_admit_date cvd_admit_date dm_admit_date copd_ad
-> mit_date mh_admit_date date_died" 
-  9.     forvalues i=1/16 {
+> mit_date mh_admit_date date_died lrti_admit_date copd_any_date" 
+  9.     forvalues i=1/18 {
  10.         local c: word `i' of `a'
  11.         local d: word `i' of `b' 
  12.         di "number of missing values"
@@ -33,73 +32,80 @@
  15.         format %dD/N/CY `d'
  16.         drop `c'
  17.         }
- 18.    
+ 18.     
+.     * Update COPD exacerbation date if hospitalised with LRTI primary and COP
+> D any position
+.     gen lrti_copd = lrti_admit_date==copd_any_date & copd_any_date!=.
+ 19.     tab lrti_copd
+ 20.     replace copd_admit_date = lrti_admit_date if lrti_copd==1 & lrti_admit
+> _date<copd_admit_date
+ 21. 
 .     if "`period'"=="pre" {
- 19.         * Define index date
+ 22.         * Define index date
 .         gen index_date = date("01/03/2018", "DMY")
- 20.         * Define end of follow-up
+ 23.         * Define end of follow-up
 .         gen end_study = date("22/03/2020", "DMY")
- 21.     }
- 22.         else if "`period'"=="pandemic" {
- 23.             * Define index date
+ 24.     }
+ 25.         else if "`period'"=="pandemic" {
+ 26.             * Define index date
 .             gen index_date = date("23/03/2020", "DMY")
- 24.             * Define end of follow-up
+ 27.             * Define end of follow-up
 .             gen end_study = date("30/04/2022", "DMY")
- 25.         }
- 26.            else if "`period'"=="wave1" {
- 27.             * Define index date
+ 28.         }
+ 29.            else if "`period'"=="wave1" {
+ 30.             * Define index date
 .             gen index_date = date("23/03/2020", "DMY")
- 28.             * Define end of follow-up
+ 31.             * Define end of follow-up
 .             gen end_study = date("30/05/2020", "DMY")
- 29.             } 
- 30.                 else if "`period'"=="easing1" {
- 31.                     * Define index date
+ 32.             } 
+ 33.                 else if "`period'"=="easing1" {
+ 34.                     * Define index date
 .                     gen index_date = date("31/05/2020", "DMY")
- 32.                     * Define end of follow-up
+ 35.                     * Define end of follow-up
 .                     gen end_study = date("06/09/2020", "DMY")
- 33.                     } 
- 34.                     else if "`period'"=="wave2" {
- 35.                         * Define index date
+ 36.                     } 
+ 37.                     else if "`period'"=="wave2" {
+ 38.                         * Define index date
 .                         gen index_date = date("07/09/2020", "DMY")
- 36.                         * Define end of follow-up
+ 39.                         * Define end of follow-up
 .                         gen end_study = date("24/04/2021", "DMY")
- 37.                         } 
- 38.                         else if "`period'"=="easing2" {
- 39.                             * Define index date
+ 40.                         } 
+ 41.                         else if "`period'"=="easing2" {
+ 42.                             * Define index date
 .                             gen index_date = date("25/04/2021", "DMY")
- 40.                             * Define end of follow-up
+ 43.                             * Define end of follow-up
 .                             gen end_study = date("27/05/2021", "DMY")
- 41.                             } 
- 42.                             else if "`period'"=="wave3" {
- 43.                                 * Define index date
+ 44.                             } 
+ 45.                             else if "`period'"=="wave3" {
+ 46.                                 * Define index date
 .                                 gen index_date = date("28/05/2021", "DMY")
- 44.                                 * Define end of follow-up
+ 47.                                 * Define end of follow-up
 .                                 gen end_study = date("14/12/2021", "DMY")
- 45.                                 } 
- 46.                                 else if "`period'"=="easing3" {
- 47.                                     * Define index date
+ 48.                                 } 
+ 49.                                 else if "`period'"=="easing3" {
+ 50.                                     * Define index date
 .                                     gen index_date = date("15/12/2021", "DMY"
 > )
- 48.                                     * Define end of follow-up
+ 51.                                     * Define end of follow-up
 .                                     gen end_study = date("30/04/2022", "DMY")
- 49.                                     } 
- 50.         format %dD/N/CY index_date end_study
- 51.        list index_date in 1/5 
- 52.        list end_study in 1/5
- 53.         egen end_date = rowmin(dereg_dateA end_study date_died)
- 54.         format %dD/N/CY end_date
- 55.         di "Number where end date is prior to index"
- 56.         count if end_date<index_date
- 57. 
+ 52.                                     } 
+ 53.         format %dD/N/CY index_date end_study
+ 54.        list index_date in 1/5 
+ 55.        list end_study in 1/5
+ 56.         egen end_date = rowmin(dereg_dateA end_study date_died)
+ 57.         format %dD/N/CY end_date
+ 58.         di "Number where end date is prior to index"
+ 59.         count if end_date<index_date
+ 60. 
 .     * Reorder ethnicity - white, asian, black, mixed, other
 .     *re-order ethnicity
 .     gen eth5=1 if ethnicity==1
- 58.     replace eth5=2 if ethnicity==3
- 59.     replace eth5=3 if ethnicity==4
- 60.     replace eth5=4 if ethnicity==2
- 61.     replace eth5=5 if ethnicity==5
- 62.     replace eth5=. if ethnicity==.
- 63. 
+ 61.     replace eth5=2 if ethnicity==3
+ 62.     replace eth5=3 if ethnicity==4
+ 63.     replace eth5=4 if ethnicity==2
+ 64.     replace eth5=5 if ethnicity==5
+ 65.     replace eth5=. if ethnicity==.
+ 66. 
 .     label define eth5                   1 "White"                            
 >            ///
 >                                 2 "South Asian"                         ///  
@@ -110,122 +116,135 @@
 >    ///
 >                                 5 "Other"                                    
 >    
- 64.                         
+ 67.                         
 . 
 .     label values eth5 eth5
- 65.     safetab eth5, m
- 66. 
+ 68.     safetab eth5, m
+ 69. 
 .     * Make gender numeric
 .     gen male = 1 if sex == "M"
- 67.     replace male = 0 if sex == "F"
- 68.     label define male 0"Female" 1"Male"
- 69.     label values male male
- 70.     safetab male, miss
- 71.     drop sex
- 72. 
+ 70.     replace male = 0 if sex == "F"
+ 71.     label define male 0"Female" 1"Male"
+ 72.     label values male male
+ 73.     safetab male, miss
+ 74.     drop sex
+ 75. 
 .     * Make region numeric
 .     generate region2=.
- 73.     replace region2=0 if region=="East"
- 74.     replace region2=1 if region=="East Midlands"
- 75.     replace region2=2 if region=="London"
- 76.     replace region2=3 if region=="North East"
- 77.     replace region2=4 if region=="North West"
- 78.     replace region2=5 if region=="South East"
- 79.     replace region2=6 if region=="South West"
- 80.     replace region2=7 if region=="West Midlands"
- 81.     replace region2=8 if region=="Yorkshire and The Humber"
- 82.     drop region
- 83.     rename region2 region
- 84.     label var region "region of England"
- 85.     label define region 0 "East" 1 "East Midlands"  2 "London" 3 "North Ea
+ 76.     replace region2=0 if region=="East"
+ 77.     replace region2=1 if region=="East Midlands"
+ 78.     replace region2=2 if region=="London"
+ 79.     replace region2=3 if region=="North East"
+ 80.     replace region2=4 if region=="North West"
+ 81.     replace region2=5 if region=="South East"
+ 82.     replace region2=6 if region=="South West"
+ 83.     replace region2=7 if region=="West Midlands"
+ 84.     replace region2=8 if region=="Yorkshire and The Humber"
+ 85.     drop region
+ 86.     rename region2 region
+ 87.     label var region "region of England"
+ 88.     label define region 0 "East" 1 "East Midlands"  2 "London" 3 "North Ea
 > st" 4 "North West" 5 "South East" 6 "South West" 7 "West Midlands" 8 "Yorkshi
 > re and The Humber"
- 86.     label values region region
- 87.     safetab region, miss
- 88. 
+ 89.     label values region region
+ 90.     safetab region, miss
+ 91. 
 .     *create a 4 category rural urban variable 
 .     generate urban_rural_5=.
- 89.     la var urban_rural_5 "Rural Urban in five categories"
- 90.     replace urban_rural_5=1 if urban_rural==1
- 91.     replace urban_rural_5=2 if urban_rural==2
- 92.     replace urban_rural_5=3 if urban_rural==3|urban_rural==4
- 93.     replace urban_rural_5=4 if urban_rural==5|urban_rural==6
- 94.     replace urban_rural_5=5 if urban_rural==7|urban_rural==8
- 95.     label define urban_rural_5 1 "Urban major conurbation" 2 "Urban minor 
+ 92.     la var urban_rural_5 "Rural Urban in five categories"
+ 93.     replace urban_rural_5=1 if urban_rural==1
+ 94.     replace urban_rural_5=2 if urban_rural==2
+ 95.     replace urban_rural_5=3 if urban_rural==3|urban_rural==4
+ 96.     replace urban_rural_5=4 if urban_rural==5|urban_rural==6
+ 97.     replace urban_rural_5=5 if urban_rural==7|urban_rural==8
+ 98.     label define urban_rural_5 1 "Urban major conurbation" 2 "Urban minor 
 > conurbation" 3 "Urban city and town" 4 "Rural town and fringe" 5 "Rural villa
 > ge and dispersed"
- 96.     label values urban_rural_5 urban_rural_5
- 97.     safetab urban_rural_5, miss
- 98. 
+ 99.     label values urban_rural_5 urban_rural_5
+100.     safetab urban_rural_5, miss
+101. 
 .     *generate a binary rural urban (with missing assigned to urban)
 .     generate urban_rural_bin=.
- 99.     replace urban_rural_bin=1 if urban_rural<=4|urban_rural==.
-100.     replace urban_rural_bin=0 if urban_rural>4 & urban_rural!=.
-101.     label define urban_rural_bin 0 "Rural" 1 "Urban"
-102.     label values urban_rural_bin urban_rural_bin
-103.     safetab urban_rural_bin urban_rural, miss
-104.     label var urban_rural_bin "Rural-Urban"
-105. 
+102.     replace urban_rural_bin=1 if urban_rural<=4|urban_rural==.
+103.     replace urban_rural_bin=0 if urban_rural>4 & urban_rural!=.
+104.     label define urban_rural_bin 0 "Rural" 1 "Urban"
+105.     label values urban_rural_bin urban_rural_bin
+106.     safetab urban_rural_bin urban_rural, miss
+107.     label var urban_rural_bin "Rural-Urban"
+108. 
 .     * Define age categories
 .     * Create age categories
 .     egen age_cat = cut(age), at(18, 40, 60, 80, 120) icodes
-106.     label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years"
+109.     label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years"
 >  3 ">80 years"
-107.     label values age_cat age
-108.     safetab age_cat, miss
-109. 
+110.     label values age_cat age
+111.     safetab age_cat, miss
+112. 
 .     save "./output/prep_survival_`period'", replace
-110. }
+113. }
 (42 vars, 1,000 obs)
 (950 missing values generated)
-number of missing values
-  976
-(976 missing values generated)
-number of missing values
-  975
-(975 missing values generated)
-number of missing values
-  976
-(976 missing values generated)
-number of missing values
-  977
-(977 missing values generated)
 number of missing values
   982
 (982 missing values generated)
 number of missing values
-  974
-(974 missing values generated)
+  977
+(977 missing values generated)
 number of missing values
-  974
-(974 missing values generated)
+  979
+(979 missing values generated)
+number of missing values
+  971
+(971 missing values generated)
+number of missing values
+  971
+(971 missing values generated)
+number of missing values
+  977
+(977 missing values generated)
 number of missing values
   978
 (978 missing values generated)
 number of missing values
-  977
-(977 missing values generated)
+  975
+(975 missing values generated)
 number of missing values
-  982
-(982 missing values generated)
+  973
+(973 missing values generated)
 number of missing values
-  974
-(974 missing values generated)
+  979
+(979 missing values generated)
 number of missing values
-  909
-(909 missing values generated)
+  979
+(979 missing values generated)
 number of missing values
-  932
-(932 missing values generated)
+  913
+(913 missing values generated)
 number of missing values
-  953
-(953 missing values generated)
+  926
+(926 missing values generated)
 number of missing values
-  912
-(912 missing values generated)
+  955
+(955 missing values generated)
+number of missing values
+  916
+(916 missing values generated)
 number of missing values
   950
 (950 missing values generated)
+number of missing values
+  972
+(972 missing values generated)
+number of missing values
+  974
+(974 missing values generated)
+
+  lrti_copd |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,000      100.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+(0 real changes made)
 
      +------------+
      | index_date |
@@ -248,160 +267,173 @@ number of missing values
      +------------+
 Number where end date is prior to index
   0
-(794 missing values generated)
-(227 real changes made)
-(199 real changes made)
-(175 real changes made)
+(790 missing values generated)
+(215 real changes made)
+(203 real changes made)
+(179 real changes made)
 (193 real changes made)
 (0 real changes made)
 5
 
        eth5 |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-      White |        206       20.60       20.60
-South Asian |        227       22.70       43.30
-      Black |        199       19.90       63.20
-      Mixed |        175       17.50       80.70
+      White |        210       21.00       21.00
+South Asian |        215       21.50       42.50
+      Black |        203       20.30       62.80
+      Mixed |        179       17.90       80.70
       Other |        193       19.30      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
-(502 missing values generated)
-(491 real changes made)
+(533 missing values generated)
+(521 real changes made)
 5
 
        male |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-     Female |        491       49.10       49.10
-       Male |        498       49.80       98.90
-          . |         11        1.10      100.00
+     Female |        521       52.10       52.10
+       Male |        467       46.70       98.80
+          . |         12        1.20      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
 (1,000 missing values generated)
 (0 real changes made)
-(88 real changes made)
-(205 real changes made)
-(103 real changes made)
-(95 real changes made)
-(185 real changes made)
-(0 real changes made)
+(104 real changes made)
+(204 real changes made)
+(106 real changes made)
 (98 real changes made)
+(195 real changes made)
+(0 real changes made)
+(89 real changes made)
 (0 real changes made)
 7
 
        region of England |      Freq.     Percent        Cum.
 -------------------------+-----------------------------------
-           East Midlands |         88        8.80        8.80
-                  London |        205       20.50       29.30
-              North East |        103       10.30       39.60
-              North West |         95        9.50       49.10
-              South East |        185       18.50       67.60
-           West Midlands |         98        9.80       77.40
-                       . |        226       22.60      100.00
+           East Midlands |        104       10.40       10.40
+                  London |        204       20.40       30.80
+              North East |        106       10.60       41.40
+              North West |         98        9.80       51.20
+              South East |        195       19.50       70.70
+           West Midlands |         89        8.90       79.60
+                       . |        204       20.40      100.00
 -------------------------+-----------------------------------
                    Total |      1,000      100.00
 (1,000 missing values generated)
-(105 real changes made)
-(111 real changes made)
-(180 real changes made)
-(179 real changes made)
-(425 real changes made)
+(98 real changes made)
+(99 real changes made)
+(223 real changes made)
+(175 real changes made)
+(405 real changes made)
 14
 
         Rural Urban in five |
                  categories |      Freq.     Percent        Cum.
 ----------------------------+-----------------------------------
-    Urban major conurbation |        105       10.50       10.50
-    Urban minor conurbation |        111       11.10       21.60
-        Urban city and town |        180       18.00       39.60
-      Rural town and fringe |        179       17.90       57.50
-Rural village and dispersed |        425       42.50      100.00
+    Urban major conurbation |         98        9.80        9.80
+    Urban minor conurbation |         99        9.90       19.70
+        Urban city and town |        223       22.30       42.00
+      Rural town and fringe |        175       17.50       59.50
+Rural village and dispersed |        405       40.50      100.00
 ----------------------------+-----------------------------------
                       Total |      1,000      100.00
 (1,000 missing values generated)
-(396 real changes made)
-(604 real changes made)
+(420 real changes made)
+(580 real changes made)
 28
 
 urban_rura |                      urban_rural
      l_bin |         1          2          3          4          5 |     Total
 -----------+-------------------------------------------------------+----------
-     Rural |         0          0          0          0         91 |       604 
-     Urban |       105        111         87         93          0 |       396 
+     Rural |         0          0          0          0         79 |       580 
+     Urban |        98         99        111        112          0 |       420 
 -----------+-------------------------------------------------------+----------
-     Total |       105        111         87         93         91 |     1,000 
+     Total |        98         99        111        112         79 |     1,000 
 
 
 urban_rura |           urban_rural
      l_bin |         6          7          8 |     Total
 -----------+---------------------------------+----------
-     Rural |        88        226        199 |       604 
-     Urban |         0          0          0 |       396 
+     Rural |        96        199        206 |       580 
+     Urban |         0          0          0 |       420 
 -----------+---------------------------------+----------
-     Total |        88        226        199 |     1,000 
-(209 missing values generated)
+     Total |        96        199        206 |     1,000 
+(192 missing values generated)
 8
 
       age_cat |      Freq.     Percent        Cum.
 --------------+-----------------------------------
-18 - 40 years |        294       29.40       29.40
-41 - 60 years |        276       27.60       57.00
-61 - 80 years |        181       18.10       75.10
-    >80 years |         40        4.00       79.10
-            . |        209       20.90      100.00
+18 - 40 years |        295       29.50       29.50
+41 - 60 years |        276       27.60       57.10
+61 - 80 years |        184       18.40       75.50
+    >80 years |         53        5.30       80.80
+            . |        192       19.20      100.00
 --------------+-----------------------------------
         Total |      1,000      100.00
 (note: file ./output/prep_survival_pre.dta not found)
 file ./output/prep_survival_pre.dta saved
 (42 vars, 1,000 obs)
-(950 missing values generated)
-number of missing values
-  974
-(974 missing values generated)
+(953 missing values generated)
 number of missing values
   976
 (976 missing values generated)
 number of missing values
-  973
-(973 missing values generated)
+  981
+(981 missing values generated)
 number of missing values
-  970
-(970 missing values generated)
-number of missing values
-  974
-(974 missing values generated)
-number of missing values
-  979
-(979 missing values generated)
-number of missing values
-  978
-(978 missing values generated)
-number of missing values
-  974
-(974 missing values generated)
+  972
+(972 missing values generated)
 number of missing values
   973
 (973 missing values generated)
 number of missing values
+  977
+(977 missing values generated)
+number of missing values
+  977
+(977 missing values generated)
+number of missing values
+  971
+(971 missing values generated)
+number of missing values
+  977
+(977 missing values generated)
+number of missing values
   974
 (974 missing values generated)
 number of missing values
-  980
-(980 missing values generated)
+  969
+(969 missing values generated)
 number of missing values
-  899
-(899 missing values generated)
+  977
+(977 missing values generated)
 number of missing values
-  932
-(932 missing values generated)
+  908
+(908 missing values generated)
 number of missing values
-  954
-(954 missing values generated)
+  927
+(927 missing values generated)
 number of missing values
-  906
-(906 missing values generated)
+  952
+(952 missing values generated)
+number of missing values
+  897
+(897 missing values generated)
 number of missing values
   951
 (951 missing values generated)
+number of missing values
+  975
+(975 missing values generated)
+number of missing values
+  976
+(976 missing values generated)
+
+  lrti_copd |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,000      100.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+(0 real changes made)
 
      +------------+
      | index_date |
@@ -424,106 +456,106 @@ number of missing values
      +------------+
 Number where end date is prior to index
   0
-(795 missing values generated)
-(193 real changes made)
-(195 real changes made)
-(185 real changes made)
-(222 real changes made)
+(805 missing values generated)
+(202 real changes made)
+(219 real changes made)
+(205 real changes made)
+(179 real changes made)
 (0 real changes made)
 5
 
        eth5 |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-      White |        205       20.50       20.50
-South Asian |        193       19.30       39.80
-      Black |        195       19.50       59.30
-      Mixed |        185       18.50       77.80
-      Other |        222       22.20      100.00
+      White |        195       19.50       19.50
+South Asian |        202       20.20       39.70
+      Black |        219       21.90       61.60
+      Mixed |        205       20.50       82.10
+      Other |        179       17.90      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
-(506 missing values generated)
+(508 missing values generated)
 (497 real changes made)
 5
 
        male |      Freq.     Percent        Cum.
 ------------+-----------------------------------
      Female |        497       49.70       49.70
-       Male |        494       49.40       99.10
-          . |          9        0.90      100.00
+       Male |        492       49.20       98.90
+          . |         11        1.10      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
 (1,000 missing values generated)
 (0 real changes made)
-(97 real changes made)
-(214 real changes made)
-(96 real changes made)
-(99 real changes made)
-(190 real changes made)
-(0 real changes made)
+(125 real changes made)
+(209 real changes made)
 (111 real changes made)
+(93 real changes made)
+(180 real changes made)
+(0 real changes made)
+(103 real changes made)
 (0 real changes made)
 7
 
        region of England |      Freq.     Percent        Cum.
 -------------------------+-----------------------------------
-           East Midlands |         97        9.70        9.70
-                  London |        214       21.40       31.10
-              North East |         96        9.60       40.70
-              North West |         99        9.90       50.60
-              South East |        190       19.00       69.60
-           West Midlands |        111       11.10       80.70
-                       . |        193       19.30      100.00
+           East Midlands |        125       12.50       12.50
+                  London |        209       20.90       33.40
+              North East |        111       11.10       44.50
+              North West |         93        9.30       53.80
+              South East |        180       18.00       71.80
+           West Midlands |        103       10.30       82.10
+                       . |        179       17.90      100.00
 -------------------------+-----------------------------------
                    Total |      1,000      100.00
 (1,000 missing values generated)
-(85 real changes made)
-(117 real changes made)
-(192 real changes made)
-(199 real changes made)
-(407 real changes made)
+(106 real changes made)
+(94 real changes made)
+(208 real changes made)
+(211 real changes made)
+(381 real changes made)
 14
 
         Rural Urban in five |
                  categories |      Freq.     Percent        Cum.
 ----------------------------+-----------------------------------
-    Urban major conurbation |         85        8.50        8.50
-    Urban minor conurbation |        117       11.70       20.20
-        Urban city and town |        192       19.20       39.40
-      Rural town and fringe |        199       19.90       59.30
-Rural village and dispersed |        407       40.70      100.00
+    Urban major conurbation |        106       10.60       10.60
+    Urban minor conurbation |         94        9.40       20.00
+        Urban city and town |        208       20.80       40.80
+      Rural town and fringe |        211       21.10       61.90
+Rural village and dispersed |        381       38.10      100.00
 ----------------------------+-----------------------------------
                       Total |      1,000      100.00
 (1,000 missing values generated)
-(394 real changes made)
-(606 real changes made)
+(408 real changes made)
+(592 real changes made)
 28
 
 urban_rura |                      urban_rural
      l_bin |         1          2          3          4          5 |     Total
 -----------+-------------------------------------------------------+----------
-     Rural |         0          0          0          0        103 |       606 
-     Urban |        85        117         91        101          0 |       394 
+     Rural |         0          0          0          0        104 |       592 
+     Urban |       106         94        102        106          0 |       408 
 -----------+-------------------------------------------------------+----------
-     Total |        85        117         91        101        103 |     1,000 
+     Total |       106         94        102        106        104 |     1,000 
 
 
 urban_rura |           urban_rural
      l_bin |         6          7          8 |     Total
 -----------+---------------------------------+----------
-     Rural |        96        201        206 |       606 
-     Urban |         0          0          0 |       394 
+     Rural |       107        189        192 |       592 
+     Urban |         0          0          0 |       408 
 -----------+---------------------------------+----------
-     Total |        96        201        206 |     1,000 
-(207 missing values generated)
+     Total |       107        189        192 |     1,000 
+(219 missing values generated)
 8
 
       age_cat |      Freq.     Percent        Cum.
 --------------+-----------------------------------
-18 - 40 years |        315       31.50       31.50
-41 - 60 years |        263       26.30       57.80
-61 - 80 years |        168       16.80       74.60
-    >80 years |         47        4.70       79.30
-            . |        207       20.70      100.00
+18 - 40 years |        284       28.40       28.40
+41 - 60 years |        266       26.60       55.00
+61 - 80 years |        179       17.90       72.90
+    >80 years |         52        5.20       78.10
+            . |        219       21.90      100.00
 --------------+-----------------------------------
         Total |      1,000      100.00
 (note: file ./output/prep_survival_pandemic.dta not found)
@@ -531,53 +563,66 @@ file ./output/prep_survival_pandemic.dta saved
 (42 vars, 1,000 obs)
 (952 missing values generated)
 number of missing values
-  997
-(997 missing values generated)
-number of missing values
-  999
-(999 missing values generated)
+  996
+(996 missing values generated)
 number of missing values
   1,000
 (1,000 missing values generated)
+number of missing values
+  997
+(997 missing values generated)
 number of missing values
   998
 (998 missing values generated)
 number of missing values
-  997
-(997 missing values generated)
-number of missing values
-  1,000
-(1,000 missing values generated)
-number of missing values
   996
 (996 missing values generated)
+number of missing values
+  997
+(997 missing values generated)
 number of missing values
   998
 (998 missing values generated)
 number of missing values
+  994
+(994 missing values generated)
+number of missing values
   997
 (997 missing values generated)
 number of missing values
-  1,000
-(1,000 missing values generated)
+  998
+(998 missing values generated)
 number of missing values
-  994
-(994 missing values generated)
+  998
+(998 missing values generated)
 number of missing values
-  994
-(994 missing values generated)
+  991
+(991 missing values generated)
 number of missing values
-  993
-(993 missing values generated)
+  991
+(991 missing values generated)
 number of missing values
-  996
-(996 missing values generated)
+  989
+(989 missing values generated)
 number of missing values
-  990
-(990 missing values generated)
+  992
+(992 missing values generated)
 number of missing values
   951
 (951 missing values generated)
+number of missing values
+  998
+(998 missing values generated)
+number of missing values
+  1,000
+(1,000 missing values generated)
+
+  lrti_copd |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,000      100.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+(0 real changes made)
 
      +------------+
      | index_date |
@@ -600,118 +645,133 @@ number of missing values
      +------------+
 Number where end date is prior to index
   0
-(806 missing values generated)
-(211 real changes made)
-(192 real changes made)
-(182 real changes made)
-(221 real changes made)
+(810 missing values generated)
+(204 real changes made)
+(218 real changes made)
+(195 real changes made)
+(193 real changes made)
 (0 real changes made)
 5
 
        eth5 |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-      White |        194       19.40       19.40
-South Asian |        211       21.10       40.50
-      Black |        192       19.20       59.70
-      Mixed |        182       18.20       77.90
-      Other |        221       22.10      100.00
+      White |        190       19.00       19.00
+South Asian |        204       20.40       39.40
+      Black |        218       21.80       61.20
+      Mixed |        195       19.50       80.70
+      Other |        193       19.30      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
-(521 missing values generated)
-(512 real changes made)
+(507 missing values generated)
+(494 real changes made)
 5
 
        male |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-     Female |        512       51.20       51.20
-       Male |        479       47.90       99.10
-          . |          9        0.90      100.00
+     Female |        494       49.40       49.40
+       Male |        493       49.30       98.70
+          . |         13        1.30      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
 (1,000 missing values generated)
 (0 real changes made)
-(100 real changes made)
-(193 real changes made)
-(103 real changes made)
-(105 real changes made)
+(127 real changes made)
 (190 real changes made)
+(105 real changes made)
+(108 real changes made)
+(166 real changes made)
 (0 real changes made)
-(116 real changes made)
+(98 real changes made)
 (0 real changes made)
 7
 
        region of England |      Freq.     Percent        Cum.
 -------------------------+-----------------------------------
-           East Midlands |        100       10.00       10.00
-                  London |        193       19.30       29.30
-              North East |        103       10.30       39.60
-              North West |        105       10.50       50.10
-              South East |        190       19.00       69.10
-           West Midlands |        116       11.60       80.70
-                       . |        193       19.30      100.00
+           East Midlands |        127       12.70       12.70
+                  London |        190       19.00       31.70
+              North East |        105       10.50       42.20
+              North West |        108       10.80       53.00
+              South East |        166       16.60       69.60
+           West Midlands |         98        9.80       79.40
+                       . |        206       20.60      100.00
 -------------------------+-----------------------------------
                    Total |      1,000      100.00
 (1,000 missing values generated)
-(114 real changes made)
-(97 real changes made)
+(95 real changes made)
+(119 real changes made)
 (193 real changes made)
-(181 real changes made)
-(415 real changes made)
+(197 real changes made)
+(396 real changes made)
 14
 
         Rural Urban in five |
                  categories |      Freq.     Percent        Cum.
 ----------------------------+-----------------------------------
-    Urban major conurbation |        114       11.40       11.40
-    Urban minor conurbation |         97        9.70       21.10
-        Urban city and town |        193       19.30       40.40
-      Rural town and fringe |        181       18.10       58.50
-Rural village and dispersed |        415       41.50      100.00
+    Urban major conurbation |         95        9.50        9.50
+    Urban minor conurbation |        119       11.90       21.40
+        Urban city and town |        193       19.30       40.70
+      Rural town and fringe |        197       19.70       60.40
+Rural village and dispersed |        396       39.60      100.00
 ----------------------------+-----------------------------------
                       Total |      1,000      100.00
 (1,000 missing values generated)
-(404 real changes made)
-(596 real changes made)
+(407 real changes made)
+(593 real changes made)
 28
 
 urban_rura |                      urban_rural
      l_bin |         1          2          3          4          5 |     Total
 -----------+-------------------------------------------------------+----------
-     Rural |         0          0          0          0         91 |       596 
-     Urban |       114         97        101         92          0 |       404 
+     Rural |         0          0          0          0         96 |       593 
+     Urban |        95        119        100         93          0 |       407 
 -----------+-------------------------------------------------------+----------
-     Total |       114         97        101         92         91 |     1,000 
+     Total |        95        119        100         93         96 |     1,000 
 
 
 urban_rura |           urban_rural
      l_bin |         6          7          8 |     Total
 -----------+---------------------------------+----------
-     Rural |        90        212        203 |       596 
-     Urban |         0          0          0 |       404 
+     Rural |       101        208        188 |       593 
+     Urban |         0          0          0 |       407 
 -----------+---------------------------------+----------
-     Total |        90        212        203 |     1,000 
-(234 missing values generated)
+     Total |       101        208        188 |     1,000 
+(214 missing values generated)
 8
 
       age_cat |      Freq.     Percent        Cum.
 --------------+-----------------------------------
-18 - 40 years |        268       26.80       26.80
-41 - 60 years |        264       26.40       53.20
-61 - 80 years |        173       17.30       70.50
-    >80 years |         61        6.10       76.60
-            . |        234       23.40      100.00
+18 - 40 years |        276       27.60       27.60
+41 - 60 years |        278       27.80       55.40
+61 - 80 years |        191       19.10       74.50
+    >80 years |         41        4.10       78.60
+            . |        214       21.40      100.00
 --------------+-----------------------------------
         Total |      1,000      100.00
 (note: file ./output/prep_survival_wave1.dta not found)
 file ./output/prep_survival_wave1.dta saved
 (42 vars, 1,000 obs)
-(960 missing values generated)
+(954 missing values generated)
+number of missing values
+  997
+(997 missing values generated)
 number of missing values
   999
 (999 missing values generated)
 number of missing values
+  997
+(997 missing values generated)
+number of missing values
+  995
+(995 missing values generated)
+number of missing values
   998
 (998 missing values generated)
+number of missing values
+  999
+(999 missing values generated)
+number of missing values
+  997
+(997 missing values generated)
 number of missing values
   994
 (994 missing values generated)
@@ -719,41 +779,39 @@ number of missing values
   995
 (995 missing values generated)
 number of missing values
-  996
-(996 missing values generated)
-number of missing values
-  999
-(999 missing values generated)
-number of missing values
-  1,000
-(1,000 missing values generated)
-number of missing values
-  998
-(998 missing values generated)
-number of missing values
-  999
-(999 missing values generated)
-number of missing values
-  999
-(999 missing values generated)
-number of missing values
-  1,000
-(1,000 missing values generated)
-number of missing values
-  986
-(986 missing values generated)
-number of missing values
   995
 (995 missing values generated)
 number of missing values
   998
 (998 missing values generated)
 number of missing values
-  992
-(992 missing values generated)
+  988
+(988 missing values generated)
 number of missing values
-  958
-(958 missing values generated)
+  994
+(994 missing values generated)
+number of missing values
+  997
+(997 missing values generated)
+number of missing values
+  984
+(984 missing values generated)
+number of missing values
+  956
+(956 missing values generated)
+number of missing values
+  997
+(997 missing values generated)
+number of missing values
+  998
+(998 missing values generated)
+
+  lrti_copd |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,000      100.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+(0 real changes made)
 
      +------------+
      | index_date |
@@ -776,139 +834,124 @@ number of missing values
      +------------+
 Number where end date is prior to index
   0
-(791 missing values generated)
-(175 real changes made)
-(203 real changes made)
-(215 real changes made)
-(198 real changes made)
+(790 missing values generated)
+(205 real changes made)
+(210 real changes made)
+(178 real changes made)
+(197 real changes made)
 (0 real changes made)
 5
 
        eth5 |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-      White |        209       20.90       20.90
-South Asian |        175       17.50       38.40
-      Black |        203       20.30       58.70
-      Mixed |        215       21.50       80.20
-      Other |        198       19.80      100.00
+      White |        210       21.00       21.00
+South Asian |        205       20.50       41.50
+      Black |        210       21.00       62.50
+      Mixed |        178       17.80       80.30
+      Other |        197       19.70      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
-(527 missing values generated)
-(508 real changes made)
+(526 missing values generated)
+(512 real changes made)
 5
 
        male |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-     Female |        508       50.80       50.80
-       Male |        473       47.30       98.10
-          . |         19        1.90      100.00
+     Female |        512       51.20       51.20
+       Male |        474       47.40       98.60
+          . |         14        1.40      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
 (1,000 missing values generated)
 (0 real changes made)
-(110 real changes made)
-(189 real changes made)
-(105 real changes made)
-(100 real changes made)
-(198 real changes made)
+(90 real changes made)
+(215 real changes made)
+(109 real changes made)
+(103 real changes made)
+(193 real changes made)
 (0 real changes made)
-(104 real changes made)
+(90 real changes made)
 (0 real changes made)
 7
 
        region of England |      Freq.     Percent        Cum.
 -------------------------+-----------------------------------
-           East Midlands |        110       11.00       11.00
-                  London |        189       18.90       29.90
-              North East |        105       10.50       40.40
-              North West |        100       10.00       50.40
-              South East |        198       19.80       70.20
-           West Midlands |        104       10.40       80.60
-                       . |        194       19.40      100.00
+           East Midlands |         90        9.00        9.00
+                  London |        215       21.50       30.50
+              North East |        109       10.90       41.40
+              North West |        103       10.30       51.70
+              South East |        193       19.30       71.00
+           West Midlands |         90        9.00       80.00
+                       . |        200       20.00      100.00
 -------------------------+-----------------------------------
                    Total |      1,000      100.00
 (1,000 missing values generated)
 (99 real changes made)
-(95 real changes made)
-(223 real changes made)
-(193 real changes made)
-(390 real changes made)
+(106 real changes made)
+(174 real changes made)
+(226 real changes made)
+(395 real changes made)
 14
 
         Rural Urban in five |
                  categories |      Freq.     Percent        Cum.
 ----------------------------+-----------------------------------
     Urban major conurbation |         99        9.90        9.90
-    Urban minor conurbation |         95        9.50       19.40
-        Urban city and town |        223       22.30       41.70
-      Rural town and fringe |        193       19.30       61.00
-Rural village and dispersed |        390       39.00      100.00
+    Urban minor conurbation |        106       10.60       20.50
+        Urban city and town |        174       17.40       37.90
+      Rural town and fringe |        226       22.60       60.50
+Rural village and dispersed |        395       39.50      100.00
 ----------------------------+-----------------------------------
                       Total |      1,000      100.00
 (1,000 missing values generated)
-(417 real changes made)
-(583 real changes made)
+(379 real changes made)
+(621 real changes made)
 28
 
 urban_rura |                      urban_rural
      l_bin |         1          2          3          4          5 |     Total
 -----------+-------------------------------------------------------+----------
-     Rural |         0          0          0          0         99 |       583 
-     Urban |        99         95        109        114          0 |       417 
+     Rural |         0          0          0          0        108 |       621 
+     Urban |        99        106         70        104          0 |       379 
 -----------+-------------------------------------------------------+----------
-     Total |        99         95        109        114         99 |     1,000 
+     Total |        99        106         70        104        108 |     1,000 
 
 
 urban_rura |           urban_rural
      l_bin |         6          7          8 |     Total
 -----------+---------------------------------+----------
-     Rural |        94        185        205 |       583 
-     Urban |         0          0          0 |       417 
+     Rural |       118        197        198 |       621 
+     Urban |         0          0          0 |       379 
 -----------+---------------------------------+----------
-     Total |        94        185        205 |     1,000 
-(203 missing values generated)
+     Total |       118        197        198 |     1,000 
+(196 missing values generated)
 8
 
       age_cat |      Freq.     Percent        Cum.
 --------------+-----------------------------------
-18 - 40 years |        287       28.70       28.70
-41 - 60 years |        263       26.30       55.00
-61 - 80 years |        203       20.30       75.30
-    >80 years |         44        4.40       79.70
-            . |        203       20.30      100.00
+18 - 40 years |        299       29.90       29.90
+41 - 60 years |        265       26.50       56.40
+61 - 80 years |        200       20.00       76.40
+    >80 years |         40        4.00       80.40
+            . |        196       19.60      100.00
 --------------+-----------------------------------
         Total |      1,000      100.00
 (note: file ./output/prep_survival_easing1.dta not found)
 file ./output/prep_survival_easing1.dta saved
 (42 vars, 1,000 obs)
-(961 missing values generated)
+(962 missing values generated)
 number of missing values
-  997
-(997 missing values generated)
+  994
+(994 missing values generated)
+number of missing values
+  993
+(993 missing values generated)
 number of missing values
   992
 (992 missing values generated)
 number of missing values
-  990
-(990 missing values generated)
-number of missing values
-  995
-(995 missing values generated)
-number of missing values
   993
 (993 missing values generated)
-number of missing values
-  993
-(993 missing values generated)
-number of missing values
-  995
-(995 missing values generated)
-number of missing values
-  995
-(995 missing values generated)
-number of missing values
-  991
-(991 missing values generated)
 number of missing values
   993
 (993 missing values generated)
@@ -916,20 +959,48 @@ number of missing values
   991
 (991 missing values generated)
 number of missing values
-  974
-(974 missing values generated)
+  994
+(994 missing values generated)
 number of missing values
-  981
-(981 missing values generated)
+  993
+(993 missing values generated)
 number of missing values
-  982
-(982 missing values generated)
+  994
+(994 missing values generated)
 number of missing values
-  967
-(967 missing values generated)
+  995
+(995 missing values generated)
+number of missing values
+  993
+(993 missing values generated)
+number of missing values
+  972
+(972 missing values generated)
+number of missing values
+  978
+(978 missing values generated)
+number of missing values
+  988
+(988 missing values generated)
+number of missing values
+  975
+(975 missing values generated)
 number of missing values
   960
 (960 missing values generated)
+number of missing values
+  993
+(993 missing values generated)
+number of missing values
+  993
+(993 missing values generated)
+
+  lrti_copd |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,000      100.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+(0 real changes made)
 
      +------------+
      | index_date |
@@ -952,130 +1023,124 @@ number of missing values
      +------------+
 Number where end date is prior to index
   0
-(811 missing values generated)
+(804 missing values generated)
+(211 real changes made)
+(204 real changes made)
 (199 real changes made)
-(197 real changes made)
-(215 real changes made)
-(200 real changes made)
+(190 real changes made)
 (0 real changes made)
 5
 
        eth5 |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-      White |        189       18.90       18.90
-South Asian |        199       19.90       38.80
-      Black |        197       19.70       58.50
-      Mixed |        215       21.50       80.00
-      Other |        200       20.00      100.00
+      White |        196       19.60       19.60
+South Asian |        211       21.10       40.70
+      Black |        204       20.40       61.10
+      Mixed |        199       19.90       81.00
+      Other |        190       19.00      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
-(488 missing values generated)
-(477 real changes made)
+(535 missing values generated)
+(524 real changes made)
 5
 
        male |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-     Female |        477       47.70       47.70
-       Male |        512       51.20       98.90
+     Female |        524       52.40       52.40
+       Male |        465       46.50       98.90
           . |         11        1.10      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
 (1,000 missing values generated)
 (0 real changes made)
-(117 real changes made)
-(189 real changes made)
-(99 real changes made)
-(103 real changes made)
-(214 real changes made)
+(91 real changes made)
+(221 real changes made)
+(108 real changes made)
+(97 real changes made)
+(181 real changes made)
 (0 real changes made)
-(82 real changes made)
+(109 real changes made)
 (0 real changes made)
 7
 
        region of England |      Freq.     Percent        Cum.
 -------------------------+-----------------------------------
-           East Midlands |        117       11.70       11.70
-                  London |        189       18.90       30.60
-              North East |         99        9.90       40.50
-              North West |        103       10.30       50.80
-              South East |        214       21.40       72.20
-           West Midlands |         82        8.20       80.40
-                       . |        196       19.60      100.00
+           East Midlands |         91        9.10        9.10
+                  London |        221       22.10       31.20
+              North East |        108       10.80       42.00
+              North West |         97        9.70       51.70
+              South East |        181       18.10       69.80
+           West Midlands |        109       10.90       80.70
+                       . |        193       19.30      100.00
 -------------------------+-----------------------------------
                    Total |      1,000      100.00
 (1,000 missing values generated)
-(81 real changes made)
-(112 real changes made)
-(200 real changes made)
-(221 real changes made)
-(386 real changes made)
+(109 real changes made)
+(93 real changes made)
+(196 real changes made)
+(208 real changes made)
+(394 real changes made)
 14
 
         Rural Urban in five |
                  categories |      Freq.     Percent        Cum.
 ----------------------------+-----------------------------------
-    Urban major conurbation |         81        8.10        8.10
-    Urban minor conurbation |        112       11.20       19.30
-        Urban city and town |        200       20.00       39.30
-      Rural town and fringe |        221       22.10       61.40
-Rural village and dispersed |        386       38.60      100.00
+    Urban major conurbation |        109       10.90       10.90
+    Urban minor conurbation |         93        9.30       20.20
+        Urban city and town |        196       19.60       39.80
+      Rural town and fringe |        208       20.80       60.60
+Rural village and dispersed |        394       39.40      100.00
 ----------------------------+-----------------------------------
                       Total |      1,000      100.00
 (1,000 missing values generated)
-(393 real changes made)
-(607 real changes made)
+(398 real changes made)
+(602 real changes made)
 28
 
 urban_rura |                      urban_rural
      l_bin |         1          2          3          4          5 |     Total
 -----------+-------------------------------------------------------+----------
-     Rural |         0          0          0          0        111 |       607 
-     Urban |        81        112        104         96          0 |       393 
+     Rural |         0          0          0          0        103 |       602 
+     Urban |       109         93         88        108          0 |       398 
 -----------+-------------------------------------------------------+----------
-     Total |        81        112        104         96        111 |     1,000 
+     Total |       109         93         88        108        103 |     1,000 
 
 
 urban_rura |           urban_rural
      l_bin |         6          7          8 |     Total
 -----------+---------------------------------+----------
-     Rural |       110        184        202 |       607 
-     Urban |         0          0          0 |       393 
+     Rural |       105        186        208 |       602 
+     Urban |         0          0          0 |       398 
 -----------+---------------------------------+----------
-     Total |       110        184        202 |     1,000 
-(242 missing values generated)
+     Total |       105        186        208 |     1,000 
+(208 missing values generated)
 8
 
       age_cat |      Freq.     Percent        Cum.
 --------------+-----------------------------------
-18 - 40 years |        283       28.30       28.30
-41 - 60 years |        248       24.80       53.10
-61 - 80 years |        180       18.00       71.10
-    >80 years |         47        4.70       75.80
-            . |        242       24.20      100.00
+18 - 40 years |        287       28.70       28.70
+41 - 60 years |        268       26.80       55.50
+61 - 80 years |        198       19.80       75.30
+    >80 years |         39        3.90       79.20
+            . |        208       20.80      100.00
 --------------+-----------------------------------
         Total |      1,000      100.00
 (note: file ./output/prep_survival_wave2.dta not found)
 file ./output/prep_survival_wave2.dta saved
 (42 vars, 1,000 obs)
-(970 missing values generated)
+(972 missing values generated)
 number of missing values
   1,000
 (1,000 missing values generated)
 number of missing values
-  1,000
-(1,000 missing values generated)
+  999
+(999 missing values generated)
 number of missing values
-  998
-(998 missing values generated)
-number of missing values
-  1,000
-(1,000 missing values generated)
+  996
+(996 missing values generated)
 number of missing values
   1,000
 (1,000 missing values generated)
-number of missing values
-  997
-(997 missing values generated)
 number of missing values
   1,000
 (1,000 missing values generated)
@@ -1085,9 +1150,6 @@ number of missing values
 number of missing values
   999
 (999 missing values generated)
-number of missing values
-  1,000
-(1,000 missing values generated)
 number of missing values
   999
 (999 missing values generated)
@@ -1095,17 +1157,39 @@ number of missing values
   998
 (998 missing values generated)
 number of missing values
+  999
+(999 missing values generated)
+number of missing values
+  1,000
+(1,000 missing values generated)
+number of missing values
+  995
+(995 missing values generated)
+number of missing values
+  998
+(998 missing values generated)
+number of missing values
   997
 (997 missing values generated)
+number of missing values
+  995
+(995 missing values generated)
+number of missing values
+  978
+(978 missing values generated)
 number of missing values
   999
 (999 missing values generated)
 number of missing values
-  997
-(997 missing values generated)
-number of missing values
-  975
-(975 missing values generated)
+  999
+(999 missing values generated)
+
+  lrti_copd |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,000      100.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+(0 real changes made)
 
      +------------+
      | index_date |
@@ -1128,160 +1212,173 @@ number of missing values
      +------------+
 Number where end date is prior to index
   0
-(800 missing values generated)
-(200 real changes made)
-(177 real changes made)
+(794 missing values generated)
 (215 real changes made)
-(208 real changes made)
+(201 real changes made)
+(181 real changes made)
+(197 real changes made)
 (0 real changes made)
 5
 
        eth5 |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-      White |        200       20.00       20.00
-South Asian |        200       20.00       40.00
-      Black |        177       17.70       57.70
-      Mixed |        215       21.50       79.20
-      Other |        208       20.80      100.00
+      White |        206       20.60       20.60
+South Asian |        215       21.50       42.10
+      Black |        201       20.10       62.20
+      Mixed |        181       18.10       80.30
+      Other |        197       19.70      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
-(494 missing values generated)
-(482 real changes made)
+(546 missing values generated)
+(531 real changes made)
 5
 
        male |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-     Female |        482       48.20       48.20
-       Male |        506       50.60       98.80
-          . |         12        1.20      100.00
+     Female |        531       53.10       53.10
+       Male |        454       45.40       98.50
+          . |         15        1.50      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
 (1,000 missing values generated)
 (0 real changes made)
-(107 real changes made)
-(192 real changes made)
-(101 real changes made)
-(94 real changes made)
-(216 real changes made)
+(98 real changes made)
+(211 real changes made)
+(105 real changes made)
+(103 real changes made)
+(184 real changes made)
 (0 real changes made)
-(93 real changes made)
+(91 real changes made)
 (0 real changes made)
 7
 
        region of England |      Freq.     Percent        Cum.
 -------------------------+-----------------------------------
-           East Midlands |        107       10.70       10.70
-                  London |        192       19.20       29.90
-              North East |        101       10.10       40.00
-              North West |         94        9.40       49.40
-              South East |        216       21.60       71.00
-           West Midlands |         93        9.30       80.30
-                       . |        197       19.70      100.00
+           East Midlands |         98        9.80        9.80
+                  London |        211       21.10       30.90
+              North East |        105       10.50       41.40
+              North West |        103       10.30       51.70
+              South East |        184       18.40       70.10
+           West Midlands |         91        9.10       79.20
+                       . |        208       20.80      100.00
 -------------------------+-----------------------------------
                    Total |      1,000      100.00
 (1,000 missing values generated)
-(105 real changes made)
-(90 real changes made)
-(208 real changes made)
-(184 real changes made)
-(413 real changes made)
+(91 real changes made)
+(89 real changes made)
+(201 real changes made)
+(183 real changes made)
+(436 real changes made)
 14
 
         Rural Urban in five |
                  categories |      Freq.     Percent        Cum.
 ----------------------------+-----------------------------------
-    Urban major conurbation |        105       10.50       10.50
-    Urban minor conurbation |         90        9.00       19.50
-        Urban city and town |        208       20.80       40.30
-      Rural town and fringe |        184       18.40       58.70
-Rural village and dispersed |        413       41.30      100.00
+    Urban major conurbation |         91        9.10        9.10
+    Urban minor conurbation |         89        8.90       18.00
+        Urban city and town |        201       20.10       38.10
+      Rural town and fringe |        183       18.30       56.40
+Rural village and dispersed |        436       43.60      100.00
 ----------------------------+-----------------------------------
                       Total |      1,000      100.00
 (1,000 missing values generated)
-(403 real changes made)
-(597 real changes made)
+(381 real changes made)
+(619 real changes made)
 28
 
 urban_rura |                      urban_rural
      l_bin |         1          2          3          4          5 |     Total
 -----------+-------------------------------------------------------+----------
-     Rural |         0          0          0          0         91 |       597 
-     Urban |       105         90        107        101          0 |       403 
+     Rural |         0          0          0          0        111 |       619 
+     Urban |        91         89        100        101          0 |       381 
 -----------+-------------------------------------------------------+----------
-     Total |       105         90        107        101         91 |     1,000 
+     Total |        91         89        100        101        111 |     1,000 
 
 
 urban_rura |           urban_rural
      l_bin |         6          7          8 |     Total
 -----------+---------------------------------+----------
-     Rural |        93        223        190 |       597 
-     Urban |         0          0          0 |       403 
+     Rural |        72        216        220 |       619 
+     Urban |         0          0          0 |       381 
 -----------+---------------------------------+----------
-     Total |        93        223        190 |     1,000 
-(186 missing values generated)
+     Total |        72        216        220 |     1,000 
+(218 missing values generated)
 8
 
       age_cat |      Freq.     Percent        Cum.
 --------------+-----------------------------------
-18 - 40 years |        280       28.00       28.00
-41 - 60 years |        278       27.80       55.80
-61 - 80 years |        214       21.40       77.20
-    >80 years |         42        4.20       81.40
-            . |        186       18.60      100.00
+18 - 40 years |        299       29.90       29.90
+41 - 60 years |        260       26.00       55.90
+61 - 80 years |        168       16.80       72.70
+    >80 years |         55        5.50       78.20
+            . |        218       21.80      100.00
 --------------+-----------------------------------
         Total |      1,000      100.00
 (note: file ./output/prep_survival_easing2.dta not found)
 file ./output/prep_survival_easing2.dta saved
 (42 vars, 1,000 obs)
-(974 missing values generated)
+(982 missing values generated)
+number of missing values
+  995
+(995 missing values generated)
+number of missing values
+  993
+(993 missing values generated)
+number of missing values
+  991
+(991 missing values generated)
+number of missing values
+  998
+(998 missing values generated)
 number of missing values
   997
 (997 missing values generated)
 number of missing values
-  993
-(993 missing values generated)
-number of missing values
-  993
-(993 missing values generated)
-number of missing values
-  991
-(991 missing values generated)
-number of missing values
-  992
-(992 missing values generated)
-number of missing values
   996
 (996 missing values generated)
 number of missing values
   991
 (991 missing values generated)
 number of missing values
-  993
-(993 missing values generated)
+  997
+(997 missing values generated)
 number of missing values
-  991
-(991 missing values generated)
+  995
+(995 missing values generated)
 number of missing values
-  994
-(994 missing values generated)
+  997
+(997 missing values generated)
 number of missing values
   996
 (996 missing values generated)
 number of missing values
-  974
-(974 missing values generated)
+  978
+(978 missing values generated)
 number of missing values
-  979
-(979 missing values generated)
+  984
+(984 missing values generated)
 number of missing values
-  990
-(990 missing values generated)
+  988
+(988 missing values generated)
+number of missing values
+  981
+(981 missing values generated)
 number of missing values
   976
 (976 missing values generated)
 number of missing values
-  981
-(981 missing values generated)
+  999
+(999 missing values generated)
+number of missing values
+  995
+(995 missing values generated)
+
+  lrti_copd |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,000      100.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+(0 real changes made)
 
      +------------+
      | index_date |
@@ -1304,160 +1401,173 @@ number of missing values
      +------------+
 Number where end date is prior to index
   0
-(777 missing values generated)
-(203 real changes made)
+(781 missing values generated)
 (206 real changes made)
-(167 real changes made)
-(201 real changes made)
+(193 real changes made)
+(186 real changes made)
+(196 real changes made)
 (0 real changes made)
 5
 
        eth5 |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-      White |        223       22.30       22.30
-South Asian |        203       20.30       42.60
-      Black |        206       20.60       63.20
-      Mixed |        167       16.70       79.90
-      Other |        201       20.10      100.00
+      White |        219       21.90       21.90
+South Asian |        206       20.60       42.50
+      Black |        193       19.30       61.80
+      Mixed |        186       18.60       80.40
+      Other |        196       19.60      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
-(489 missing values generated)
-(481 real changes made)
+(502 missing values generated)
+(487 real changes made)
 5
 
        male |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-     Female |        481       48.10       48.10
-       Male |        511       51.10       99.20
-          . |          8        0.80      100.00
+     Female |        487       48.70       48.70
+       Male |        498       49.80       98.50
+          . |         15        1.50      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
 (1,000 missing values generated)
 (0 real changes made)
 (98 real changes made)
-(189 real changes made)
-(97 real changes made)
-(104 real changes made)
-(219 real changes made)
+(201 real changes made)
+(92 real changes made)
+(106 real changes made)
+(198 real changes made)
 (0 real changes made)
-(91 real changes made)
+(108 real changes made)
 (0 real changes made)
 7
 
        region of England |      Freq.     Percent        Cum.
 -------------------------+-----------------------------------
            East Midlands |         98        9.80        9.80
-                  London |        189       18.90       28.70
-              North East |         97        9.70       38.40
-              North West |        104       10.40       48.80
-              South East |        219       21.90       70.70
-           West Midlands |         91        9.10       79.80
-                       . |        202       20.20      100.00
+                  London |        201       20.10       29.90
+              North East |         92        9.20       39.10
+              North West |        106       10.60       49.70
+              South East |        198       19.80       69.50
+           West Midlands |        108       10.80       80.30
+                       . |        197       19.70      100.00
 -------------------------+-----------------------------------
                    Total |      1,000      100.00
 (1,000 missing values generated)
-(101 real changes made)
-(101 real changes made)
-(204 real changes made)
-(198 real changes made)
-(396 real changes made)
+(97 real changes made)
+(98 real changes made)
+(197 real changes made)
+(217 real changes made)
+(391 real changes made)
 14
 
         Rural Urban in five |
                  categories |      Freq.     Percent        Cum.
 ----------------------------+-----------------------------------
-    Urban major conurbation |        101       10.10       10.10
-    Urban minor conurbation |        101       10.10       20.20
-        Urban city and town |        204       20.40       40.60
-      Rural town and fringe |        198       19.80       60.40
-Rural village and dispersed |        396       39.60      100.00
+    Urban major conurbation |         97        9.70        9.70
+    Urban minor conurbation |         98        9.80       19.50
+        Urban city and town |        197       19.70       39.20
+      Rural town and fringe |        217       21.70       60.90
+Rural village and dispersed |        391       39.10      100.00
 ----------------------------+-----------------------------------
                       Total |      1,000      100.00
 (1,000 missing values generated)
-(406 real changes made)
-(594 real changes made)
+(392 real changes made)
+(608 real changes made)
 28
 
 urban_rura |                      urban_rural
      l_bin |         1          2          3          4          5 |     Total
 -----------+-------------------------------------------------------+----------
-     Rural |         0          0          0          0         87 |       594 
-     Urban |       101        101         96        108          0 |       406 
+     Rural |         0          0          0          0        111 |       608 
+     Urban |        97         98        109         88          0 |       392 
 -----------+-------------------------------------------------------+----------
-     Total |       101        101         96        108         87 |     1,000 
+     Total |        97         98        109         88        111 |     1,000 
 
 
 urban_rura |           urban_rural
      l_bin |         6          7          8 |     Total
 -----------+---------------------------------+----------
-     Rural |       111        193        203 |       594 
-     Urban |         0          0          0 |       406 
+     Rural |       106        194        197 |       608 
+     Urban |         0          0          0 |       392 
 -----------+---------------------------------+----------
-     Total |       111        193        203 |     1,000 
-(207 missing values generated)
+     Total |       106        194        197 |     1,000 
+(214 missing values generated)
 8
 
       age_cat |      Freq.     Percent        Cum.
 --------------+-----------------------------------
-18 - 40 years |        293       29.30       29.30
-41 - 60 years |        265       26.50       55.80
-61 - 80 years |        192       19.20       75.00
-    >80 years |         43        4.30       79.30
-            . |        207       20.70      100.00
+18 - 40 years |        295       29.50       29.50
+41 - 60 years |        265       26.50       56.00
+61 - 80 years |        184       18.40       74.40
+    >80 years |         42        4.20       78.60
+            . |        214       21.40      100.00
 --------------+-----------------------------------
         Total |      1,000      100.00
 (note: file ./output/prep_survival_wave3.dta not found)
 file ./output/prep_survival_wave3.dta saved
 (42 vars, 1,000 obs)
-(990 missing values generated)
-number of missing values
-  997
-(997 missing values generated)
-number of missing values
-  998
-(998 missing values generated)
-number of missing values
-  999
-(999 missing values generated)
+(986 missing values generated)
 number of missing values
   995
 (995 missing values generated)
+number of missing values
+  997
+(997 missing values generated)
 number of missing values
   994
 (994 missing values generated)
 number of missing values
-  992
-(992 missing values generated)
-number of missing values
-  1,000
-(1,000 missing values generated)
-number of missing values
-  993
-(993 missing values generated)
-number of missing values
-  997
-(997 missing values generated)
+  996
+(996 missing values generated)
 number of missing values
   995
 (995 missing values generated)
 number of missing values
+  997
+(997 missing values generated)
+number of missing values
   996
 (996 missing values generated)
 number of missing values
-  989
-(989 missing values generated)
+  997
+(997 missing values generated)
 number of missing values
-  986
-(986 missing values generated)
+  994
+(994 missing values generated)
 number of missing values
-  989
-(989 missing values generated)
+  996
+(996 missing values generated)
+number of missing values
+  998
+(998 missing values generated)
 number of missing values
   984
 (984 missing values generated)
 number of missing values
-  992
-(992 missing values generated)
+  988
+(988 missing values generated)
+number of missing values
+  991
+(991 missing values generated)
+number of missing values
+  986
+(986 missing values generated)
+number of missing values
+  982
+(982 missing values generated)
+number of missing values
+  994
+(994 missing values generated)
+number of missing values
+  996
+(996 missing values generated)
+
+  lrti_copd |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,000      100.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+(0 real changes made)
 
      +------------+
      | index_date |
@@ -1480,106 +1590,106 @@ number of missing values
      +------------+
 Number where end date is prior to index
   0
-(804 missing values generated)
-(195 real changes made)
-(179 real changes made)
-(220 real changes made)
-(210 real changes made)
+(811 missing values generated)
+(185 real changes made)
+(193 real changes made)
+(227 real changes made)
+(206 real changes made)
 (0 real changes made)
 5
 
        eth5 |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-      White |        196       19.60       19.60
-South Asian |        195       19.50       39.10
-      Black |        179       17.90       57.00
-      Mixed |        220       22.00       79.00
-      Other |        210       21.00      100.00
+      White |        189       18.90       18.90
+South Asian |        185       18.50       37.40
+      Black |        193       19.30       56.70
+      Mixed |        227       22.70       79.40
+      Other |        206       20.60      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
 (503 missing values generated)
-(494 real changes made)
+(487 real changes made)
 5
 
        male |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-     Female |        494       49.40       49.40
-       Male |        497       49.70       99.10
-          . |          9        0.90      100.00
+     Female |        487       48.70       48.70
+       Male |        497       49.70       98.40
+          . |         16        1.60      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
 (1,000 missing values generated)
 (0 real changes made)
-(97 real changes made)
-(214 real changes made)
-(85 real changes made)
 (98 real changes made)
-(204 real changes made)
+(206 real changes made)
+(87 real changes made)
+(103 real changes made)
+(181 real changes made)
 (0 real changes made)
-(98 real changes made)
+(113 real changes made)
 (0 real changes made)
 7
 
        region of England |      Freq.     Percent        Cum.
 -------------------------+-----------------------------------
-           East Midlands |         97        9.70        9.70
-                  London |        214       21.40       31.10
-              North East |         85        8.50       39.60
-              North West |         98        9.80       49.40
-              South East |        204       20.40       69.80
-           West Midlands |         98        9.80       79.60
-                       . |        204       20.40      100.00
+           East Midlands |         98        9.80        9.80
+                  London |        206       20.60       30.40
+              North East |         87        8.70       39.10
+              North West |        103       10.30       49.40
+              South East |        181       18.10       67.50
+           West Midlands |        113       11.30       78.80
+                       . |        212       21.20      100.00
 -------------------------+-----------------------------------
                    Total |      1,000      100.00
 (1,000 missing values generated)
-(101 real changes made)
-(93 real changes made)
-(198 real changes made)
-(218 real changes made)
-(390 real changes made)
+(109 real changes made)
+(87 real changes made)
+(220 real changes made)
+(196 real changes made)
+(388 real changes made)
 14
 
         Rural Urban in five |
                  categories |      Freq.     Percent        Cum.
 ----------------------------+-----------------------------------
-    Urban major conurbation |        101       10.10       10.10
-    Urban minor conurbation |         93        9.30       19.40
-        Urban city and town |        198       19.80       39.20
-      Rural town and fringe |        218       21.80       61.00
-Rural village and dispersed |        390       39.00      100.00
+    Urban major conurbation |        109       10.90       10.90
+    Urban minor conurbation |         87        8.70       19.60
+        Urban city and town |        220       22.00       41.60
+      Rural town and fringe |        196       19.60       61.20
+Rural village and dispersed |        388       38.80      100.00
 ----------------------------+-----------------------------------
                       Total |      1,000      100.00
 (1,000 missing values generated)
-(392 real changes made)
-(608 real changes made)
+(416 real changes made)
+(584 real changes made)
 28
 
 urban_rura |                      urban_rural
      l_bin |         1          2          3          4          5 |     Total
 -----------+-------------------------------------------------------+----------
-     Rural |         0          0          0          0        102 |       608 
-     Urban |       101         93         89        109          0 |       392 
+     Rural |         0          0          0          0        104 |       584 
+     Urban |       109         87        104        116          0 |       416 
 -----------+-------------------------------------------------------+----------
-     Total |       101         93         89        109        102 |     1,000 
+     Total |       109         87        104        116        104 |     1,000 
 
 
 urban_rura |           urban_rural
      l_bin |         6          7          8 |     Total
 -----------+---------------------------------+----------
-     Rural |       116        189        201 |       608 
-     Urban |         0          0          0 |       392 
+     Rural |        92        192        196 |       584 
+     Urban |         0          0          0 |       416 
 -----------+---------------------------------+----------
-     Total |       116        189        201 |     1,000 
-(205 missing values generated)
+     Total |        92        192        196 |     1,000 
+(214 missing values generated)
 8
 
       age_cat |      Freq.     Percent        Cum.
 --------------+-----------------------------------
-18 - 40 years |        281       28.10       28.10
-41 - 60 years |        267       26.70       54.80
-61 - 80 years |        195       19.50       74.30
-    >80 years |         52        5.20       79.50
-            . |        205       20.50      100.00
+18 - 40 years |        260       26.00       26.00
+41 - 60 years |        288       28.80       54.80
+61 - 80 years |        188       18.80       73.60
+    >80 years |         50        5.00       78.60
+            . |        214       21.40      100.00
 --------------+-----------------------------------
         Total |      1,000      100.00
 (note: file ./output/prep_survival_easing3.dta not found)
@@ -1589,7 +1699,7 @@ file ./output/prep_survival_easing3.dta saved
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.oAvBVeHTwP", write text replace
+. . file open output using "/tmp/tmp.thst13Xyk7", write text replace
 
 . . file write output "success" 
 
