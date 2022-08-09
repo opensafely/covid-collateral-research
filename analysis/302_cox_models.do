@@ -87,10 +87,10 @@ use ./output/prep_survival_`period', clear
         local event = r(N)
         bysort eth5: egen total_follow_up = total(_t)
         qui su total_follow_up if eth5 == 1
-        local person_week = r(mean)/7
-        local rate = 100000*(`event'/`person_week')
+        local person_mth = r(mean)/30
+        local rate = 100000*(`event'/`person_mth')
         if `event'>10 & `event'!=. {
-            file write tablecontent  ("`period'") _tab ("`lab1'") _tab (`denominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _tab
+            file write tablecontent  ("`period'") _tab ("`lab1'") _tab (`denominator') _tab (`event') _tab %10.0f (`person_mth') _tab %3.2f (`rate') _tab
             file write tablecontent ("1.00") _tab _tab ("1.00") _tab _tab _tab _tab ("1.00") _n
             }
         else {
@@ -104,10 +104,10 @@ use ./output/prep_survival_`period', clear
             qui safecount if eth5 == `eth' & `outcome'_admit == 1
             local event = r(N)
             qui su total_follow_up if eth5 == `eth'
-            local person_week = r(mean)/7
-            local rate = 100000*(`event'/`person_week')
+            local person_mth = r(mean)/30
+            local rate = 100000*(`event'/`person_mth')
             if `event'>10 & `event'!=. {
-                file write tablecontent ("`period'") _tab ("`lab`eth''") _tab (`denominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _tab  
+                file write tablecontent ("`period'") _tab ("`lab`eth''") _tab (`denominator') _tab (`event') _tab %10.0f (`person_mth') _tab %3.2f (`rate') _tab  
                 cap estimates use "./output/tempdata/crude_`outcome'_eth" 
                 cap lincom `eth'.eth5, eform
                 file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4.2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab %4.2f (r(lb)) _tab %4.2f (r(ub)) _tab
