@@ -3,109 +3,110 @@
 . * Prepare datasets
 . foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
   2.     import delimited using ./output/survival/input_survival_`period'.csv, 
-> clear stringcols(3/18 38 39 40 41)
-  3.     * First preparing dataset
+> clear stringcols(1/18 38 39 40 41)
+  3.     describe
+  4.     * First preparing dataset
 .     * Drop variables that are not required
 .     drop copd_exacerbation_hospital copd_hospital eth ethnicity_sus
-  4. 
+  5. 
 .     * Assume deregistered on 1st of month
 .     gen dereg_dateA = date(dereg_date, "YMD")
-  5.     format %dD/N/CY dereg_dateA
-  6.     drop dereg_date
-  7. 
+  6.     format %dD/N/CY dereg_dateA
+  7.     drop dereg_date
+  8. 
 .     * Format dates
 .     local a "mi_primary_admission stroke_primary_admission heart_failure_prim
 > ary_admission vte_primary_admission t1dm_admission_primary t2dm_admission_pri
 > mary dm_keto_admission_primary asthma_exacerbation depression_primary_admissi
 > on anxiety_primary_admission smi_primary_admission cvd_admission_date dm_admi
 > ssion copd_hospitalisation_date mh_admission died_fu lrti_hospital copd_any" 
-  8.     local b "mi_admit_date stroke_admit_date hf_admit_date vte_admit_date 
+  9.     local b "mi_admit_date stroke_admit_date hf_admit_date vte_admit_date 
 > t1dm_admit_date t2dm_admit_date dm_keto_admit_date asthma_admit_date depress_
 > admit_date anx_admit_date smi_admit_date cvd_admit_date dm_admit_date copd_ad
 > mit_date mh_admit_date date_died lrti_admit_date copd_any_date" 
-  9.     forvalues i=1/18 {
- 10.         local c: word `i' of `a'
- 11.         local d: word `i' of `b' 
- 12.         di "number of missing values"
- 13.         count if `c'==""  
- 14.         gen `d'=date(`c', "YMD")
- 15.         format %dD/N/CY `d'
- 16.         drop `c'
- 17.         }
- 18.     
+ 10.     forvalues i=1/18 {
+ 11.         local c: word `i' of `a'
+ 12.         local d: word `i' of `b' 
+ 13.         di "number of missing values"
+ 14.         count if `c'==""  
+ 15.         gen `d'=date(`c', "YMD")
+ 16.         format %dD/N/CY `d'
+ 17.         drop `c'
+ 18.         }
+ 19.     
 .     * Update COPD exacerbation date if hospitalised with LRTI primary and COP
 > D any position
 .     gen lrti_copd = lrti_admit_date==copd_any_date & copd_any_date!=.
- 19.     tab lrti_copd
- 20.     replace copd_admit_date = lrti_admit_date if lrti_copd==1 & lrti_admit
+ 20.     tab lrti_copd
+ 21.     replace copd_admit_date = lrti_admit_date if lrti_copd==1 & lrti_admit
 > _date<copd_admit_date
- 21. 
+ 22. 
 .     if "`period'"=="pre" {
- 22.         * Define index date
+ 23.         * Define index date
 .         gen index_date = date("01/03/2018", "DMY")
- 23.         * Define end of follow-up
+ 24.         * Define end of follow-up
 .         gen end_study = date("22/03/2020", "DMY")
- 24.     }
- 25.         else if "`period'"=="pandemic" {
- 26.             * Define index date
+ 25.     }
+ 26.         else if "`period'"=="pandemic" {
+ 27.             * Define index date
 .             gen index_date = date("23/03/2020", "DMY")
- 27.             * Define end of follow-up
+ 28.             * Define end of follow-up
 .             gen end_study = date("30/04/2022", "DMY")
- 28.         }
- 29.            else if "`period'"=="wave1" {
- 30.             * Define index date
+ 29.         }
+ 30.            else if "`period'"=="wave1" {
+ 31.             * Define index date
 .             gen index_date = date("23/03/2020", "DMY")
- 31.             * Define end of follow-up
+ 32.             * Define end of follow-up
 .             gen end_study = date("30/05/2020", "DMY")
- 32.             } 
- 33.                 else if "`period'"=="easing1" {
- 34.                     * Define index date
+ 33.             } 
+ 34.                 else if "`period'"=="easing1" {
+ 35.                     * Define index date
 .                     gen index_date = date("31/05/2020", "DMY")
- 35.                     * Define end of follow-up
+ 36.                     * Define end of follow-up
 .                     gen end_study = date("06/09/2020", "DMY")
- 36.                     } 
- 37.                     else if "`period'"=="wave2" {
- 38.                         * Define index date
+ 37.                     } 
+ 38.                     else if "`period'"=="wave2" {
+ 39.                         * Define index date
 .                         gen index_date = date("07/09/2020", "DMY")
- 39.                         * Define end of follow-up
+ 40.                         * Define end of follow-up
 .                         gen end_study = date("24/04/2021", "DMY")
- 40.                         } 
- 41.                         else if "`period'"=="easing2" {
- 42.                             * Define index date
+ 41.                         } 
+ 42.                         else if "`period'"=="easing2" {
+ 43.                             * Define index date
 .                             gen index_date = date("25/04/2021", "DMY")
- 43.                             * Define end of follow-up
+ 44.                             * Define end of follow-up
 .                             gen end_study = date("27/05/2021", "DMY")
- 44.                             } 
- 45.                             else if "`period'"=="wave3" {
- 46.                                 * Define index date
+ 45.                             } 
+ 46.                             else if "`period'"=="wave3" {
+ 47.                                 * Define index date
 .                                 gen index_date = date("28/05/2021", "DMY")
- 47.                                 * Define end of follow-up
+ 48.                                 * Define end of follow-up
 .                                 gen end_study = date("14/12/2021", "DMY")
- 48.                                 } 
- 49.                                 else if "`period'"=="easing3" {
- 50.                                     * Define index date
+ 49.                                 } 
+ 50.                                 else if "`period'"=="easing3" {
+ 51.                                     * Define index date
 .                                     gen index_date = date("15/12/2021", "DMY"
 > )
- 51.                                     * Define end of follow-up
+ 52.                                     * Define end of follow-up
 .                                     gen end_study = date("30/04/2022", "DMY")
- 52.                                     } 
- 53.         format %dD/N/CY index_date end_study
- 54.        list index_date in 1/5 
- 55.        list end_study in 1/5
- 56.         egen end_date = rowmin(dereg_dateA end_study date_died)
- 57.         format %dD/N/CY end_date
- 58.         di "Number where end date is prior to index"
- 59.         count if end_date<index_date
- 60. 
+ 53.                                     } 
+ 54.         format %dD/N/CY index_date end_study
+ 55.        list index_date in 1/5 
+ 56.        list end_study in 1/5
+ 57.         egen end_date = rowmin(dereg_dateA end_study date_died)
+ 58.         format %dD/N/CY end_date
+ 59.         di "Number where end date is prior to index"
+ 60.         count if end_date<index_date
+ 61. 
 .     * Reorder ethnicity - white, asian, black, mixed, other
 .     *re-order ethnicity
 .     gen eth5=1 if ethnicity==1
- 61.     replace eth5=2 if ethnicity==3
- 62.     replace eth5=3 if ethnicity==4
- 63.     replace eth5=4 if ethnicity==2
- 64.     replace eth5=5 if ethnicity==5
- 65.     replace eth5=. if ethnicity==.
- 66. 
+ 62.     replace eth5=2 if ethnicity==3
+ 63.     replace eth5=3 if ethnicity==4
+ 64.     replace eth5=4 if ethnicity==2
+ 65.     replace eth5=5 if ethnicity==5
+ 66.     replace eth5=. if ethnicity==.
+ 67. 
 .     label define eth5                   1 "White"                            
 >            ///
 >                                 2 "South Asian"                         ///  
@@ -116,73 +117,126 @@
 >    ///
 >                                 5 "Other"                                    
 >    
- 67.                         
+ 68.                         
 . 
 .     label values eth5 eth5
- 68.     safetab eth5, m
- 69. 
+ 69.     safetab eth5, m
+ 70. 
 .     * Make gender numeric
 .     gen male = 1 if sex == "M"
- 70.     replace male = 0 if sex == "F"
- 71.     label define male 0"Female" 1"Male"
- 72.     label values male male
- 73.     safetab male, miss
- 74.     drop sex
- 75. 
+ 71.     replace male = 0 if sex == "F"
+ 72.     label define male 0"Female" 1"Male"
+ 73.     label values male male
+ 74.     safetab male, miss
+ 75.     drop sex
+ 76. 
 .     * Make region numeric
 .     generate region2=.
- 76.     replace region2=0 if region=="East"
- 77.     replace region2=1 if region=="East Midlands"
- 78.     replace region2=2 if region=="London"
- 79.     replace region2=3 if region=="North East"
- 80.     replace region2=4 if region=="North West"
- 81.     replace region2=5 if region=="South East"
- 82.     replace region2=6 if region=="South West"
- 83.     replace region2=7 if region=="West Midlands"
- 84.     replace region2=8 if region=="Yorkshire and The Humber"
- 85.     drop region
- 86.     rename region2 region
- 87.     label var region "region of England"
- 88.     label define region 0 "East" 1 "East Midlands"  2 "London" 3 "North Ea
+ 77.     replace region2=0 if region=="East"
+ 78.     replace region2=1 if region=="East Midlands"
+ 79.     replace region2=2 if region=="London"
+ 80.     replace region2=3 if region=="North East"
+ 81.     replace region2=4 if region=="North West"
+ 82.     replace region2=5 if region=="South East"
+ 83.     replace region2=6 if region=="South West"
+ 84.     replace region2=7 if region=="West Midlands"
+ 85.     replace region2=8 if region=="Yorkshire and The Humber"
+ 86.     drop region
+ 87.     rename region2 region
+ 88.     label var region "region of England"
+ 89.     label define region 0 "East" 1 "East Midlands"  2 "London" 3 "North Ea
 > st" 4 "North West" 5 "South East" 6 "South West" 7 "West Midlands" 8 "Yorkshi
 > re and The Humber"
- 89.     label values region region
- 90.     safetab region, miss
- 91. 
+ 90.     label values region region
+ 91.     safetab region, miss
+ 92. 
 .     *create a 4 category rural urban variable 
 .     generate urban_rural_5=.
- 92.     la var urban_rural_5 "Rural Urban in five categories"
- 93.     replace urban_rural_5=1 if urban_rural==1
- 94.     replace urban_rural_5=2 if urban_rural==2
- 95.     replace urban_rural_5=3 if urban_rural==3|urban_rural==4
- 96.     replace urban_rural_5=4 if urban_rural==5|urban_rural==6
- 97.     replace urban_rural_5=5 if urban_rural==7|urban_rural==8
- 98.     label define urban_rural_5 1 "Urban major conurbation" 2 "Urban minor 
+ 93.     la var urban_rural_5 "Rural Urban in five categories"
+ 94.     replace urban_rural_5=1 if urban_rural==1
+ 95.     replace urban_rural_5=2 if urban_rural==2
+ 96.     replace urban_rural_5=3 if urban_rural==3|urban_rural==4
+ 97.     replace urban_rural_5=4 if urban_rural==5|urban_rural==6
+ 98.     replace urban_rural_5=5 if urban_rural==7|urban_rural==8
+ 99.     label define urban_rural_5 1 "Urban major conurbation" 2 "Urban minor 
 > conurbation" 3 "Urban city and town" 4 "Rural town and fringe" 5 "Rural villa
 > ge and dispersed"
- 99.     label values urban_rural_5 urban_rural_5
-100.     safetab urban_rural_5, miss
-101. 
+100.     label values urban_rural_5 urban_rural_5
+101.     safetab urban_rural_5, miss
+102. 
 .     *generate a binary rural urban (with missing assigned to urban)
 .     generate urban_rural_bin=.
-102.     replace urban_rural_bin=1 if urban_rural<=4|urban_rural==.
-103.     replace urban_rural_bin=0 if urban_rural>4 & urban_rural!=.
-104.     label define urban_rural_bin 0 "Rural" 1 "Urban"
-105.     label values urban_rural_bin urban_rural_bin
-106.     safetab urban_rural_bin urban_rural, miss
-107.     label var urban_rural_bin "Rural-Urban"
-108. 
+103.     replace urban_rural_bin=1 if urban_rural<=4|urban_rural==.
+104.     replace urban_rural_bin=0 if urban_rural>4 & urban_rural!=.
+105.     label define urban_rural_bin 0 "Rural" 1 "Urban"
+106.     label values urban_rural_bin urban_rural_bin
+107.     safetab urban_rural_bin urban_rural, miss
+108.     label var urban_rural_bin "Rural-Urban"
+109. 
 .     * Define age categories
 .     * Create age categories
 .     egen age_cat = cut(age), at(18, 40, 60, 80, 120) icodes
-109.     label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years"
+110.     label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years"
 >  3 ">80 years"
-110.     label values age_cat age
-111.     safetab age_cat, miss
-112. 
+111.     label values age_cat age
+112.     safetab age_cat, miss
+113. 
 .     save "./output/prep_survival_`period'", replace
-113. }
+114. }
 (42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
 (950 missing values generated)
 number of missing values
   982
@@ -372,61 +426,114 @@ urban_rura |           urban_rural
 (note: file ./output/prep_survival_pre.dta not found)
 file ./output/prep_survival_pre.dta saved
 (42 vars, 1,000 obs)
-(953 missing values generated)
-number of missing values
-  976
-(976 missing values generated)
-number of missing values
-  981
-(981 missing values generated)
-number of missing values
-  972
-(972 missing values generated)
-number of missing values
-  973
-(973 missing values generated)
-number of missing values
-  977
-(977 missing values generated)
-number of missing values
-  977
-(977 missing values generated)
-number of missing values
-  971
-(971 missing values generated)
-number of missing values
-  977
-(977 missing values generated)
-number of missing values
-  974
-(974 missing values generated)
-number of missing values
-  969
-(969 missing values generated)
-number of missing values
-  977
-(977 missing values generated)
-number of missing values
-  908
-(908 missing values generated)
-number of missing values
-  927
-(927 missing values generated)
-number of missing values
-  952
-(952 missing values generated)
-number of missing values
-  897
-(897 missing values generated)
-number of missing values
-  951
-(951 missing values generated)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+(950 missing values generated)
 number of missing values
   975
 (975 missing values generated)
 number of missing values
+  981
+(981 missing values generated)
+number of missing values
+  979
+(979 missing values generated)
+number of missing values
+  978
+(978 missing values generated)
+number of missing values
+  974
+(974 missing values generated)
+number of missing values
+  978
+(978 missing values generated)
+number of missing values
+  973
+(973 missing values generated)
+number of missing values
+  972
+(972 missing values generated)
+number of missing values
   976
 (976 missing values generated)
+number of missing values
+  978
+(978 missing values generated)
+number of missing values
+  974
+(974 missing values generated)
+number of missing values
+  915
+(915 missing values generated)
+number of missing values
+  927
+(927 missing values generated)
+number of missing values
+  961
+(961 missing values generated)
+number of missing values
+  904
+(904 missing values generated)
+number of missing values
+  950
+(950 missing values generated)
+number of missing values
+  980
+(980 missing values generated)
+number of missing values
+  977
+(977 missing values generated)
 
   lrti_copd |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -456,111 +563,164 @@ number of missing values
      +------------+
 Number where end date is prior to index
   0
-(805 missing values generated)
+(800 missing values generated)
+(209 real changes made)
+(172 real changes made)
 (202 real changes made)
-(219 real changes made)
-(205 real changes made)
-(179 real changes made)
+(217 real changes made)
 (0 real changes made)
 5
 
        eth5 |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-      White |        195       19.50       19.50
-South Asian |        202       20.20       39.70
-      Black |        219       21.90       61.60
-      Mixed |        205       20.50       82.10
-      Other |        179       17.90      100.00
+      White |        200       20.00       20.00
+South Asian |        209       20.90       40.90
+      Black |        172       17.20       58.10
+      Mixed |        202       20.20       78.30
+      Other |        217       21.70      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
-(508 missing values generated)
-(497 real changes made)
+(494 missing values generated)
+(483 real changes made)
 5
 
        male |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-     Female |        497       49.70       49.70
-       Male |        492       49.20       98.90
+     Female |        483       48.30       48.30
+       Male |        506       50.60       98.90
           . |         11        1.10      100.00
 ------------+-----------------------------------
       Total |      1,000      100.00
 (1,000 missing values generated)
 (0 real changes made)
-(125 real changes made)
-(209 real changes made)
-(111 real changes made)
-(93 real changes made)
-(180 real changes made)
+(98 real changes made)
+(202 real changes made)
+(114 real changes made)
+(89 real changes made)
+(196 real changes made)
 (0 real changes made)
-(103 real changes made)
+(109 real changes made)
 (0 real changes made)
 7
 
        region of England |      Freq.     Percent        Cum.
 -------------------------+-----------------------------------
-           East Midlands |        125       12.50       12.50
-                  London |        209       20.90       33.40
-              North East |        111       11.10       44.50
-              North West |         93        9.30       53.80
-              South East |        180       18.00       71.80
-           West Midlands |        103       10.30       82.10
-                       . |        179       17.90      100.00
+           East Midlands |         98        9.80        9.80
+                  London |        202       20.20       30.00
+              North East |        114       11.40       41.40
+              North West |         89        8.90       50.30
+              South East |        196       19.60       69.90
+           West Midlands |        109       10.90       80.80
+                       . |        192       19.20      100.00
 -------------------------+-----------------------------------
                    Total |      1,000      100.00
 (1,000 missing values generated)
-(106 real changes made)
-(94 real changes made)
-(208 real changes made)
-(211 real changes made)
-(381 real changes made)
+(105 real changes made)
+(95 real changes made)
+(190 real changes made)
+(199 real changes made)
+(411 real changes made)
 14
 
         Rural Urban in five |
                  categories |      Freq.     Percent        Cum.
 ----------------------------+-----------------------------------
-    Urban major conurbation |        106       10.60       10.60
-    Urban minor conurbation |         94        9.40       20.00
-        Urban city and town |        208       20.80       40.80
-      Rural town and fringe |        211       21.10       61.90
-Rural village and dispersed |        381       38.10      100.00
+    Urban major conurbation |        105       10.50       10.50
+    Urban minor conurbation |         95        9.50       20.00
+        Urban city and town |        190       19.00       39.00
+      Rural town and fringe |        199       19.90       58.90
+Rural village and dispersed |        411       41.10      100.00
 ----------------------------+-----------------------------------
                       Total |      1,000      100.00
 (1,000 missing values generated)
-(408 real changes made)
-(592 real changes made)
+(390 real changes made)
+(610 real changes made)
 28
 
 urban_rura |                      urban_rural
      l_bin |         1          2          3          4          5 |     Total
 -----------+-------------------------------------------------------+----------
-     Rural |         0          0          0          0        104 |       592 
-     Urban |       106         94        102        106          0 |       408 
+     Rural |         0          0          0          0         89 |       610 
+     Urban |       105         95         91         99          0 |       390 
 -----------+-------------------------------------------------------+----------
-     Total |       106         94        102        106        104 |     1,000 
+     Total |       105         95         91         99         89 |     1,000 
 
 
 urban_rura |           urban_rural
      l_bin |         6          7          8 |     Total
 -----------+---------------------------------+----------
-     Rural |       107        189        192 |       592 
-     Urban |         0          0          0 |       408 
+     Rural |       110        207        204 |       610 
+     Urban |         0          0          0 |       390 
 -----------+---------------------------------+----------
-     Total |       107        189        192 |     1,000 
-(219 missing values generated)
+     Total |       110        207        204 |     1,000 
+(201 missing values generated)
 8
 
       age_cat |      Freq.     Percent        Cum.
 --------------+-----------------------------------
-18 - 40 years |        284       28.40       28.40
-41 - 60 years |        266       26.60       55.00
-61 - 80 years |        179       17.90       72.90
-    >80 years |         52        5.20       78.10
-            . |        219       21.90      100.00
+18 - 40 years |        309       30.90       30.90
+41 - 60 years |        261       26.10       57.00
+61 - 80 years |        183       18.30       75.30
+    >80 years |         46        4.60       79.90
+            . |        201       20.10      100.00
 --------------+-----------------------------------
         Total |      1,000      100.00
 (note: file ./output/prep_survival_pandemic.dta not found)
 file ./output/prep_survival_pandemic.dta saved
 (42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str1    %9s                   
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str1    %9s                   
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
 (952 missing values generated)
 number of missing values
   996
@@ -750,6 +910,59 @@ urban_rura |           urban_rural
 (note: file ./output/prep_survival_wave1.dta not found)
 file ./output/prep_survival_wave1.dta saved
 (42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
 (954 missing values generated)
 number of missing values
   997
@@ -939,6 +1152,59 @@ urban_rura |           urban_rural
 (note: file ./output/prep_survival_easing1.dta not found)
 file ./output/prep_survival_easing1.dta saved
 (42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
 (962 missing values generated)
 number of missing values
   994
@@ -1128,6 +1394,59 @@ urban_rura |           urban_rural
 (note: file ./output/prep_survival_wave2.dta not found)
 file ./output/prep_survival_wave2.dta saved
 (42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str1    %9s                   
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str1    %9s                   
+t1dm_admissio~y str1    %9s                   
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str1    %9s                   
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str1    %9s                   
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
 (972 missing values generated)
 number of missing values
   1,000
@@ -1317,6 +1636,59 @@ urban_rura |           urban_rural
 (note: file ./output/prep_survival_easing2.dta not found)
 file ./output/prep_survival_easing2.dta saved
 (42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
 (982 missing values generated)
 number of missing values
   995
@@ -1506,6 +1878,59 @@ urban_rura |           urban_rural
 (note: file ./output/prep_survival_wave3.dta not found)
 file ./output/prep_survival_wave3.dta saved
 (42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
 (986 missing values generated)
 number of missing values
   995
@@ -1696,16 +2121,9 @@ urban_rura |           urban_rural
 file ./output/prep_survival_easing3.dta saved
 
 . 
-. 
-end of do-file
-
-. . file open output using "/tmp/tmp.JckVb3WEbo", write text replace
-
-. . file write output "success" 
-
-. . file close output
-
-. 
-end of do-file
-
-
+. log close
+      name:  <unnamed>
+       log:  /workspace/logs/cox_model_prep.log
+  log type:  text
+ closed on:  10 Aug 2022, 09:10:12
+-------------------------------------------------------------------------------

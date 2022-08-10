@@ -24,1539 +24,712 @@ copd
 
 . 
 . foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
-  2. use ./output/prep_survival_`period', clear
-  3. 
-.     * Drop events that occur on index date
+  2.     use ./output/prep_survival_`period', clear
+  3.     describe
+  4.     * Drop events that occur on index date
 .     drop if `outcome'_admit_date==index_date
-  4. 
+  5. 
 .     * Update study population for diabetes and respiratory outcomes
 .     drop if has_t1_diabetes==0 & "`outcome'"=="t1dm"
-  5.     drop if has_t2_diabetes==0 & "`outcome'"=="t2dm"
-  6.     drop if diabetes_subgroup==0 & "`outcome'"=="dm_keto"
-  7.     drop if has_asthma==0 & "`outcome'"=="asthma"
-  8.     drop if has_copd==1 & "`outcome'"=="copd"
-  9. 
+  6.     drop if has_t2_diabetes==0 & "`outcome'"=="t2dm"
+  7.     drop if diabetes_subgroup==0 & "`outcome'"=="dm_keto"
+  8.     drop if has_asthma==0 & "`outcome'"=="asthma"
+  9.     drop if has_copd==0 & "`outcome'"=="copd"
+ 10. 
 .     * Cox model for each outcome category
 .     * Generate flags and end dates for each outcome
 .     gen `outcome'_admit=(`outcome'_admit_date!=.)
- 10.     tab `outcome'_admit
- 11.     count if `outcome'_admit_date!=.
- 12.     if r(N) > 10 {
- 13.         gen `outcome'_end = end_date
- 14.         replace `outcome'_end = `outcome'_admit_date if `outcome'_admit==1
- 15. 
+ 11.     tab `outcome'_admit
+ 12.     count if `outcome'_admit_date!=.
+ 13.     if r(N) > 10 {
+ 14.         gen `outcome'_end = end_date
+ 15.         replace `outcome'_end = `outcome'_admit_date if `outcome'_admit==1
+ 16. 
 .         stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index
 > _date) origin(index_date) 
- 16.         * Kaplan-Meier plot
+ 17.         * Kaplan-Meier plot
 .         sts graph, by(eth5) ylabel(.75(.05)1)
- 17.         graph export ./output/graphs/km_`outcome'_`period'_eth.svg, as(svg
+ 18.         graph export ./output/graphs/km_`outcome'_`period'_eth.svg, as(svg
 > ) replace
- 18.         * Cox model - crude
+ 19.         * Cox model - crude
 .         stcox i.eth5, strata(stp)
- 19.         estimates save "./output/tempdata/crude_`outcome'_eth", replace 
- 20.         eststo model1
- 21.         parmest, label eform format(estimate p lb ub) saving("./output/tem
+ 20.         estimates save "./output/tempdata/crude_`outcome'_eth", replace 
+ 21.         eststo model1
+ 22.         parmest, label eform format(estimate p lb ub) saving("./output/tem
 > pdata/surv_crude_`outcome'_eth", replace) idstr("crude_`outcome'_eth") 
- 22.         *estat phtest, detail
+ 23.         *estat phtest, detail
 .         * Cox model - age and gender adjusted
 .         stcox i.eth5 i.age_cat i.male, strata(stp)
- 23.         estimates save "./output/tempdata/model1_`outcome'_eth", replace 
- 24.         eststo model2
- 25.         parmest, label eform format(estimate p lb ub) saving("./output/tem
+ 24.         estimates save "./output/tempdata/model1_`outcome'_eth", replace 
+ 25.         eststo model2
+ 26.         parmest, label eform format(estimate p lb ub) saving("./output/tem
 > pdata/surv_model1_`outcome'_eth", replace) idstr("model1_`outcome'_eth") 
- 26.         *estat phtest, detail
+ 27.         *estat phtest, detail
 .         * Cox model - fully adjusted
 .         stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, str
 > ata(stp)
- 27.         estimates save "./output/tempdata/model2_`outcome'_eth", replace 
- 28.         eststo model3
- 29.         parmest, label eform format(estimate p lb ub) saving("./output/tem
+ 28.         estimates save "./output/tempdata/model2_`outcome'_eth", replace 
+ 29.         eststo model3
+ 30.         parmest, label eform format(estimate p lb ub) saving("./output/tem
 > pdata/surv_model2_`outcome'_eth", replace) idstr("model2_`outcome'_eth") 
- 30.         *estat phtest, detail
+ 31.         *estat phtest, detail
 .         esttab model1 model2 model3 using "./output/tables/`outcome'_estout_t
 > able_eth_`period'.txt", b(a2) ci(2) label wide compress eform ///
 >         title ("`outcome'") ///
 >         varlabels(`e(labels)') ///
 >         stats(N_outcome) ///
 >         append 
- 31.         eststo clear
- 32.     * Write results to table
+ 32.         eststo clear
+ 33.     * Write results to table
 .         * eth16 labelled columns
 . 
 .         local lab1: label eth5 1
- 33.         local lab2: label eth5 2
- 34.         local lab3: label eth5 3
- 35.         local lab4: label eth5 4
- 36.         local lab5: label eth5 5
- 37.         /* counts */
+ 34.         local lab2: label eth5 2
+ 35.         local lab3: label eth5 3
+ 36.         local lab4: label eth5 4
+ 37.         local lab5: label eth5 5
+ 38.         /* counts */
 .         
 .         * First row, eth16 = 1 (White British) reference cat
 .         qui safecount if eth5==1
- 38.         local denominator = r(N)
- 39.         qui safecount if eth5 == 1 & `outcome'_admit == 1
- 40.         local event = r(N)
- 41.         bysort eth5: egen total_follow_up = total(_t)
- 42.         qui su total_follow_up if eth5 == 1
- 43.         local person_week = r(mean)/7
- 44.         local rate = 100000*(`event'/`person_week')
- 45.         if `event'>10 & `event'!=. {
- 46.             file write tablecontent  ("`period'") _tab ("`lab1'") _tab (`d
-> enominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`rate') _
-> tab
- 47.             file write tablecontent ("1.00") _tab _tab ("1.00") _tab _tab 
+ 39.         local denominator = r(N)
+ 40.         qui safecount if eth5 == 1 & `outcome'_admit == 1
+ 41.         local event = r(N)
+ 42.         bysort eth5: egen total_follow_up = total(_t)
+ 43.         qui su total_follow_up if eth5 == 1
+ 44.         local person_mth = r(mean)/30
+ 45.         local rate = 100000*(`event'/`person_mth')
+ 46.         if `event'>10 & `event'!=. {
+ 47.             file write tablecontent  ("`period'") _tab ("`lab1'") _tab (`d
+> enominator') _tab (`event') _tab %10.0f (`person_mth') _tab %3.2f (`rate') _t
+> ab
+ 48.             file write tablecontent ("1.00") _tab _tab ("1.00") _tab _tab 
 > _tab _tab ("1.00") _n
- 48.             }
- 49.         else {
- 50.             file write tablecontent ("`period'") _tab ("`lab`eth''") _tab 
+ 49.             }
+ 50.         else {
+ 51.             file write tablecontent ("`period'") _tab ("`lab`eth''") _tab 
 > ("redact") _n
- 51.             continue
- 52.         }
- 53.     * outcomesequent ethnic groups
+ 52.             continue
+ 53.         }
+ 54.     * outcomesequent ethnic groups
 .         forvalues eth=2/5 {
- 54.             qui safecount if eth5==`eth'
- 55.             local denominator = r(N)
- 56.             qui safecount if eth5 == `eth' & `outcome'_admit == 1
- 57.             local event = r(N)
- 58.             qui su total_follow_up if eth5 == `eth'
- 59.             local person_week = r(mean)/7
- 60.             local rate = 100000*(`event'/`person_week')
- 61.             if `event'>10 & `event'!=. {
- 62.                 file write tablecontent ("`period'") _tab ("`lab`eth''") _
-> tab (`denominator') _tab (`event') _tab %10.0f (`person_week') _tab %3.2f (`r
-> ate') _tab  
- 63.                 cap estimates use "./output/tempdata/crude_`outcome'_eth" 
- 64.                 cap lincom `eth'.eth5, eform
- 65.                 file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4
+ 55.             qui safecount if eth5==`eth'
+ 56.             local denominator = r(N)
+ 57.             qui safecount if eth5 == `eth' & `outcome'_admit == 1
+ 58.             local event = r(N)
+ 59.             qui su total_follow_up if eth5 == `eth'
+ 60.             local person_mth = r(mean)/30
+ 61.             local rate = 100000*(`event'/`person_mth')
+ 62.             if `event'>10 & `event'!=. {
+ 63.                 file write tablecontent ("`period'") _tab ("`lab`eth''") _
+> tab (`denominator') _tab (`event') _tab %10.0f (`person_mth') _tab %3.2f (`ra
+> te') _tab  
+ 64.                 cap estimates use "./output/tempdata/crude_`outcome'_eth" 
+ 65.                 cap lincom `eth'.eth5, eform
+ 66.                 file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4
 > .2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab %4.2f (r(lb)) _tab %4.2f (r(ub))
 >  _tab
- 66.                 cap estimates clear
- 67.                 cap estimates use "./output/tempdata/model1_`outcome'_eth"
+ 67.                 cap estimates clear
+ 68.                 cap estimates use "./output/tempdata/model1_`outcome'_eth"
 >  
- 68.                 cap lincom `eth'.eth5, eform
- 69.                 file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4
+ 69.                 cap lincom `eth'.eth5, eform
+ 70.                 file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4
 > .2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab %4.2f (r(lb)) _tab %4.2f (r(ub))
 >   _tab
- 70.                 cap estimates clear
- 71.                 cap estimates use "./output/tempdata/model2_`outcome'_eth"
+ 71.                 cap estimates clear
+ 72.                 cap estimates use "./output/tempdata/model2_`outcome'_eth"
 >  
- 72.                 cap lincom `eth'.eth5, eform
- 73.                 file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4
+ 73.                 cap lincom `eth'.eth5, eform
+ 74.                 file write tablecontent  %4.2f (r(estimate)) _tab ("(") %4
 > .2f (r(lb)) (" - ") %4.2f (r(ub)) (")") _tab %4.2f (r(lb)) _tab %4.2f (r(ub))
 >  _n
- 74.                 cap estimates clear
- 75.             }
- 76.             else {
- 77.                 file write tablecontent ("`period'") _tab ("`lab`eth''") _
+ 75.                 cap estimates clear
+ 76.             }
+ 77.             else {
+ 78.                 file write tablecontent ("`period'") _tab ("`lab`eth''") _
 > tab ("redact") _n
- 78.                 continue
- 79.             }
- 80.         }  //end ethnic group
- 81. drop total_follow_up
- 82.     }
- 83. else { 
- 84.     file write tablecontent ("`period'") _tab ("redact") _n
- 85.     continue
- 86. }
- 87. } //end outcomes
+ 79.                 continue
+ 80.             }
+ 81.         }  //end ethnic group
+ 82. drop total_follow_up
+ 83.     }
+ 84. else { 
+ 85.     file write tablecontent ("`period'") _tab ("redact") _n
+ 86.     continue
+ 87. }
+ 88. } //end outcomes
+
+Contains data from ./output/prep_survival_pre.dta
+  obs:         1,000                          
+ vars:            46                          10 Aug 2022 09:10
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
-(50 observations deleted)
+(950 observations deleted)
 
  copd_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        898       94.53       94.53
-          1 |         52        5.47      100.00
+          0 |         45       90.00       90.00
+          1 |          5       10.00      100.00
 ------------+-----------------------------------
-      Total |        950      100.00
-  52
-(52 real changes made)
+      Total |         50      100.00
+  5
 
-                id:  patient_id
-     failure event:  copd_admit != 0 & copd_admit < .
-obs. time interval:  (copd_end[_n-1], copd_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-        950  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-        950  observations remaining, representing
-        950  subjects
-         52  failures in single-failure-per-subject data
-    694,554  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       752
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_copd_pre_eth.svg not found)
-(file ./output/graphs/km_copd_pre_eth.svg written in SVG format)
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-Iteration 0:   log likelihood =  -9.257987
-Iteration 1:   log likelihood = -7.1692471
-Iteration 2:   log likelihood = -6.9104219
-Iteration 3:   log likelihood = -6.8324835
-Iteration 4:   log likelihood = -6.8051635
-Iteration 5:   log likelihood = -6.7952531
-Iteration 6:   log likelihood = -6.7916257
-Iteration 7:   log likelihood = -6.7902937
-Iteration 8:   log likelihood =  -6.789804
-Iteration 9:   log likelihood = -6.7896239
-Iteration 10:  log likelihood = -6.7895577
-Iteration 11:  log likelihood = -6.7895333
-Iteration 12:  log likelihood = -6.7895244
-Iteration 13:  log likelihood = -6.7895211
-Iteration 14:  log likelihood = -6.7895198
-Iteration 15:  log likelihood = -6.7895194
-Iteration 16:  log likelihood = -6.7895192
-Iteration 17:  log likelihood = -6.7895192
-Iteration 18:  log likelihood = -6.7895192
-Iteration 19:  log likelihood = -6.7895191
-Iteration 20:  log likelihood = -6.7895191
-Iteration 21:  log likelihood = -6.7895191
-Iteration 22:  log likelihood = -6.7895191
-Iteration 23:  log likelihood = -6.7895191
-Iteration 24:  log likelihood = -6.7895191
-Iteration 25:  log likelihood = -6.7895191
-Iteration 26:  log likelihood = -6.7895191
-Iteration 27:  log likelihood = -6.7895191
-Iteration 28:  log likelihood = -6.7895191
-Iteration 29:  log likelihood = -6.7895191
-Iteration 30:  log likelihood = -6.7895191
-Iteration 31:  log likelihood = -6.7895191
-Iteration 32:  log likelihood = -6.7895191
-Iteration 33:  log likelihood = -6.7895191
-Iteration 34:  log likelihood = -6.7895191
-Iteration 35:  log likelihood = -6.7895191
-Refining estimates:
-Iteration 0:   log likelihood = -6.7895191
-Iteration 1:   log likelihood = -6.7895191
-Iteration 2:   log likelihood = -6.7895191
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          950                  Number of obs    =          48
-No. of failures =           52
-Time at risk    =       694554
-                                                LR chi2(4)       =        4.94
-Log likelihood  =   -6.7895191                  Prob > chi2      =      0.2938
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   2.10e-17   3.90e-09    -0.00   1.000            0           .
-      Black  |    1.21525    1.49131     0.16   0.874     .1096738     13.4657
-      Mixed  |   2.32e-17   4.81e-09    -0.00   1.000            0           .
-      Other  |   2.00e-17   4.44e-09    -0.00   1.000            0           .
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-(note: file ./output/tempdata/crude_copd_eth.ster not found)
-file ./output/tempdata/crude_copd_eth.ster saved
-(note: file ./output/tempdata/surv_crude_copd_eth.dta not found)
-file ./output/tempdata/surv_crude_copd_eth.dta saved
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-Iteration 0:   log likelihood = -8.7733846
-Iteration 1:   log likelihood = -3.4481324
-Iteration 2:   log likelihood = -2.8298614
-Iteration 3:   log likelihood = -2.6025405
-Iteration 4:   log likelihood = -2.5123891
-Iteration 5:   log likelihood = -2.4771743
-Iteration 6:   log likelihood =  -2.463802
-Iteration 7:   log likelihood = -2.4588149
-Iteration 8:   log likelihood = -2.4569703
-Iteration 9:   log likelihood = -2.4562904
-Iteration 10:  log likelihood = -2.4560401
-Iteration 11:  log likelihood =  -2.455948
-Iteration 12:  log likelihood = -2.4559141
-Iteration 13:  log likelihood = -2.4559016
-Iteration 14:  log likelihood =  -2.455897
-Iteration 15:  log likelihood = -2.4558953
-Iteration 16:  log likelihood = -2.4558947
-Iteration 17:  log likelihood = -2.4558945
-Iteration 18:  log likelihood = -2.4558944
-Iteration 19:  log likelihood = -2.4558944
-Iteration 20:  log likelihood = -2.4558944
-Iteration 21:  log likelihood = -2.4558944
-Iteration 22:  log likelihood = -2.4558944
-Iteration 23:  log likelihood = -2.4558944
-Iteration 24:  log likelihood = -2.4558944
-Iteration 25:  log likelihood = -2.4558944
-Iteration 26:  log likelihood = -2.4558944
-Iteration 27:  log likelihood = -2.4558944
-Iteration 28:  log likelihood = -2.4558944
-Iteration 29:  log likelihood = -2.4558944
-Iteration 30:  log likelihood = -2.4558944
-Iteration 31:  log likelihood = -2.4558944
-Iteration 32:  log likelihood = -2.4558944
-Iteration 33:  log likelihood = -2.4558944
-Refining estimates:
-Iteration 0:   log likelihood = -2.4558944
-Iteration 1:   log likelihood = -2.4558944
-Iteration 2:   log likelihood = -2.4558944
-Iteration 3:   log likelihood = -2.4558944
-Iteration 4:   log likelihood = -2.4558944
-Iteration 5:   log likelihood = -2.4558944
-Iteration 6:   log likelihood = -2.4558944
-Iteration 7:   log likelihood = -2.4558944
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          746                  Number of obs    =          41
-No. of failures =           43
-Time at risk    =       545061
-                                                LR chi2(6)       =       12.63
-Log likelihood  =   -2.4558944                  Prob > chi2      =      0.0492
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   2.35e-18   1.82e-09    -0.00   1.000            0           .
-      Black  |   1.35e+09   3.77e+13     0.00   0.999            0           .
-      Mixed  |   7.10e-10   .9210472    -0.00   1.000            0           .
-      Other  |   1.96e-19   2.38e-10    -0.00   1.000            0           .
-             |
-     age_cat |
-41 - 60 y..  |   1.49e+18          .        .       .            .           .
-61 - 80 y..  |   5.80e+18          .        .       .            .           .
-  >80 years  |   4.77e+18   9.53e+27     0.00   1.000            0           .
-             |
-        male |
-       Male  |   2.69e-10   7.52e-06    -0.00   0.999            0           .
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-(note: file ./output/tempdata/model1_copd_eth.ster not found)
-file ./output/tempdata/model1_copd_eth.ster saved
-(note: file ./output/tempdata/surv_model1_copd_eth.dta not found)
-file ./output/tempdata/surv_model1_copd_eth.dta saved
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-Iteration 0:   log likelihood = -8.7733846
-Iteration 1:   log likelihood =  -.3387853
-Iteration 2:   log likelihood = -.11564671
-Iteration 3:   log likelihood =  -.0416708
-Iteration 4:   log likelihood = -.01526297
-Iteration 5:   log likelihood = -.00562175
-Iteration 6:   log likelihood = -.00207425
-Iteration 7:   log likelihood = -.00076557
-Iteration 8:   log likelihood = -.00028214
-Iteration 9:   log likelihood = -.00010595
-Iteration 10:  log likelihood = -.00003607
-Iteration 11:  log likelihood = -.00003314  (backed up)
-Iteration 12:  log likelihood = -7.100e-07
-Iteration 13:  log likelihood = -6.949e-07
-Iteration 14:  log likelihood =  1.074e-06
-Iteration 15:  log likelihood =  1.474e-06
-Iteration 16:  log likelihood =  .00004482
-Iteration 17:  log likelihood =   .0000449
-Iteration 18:  log likelihood =   .0000449  (backed up)
-Iteration 19:  log likelihood =   .0000449  (backed up)
-Iteration 20:  log likelihood =   .0000449  (backed up)
-Iteration 21:  log likelihood =   .0000449  (backed up)
-Iteration 22:  log likelihood =   .0000449  (backed up)
-Iteration 23:  log likelihood =   .0000449  (backed up)
-Iteration 24:  log likelihood = -.00012705  (backed up)
-Iteration 25:  log likelihood =  .00009104
-Iteration 26:  log likelihood =  .00009106
-Iteration 27:  log likelihood =  .00009107
-Iteration 28:  log likelihood =  .00009107
-Iteration 29:  log likelihood =  .00009107
-Iteration 30:  log likelihood =  .00009107  (backed up)
-Iteration 31:  log likelihood =  .00009107  (backed up)
-Iteration 32:  log likelihood =  .00009107  (backed up)
-Iteration 33:  log likelihood =  .00009107  (backed up)
-Iteration 34:  log likelihood =  .00009107  (backed up)
-Refining estimates:
-Iteration 0:   log likelihood = -1.306e-07
-Iteration 1:   log likelihood = -4.804e-08
-Iteration 2:   log likelihood = -1.767e-08
-Iteration 3:   log likelihood = -6.502e-09
-Iteration 4:   log likelihood = -2.392e-09
-Iteration 5:   log likelihood = -8.800e-10
-Iteration 6:   log likelihood = -3.237e-10
-Iteration 7:   log likelihood = -1.191e-10
-Iteration 8:   log likelihood = -4.381e-11
-Iteration 9:   log likelihood = -1.612e-11
-Iteration 10:  log likelihood = -5.933e-12
-Iteration 11:  log likelihood = -2.181e-12
-Iteration 12:  log likelihood = -8.029e-13
-Iteration 13:  log likelihood = -2.984e-13
-Iteration 14:  log likelihood = -1.137e-13
-Iteration 15:  log likelihood = -4.974e-14
-Iteration 16:  log likelihood = -1.421e-14
-Iteration 17:  log likelihood =          0
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          746                  Number of obs    =          41
-No. of failures =           43
-Time at risk    =       545061
-                                                LR chi2(10)      =       17.55
-Log likelihood  =            0                  Prob > chi2      =      0.0631
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   1.36e-08          .        .       .            .           .
-      Black  |   3.89e+08   4.66e+16     0.00   1.000            0           .
-      Mixed  |   1.885547   2.67e+08     0.00   1.000            0           .
-      Other  |   .0003769   66973.61    -0.00   1.000            0           .
-             |
-     age_cat |
-41 - 60 y..  |    3.81655          .        .       .            .           .
-61 - 80 y..  |   2.14e+14   3.12e+21     0.00   1.000            0           .
-  >80 years  |   67030.89   2.43e+13     0.00   1.000            0           .
-             |
-        male |
-       Male  |   1.87e-08   3.313643    -0.00   1.000            0           .
-             |
-urban_rura~n |
-      Urban  |   1.64e+17          .        .       .            .           .
-             |
-         imd |
-          1  |   2.76e+11   4.03e+19     0.00   1.000            0           .
-          2  |   1.06e+19          .        .       .            .           .
-          3  |   6.37e+12   9.45e+20     0.00   1.000            0           .
-          4  |   525.4635   1.55e+11     0.00   1.000            0           .
-          5  |   112488.2   1.75e+13     0.00   1.000            0           .
-             |
-  1.shielded |   3.20e+13          .        .       .            .           .
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-(note: file ./output/tempdata/model2_copd_eth.ster not found)
-file ./output/tempdata/model2_copd_eth.ster saved
-(note: file ./output/tempdata/surv_model2_copd_eth.dta not found)
-file ./output/tempdata/surv_model2_copd_eth.dta saved
-(note: file ./output/tables/copd_estout_table_eth_pre.txt not found)
-(output written to ./output/tables/copd_estout_table_eth_pre.txt)
+Contains data from ./output/prep_survival_pandemic.dta
+  obs:         1,000                          
+ vars:            46                          10 Aug 2022 09:10
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
-(50 observations deleted)
+(950 observations deleted)
 
  copd_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        904       95.16       95.16
-          1 |         46        4.84      100.00
+          0 |         48       96.00       96.00
+          1 |          2        4.00      100.00
 ------------+-----------------------------------
-      Total |        950      100.00
-  46
-(46 real changes made)
+      Total |         50      100.00
+  2
 
-                id:  patient_id
-     failure event:  copd_admit != 0 & copd_admit < .
-obs. time interval:  (copd_end[_n-1], copd_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-        950  total observations
-          1  observation ends on or before enter()
-------------------------------------------------------------------------------
-        949  observations remaining, representing
-        949  subjects
-         46  failures in single-failure-per-subject data
-    682,386  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       768
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_copd_pandemic_eth.svg not found)
-(file ./output/graphs/km_copd_pandemic_eth.svg written in SVG format)
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-Iteration 0:   log likelihood =   -8.43815
-Iteration 1:   log likelihood = -4.3201807
-Iteration 2:   log likelihood =  -3.995371
-Iteration 3:   log likelihood = -3.9146163
-Iteration 4:   log likelihood = -3.8869325
-Iteration 5:   log likelihood = -3.8769586
-Iteration 6:   log likelihood = -3.8733152
-Iteration 7:   log likelihood = -3.8719783
-Iteration 8:   log likelihood = -3.8714869
-Iteration 9:   log likelihood = -3.8713062
-Iteration 10:  log likelihood = -3.8712397
-Iteration 11:  log likelihood = -3.8712152
-Iteration 12:  log likelihood = -3.8712062
-Iteration 13:  log likelihood = -3.8712029
-Iteration 14:  log likelihood = -3.8712017
-Iteration 15:  log likelihood = -3.8712013
-Iteration 16:  log likelihood = -3.8712011
-Iteration 17:  log likelihood =  -3.871201
-Iteration 18:  log likelihood =  -3.871201
-Iteration 19:  log likelihood =  -3.871201
-Iteration 20:  log likelihood =  -3.871201
-Iteration 21:  log likelihood =  -3.871201
-Iteration 22:  log likelihood =  -3.871201
-Iteration 23:  log likelihood =  -3.871201
-Iteration 24:  log likelihood =  -3.871201
-Iteration 25:  log likelihood =  -3.871201
-Iteration 26:  log likelihood =  -3.871201
-Iteration 27:  log likelihood =  -3.871201
-Iteration 28:  log likelihood =  -3.871201
-Iteration 29:  log likelihood =  -3.871201
-Iteration 30:  log likelihood =  -3.871201
-Iteration 31:  log likelihood =  -3.871201
-Iteration 32:  log likelihood =  -3.871201
-Iteration 33:  log likelihood =  -3.871201
-Iteration 34:  log likelihood =  -3.871201
-Refining estimates:
-Iteration 0:   log likelihood =  -3.871201
-Iteration 1:   log likelihood =  -3.871201
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          949                  Number of obs    =          45
-No. of failures =           46
-Time at risk    =       682386
-                                                LR chi2(4)       =        9.13
-Log likelihood  =    -3.871201                  Prob > chi2      =      0.0578
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   2.13e+15   2.54e+23     0.00   1.000            0           .
-      Black  |   .7059295   1.00e+08    -0.00   1.000            0           .
-      Mixed  |   .6681201   9.58e+07    -0.00   1.000            0           .
-      Other  |   3.10e+31   7.30e+39     0.00   1.000            0           .
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/crude_copd_eth.ster saved
-file ./output/tempdata/surv_crude_copd_eth.dta saved
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-Iteration 0:   log likelihood = -1.9459101
-Iteration 1:   log likelihood = -.00545638
-Iteration 2:   log likelihood = -.00199979
-Iteration 3:   log likelihood = -.00073468
-Iteration 4:   log likelihood = -.00027014
-Iteration 5:   log likelihood = -.00009936
-Iteration 6:   log likelihood = -.00003655
-Iteration 7:   log likelihood = -.00001345
-Iteration 8:   log likelihood = -4.946e-06
-Iteration 9:   log likelihood = -1.820e-06
-Iteration 10:  log likelihood = -6.694e-07
-Iteration 11:  log likelihood = -2.463e-07
-Iteration 12:  log likelihood = -9.059e-08
-Iteration 13:  log likelihood = -3.333e-08
-Iteration 14:  log likelihood = -1.226e-08
-Iteration 15:  log likelihood = -4.510e-09
-Iteration 16:  log likelihood = -1.659e-09
-Iteration 17:  log likelihood = -6.104e-10
-Iteration 18:  log likelihood = -2.246e-10
-Iteration 19:  log likelihood = -8.261e-11
-Iteration 20:  log likelihood = -3.039e-11
-Iteration 21:  log likelihood = -1.118e-11
-Iteration 22:  log likelihood = -4.114e-12
-Iteration 23:  log likelihood = -1.513e-12
-Iteration 24:  log likelihood = -5.578e-13
-Iteration 25:  log likelihood = -2.061e-13
-Iteration 26:  log likelihood = -7.816e-14
-Iteration 27:  log likelihood = -2.842e-14
-Iteration 28:  log likelihood = -7.105e-15
-Iteration 29:  log likelihood = -7.105e-15
-Refining estimates:
-Iteration 0:   log likelihood = -7.105e-15
-Iteration 1:   log likelihood =          0
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          738                  Number of obs    =          33
-No. of failures =           35
-Time at risk    =       530561
-                                                LR chi2(6)       =        3.89
-Log likelihood  =            0                  Prob > chi2      =      0.6913
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   4.16e+15   4.35e+23     0.00   1.000            0           .
-      Black  |   1.047412   1.55e+08     0.00   1.000            0           .
-      Mixed  |   4.24e+15   4.56e+23     0.00   1.000            0           .
-      Other  |          1  (omitted)
-             |
-     age_cat |
-41 - 60 y..  |   1.056804   1.43e+08     0.00   1.000            0           .
-61 - 80 y..  |   2.47e-16   4.43e-08    -0.00   1.000            0           .
-  >80 years  |          1  (omitted)
-             |
-        male |
-       Male  |   1.034858   9.95e+07     0.00   1.000            0           .
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/model1_copd_eth.ster saved
-file ./output/tempdata/surv_model1_copd_eth.dta saved
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-note: 1.shielded omitted because of collinearity
-Iteration 0:   log likelihood = -1.9459101
-Iteration 1:   log likelihood = -.00545638
-Iteration 2:   log likelihood = -.00199979
-Iteration 3:   log likelihood = -.00073468
-Iteration 4:   log likelihood = -.00027014
-Iteration 5:   log likelihood = -.00009936
-Iteration 6:   log likelihood = -.00003655
-Iteration 7:   log likelihood = -.00001345
-Iteration 8:   log likelihood = -4.946e-06
-Iteration 9:   log likelihood = -1.820e-06
-Iteration 10:  log likelihood = -6.694e-07
-Iteration 11:  log likelihood = -2.463e-07
-Iteration 12:  log likelihood = -9.059e-08
-Iteration 13:  log likelihood = -3.333e-08
-Iteration 14:  log likelihood = -1.226e-08
-Iteration 15:  log likelihood = -4.510e-09
-Iteration 16:  log likelihood = -1.659e-09
-Iteration 17:  log likelihood = -6.104e-10
-Iteration 18:  log likelihood = -2.246e-10
-Iteration 19:  log likelihood = -8.261e-11
-Iteration 20:  log likelihood = -3.039e-11
-Iteration 21:  log likelihood = -1.118e-11
-Iteration 22:  log likelihood = -4.114e-12
-Iteration 23:  log likelihood = -1.513e-12
-Iteration 24:  log likelihood = -5.542e-13
-Iteration 25:  log likelihood = -2.061e-13
-Iteration 26:  log likelihood = -7.816e-14
-Iteration 27:  log likelihood = -2.842e-14
-Iteration 28:  log likelihood = -7.105e-15
-Iteration 29:  log likelihood = -7.105e-15
-Refining estimates:
-Iteration 0:   log likelihood = -7.105e-15
-Iteration 1:   log likelihood =          0
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          738                  Number of obs    =          33
-No. of failures =           35
-Time at risk    =       530561
-                                                LR chi2(7)       =        3.89
-Log likelihood  =            0                  Prob > chi2      =      0.7921
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   .0372858    3741713    -0.00   1.000            0           .
-      Black  |   .3294227          .        .       .            .           .
-      Mixed  |   .0281875          .        .       .            .           .
-      Other  |          1  (omitted)
-             |
-     age_cat |
-41 - 60 y..  |   7.17e+11   7.68e+19     0.00   1.000            0           .
-61 - 80 y..  |   2.28e+07   3.26e+15     0.00   1.000            0           .
-  >80 years  |          1  (omitted)
-             |
-        male |
-       Male  |   57083.01   3.56e+12     0.00   1.000            0           .
-             |
-urban_rura~n |
-      Urban  |   846843.3   6.81e+13     0.00   1.000            0           .
-             |
-         imd |
-          1  |          1  (omitted)
-          2  |    4692597   3.80e+14     0.00   1.000            0           .
-          3  |   2.564621   2.99e+08     0.00   1.000            0           .
-          4  |   2.29e-06          .        .       .            .           .
-          5  |    .000034          .        .       .            .           .
-             |
-  1.shielded |          1  (omitted)
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/model2_copd_eth.ster saved
-file ./output/tempdata/surv_model2_copd_eth.dta saved
-(note: file ./output/tables/copd_estout_table_eth_pandemic.txt not found)
-(output written to ./output/tables/copd_estout_table_eth_pandemic.txt)
+Contains data from ./output/prep_survival_wave1.dta
+  obs:         1,000                          
+ vars:            46                          10 Aug 2022 09:10
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
-(50 observations deleted)
+(950 observations deleted)
 
  copd_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        939       98.84       98.84
-          1 |         11        1.16      100.00
+          0 |         50      100.00      100.00
 ------------+-----------------------------------
-      Total |        950      100.00
-  11
-(11 real changes made)
+      Total |         50      100.00
+  0
 
-                id:  patient_id
-     failure event:  copd_admit != 0 & copd_admit < .
-obs. time interval:  (copd_end[_n-1], copd_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-        950  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-        950  observations remaining, representing
-        950  subjects
-         11  failures in single-failure-per-subject data
-     64,121  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =        68
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_copd_wave1_eth.svg not found)
-(file ./output/graphs/km_copd_wave1_eth.svg written in SVG format)
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-Iteration 0:   log likelihood = -3.1354942
-Iteration 1:   log likelihood = -1.8512596
-Iteration 2:   log likelihood = -1.8127497
-Iteration 3:   log likelihood = -1.7993701
-Iteration 4:   log likelihood = -1.7945447
-Iteration 5:   log likelihood = -1.7927821
-Iteration 6:   log likelihood = -1.7921354
-Iteration 7:   log likelihood = -1.7918977
-Iteration 8:   log likelihood = -1.7918103
-Iteration 9:   log likelihood = -1.7917782
-Iteration 10:  log likelihood = -1.7917664
-Iteration 11:  log likelihood =  -1.791762
-Iteration 12:  log likelihood = -1.7917604
-Iteration 13:  log likelihood = -1.7917598
-Iteration 14:  log likelihood = -1.7917596
-Iteration 15:  log likelihood = -1.7917595
-Iteration 16:  log likelihood = -1.7917595
-Iteration 17:  log likelihood = -1.7917595
-Iteration 18:  log likelihood = -1.7917595
-Iteration 19:  log likelihood = -1.7917595
-Iteration 20:  log likelihood = -1.7917595
-Iteration 21:  log likelihood = -1.7917595
-Iteration 22:  log likelihood = -1.7917595
-Iteration 23:  log likelihood = -1.7917595
-Iteration 24:  log likelihood = -1.7917595
-Iteration 25:  log likelihood = -1.7917595
-Iteration 26:  log likelihood = -1.7917595
-Iteration 27:  log likelihood = -1.7917595
-Iteration 28:  log likelihood = -1.7917595
-Iteration 29:  log likelihood = -1.7917595
-Iteration 30:  log likelihood = -1.7917595
-Iteration 31:  log likelihood = -1.7917595
-Iteration 32:  log likelihood = -1.7917595
-Iteration 33:  log likelihood = -1.7917595
-Refining estimates:
-Iteration 0:   log likelihood = -1.7917595
-Iteration 1:   log likelihood = -1.7917595
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          950                  Number of obs    =          45
-No. of failures =           11
-Time at risk    =        64121
-                                                LR chi2(4)       =        2.69
-Log likelihood  =   -1.7917595                  Prob > chi2      =      0.6114
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |          1   1.92e+08    -0.00   1.000            0           .
-      Black  |          1   2.18e+08    -0.00   1.000            0           .
-      Mixed  |          1   2.18e+08    -0.00   1.000            0           .
-      Other  |   1.09e+16   1.75e+24     0.00   1.000            0           .
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/crude_copd_eth.ster saved
-file ./output/tempdata/surv_crude_copd_eth.dta saved
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-Iteration 0:   log likelihood = -3.0445224
-Iteration 1:   log likelihood = -.02494058
-Iteration 2:   log likelihood = -.00904901
-Iteration 3:   log likelihood = -.00331272
-Iteration 4:   log likelihood = -.00121653
-Iteration 5:   log likelihood = -.00044725
-Iteration 6:   log likelihood = -.00016449
-Iteration 7:   log likelihood = -.00006051
-Iteration 8:   log likelihood = -.00002226
-Iteration 9:   log likelihood = -8.189e-06
-Iteration 10:  log likelihood = -3.012e-06
-Iteration 11:  log likelihood = -1.108e-06
-Iteration 12:  log likelihood = -4.077e-07
-Iteration 13:  log likelihood = -1.500e-07
-Iteration 14:  log likelihood = -5.517e-08
-Iteration 15:  log likelihood = -2.030e-08
-Iteration 16:  log likelihood = -7.467e-09
-Iteration 17:  log likelihood = -2.747e-09
-Iteration 18:  log likelihood = -1.011e-09
-Iteration 19:  log likelihood = -3.718e-10
-Iteration 20:  log likelihood = -1.368e-10
-Iteration 21:  log likelihood = -5.031e-11
-Iteration 22:  log likelihood = -1.851e-11
-Iteration 23:  log likelihood = -6.807e-12
-Iteration 24:  log likelihood = -2.508e-12
-Iteration 25:  log likelihood = -9.237e-13
-Iteration 26:  log likelihood = -3.411e-13
-Iteration 27:  log likelihood = -1.279e-13
-Iteration 28:  log likelihood = -4.263e-14
-Iteration 29:  log likelihood = -1.421e-14
-Iteration 30:  log likelihood =          0
-Refining estimates:
-Iteration 0:   log likelihood =          0
-Iteration 1:   log likelihood =          0
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          737                  Number of obs    =          37
-No. of failures =            6
-Time at risk    =        49853
-                                                LR chi2(8)       =        6.09
-Log likelihood  =            0                  Prob > chi2      =      0.6373
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   7.254195   1.01e+09     0.00   1.000            0           .
-      Black  |   3.449739   3.33e+08     0.00   1.000            0           .
-      Mixed  |   1.22e+15   2.01e+23     0.00   1.000            0           .
-      Other  |   8.45e+15   7.00e+23     0.00   1.000            0           .
-             |
-     age_cat |
-41 - 60 y..  |   .3368266   2.12e+07    -0.00   1.000            0           .
-61 - 80 y..  |    .147232   1.64e+07    -0.00   1.000            0           .
-  >80 years  |   4.37e+13   1.24e+22     0.00   1.000            0           .
-             |
-        male |
-       Male  |   2.29e+15   7.55e+22     0.00   1.000            0           .
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/model1_copd_eth.ster saved
-file ./output/tempdata/surv_model1_copd_eth.dta saved
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-note: 5.imd omitted because of collinearity
-note: 1.shielded omitted because of collinearity
-Iteration 0:   log likelihood = -3.0445224
-Iteration 1:   log likelihood = -.00855318
-Iteration 2:   log likelihood = -.00313548
-Iteration 3:   log likelihood = -.00115319
-Iteration 4:   log likelihood = -.00042457
-Iteration 5:   log likelihood = -.00015635
-Iteration 6:   log likelihood = -.00005758
-Iteration 7:   log likelihood =  -.0000212
-Iteration 8:   log likelihood = -7.803e-06
-Iteration 9:   log likelihood = -2.872e-06
-Iteration 10:  log likelihood = -1.057e-06
-Iteration 11:  log likelihood = -3.887e-07
-Iteration 12:  log likelihood = -1.430e-07
-Iteration 13:  log likelihood = -5.261e-08
-Iteration 14:  log likelihood = -1.936e-08
-Iteration 15:  log likelihood = -7.120e-09
-Iteration 16:  log likelihood = -2.619e-09
-Iteration 17:  log likelihood = -9.636e-10
-Iteration 18:  log likelihood = -3.545e-10
-Iteration 19:  log likelihood = -1.304e-10
-Iteration 20:  log likelihood = -4.798e-11
-Iteration 21:  log likelihood = -1.765e-11
-Iteration 22:  log likelihood = -6.494e-12
-Iteration 23:  log likelihood = -2.387e-12
-Iteration 24:  log likelihood = -8.811e-13
-Iteration 25:  log likelihood = -3.268e-13
-Iteration 26:  log likelihood = -1.208e-13
-Iteration 27:  log likelihood = -4.263e-14
-Iteration 28:  log likelihood = -1.421e-14
-Iteration 29:  log likelihood =          0
-Refining estimates:
-Iteration 0:   log likelihood =          0
-Iteration 1:   log likelihood =          0
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          737                  Number of obs    =          37
-No. of failures =            6
-Time at risk    =        49853
-                                                LR chi2(12)      =        6.09
-Log likelihood  =            0                  Prob > chi2      =      0.9115
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   4.099214   2.76e+09     0.00   1.000            0           .
-      Black  |   29.02697   3.17e+10     0.00   1.000            0           .
-      Mixed  |   9.11e+12   6.25e+21     0.00   1.000            0           .
-      Other  |   3.37e+15   2.30e+24     0.00   1.000            0           .
-             |
-     age_cat |
-41 - 60 y..  |   1.913272   2.82e+08     0.00   1.000            0           .
-61 - 80 y..  |   .3749936   4.44e+07    -0.00   1.000            0           .
-  >80 years  |   4.12e+12   4.60e+21     0.00   1.000            0           .
-             |
-        male |
-       Male  |   1.50e+14   6.18e+22     0.00   1.000            0           .
-             |
-urban_rura~n |
-      Urban  |   .0492481   2.09e+07    -0.00   1.000            0           .
-             |
-         imd |
-          1  |   12.81601   1.19e+10     0.00   1.000            0           .
-          2  |   34.85145   8.81e+09     0.00   1.000            0           .
-          3  |   2885.412          .        .       .            .           .
-          4  |   5.405005   2.63e+09     0.00   1.000            0           .
-          5  |          1  (omitted)
-             |
-  1.shielded |          1  (omitted)
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/model2_copd_eth.ster saved
-file ./output/tempdata/surv_model2_copd_eth.dta saved
-(note: file ./output/tables/copd_estout_table_eth_wave1.txt not found)
-(output written to ./output/tables/copd_estout_table_eth_wave1.txt)
+Contains data from ./output/prep_survival_easing1.dta
+  obs:         1,000                          
+ vars:            46                          10 Aug 2022 09:10
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
-(50 observations deleted)
+(950 observations deleted)
 
  copd_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        947       99.68       99.68
-          1 |          3        0.32      100.00
+          0 |         50      100.00      100.00
 ------------+-----------------------------------
-      Total |        950      100.00
-  3
+      Total |         50      100.00
+  0
+
+Contains data from ./output/prep_survival_wave2.dta
+  obs:         1,000                          
+ vars:            46                          10 Aug 2022 09:10
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
-(50 observations deleted)
+(950 observations deleted)
 
  copd_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        939       98.84       98.84
-          1 |         11        1.16      100.00
+          0 |         49       98.00       98.00
+          1 |          1        2.00      100.00
 ------------+-----------------------------------
-      Total |        950      100.00
-  11
-(11 real changes made)
+      Total |         50      100.00
+  1
 
-                id:  patient_id
-     failure event:  copd_admit != 0 & copd_admit < .
-obs. time interval:  (copd_end[_n-1], copd_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-        950  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-        950  observations remaining, representing
-        950  subjects
-         11  failures in single-failure-per-subject data
-    214,067  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       229
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_copd_wave2_eth.svg not found)
-(file ./output/graphs/km_copd_wave2_eth.svg written in SVG format)
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-Iteration 0:   log likelihood = -3.0910425
-Iteration 1:   log likelihood = -1.4045178
-Iteration 2:   log likelihood = -1.3929146
-Iteration 3:   log likelihood = -1.3887188
-Iteration 4:   log likelihood = -1.3871848
-Iteration 5:   log likelihood = -1.3866217
-Iteration 6:   log likelihood = -1.3864148
-Iteration 7:   log likelihood = -1.3863387
-Iteration 8:   log likelihood = -1.3863107
-Iteration 9:   log likelihood = -1.3863004
-Iteration 10:  log likelihood = -1.3862966
-Iteration 11:  log likelihood = -1.3862952
-Iteration 12:  log likelihood = -1.3862947
-Iteration 13:  log likelihood = -1.3862945
-Iteration 14:  log likelihood = -1.3862944
-Iteration 15:  log likelihood = -1.3862944
-Iteration 16:  log likelihood = -1.3862944
-Iteration 17:  log likelihood = -1.3862944
-Iteration 18:  log likelihood = -1.3862944
-Iteration 19:  log likelihood = -1.3862944
-Iteration 20:  log likelihood = -1.3862944
-Iteration 21:  log likelihood = -1.3862944
-Iteration 22:  log likelihood = -1.3862944
-Iteration 23:  log likelihood = -1.3862944
-Iteration 24:  log likelihood = -1.3862944
-Iteration 25:  log likelihood = -1.3862944
-Iteration 26:  log likelihood = -1.3862944
-Iteration 27:  log likelihood = -1.3862944
-Iteration 28:  log likelihood = -1.3862944
-Iteration 29:  log likelihood = -1.3862944
-Iteration 30:  log likelihood = -1.3862944
-Iteration 31:  log likelihood = -1.3862944
-Refining estimates:
-Iteration 0:   log likelihood = -1.3862944
-Iteration 1:   log likelihood = -1.3862944
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          950                  Number of obs    =          49
-No. of failures =           11
-Time at risk    =       214067
-                                                LR chi2(4)       =        3.41
-Log likelihood  =   -1.3862944                  Prob > chi2      =      0.4918
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |          1   1.07e+08    -0.00   1.000            0           .
-      Black  |          1   1.24e+08    -0.00   1.000            0           .
-      Mixed  |   7.32e+15   5.46e+23     0.00   1.000            0           .
-      Other  |          1   1.24e+08    -0.00   1.000            0           .
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/crude_copd_eth.ster saved
-file ./output/tempdata/surv_crude_copd_eth.dta saved
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-Iteration 0:   log likelihood = -2.8903718
-Iteration 1:   log likelihood = -.75475224
-Iteration 2:   log likelihood = -.71510107
-Iteration 3:   log likelihood = -.70113375
-Iteration 4:   log likelihood =  -.6960734
-Iteration 5:   log likelihood = -.69422208
-Iteration 6:   log likelihood =  -.6935424
-Iteration 7:   log likelihood = -.69329254
-Iteration 8:   log likelihood = -.69320065
-Iteration 9:   log likelihood = -.69316685
-Iteration 10:  log likelihood = -.69315442
-Iteration 11:  log likelihood = -.69314984
-Iteration 12:  log likelihood = -.69314816
-Iteration 13:  log likelihood = -.69314754
-Iteration 14:  log likelihood = -.69314731
-Iteration 15:  log likelihood = -.69314723
-Iteration 16:  log likelihood =  -.6931472
-Iteration 17:  log likelihood = -.69314719
-Iteration 18:  log likelihood = -.69314718
-Iteration 19:  log likelihood = -.69314718
-Iteration 20:  log likelihood = -.69314718
-Iteration 21:  log likelihood = -.69314718
-Iteration 22:  log likelihood = -.69314718
-Iteration 23:  log likelihood = -.69314718
-Iteration 24:  log likelihood = -.69314718
-Iteration 25:  log likelihood = -.69314718
-Iteration 26:  log likelihood = -.69314718
-Iteration 27:  log likelihood = -.69314718
-Iteration 28:  log likelihood = -.69314718
-Iteration 29:  log likelihood = -.69314718
-Iteration 30:  log likelihood = -.69314718
-Iteration 31:  log likelihood = -.69314718
-Iteration 32:  log likelihood = -.69314718
-Iteration 33:  log likelihood = -.69314718
-Refining estimates:
-Iteration 0:   log likelihood = -.69314718
-Iteration 1:   log likelihood = -.69314718
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          744                  Number of obs    =          42
-No. of failures =            9
-Time at risk    =       167362
-                                                LR chi2(7)       =        4.39
-Log likelihood  =   -.69314718                  Prob > chi2      =      0.7334
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   2.214655   3.62e+08     0.00   1.000            0           .
-      Black  |   .6947605   2.51e+08    -0.00   1.000            0           .
-      Mixed  |   3.79e+16          .        .       .            .           .
-      Other  |   .6025167   3.07e+08    -0.00   1.000            0           .
-             |
-     age_cat |
-41 - 60 y..  |   .4320582   1.31e+08    -0.00   1.000            0           .
-61 - 80 y..  |   1.64e-16   1.28e-08    -0.00   1.000            0           .
-  >80 years  |   .6025167   3.07e+08    -0.00   1.000            0           .
-             |
-        male |
-       Male  |   .5759496   1.17e+08    -0.00   1.000            0           .
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/model1_copd_eth.ster saved
-file ./output/tempdata/surv_model1_copd_eth.dta saved
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-note: 1.shielded omitted because of collinearity
-Iteration 0:   log likelihood = -2.8903718
-Iteration 1:   log likelihood = -.00093343
-Iteration 2:   log likelihood = -.00034516
-Iteration 3:   log likelihood = -.00012745
-Iteration 4:   log likelihood =   -.000047
-Iteration 5:   log likelihood = -.00001731
-Iteration 6:   log likelihood = -6.373e-06
-Iteration 7:   log likelihood = -2.345e-06
-Iteration 8:   log likelihood = -8.629e-07
-Iteration 9:   log likelihood = -3.175e-07
-Iteration 10:  log likelihood = -1.168e-07
-Iteration 11:  log likelihood = -4.297e-08
-Iteration 12:  log likelihood = -1.581e-08
-Iteration 13:  log likelihood = -5.815e-09
-Iteration 14:  log likelihood = -2.139e-09
-Iteration 15:  log likelihood = -7.869e-10
-Iteration 16:  log likelihood = -2.895e-10
-Iteration 17:  log likelihood = -1.065e-10
-Iteration 18:  log likelihood = -3.918e-11
-Iteration 19:  log likelihood = -1.441e-11
-Iteration 20:  log likelihood = -5.302e-12
-Iteration 21:  log likelihood = -1.950e-12
-Iteration 22:  log likelihood = -7.176e-13
-Iteration 23:  log likelihood = -2.629e-13
-Iteration 24:  log likelihood = -9.592e-14
-Iteration 25:  log likelihood = -3.553e-14
-Iteration 26:  log likelihood = -1.421e-14
-Iteration 27:  log likelihood = -7.105e-15
-Iteration 28:  log likelihood =          0
-Refining estimates:
-Iteration 0:   log likelihood =          0
-Iteration 1:   log likelihood =          0
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          744                  Number of obs    =          42
-No. of failures =            9
-Time at risk    =       167362
-                                                LR chi2(10)      =        5.78
-Log likelihood  =            0                  Prob > chi2      =      0.8333
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   2.54e+14          .        .       .            .           .
-      Black  |   110.4708   7.69e+10     0.00   1.000            0           .
-      Mixed  |   6.24e+15   3.84e+23     0.00   1.000            0           .
-      Other  |   1.01e+17   4.89e+25     0.00   1.000            0           .
-             |
-     age_cat |
-41 - 60 y..  |   .0019464    1106140    -0.00   1.000            0           .
-61 - 80 y..  |   8.40e-17   8.84e-09    -0.00   1.000            0           .
-  >80 years  |   1.32e+13   5.80e+21     0.00   1.000            0           .
-             |
-        male |
-       Male  |   .4266704          .        .       .            .           .
-             |
-urban_rura~n |
-      Urban  |   2.97e-18          .        .       .            .           .
-             |
-         imd |
-          1  |   4835.622   7.89e+11     0.00   1.000            0           .
-          2  |   636.4251   1.62e+11     0.00   1.000            0           .
-          3  |   2364.755   2.47e+11     0.00   1.000            0           .
-          4  |   107849.3   4.65e+13     0.00   1.000            0           .
-          5  |    4861969          .        .       .            .           .
-             |
-  1.shielded |          1  (omitted)
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/model2_copd_eth.ster saved
-file ./output/tempdata/surv_model2_copd_eth.dta saved
-(note: file ./output/tables/copd_estout_table_eth_wave2.txt not found)
-(output written to ./output/tables/copd_estout_table_eth_wave2.txt)
+Contains data from ./output/prep_survival_easing2.dta
+  obs:         1,000                          
+ vars:            46                          10 Aug 2022 09:10
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
 (1 observation deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
-(50 observations deleted)
+(949 observations deleted)
 
  copd_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        947       99.79       99.79
-          1 |          2        0.21      100.00
+          0 |         50      100.00      100.00
 ------------+-----------------------------------
-      Total |        949      100.00
-  2
+      Total |         50      100.00
+  0
+
+Contains data from ./output/prep_survival_wave3.dta
+  obs:         1,000                          
+ vars:            46                          10 Aug 2022 09:10
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
-(50 observations deleted)
+(950 observations deleted)
 
  copd_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        938       98.74       98.74
-          1 |         12        1.26      100.00
+          0 |         50      100.00      100.00
 ------------+-----------------------------------
-      Total |        950      100.00
-  12
-(12 real changes made)
+      Total |         50      100.00
+  0
 
-                id:  patient_id
-     failure event:  copd_admit != 0 & copd_admit < .
-obs. time interval:  (copd_end[_n-1], copd_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-        950  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-        950  observations remaining, representing
-        950  subjects
-         12  failures in single-failure-per-subject data
-    186,265  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       200
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_copd_wave3_eth.svg not found)
-(file ./output/graphs/km_copd_wave3_eth.svg written in SVG format)
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-Iteration 0:   log likelihood = -2.1972246
-Iteration 1:   log likelihood = -.73129182
-Iteration 2:   log likelihood = -.70681162
-Iteration 3:   log likelihood = -.69812697
-Iteration 4:   log likelihood =  -.6949729
-Iteration 5:   log likelihood = -.69381799
-Iteration 6:   log likelihood = -.69339384
-Iteration 7:   log likelihood = -.69323791
-Iteration 8:   log likelihood = -.69318055
-Iteration 9:   log likelihood = -.69315946
-Iteration 10:  log likelihood =  -.6931517
-Iteration 11:  log likelihood = -.69314884
-Iteration 12:  log likelihood = -.69314779
-Iteration 13:  log likelihood = -.69314741
-Iteration 14:  log likelihood = -.69314726
-Iteration 15:  log likelihood = -.69314721
-Iteration 16:  log likelihood = -.69314719
-Iteration 17:  log likelihood = -.69314718
-Iteration 18:  log likelihood = -.69314718
-Iteration 19:  log likelihood = -.69314718
-Iteration 20:  log likelihood = -.69314718
-Iteration 21:  log likelihood = -.69314718
-Iteration 22:  log likelihood = -.69314718
-Iteration 23:  log likelihood = -.69314718
-Iteration 24:  log likelihood = -.69314718
-Iteration 25:  log likelihood = -.69314718
-Iteration 26:  log likelihood = -.69314718
-Iteration 27:  log likelihood = -.69314718
-Iteration 28:  log likelihood = -.69314718
-Iteration 29:  log likelihood = -.69314718
-Iteration 30:  log likelihood = -.69314718
-Iteration 31:  log likelihood = -.69314718
-Iteration 32:  log likelihood = -.69314718
-Iteration 33:  log likelihood = -.69314718
-Iteration 34:  log likelihood = -.69314718
-Iteration 35:  log likelihood = -.69314718
-Refining estimates:
-Iteration 0:   log likelihood = -.69314718
-Iteration 1:   log likelihood = -.69314718
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          950                  Number of obs    =          44
-No. of failures =           12
-Time at risk    =       186265
-                                                LR chi2(3)       =        3.01
-Log likelihood  =   -.69314718                  Prob > chi2      =      0.3904
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   6.59e-18   2.57e-09    -0.00   1.000            0           .
-      Black  |          1  (omitted)
-      Mixed  |   6.59e-18   2.57e-09    -0.00   1.000            0           .
-      Other  |   6.59e-18   2.10e-09    -0.00   1.000            0           .
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/crude_copd_eth.ster saved
-file ./output/tempdata/surv_crude_copd_eth.dta saved
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-Iteration 0:   log likelihood = -1.9459101
-Iteration 1:   log likelihood = -.00545638
-Iteration 2:   log likelihood = -.00199979
-Iteration 3:   log likelihood = -.00073468
-Iteration 4:   log likelihood = -.00027014
-Iteration 5:   log likelihood = -.00009936
-Iteration 6:   log likelihood = -.00003655
-Iteration 7:   log likelihood = -.00001345
-Iteration 8:   log likelihood = -4.946e-06
-Iteration 9:   log likelihood = -1.820e-06
-Iteration 10:  log likelihood = -6.694e-07
-Iteration 11:  log likelihood = -2.463e-07
-Iteration 12:  log likelihood = -9.059e-08
-Iteration 13:  log likelihood = -3.333e-08
-Iteration 14:  log likelihood = -1.226e-08
-Iteration 15:  log likelihood = -4.510e-09
-Iteration 16:  log likelihood = -1.659e-09
-Iteration 17:  log likelihood = -6.104e-10
-Iteration 18:  log likelihood = -2.246e-10
-Iteration 19:  log likelihood = -8.261e-11
-Iteration 20:  log likelihood = -3.039e-11
-Iteration 21:  log likelihood = -1.118e-11
-Iteration 22:  log likelihood = -4.113e-12
-Iteration 23:  log likelihood = -1.513e-12
-Iteration 24:  log likelihood = -5.566e-13
-Iteration 25:  log likelihood = -2.047e-13
-Iteration 26:  log likelihood = -7.564e-14
-Iteration 27:  log likelihood = -2.763e-14
-Iteration 28:  log likelihood = -1.031e-14
-Iteration 29:  log likelihood = -3.754e-15
-Iteration 30:  log likelihood = -1.360e-15
-Iteration 31:  log likelihood = -4.441e-16
-Iteration 32:  log likelihood =          0
-Refining estimates:
-Iteration 0:   log likelihood = -4.441e-16
-Iteration 1:   log likelihood = -2.220e-16
-Iteration 2:   log likelihood =          0
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          740                  Number of obs    =          35
-No. of failures =            9
-Time at risk    =       145324
-                                                LR chi2(5)       =        3.89
-Log likelihood  =            0                  Prob > chi2      =      0.5651
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   1.28e-18   1.50e-09    -0.00   1.000            0           .
-      Black  |          1  (omitted)
-      Mixed  |   2.85e-18   2.21e-09    -0.00   1.000            0           .
-      Other  |   1.91e-18   1.53e-09    -0.00   1.000            0           .
-             |
-     age_cat |
-41 - 60 y..  |          1   6.89e+08    -0.00   1.000            0           .
-61 - 80 y..  |   .4510405          .        .       .            .           .
-  >80 years  |          1  (omitted)
-             |
-        male |
-       Male  |   1.488992   1.22e+09     0.00   1.000            0           .
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/model1_copd_eth.ster saved
-file ./output/tempdata/surv_model1_copd_eth.dta saved
-
-         failure _d:  copd_admit
-   analysis time _t:  (copd_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-
-note: 5.imd omitted because of collinearity
-note: 1.shielded omitted because of collinearity
-Iteration 0:   log likelihood = -1.9459101
-Iteration 1:   log likelihood = -.00545638
-Iteration 2:   log likelihood = -.00199979
-Iteration 3:   log likelihood = -.00073468
-Iteration 4:   log likelihood = -.00027014
-Iteration 5:   log likelihood = -.00009936
-Iteration 6:   log likelihood = -.00003655
-Iteration 7:   log likelihood = -.00001345
-Iteration 8:   log likelihood = -4.946e-06
-Iteration 9:   log likelihood = -1.820e-06
-Iteration 10:  log likelihood = -6.694e-07
-Iteration 11:  log likelihood = -2.463e-07
-Iteration 12:  log likelihood = -9.059e-08
-Iteration 13:  log likelihood = -3.333e-08
-Iteration 14:  log likelihood = -1.226e-08
-Iteration 15:  log likelihood = -4.510e-09
-Iteration 16:  log likelihood = -1.659e-09
-Iteration 17:  log likelihood = -6.104e-10
-Iteration 18:  log likelihood = -2.246e-10
-Iteration 19:  log likelihood = -8.261e-11
-Iteration 20:  log likelihood = -3.039e-11
-Iteration 21:  log likelihood = -1.118e-11
-Iteration 22:  log likelihood = -4.113e-12
-Iteration 23:  log likelihood = -1.513e-12
-Iteration 24:  log likelihood = -5.578e-13
-Iteration 25:  log likelihood = -2.043e-13
-Iteration 26:  log likelihood = -7.461e-14
-Iteration 27:  log likelihood = -2.842e-14
-Iteration 28:  log likelihood = -1.066e-14
-Iteration 29:  log likelihood = -3.553e-15
-Iteration 30:  log likelihood = -1.776e-15
-Iteration 31:  log likelihood =          0
-Refining estimates:
-Iteration 0:   log likelihood =          0
-Iteration 1:   log likelihood =          0
-
-Stratified Cox regr. -- no ties
-
-No. of subjects =          740                  Number of obs    =          35
-No. of failures =            9
-Time at risk    =       145324
-                                                LR chi2(6)       =        3.89
-Log likelihood  =            0                  Prob > chi2      =      0.6913
-
-------------------------------------------------------------------------------
-          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-        eth5 |
-South Asian  |   .0009119          .        .       .            .           .
-      Black  |          1  (omitted)
-      Mixed  |   1.60e-08   2.821667    -0.00   1.000            0           .
-      Other  |   1.01e-07   15.30456    -0.00   1.000            0           .
-             |
-     age_cat |
-41 - 60 y..  |   9.732728   2.06e+09     0.00   1.000            0           .
-61 - 80 y..  |   421657.4          .        .       .            .           .
-  >80 years  |          1  (omitted)
-             |
-        male |
-       Male  |   .0001372   20789.86    -0.00   1.000            0           .
-             |
-urban_rura~n |
-      Urban  |          1  (omitted)
-             |
-         imd |
-          1  |   .0000126   3172.482    -0.00   1.000            0           .
-          2  |          1  (omitted)
-          3  |          1  (omitted)
-          4  |   .0000936   22727.13    -0.00   1.000            0           .
-          5  |          1  (omitted)
-             |
-  1.shielded |          1  (omitted)
-------------------------------------------------------------------------------
-                                                             Stratified by stp
-file ./output/tempdata/model2_copd_eth.ster saved
-file ./output/tempdata/surv_model2_copd_eth.dta saved
-(note: file ./output/tables/copd_estout_table_eth_wave3.txt not found)
-(output written to ./output/tables/copd_estout_table_eth_wave3.txt)
+Contains data from ./output/prep_survival_easing3.dta
+  obs:         1,000                          
+ vars:            46                          10 Aug 2022 09:10
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
 (0 observations deleted)
-(50 observations deleted)
+(950 observations deleted)
 
  copd_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        942       99.16       99.16
-          1 |          8        0.84      100.00
+          0 |         49       98.00       98.00
+          1 |          1        2.00      100.00
 ------------+-----------------------------------
-      Total |        950      100.00
-  8
+      Total |         50      100.00
+  1
 
 . file close tablecontent
 
@@ -1565,5 +738,5 @@ file ./output/tempdata/surv_model2_copd_eth.dta saved
       name:  <unnamed>
        log:  /workspace/logs/cox_model_copd.log
   log type:  text
- closed on:   9 Aug 2022, 09:13:54
+ closed on:  10 Aug 2022, 09:13:43
 -------------------------------------------------------------------------------
