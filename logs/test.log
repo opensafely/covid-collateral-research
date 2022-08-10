@@ -1,0 +1,448 @@
+
+. 
+. * Prepare datasets
+. foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
+  2.     import delimited using ./output/survival/input_survival_`period'.csv, 
+> clear
+  3.     describe
+  4.     }
+(42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+(42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+(42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n byte    %8.0g                 
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        byte    %8.0g                 
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+(42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+(42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+(42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n byte    %8.0g                 
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n byte    %8.0g                 
+t1dm_admissio~y byte    %8.0g                 
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l byte    %8.0g                 
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n byte    %8.0g                 
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+(42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+(42 vars, 1,000 obs)
+
+Contains data
+  obs:         1,000                          
+ vars:            42                          
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+dereg_date      str10   %10s                  
+died_fu         str10   %10s                  
+mi_primary_ad~n str10   %10s                  
+stroke_primar~n str10   %10s                  
+heart_failure~n str10   %10s                  
+vte_primary_a~n str10   %10s                  
+t1dm_admissio~y str10   %10s                  
+t2dm_admissio~y str10   %10s                  
+dm_keto_admis~y str10   %10s                  
+copd_exacerba~l str10   %10s                  
+copd_hospital   str10   %10s                  
+lrti_hospital   str10   %10s                  
+copd_any        str10   %10s                  
+asthma_exacer~n str10   %10s                  
+depression_pr~n str10   %10s                  
+anxiety_prima~n str10   %10s                  
+smi_primary_a~n str10   %10s                  
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+sex             str1    %9s                   
+eth             byte    %8.0g                 
+ethnicity_sus   byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+region          str24   %24s                  
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+cvd_admission~e str10   %10s                  
+dm_admission    str10   %10s                  
+copd_hospital~e str10   %10s                  
+mh_admission    str10   %10s                  
+patient_id      int     %8.0g                 
+-------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. 
+.  log close
+      name:  <unnamed>
+       log:  /workspace/logs/test.log
+  log type:  text
+ closed on:  10 Aug 2022, 09:26:26
+-------------------------------------------------------------------------------

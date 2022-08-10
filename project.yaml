@@ -498,4 +498,9 @@ actions:
         log: logs/cox_model_graphs.log
         graph: output/survival/estimates_*.svg
       
-        
+  test:
+    run: stata-mp:latest analysis/test.do
+    needs: [generate_study_population_survival_pre, generate_study_population_survival_pandemic, cox_model_prep, generate_study_population_survival_wave1, generate_study_population_survival_easing1, generate_study_population_survival_wave2, generate_study_population_survival_easing2, generate_study_population_survival_wave3, generate_study_population_survival_easing3]
+    outputs:
+      moderately_sensitive:
+        log: logs/test.log
