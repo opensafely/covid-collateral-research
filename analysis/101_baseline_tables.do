@@ -54,9 +54,6 @@ forvalues i=2019/2021 {
     egen household_cat = cut(household), at(0, 1, 16, 100) icodes
     label define house 0 "missing" 1 "1-15 people" 2 "over 15 people"
     bys household_cat: sum household
-
-    * Drop missing ethnicity
-    drop if ethnicity==6
     
     preserve
     * Create baseline table
@@ -77,7 +74,7 @@ forvalues i=2019/2021 {
     \ has_t1_diabetes cate \ has_t2_diabetes cate \ has_asthma cate \ has_copd cate \ cvd_subgroup cate \ mh_subgroup cate) clear
     save `tempfile', replace
     restore
-    forvalues j=2/5 {
+    forvalues j=2/6 {
       preserve
       keep if ethnicity==`j'
       table1_mc, vars(age_cat cate \ sex cate \ imd cate \ region cate \ urban_rural cate \ household_cat cate \ care_home cate ///

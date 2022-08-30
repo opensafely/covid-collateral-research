@@ -46,7 +46,7 @@ common_variables = dict(
                 "5": "eth='5' OR (NOT eth AND ethnicity_sus='5')",
             },
             return_expectations={
-                "category": {"ratios": {"1": 0.2, "2": 0.2, "3": 0.2, "4": 0.2, "5": 0.2}},
+                "category": {"ratios": {"0": 0.05, "1": 0.15, "2": 0.2, "3": 0.2, "4": 0.2, "5": 0.2}},
                 "incidence": 1.0,
                     },
         ),
