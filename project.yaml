@@ -19,7 +19,12 @@ actions:
         cohort: output/input_static_2020.csv
   # Generates study population for CV - start date = 2018-03-01
   generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2018-03-01 to 2022-04-30 by month" --output-dir=output/measures --output-format=csv
+    run: cohortextractor:latest generate_cohort 
+      --study-definition study_definition 
+      --index-date-range "2018-03-01 to 2022-04-30 by month" 
+      --output-dir=output/measures 
+      --output-format=csv
+      --with-end-date-fix
     outputs:
       highly_sensitive:
         cohort: output/measures/input_*.csv
