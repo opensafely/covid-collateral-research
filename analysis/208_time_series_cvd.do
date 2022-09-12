@@ -12,9 +12,9 @@ cap mkdir ./output/time_series
 * Time series analysis CVD outcomes
 * Clinical monitoring: BP measurement
 * Hospital admissions: any code and primary code for MI, stroke, heart failure and vte
-local a "bp_meas_cvd mi_admission stroke_admission heart_failure_admission vte_admission mi_primary_admission stroke_primary_admission heart_failure_primary_admission vte_primary_admission"
-local z "bp_cvd mi_admit stroke_admit hf_admit vte_admit mi_pri stroke_pri hf_pri vte_pri"
-forvalues i=1/9 {
+local a "bp_meas_cvd /*mi_admission stroke_admission heart_failure_admission vte_admission mi_primary_admission stroke_primary_admission heart_failure_primary_admission vte_primary_admission*/"
+local z "bp_cvd /*mi_admit stroke_admit hf_admit vte_admit mi_pri stroke_pri hf_pri vte_pri*/"
+forvalues i=1/1 {
     local c: word `i' of `a' 
     local e: word `i' of `z'
 	local b "ethnicity imd"

@@ -10,7 +10,7 @@ cap mkdir ./output/collapsed
 cap mkdir ./output/graphs
 
 * Generates graphs for clinical monitoring measures
-foreach this_group in cvd mh {
+foreach this_group in cvd /*mh*/ {
 * Ethnicity
         import delimited using ./output/measures/`this_group'/measure_bp_meas_`this_group'_ethnicity_rate.csv, numericcols(4) clear
         * Shouldn't be missing on server but is in dummy data
@@ -40,7 +40,7 @@ foreach this_group in cvd mh {
         title("Ethnic categories", size(small))) graphregion(fcolor(white))
 
         graph export ./output/graphs/line_`this_group'_bp_ethnic.svg, as(svg) replace
-    * IMD
+    /* IMD
     clear 
     import delimited using ./output/measures/`this_group'/measure_bp_meas_`this_group'_imd_rate.csv, numericcols(4)
     * IMD should not have missings as . on server but could be in dummy data
@@ -70,6 +70,7 @@ foreach this_group in cvd mh {
     title("IMD categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_`this_group'_bp_imd.svg, as(svg) replace
+    */
     }
 
 /* Hospital admission graphs
@@ -208,7 +209,7 @@ forvalues i=1/6 {
 
 }
 */
-* Hospital admissions - primary diagnosis CVD
+/* Hospital admissions - primary diagnosis CVD
 local groups "mi stroke heart_failure vte"
 forvalues i=1/4 {
     local this_group :word `i' of `groups'
@@ -479,4 +480,6 @@ forvalues i=1/2 {
 }
 */
 */
+*/
+
 log close
