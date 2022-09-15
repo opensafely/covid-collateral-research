@@ -10,7 +10,7 @@ cap mkdir ./output/collapsed
 cap mkdir ./output/graphs
 
 * Generates graphs for clinical monitoring measures
-foreach this_group in cvd /*mh*/ {
+foreach this_group in cvd mh {
 * Ethnicity
         import delimited using ./output/measures/`this_group'/measure_bp_meas_`this_group'_ethnicity_rate.csv, numericcols(4) clear
         * Shouldn't be missing on server but is in dummy data
@@ -209,7 +209,7 @@ forvalues i=1/6 {
 
 }
 */
-/* Hospital admissions - primary diagnosis CVD
+* Hospital admissions - primary diagnosis CVD
 local groups "mi stroke heart_failure vte"
 forvalues i=1/4 {
     local this_group :word `i' of `groups'
@@ -244,7 +244,7 @@ forvalues i=1/4 {
     title("Ethnic categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_cvd_`this_group'_primary_admission_ethnicity.svg, as(svg) replace
-    * IMD
+    /* IMD
     clear 
     import delimited using ./output/measures/cvd/measure_`this_group'_primary_admission_imd_rate.csv, numericcols(4)
     * IMD should not have missings as . on server but could be in dummy data
@@ -276,7 +276,7 @@ forvalues i=1/4 {
 
     graph export ./output/graphs/line_cvd_`this_group'_primary_admission_imd.svg, as(svg) replace
 
-}
+}*/
 /* Mental health measures - 3 monthly rates for primary admissions
 local groups "depression anxiety smi self_harm eating_dis ocd"
 forvalues i=1/6 {
