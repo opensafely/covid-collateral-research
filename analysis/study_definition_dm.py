@@ -31,7 +31,7 @@ study = StudyDefinition(
         (sex = 'M' OR sex = 'F') AND
         (stp != 'missing') AND
         (imd != 0) AND
-        (household <=15) AND
+        (household>=1 AND household<=15) AND
         (has_t1_diabetes OR has_t2_diabetes)
         """,
         has_follow_up=patients.registered_with_one_practice_between(
