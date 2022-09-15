@@ -23,7 +23,7 @@ study = StudyDefinition(
         (sex = 'M' OR sex = 'F') AND
         (stp != 'missing') AND
         (imd != 0) AND
-        (household <=15) 
+        (household>=1 AND household<=15) 
         """,
         has_follow_up=patients.registered_with_one_practice_between(
             "index_date - 3 months", "index_date"
