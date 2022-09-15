@@ -24,7 +24,6 @@ actions:
       --index-date-range "2018-03-01 to 2022-04-30 by month" 
       --output-dir=output/measures 
       --output-format=csv
-      --with-end-date-fix
     outputs:
       highly_sensitive:
         cohort: output/measures/input_*.csv
