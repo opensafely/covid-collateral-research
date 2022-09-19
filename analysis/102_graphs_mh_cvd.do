@@ -275,8 +275,8 @@ forvalues i=1/4 {
     title("IMD categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_cvd_`this_group'_primary_admission_imd.svg, as(svg) replace
-
-}*/
+*/
+}
 /* Mental health measures - 3 monthly rates for primary admissions
 local groups "depression anxiety smi self_harm eating_dis ocd"
 forvalues i=1/6 {
