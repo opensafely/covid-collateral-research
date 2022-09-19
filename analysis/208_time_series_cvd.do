@@ -12,13 +12,13 @@ cap mkdir ./output/time_series
 * Time series analysis CVD outcomes
 * Clinical monitoring: BP measurement
 * Hospital admissions: any code and primary code for MI, stroke, heart failure and vte
-local a "bp_meas_cvd /*mi_admission stroke_admission heart_failure_admission vte_admission mi_primary_admission stroke_primary_admission heart_failure_primary_admission vte_primary_admission*/"
-local z "bp_cvd /*mi_admit stroke_admit hf_admit vte_admit mi_pri stroke_pri hf_pri vte_pri*/"
-forvalues i=1/1 {
+local a "bp_meas_cvd mi_primary_admission stroke_primary_admission heart_failure_primary_admission vte_primary_admission"
+local z "bp_cvd mi_pri stroke_pri hf_pri vte_pri"
+forvalues i=1/5 {
     local c: word `i' of `a' 
     local e: word `i' of `z'
-	local b "ethnicity imd"
-	forvalues i=1/2 {
+	local b "ethnicity"
+	forvalues i=1/1 {
     	local d: word `i' of `b'
 		import delimited "./output/measures/cvd/measure_`c'_`d'_rate.csv", numericcols(4) clear	//get csv
         putexcel set ./output/time_series/tsreg_tables_cvd, sheet(`e'_`d') modify			//open xlsx
