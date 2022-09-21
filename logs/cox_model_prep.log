@@ -3,7 +3,7 @@
 . * Prepare datasets
 . foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
   2.     import delimited using ./output/survival/input_survival_`period'.csv, 
-> clear stringcols(1/18 38 39 40 41)
+> clear stringcols(2/18)
   3.     describe
   4.     * First preparing dataset
 .     * Drop variables that are not required
@@ -2125,5 +2125,5 @@ file ./output/prep_survival_easing3.dta saved
       name:  <unnamed>
        log:  /workspace/logs/cox_model_prep.log
   log type:  text
- closed on:  10 Aug 2022, 09:10:12
+ closed on:  21 Sep 2022, 09:55:55
 -------------------------------------------------------------------------------

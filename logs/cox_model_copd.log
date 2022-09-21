@@ -161,7 +161,7 @@ copd
 
 Contains data from ./output/prep_survival_pre.dta
   obs:         1,000                          
- vars:            46                          10 Aug 2022 09:10
+ vars:            46                          21 Sep 2022 09:55
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
@@ -233,7 +233,7 @@ Sorted by:
 
 Contains data from ./output/prep_survival_pandemic.dta
   obs:         1,000                          
- vars:            46                          10 Aug 2022 09:10
+ vars:            46                          21 Sep 2022 09:55
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
@@ -305,7 +305,7 @@ Sorted by:
 
 Contains data from ./output/prep_survival_wave1.dta
   obs:         1,000                          
- vars:            46                          10 Aug 2022 09:10
+ vars:            46                          21 Sep 2022 09:55
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
@@ -376,7 +376,7 @@ Sorted by:
 
 Contains data from ./output/prep_survival_easing1.dta
   obs:         1,000                          
- vars:            46                          10 Aug 2022 09:10
+ vars:            46                          21 Sep 2022 09:55
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
@@ -447,7 +447,7 @@ Sorted by:
 
 Contains data from ./output/prep_survival_wave2.dta
   obs:         1,000                          
- vars:            46                          10 Aug 2022 09:10
+ vars:            46                          21 Sep 2022 09:55
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
@@ -519,7 +519,7 @@ Sorted by:
 
 Contains data from ./output/prep_survival_easing2.dta
   obs:         1,000                          
- vars:            46                          10 Aug 2022 09:10
+ vars:            46                          21 Sep 2022 09:55
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
@@ -590,7 +590,7 @@ Sorted by:
 
 Contains data from ./output/prep_survival_wave3.dta
   obs:         1,000                          
- vars:            46                          10 Aug 2022 09:10
+ vars:            46                          21 Sep 2022 09:55
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
@@ -661,7 +661,7 @@ Sorted by:
 
 Contains data from ./output/prep_survival_easing3.dta
   obs:         1,000                          
- vars:            46                          10 Aug 2022 09:10
+ vars:            46                          21 Sep 2022 09:55
 -------------------------------------------------------------------------------
               storage   display    value
 variable name   type    format     label      variable label
@@ -738,5 +738,5 @@ Sorted by:
       name:  <unnamed>
        log:  /workspace/logs/cox_model_copd.log
   log type:  text
- closed on:  10 Aug 2022, 09:57:37
+ closed on:  21 Sep 2022, 10:02:55
 -------------------------------------------------------------------------------
