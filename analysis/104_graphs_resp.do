@@ -11,16 +11,20 @@ cap mkdir ./output/graphs
 
 * Generates graphs for clinical monitoring measures
 local outcomes "asthma copd"
-local strata "monitoring exacerbation"
-local other "review exacerbation"
+local strata "monitoring /*exacerbation*/"
+local other "review /*exacerbation*/"
 forvalues i=1/2 {
     local this_outcome :word `i' of `outcomes'
-    forvalues j=1/2 {
+    forvalues j=1/1 {
         local this_strata :word `j' of `strata'
         local this_other :word `j' of `other'
     * Ethnicity
     clear 
     import delimited using "./output/measures/resp/measure_`this_outcome'_`this_strata'_ethnicity_rate.csv", numericcols(4)
+    * Take out measures where population is not within subgroup
+    tab has_`this_outcome' 
+    drop if has_`this_outcome'==0
+    drop has_`this_outcome' 
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -29,7 +33,7 @@ forvalues i=1/2 {
     format dateA %dD/M/Y
     tab dateA 
     * reshape dataset so columns with rates for each ethnicity 
-    reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i(dateA) j(ethnicity)
+    reshape wide value rate population `this_outcome'_`this_other', i(dateA) j(ethnicity)
     describe
     * Labelling ethnicity variables
     label var rate1 "White"
@@ -49,6 +53,10 @@ forvalues i=1/2 {
     * IMD
     clear 
     import delimited using "./output/measures/resp/measure_`this_outcome'_`this_strata'_imd_rate.csv", numericcols(4)
+    * Take out measures where population is not within subgroup
+    tab has_`this_outcome' 
+    drop if has_`this_outcome'==0
+    drop has_`this_outcome'  
     * Generate rate per 100,000
     gen rate = value*100000 
     * Format date
@@ -57,7 +65,7 @@ forvalues i=1/2 {
     format dateA %dD/M/Y
     tab dateA 
     * reshape dataset so columns with rates for each ethnicity 
-    reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i(dateA) j(imd)
+    reshape wide value rate population `this_outcome'_`this_other', i(dateA) j(imd)
     describe
     * Labelling ethnicity variables
     label var rate1 "IMD - 1"

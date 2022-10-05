@@ -209,14 +209,14 @@ measures = [
     Measure(
         id="bp_meas_cvd_ethnicity_rate",
         numerator="bp_meas",
-        denominator="cvd_subgroup",
-        group_by=["ethnicity"],
+        denominator="population",
+        group_by=["ethnicity", "cvd_subgroup"],
     ),
     Measure(
         id="bp_meas_cvd_imd_rate",
         numerator="bp_meas",
-        denominator="cvd_subgroup",
-        group_by=["imd"],
+        denominator="population",
+        group_by=["imd", "cvd_subgroup"],
     ),
     # Hospital admissions for MI
     #Measure(
@@ -273,12 +273,12 @@ measures = [
     #    group_by=["imd"],
     #),
     # Hospital admissions for primary diagnosis MI
-    Measure(
-        id="mi_primary_admission_ethnicity_rate",
-        numerator="mi_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
+    #Measure(
+    #    id="mi_primary_admission_ethnicity_rate",
+    #    numerator="mi_primary_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
     # Hospital admissions for MI
     #Measure(
     #    id="mi_primary_admission_imd_rate",
@@ -287,12 +287,12 @@ measures = [
     #    group_by=["imd"],
     #),
     # Hospital admissions for stroke
-    Measure(
-        id="stroke_primary_admission_ethnicity_rate",
-        numerator="stroke_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
+    #Measure(
+    #    id="stroke_primary_admission_ethnicity_rate",
+    #    numerator="stroke_primary_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
     # Hospital admissions for stroke
     #Measure(
     #    id="stroke_primary_admission_imd_rate",
@@ -301,12 +301,12 @@ measures = [
     #    group_by=["imd"],
     #),
     # Hospital admissions for heart failure
-    Measure(
-        id="heart_failure_primary_admission_ethnicity_rate",
-        numerator="heart_failure_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
+    #Measure(
+    #    id="heart_failure_primary_admission_ethnicity_rate",
+    #    numerator="heart_failure_primary_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
     #Measure(
     #    id="heart_failure_primary_admission_imd_rate",
     #    numerator="heart_failure_primary_admission",
@@ -314,12 +314,12 @@ measures = [
     #    group_by=["imd"],
     #),
     # Hospital admissions for VTE
-    Measure(
-        id="vte_primary_admission_ethnicity_rate",
-        numerator="vte_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
+   #Measure(
+    #    id="vte_primary_admission_ethnicity_rate",
+    #    numerator="vte_primary_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
     #Measure(
     #    id="vte_primary_admission_imd_rate",
     #    numerator="vte_primary_admission",

@@ -7,37 +7,41 @@
 . * Generates graphs for clinical monitoring measures
 . local outcomes "asthma copd"
 
-. local strata "monitoring exacerbation"
+. local strata "monitoring /*exacerbation*/"
 
-. local other "review exacerbation"
+. local other "review /*exacerbation*/"
 
 . forvalues i=1/2 {
   2.     local this_outcome :word `i' of `outcomes'
-  3.     forvalues j=1/2 {
+  3.     forvalues j=1/1 {
   4.         local this_strata :word `j' of `strata'
   5.         local this_other :word `j' of `other'
   6.     * Ethnicity
 .     clear 
   7.     import delimited using "./output/measures/resp/measure_`this_outcome'_
 > `this_strata'_ethnicity_rate.csv", numericcols(4)
-  8.     * Generate rate per 100,000
+  8.     * Take out measures where population is not within subgroup
+.     tab has_`this_outcome' 
+  9.     drop if has_`this_outcome'==0
+ 10.     drop has_`this_outcome' 
+ 11.     * Generate rate per 100,000
 .     gen rate = value*100000 
-  9.     * Format date
+ 12.     * Format date
 .     gen dateA = date(date, "YMD")
- 10.     drop date
- 11.     format dateA %dD/M/Y
- 12.     tab dateA 
- 13.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i
-> (dateA) j(ethnicity)
- 14.     describe
- 15.     * Labelling ethnicity variables
+ 13.     drop date
+ 14.     format dateA %dD/M/Y
+ 15.     tab dateA 
+ 16.     * reshape dataset so columns with rates for each ethnicity 
+.     reshape wide value rate population `this_outcome'_`this_other', i(dateA) 
+> j(ethnicity)
+ 17.     describe
+ 18.     * Labelling ethnicity variables
 .     label var rate1 "White"
- 16.     label var rate2 "Mixed"
- 17.     label var rate3 "Asian"
- 18.     label var rate4 "Black"
- 19.     label var rate5 "Other"
- 20. 
+ 19.     label var rate2 "Mixed"
+ 20.     label var rate3 "Asian"
+ 21.     label var rate4 "Black"
+ 22.     label var rate5 "Other"
+ 23. 
 .     * Generate line graph
 .     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
 > 0)01Apr2022, angle(45) ///
@@ -46,32 +50,36 @@
 >     angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small
 > ) title("Ethnic categories", ///
 >     size(small))) graphregion(fcolor(white))
- 21. 
+ 24. 
 . 
 .     graph export ./output/graphs/line_resp_ethnic_`this_outcome'_`this_strata
 > '.svg, as(svg) replace
- 22.     * IMD
+ 25.     * IMD
 .     clear 
- 23.     import delimited using "./output/measures/resp/measure_`this_outcome'_
+ 26.     import delimited using "./output/measures/resp/measure_`this_outcome'_
 > `this_strata'_imd_rate.csv", numericcols(4)
- 24.     * Generate rate per 100,000
+ 27.     * Take out measures where population is not within subgroup
+.     tab has_`this_outcome' 
+ 28.     drop if has_`this_outcome'==0
+ 29.     drop has_`this_outcome'  
+ 30.     * Generate rate per 100,000
 .     gen rate = value*100000 
- 25.     * Format date
+ 31.     * Format date
 .     gen dateA = date(date, "YMD")
- 26.     drop date
- 27.     format dateA %dD/M/Y
- 28.     tab dateA 
- 29.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate has_`this_outcome' `this_outcome'_`this_other', i
-> (dateA) j(imd)
- 30.     describe
- 31.     * Labelling ethnicity variables
+ 32.     drop date
+ 33.     format dateA %dD/M/Y
+ 34.     tab dateA 
+ 35.     * reshape dataset so columns with rates for each ethnicity 
+.     reshape wide value rate population `this_outcome'_`this_other', i(dateA) 
+> j(imd)
+ 36.     describe
+ 37.     * Labelling ethnicity variables
 .     label var rate1 "IMD - 1"
- 32.     label var rate2 "IMD - 2"
- 33.     label var rate3 "IMD - 3"
- 34.     label var rate4 "IMD - 4"
- 35.     label var rate5 "IMD - 5"
- 36. 
+ 38.     label var rate2 "IMD - 2"
+ 39.     label var rate3 "IMD - 3"
+ 40.     label var rate4 "IMD - 4"
+ 41.     label var rate5 "IMD - 5"
+ 42. 
 .     * Generate line graph
 .     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
 > 0)01Apr2022, angle(45) ///
@@ -80,13 +88,21 @@
 >     angle(0)) yscale(range(0) titlegap(*10)) xmtick(##6) legend(row(1) size(s
 > mall) ///
 >     title("IMD categories", size(small))) graphregion(fcolor(white))
- 37. 
+ 43. 
 . 
 .     graph export ./output/graphs/line_resp_imd_`this_outcome'_`this_strata'.s
 > vg, as(svg) replace
- 38.     }
- 39. }
-(5 vars, 250 obs)
+ 44.     }
+ 45. }
+(6 vars, 500 obs)
+
+ has_asthma |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        250       50.00       50.00
+          1 |        250       50.00      100.00
+------------+-----------------------------------
+      Total |        500      100.00
+(250 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -152,8 +168,8 @@ j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
                                   value   ->   value1 value2 ... value5
                                    rate   ->   rate1 rate2 ... rate5
-                             has_asthma   ->   has_asthma1 has_asthma2 ... has_
-> asthma5
+                             population   ->   population1 population2 ... popu
+> lation5
                           asthma_review   ->   asthma_review1 asthma_review2 ..
 > . asthma_review5
 -----------------------------------------------------------------------------
@@ -167,23 +183,23 @@ variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
 dateA           float   %dD/M/Y               
 asthma_review1  byte    %8.0g                 1 asthma_review
-has_asthma1     byte    %8.0g                 1 has_asthma
+population1     int     %8.0g                 1 population
 value1          float   %9.0g                 1 value
 rate1           float   %9.0g                 1 rate
 asthma_review2  byte    %8.0g                 2 asthma_review
-has_asthma2     byte    %8.0g                 2 has_asthma
+population2     int     %8.0g                 2 population
 value2          float   %9.0g                 2 value
 rate2           float   %9.0g                 2 rate
 asthma_review3  byte    %8.0g                 3 asthma_review
-has_asthma3     byte    %8.0g                 3 has_asthma
+population3     int     %8.0g                 3 population
 value3          float   %9.0g                 3 value
 rate3           float   %9.0g                 3 rate
 asthma_review4  byte    %8.0g                 4 asthma_review
-has_asthma4     byte    %8.0g                 4 has_asthma
+population4     int     %8.0g                 4 population
 value4          float   %9.0g                 4 value
 rate4           float   %9.0g                 4 rate
 asthma_review5  byte    %8.0g                 5 asthma_review
-has_asthma5     byte    %8.0g                 5 has_asthma
+population5     int     %8.0g                 5 population
 value5          float   %9.0g                 5 value
 rate5           float   %9.0g                 5 rate
 -------------------------------------------------------------------------------
@@ -191,7 +207,15 @@ Sorted by: dateA
 (note: file ./output/graphs/line_resp_ethnic_asthma_monitoring.svg not found)
 (file ./output/graphs/line_resp_ethnic_asthma_monitoring.svg written in SVG for
 > mat)
-(5 vars, 300 obs)
+(6 vars, 600 obs)
+
+ has_asthma |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        300       50.00       50.00
+          1 |        300       50.00      100.00
+------------+-----------------------------------
+      Total |        600      100.00
+(300 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -257,8 +281,8 @@ j variable (6 values)               imd   ->   (dropped)
 xij variables:
                                   value   ->   value0 value1 ... value5
                                    rate   ->   rate0 rate1 ... rate5
-                             has_asthma   ->   has_asthma0 has_asthma1 ... has_
-> asthma5
+                             population   ->   population0 population1 ... popu
+> lation5
                           asthma_review   ->   asthma_review0 asthma_review1 ..
 > . asthma_review5
 -----------------------------------------------------------------------------
@@ -272,27 +296,27 @@ variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
 dateA           float   %dD/M/Y               
 asthma_review0  byte    %8.0g                 0 asthma_review
-has_asthma0     byte    %8.0g                 0 has_asthma
+population0     int     %8.0g                 0 population
 value0          float   %9.0g                 0 value
 rate0           float   %9.0g                 0 rate
 asthma_review1  byte    %8.0g                 1 asthma_review
-has_asthma1     byte    %8.0g                 1 has_asthma
+population1     int     %8.0g                 1 population
 value1          float   %9.0g                 1 value
 rate1           float   %9.0g                 1 rate
 asthma_review2  byte    %8.0g                 2 asthma_review
-has_asthma2     byte    %8.0g                 2 has_asthma
+population2     int     %8.0g                 2 population
 value2          float   %9.0g                 2 value
 rate2           float   %9.0g                 2 rate
 asthma_review3  byte    %8.0g                 3 asthma_review
-has_asthma3     byte    %8.0g                 3 has_asthma
+population3     int     %8.0g                 3 population
 value3          float   %9.0g                 3 value
 rate3           float   %9.0g                 3 rate
 asthma_review4  byte    %8.0g                 4 asthma_review
-has_asthma4     byte    %8.0g                 4 has_asthma
+population4     int     %8.0g                 4 population
 value4          float   %9.0g                 4 value
 rate4           float   %9.0g                 4 rate
 asthma_review5  byte    %8.0g                 5 asthma_review
-has_asthma5     byte    %8.0g                 5 has_asthma
+population5     int     %8.0g                 5 population
 value5          float   %9.0g                 5 value
 rate5           float   %9.0g                 5 rate
 -------------------------------------------------------------------------------
@@ -300,7 +324,15 @@ Sorted by: dateA
 (note: file ./output/graphs/line_resp_imd_asthma_monitoring.svg not found)
 (file ./output/graphs/line_resp_imd_asthma_monitoring.svg written in SVG format
 > )
-(5 vars, 250 obs)
+(6 vars, 500 obs)
+
+   has_copd |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        250       50.00       50.00
+          1 |        250       50.00      100.00
+------------+-----------------------------------
+      Total |        500      100.00
+(250 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -366,222 +398,8 @@ j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
                                   value   ->   value1 value2 ... value5
                                    rate   ->   rate1 rate2 ... rate5
-                             has_asthma   ->   has_asthma1 has_asthma2 ... has_
-> asthma5
-                    asthma_exacerbation   ->   asthma_exacerbation1 asthma_exac
-> erbation2 ... asthma_exacerbation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:            50                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-asthma_exacer~1 byte    %8.0g                 1 asthma_exacerbation
-has_asthma1     byte    %8.0g                 1 has_asthma
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-asthma_exacer~2 byte    %8.0g                 2 asthma_exacerbation
-has_asthma2     byte    %8.0g                 2 has_asthma
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-asthma_exacer~3 byte    %8.0g                 3 asthma_exacerbation
-has_asthma3     byte    %8.0g                 3 has_asthma
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-asthma_exacer~4 byte    %8.0g                 4 asthma_exacerbation
-has_asthma4     byte    %8.0g                 4 has_asthma
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-asthma_exacer~5 byte    %8.0g                 5 asthma_exacerbation
-has_asthma5     byte    %8.0g                 5 has_asthma
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/graphs/line_resp_ethnic_asthma_exacerbation.svg not found)
-(file ./output/graphs/line_resp_ethnic_asthma_exacerbation.svg written in SVG f
-> ormat)
-(5 vars, 300 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2018 |          6        2.00        2.00
-  01apr2018 |          6        2.00        4.00
-  01may2018 |          6        2.00        6.00
-  01jun2018 |          6        2.00        8.00
-  01jul2018 |          6        2.00       10.00
-  01aug2018 |          6        2.00       12.00
-  01sep2018 |          6        2.00       14.00
-  01oct2018 |          6        2.00       16.00
-  01nov2018 |          6        2.00       18.00
-  01dec2018 |          6        2.00       20.00
-  01jan2019 |          6        2.00       22.00
-  01feb2019 |          6        2.00       24.00
-  01mar2019 |          6        2.00       26.00
-  01apr2019 |          6        2.00       28.00
-  01may2019 |          6        2.00       30.00
-  01jun2019 |          6        2.00       32.00
-  01jul2019 |          6        2.00       34.00
-  01aug2019 |          6        2.00       36.00
-  01sep2019 |          6        2.00       38.00
-  01oct2019 |          6        2.00       40.00
-  01nov2019 |          6        2.00       42.00
-  01dec2019 |          6        2.00       44.00
-  01jan2020 |          6        2.00       46.00
-  01feb2020 |          6        2.00       48.00
-  01mar2020 |          6        2.00       50.00
-  01apr2020 |          6        2.00       52.00
-  01may2020 |          6        2.00       54.00
-  01jun2020 |          6        2.00       56.00
-  01jul2020 |          6        2.00       58.00
-  01aug2020 |          6        2.00       60.00
-  01sep2020 |          6        2.00       62.00
-  01oct2020 |          6        2.00       64.00
-  01nov2020 |          6        2.00       66.00
-  01dec2020 |          6        2.00       68.00
-  01jan2021 |          6        2.00       70.00
-  01feb2021 |          6        2.00       72.00
-  01mar2021 |          6        2.00       74.00
-  01apr2021 |          6        2.00       76.00
-  01may2021 |          6        2.00       78.00
-  01jun2021 |          6        2.00       80.00
-  01jul2021 |          6        2.00       82.00
-  01aug2021 |          6        2.00       84.00
-  01sep2021 |          6        2.00       86.00
-  01oct2021 |          6        2.00       88.00
-  01nov2021 |          6        2.00       90.00
-  01dec2021 |          6        2.00       92.00
-  01jan2022 |          6        2.00       94.00
-  01feb2022 |          6        2.00       96.00
-  01mar2022 |          6        2.00       98.00
-  01apr2022 |          6        2.00      100.00
-------------+-----------------------------------
-      Total |        300      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                      300   ->      50
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                             has_asthma   ->   has_asthma0 has_asthma1 ... has_
-> asthma5
-                    asthma_exacerbation   ->   asthma_exacerbation0 asthma_exac
-> erbation1 ... asthma_exacerbation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:            50                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-asthma_exacer~0 byte    %8.0g                 0 asthma_exacerbation
-has_asthma0     byte    %8.0g                 0 has_asthma
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-asthma_exacer~1 byte    %8.0g                 1 asthma_exacerbation
-has_asthma1     byte    %8.0g                 1 has_asthma
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-asthma_exacer~2 byte    %8.0g                 2 asthma_exacerbation
-has_asthma2     byte    %8.0g                 2 has_asthma
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-asthma_exacer~3 byte    %8.0g                 3 asthma_exacerbation
-has_asthma3     byte    %8.0g                 3 has_asthma
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-asthma_exacer~4 byte    %8.0g                 4 asthma_exacerbation
-has_asthma4     byte    %8.0g                 4 has_asthma
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-asthma_exacer~5 byte    %8.0g                 5 asthma_exacerbation
-has_asthma5     byte    %8.0g                 5 has_asthma
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/graphs/line_resp_imd_asthma_exacerbation.svg not found)
-(file ./output/graphs/line_resp_imd_asthma_exacerbation.svg written in SVG form
-> at)
-(5 vars, 250 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2018 |          5        2.00        2.00
-  01apr2018 |          5        2.00        4.00
-  01may2018 |          5        2.00        6.00
-  01jun2018 |          5        2.00        8.00
-  01jul2018 |          5        2.00       10.00
-  01aug2018 |          5        2.00       12.00
-  01sep2018 |          5        2.00       14.00
-  01oct2018 |          5        2.00       16.00
-  01nov2018 |          5        2.00       18.00
-  01dec2018 |          5        2.00       20.00
-  01jan2019 |          5        2.00       22.00
-  01feb2019 |          5        2.00       24.00
-  01mar2019 |          5        2.00       26.00
-  01apr2019 |          5        2.00       28.00
-  01may2019 |          5        2.00       30.00
-  01jun2019 |          5        2.00       32.00
-  01jul2019 |          5        2.00       34.00
-  01aug2019 |          5        2.00       36.00
-  01sep2019 |          5        2.00       38.00
-  01oct2019 |          5        2.00       40.00
-  01nov2019 |          5        2.00       42.00
-  01dec2019 |          5        2.00       44.00
-  01jan2020 |          5        2.00       46.00
-  01feb2020 |          5        2.00       48.00
-  01mar2020 |          5        2.00       50.00
-  01apr2020 |          5        2.00       52.00
-  01may2020 |          5        2.00       54.00
-  01jun2020 |          5        2.00       56.00
-  01jul2020 |          5        2.00       58.00
-  01aug2020 |          5        2.00       60.00
-  01sep2020 |          5        2.00       62.00
-  01oct2020 |          5        2.00       64.00
-  01nov2020 |          5        2.00       66.00
-  01dec2020 |          5        2.00       68.00
-  01jan2021 |          5        2.00       70.00
-  01feb2021 |          5        2.00       72.00
-  01mar2021 |          5        2.00       74.00
-  01apr2021 |          5        2.00       76.00
-  01may2021 |          5        2.00       78.00
-  01jun2021 |          5        2.00       80.00
-  01jul2021 |          5        2.00       82.00
-  01aug2021 |          5        2.00       84.00
-  01sep2021 |          5        2.00       86.00
-  01oct2021 |          5        2.00       88.00
-  01nov2021 |          5        2.00       90.00
-  01dec2021 |          5        2.00       92.00
-  01jan2022 |          5        2.00       94.00
-  01feb2022 |          5        2.00       96.00
-  01mar2022 |          5        2.00       98.00
-  01apr2022 |          5        2.00      100.00
-------------+-----------------------------------
-      Total |        250      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                      250   ->      50
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                               has_copd   ->   has_copd1 has_copd2 ... has_copd
-> 5
+                             population   ->   population1 population2 ... popu
+> lation5
                             copd_review   ->   copd_review1 copd_review2 ... co
 > pd_review5
 -----------------------------------------------------------------------------
@@ -595,23 +413,23 @@ variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
 dateA           float   %dD/M/Y               
 copd_review1    byte    %8.0g                 1 copd_review
-has_copd1       byte    %8.0g                 1 has_copd
+population1     int     %8.0g                 1 population
 value1          float   %9.0g                 1 value
 rate1           float   %9.0g                 1 rate
 copd_review2    byte    %8.0g                 2 copd_review
-has_copd2       byte    %8.0g                 2 has_copd
+population2     int     %8.0g                 2 population
 value2          float   %9.0g                 2 value
 rate2           float   %9.0g                 2 rate
 copd_review3    byte    %8.0g                 3 copd_review
-has_copd3       byte    %8.0g                 3 has_copd
+population3     int     %8.0g                 3 population
 value3          float   %9.0g                 3 value
 rate3           float   %9.0g                 3 rate
 copd_review4    byte    %8.0g                 4 copd_review
-has_copd4       byte    %8.0g                 4 has_copd
+population4     int     %8.0g                 4 population
 value4          float   %9.0g                 4 value
 rate4           float   %9.0g                 4 rate
 copd_review5    byte    %8.0g                 5 copd_review
-has_copd5       byte    %8.0g                 5 has_copd
+population5     int     %8.0g                 5 population
 value5          float   %9.0g                 5 value
 rate5           float   %9.0g                 5 rate
 -------------------------------------------------------------------------------
@@ -619,7 +437,15 @@ Sorted by: dateA
 (note: file ./output/graphs/line_resp_ethnic_copd_monitoring.svg not found)
 (file ./output/graphs/line_resp_ethnic_copd_monitoring.svg written in SVG forma
 > t)
-(5 vars, 300 obs)
+(6 vars, 600 obs)
+
+   has_copd |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        300       50.00       50.00
+          1 |        300       50.00      100.00
+------------+-----------------------------------
+      Total |        600      100.00
+(300 observations deleted)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -685,8 +511,8 @@ j variable (6 values)               imd   ->   (dropped)
 xij variables:
                                   value   ->   value0 value1 ... value5
                                    rate   ->   rate0 rate1 ... rate5
-                               has_copd   ->   has_copd0 has_copd1 ... has_copd
-> 5
+                             population   ->   population0 population1 ... popu
+> lation5
                             copd_review   ->   copd_review0 copd_review1 ... co
 > pd_review5
 -----------------------------------------------------------------------------
@@ -700,247 +526,33 @@ variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
 dateA           float   %dD/M/Y               
 copd_review0    byte    %8.0g                 0 copd_review
-has_copd0       byte    %8.0g                 0 has_copd
+population0     int     %8.0g                 0 population
 value0          float   %9.0g                 0 value
 rate0           float   %9.0g                 0 rate
 copd_review1    byte    %8.0g                 1 copd_review
-has_copd1       byte    %8.0g                 1 has_copd
+population1     int     %8.0g                 1 population
 value1          float   %9.0g                 1 value
 rate1           float   %9.0g                 1 rate
 copd_review2    byte    %8.0g                 2 copd_review
-has_copd2       byte    %8.0g                 2 has_copd
+population2     int     %8.0g                 2 population
 value2          float   %9.0g                 2 value
 rate2           float   %9.0g                 2 rate
 copd_review3    byte    %8.0g                 3 copd_review
-has_copd3       byte    %8.0g                 3 has_copd
+population3     int     %8.0g                 3 population
 value3          float   %9.0g                 3 value
 rate3           float   %9.0g                 3 rate
 copd_review4    byte    %8.0g                 4 copd_review
-has_copd4       byte    %8.0g                 4 has_copd
+population4     int     %8.0g                 4 population
 value4          float   %9.0g                 4 value
 rate4           float   %9.0g                 4 rate
 copd_review5    byte    %8.0g                 5 copd_review
-has_copd5       byte    %8.0g                 5 has_copd
+population5     int     %8.0g                 5 population
 value5          float   %9.0g                 5 value
 rate5           float   %9.0g                 5 rate
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/graphs/line_resp_imd_copd_monitoring.svg not found)
 (file ./output/graphs/line_resp_imd_copd_monitoring.svg written in SVG format)
-(5 vars, 250 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2018 |          5        2.00        2.00
-  01apr2018 |          5        2.00        4.00
-  01may2018 |          5        2.00        6.00
-  01jun2018 |          5        2.00        8.00
-  01jul2018 |          5        2.00       10.00
-  01aug2018 |          5        2.00       12.00
-  01sep2018 |          5        2.00       14.00
-  01oct2018 |          5        2.00       16.00
-  01nov2018 |          5        2.00       18.00
-  01dec2018 |          5        2.00       20.00
-  01jan2019 |          5        2.00       22.00
-  01feb2019 |          5        2.00       24.00
-  01mar2019 |          5        2.00       26.00
-  01apr2019 |          5        2.00       28.00
-  01may2019 |          5        2.00       30.00
-  01jun2019 |          5        2.00       32.00
-  01jul2019 |          5        2.00       34.00
-  01aug2019 |          5        2.00       36.00
-  01sep2019 |          5        2.00       38.00
-  01oct2019 |          5        2.00       40.00
-  01nov2019 |          5        2.00       42.00
-  01dec2019 |          5        2.00       44.00
-  01jan2020 |          5        2.00       46.00
-  01feb2020 |          5        2.00       48.00
-  01mar2020 |          5        2.00       50.00
-  01apr2020 |          5        2.00       52.00
-  01may2020 |          5        2.00       54.00
-  01jun2020 |          5        2.00       56.00
-  01jul2020 |          5        2.00       58.00
-  01aug2020 |          5        2.00       60.00
-  01sep2020 |          5        2.00       62.00
-  01oct2020 |          5        2.00       64.00
-  01nov2020 |          5        2.00       66.00
-  01dec2020 |          5        2.00       68.00
-  01jan2021 |          5        2.00       70.00
-  01feb2021 |          5        2.00       72.00
-  01mar2021 |          5        2.00       74.00
-  01apr2021 |          5        2.00       76.00
-  01may2021 |          5        2.00       78.00
-  01jun2021 |          5        2.00       80.00
-  01jul2021 |          5        2.00       82.00
-  01aug2021 |          5        2.00       84.00
-  01sep2021 |          5        2.00       86.00
-  01oct2021 |          5        2.00       88.00
-  01nov2021 |          5        2.00       90.00
-  01dec2021 |          5        2.00       92.00
-  01jan2022 |          5        2.00       94.00
-  01feb2022 |          5        2.00       96.00
-  01mar2022 |          5        2.00       98.00
-  01apr2022 |          5        2.00      100.00
-------------+-----------------------------------
-      Total |        250      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                      250   ->      50
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                               has_copd   ->   has_copd1 has_copd2 ... has_copd
-> 5
-                      copd_exacerbation   ->   copd_exacerbation1 copd_exacerba
-> tion2 ... copd_exacerbation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:            50                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-copd_exacerba~1 byte    %8.0g                 1 copd_exacerbation
-has_copd1       byte    %8.0g                 1 has_copd
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-copd_exacerba~2 byte    %8.0g                 2 copd_exacerbation
-has_copd2       byte    %8.0g                 2 has_copd
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-copd_exacerba~3 byte    %8.0g                 3 copd_exacerbation
-has_copd3       byte    %8.0g                 3 has_copd
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-copd_exacerba~4 byte    %8.0g                 4 copd_exacerbation
-has_copd4       byte    %8.0g                 4 has_copd
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-copd_exacerba~5 byte    %8.0g                 5 copd_exacerbation
-has_copd5       byte    %8.0g                 5 has_copd
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/graphs/line_resp_ethnic_copd_exacerbation.svg not found)
-(file ./output/graphs/line_resp_ethnic_copd_exacerbation.svg written in SVG for
-> mat)
-(5 vars, 300 obs)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2018 |          6        2.00        2.00
-  01apr2018 |          6        2.00        4.00
-  01may2018 |          6        2.00        6.00
-  01jun2018 |          6        2.00        8.00
-  01jul2018 |          6        2.00       10.00
-  01aug2018 |          6        2.00       12.00
-  01sep2018 |          6        2.00       14.00
-  01oct2018 |          6        2.00       16.00
-  01nov2018 |          6        2.00       18.00
-  01dec2018 |          6        2.00       20.00
-  01jan2019 |          6        2.00       22.00
-  01feb2019 |          6        2.00       24.00
-  01mar2019 |          6        2.00       26.00
-  01apr2019 |          6        2.00       28.00
-  01may2019 |          6        2.00       30.00
-  01jun2019 |          6        2.00       32.00
-  01jul2019 |          6        2.00       34.00
-  01aug2019 |          6        2.00       36.00
-  01sep2019 |          6        2.00       38.00
-  01oct2019 |          6        2.00       40.00
-  01nov2019 |          6        2.00       42.00
-  01dec2019 |          6        2.00       44.00
-  01jan2020 |          6        2.00       46.00
-  01feb2020 |          6        2.00       48.00
-  01mar2020 |          6        2.00       50.00
-  01apr2020 |          6        2.00       52.00
-  01may2020 |          6        2.00       54.00
-  01jun2020 |          6        2.00       56.00
-  01jul2020 |          6        2.00       58.00
-  01aug2020 |          6        2.00       60.00
-  01sep2020 |          6        2.00       62.00
-  01oct2020 |          6        2.00       64.00
-  01nov2020 |          6        2.00       66.00
-  01dec2020 |          6        2.00       68.00
-  01jan2021 |          6        2.00       70.00
-  01feb2021 |          6        2.00       72.00
-  01mar2021 |          6        2.00       74.00
-  01apr2021 |          6        2.00       76.00
-  01may2021 |          6        2.00       78.00
-  01jun2021 |          6        2.00       80.00
-  01jul2021 |          6        2.00       82.00
-  01aug2021 |          6        2.00       84.00
-  01sep2021 |          6        2.00       86.00
-  01oct2021 |          6        2.00       88.00
-  01nov2021 |          6        2.00       90.00
-  01dec2021 |          6        2.00       92.00
-  01jan2022 |          6        2.00       94.00
-  01feb2022 |          6        2.00       96.00
-  01mar2022 |          6        2.00       98.00
-  01apr2022 |          6        2.00      100.00
-------------+-----------------------------------
-      Total |        300      100.00
-(note: j = 0 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                      300   ->      50
-Number of variables                   6   ->      25
-j variable (6 values)               imd   ->   (dropped)
-xij variables:
-                                  value   ->   value0 value1 ... value5
-                                   rate   ->   rate0 rate1 ... rate5
-                               has_copd   ->   has_copd0 has_copd1 ... has_copd
-> 5
-                      copd_exacerbation   ->   copd_exacerbation0 copd_exacerba
-> tion1 ... copd_exacerbation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:            50                          
- vars:            25                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-copd_exacerba~0 byte    %8.0g                 0 copd_exacerbation
-has_copd0       byte    %8.0g                 0 has_copd
-value0          float   %9.0g                 0 value
-rate0           float   %9.0g                 0 rate
-copd_exacerba~1 byte    %8.0g                 1 copd_exacerbation
-has_copd1       byte    %8.0g                 1 has_copd
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-copd_exacerba~2 byte    %8.0g                 2 copd_exacerbation
-has_copd2       byte    %8.0g                 2 has_copd
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-copd_exacerba~3 byte    %8.0g                 3 copd_exacerbation
-has_copd3       byte    %8.0g                 3 has_copd
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-copd_exacerba~4 byte    %8.0g                 4 copd_exacerbation
-has_copd4       byte    %8.0g                 4 has_copd
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-copd_exacerba~5 byte    %8.0g                 5 copd_exacerbation
-has_copd5       byte    %8.0g                 5 has_copd
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/graphs/line_resp_imd_copd_exacerbation.svg not found)
-(file ./output/graphs/line_resp_imd_copd_exacerbation.svg written in SVG format
-> )
 
 . 
 . /* Adding three monthly intervals for asthma exacerbation for ethnicity
@@ -984,7 +596,7 @@ Sorted by: dateA
 
 end of do-file
 
-. . file open output using "/tmp/tmp.wvjAUKY0xR", write text replace
+. . file open output using "/tmp/tmp.XGjcDKCfVr", write text replace
 
 . . file write output "success" 
 

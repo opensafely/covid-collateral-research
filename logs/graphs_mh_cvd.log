@@ -13,23 +13,25 @@
 .         count if ethnicity==.
   4.         * Drop missings as not required
 .         drop if ethnicity==0 | ethnicity==.
-  5.         * Generate rate per 100,000
+  5.         tab `this_group'_subgroup 
+  6.         drop if `this_group'_subgroup==0
+  7.         drop `this_group'_subgroup 
+  8.         * Generate rate per 100,000
 .         gen rate = value*100000 
-  6.         * Format date
+  9.         * Format date
 .         gen dateA = date(date, "YMD")
-  7.         drop date
-  8.         format dateA %dD/M/Y
-  9.         * reshape dataset so columns with rates for each ethnicity 
-.         reshape wide value rate `this_group'_subgroup bp_meas, i(dateA) j(eth
-> nicity)
- 10.         describe
- 11.         * Labelling ethnicity variables
+ 10.         drop date
+ 11.         format dateA %dD/M/Y
+ 12.         * reshape dataset so columns with rates for each ethnicity 
+.         reshape wide value rate population bp_meas, i(dateA) j(ethnicity)
+ 13.         describe
+ 14.         * Labelling ethnicity variables
 .         label var rate1 "White"
- 12.         label var rate2 "Mixed"
- 13.         label var rate3 "Asian"
- 14.         label var rate4 "Black"
- 15.         label var rate5 "Other"
- 16. 
+ 15.         label var rate2 "Mixed"
+ 16.         label var rate3 "Asian"
+ 17.         label var rate4 "Black"
+ 18.         label var rate5 "Other"
+ 19. 
 .         * Generate line graph
 .         graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan201
 > 8(120)01Apr2022, angle(45) ///
@@ -38,10 +40,10 @@
 >         angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(s
 > mall) ///
 >         title("Ethnic categories", size(small))) graphregion(fcolor(white))
- 17. 
+ 20. 
 .         graph export ./output/graphs/line_`this_group'_bp_ethnic.svg, as(svg)
 >  replace
- 18.     /* IMD
+ 21.     /* IMD
 >     clear 
 >     import delimited using ./output/measures/`this_group'/measure_bp_meas_`th
 > is_group'_imd_rate.csv, numericcols(4)
@@ -78,9 +80,18 @@
 > e
 >     */
 .     }
-(5 vars, 300 obs)
-  50
-(50 observations deleted)
+(6 vars, 600 obs)
+  100
+(100 observations deleted)
+
+cvd_subgrou |
+          p |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        250       50.00       50.00
+          1 |        250       50.00      100.00
+------------+-----------------------------------
+      Total |        500      100.00
+(250 observations deleted)
 (75 missing values generated)
 (note: j = 1 2 3 4 5)
 
@@ -92,8 +103,8 @@ j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
                                   value   ->   value1 value2 ... value5
                                    rate   ->   rate1 rate2 ... rate5
-                           cvd_subgroup   ->   cvd_subgroup1 cvd_subgroup2 ... 
-> cvd_subgroup5
+                             population   ->   population1 population2 ... popu
+> lation5
                                 bp_meas   ->   bp_meas1 bp_meas2 ... bp_meas5
 -----------------------------------------------------------------------------
 
@@ -106,32 +117,40 @@ variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
 dateA           float   %dD/M/Y               
 bp_meas1        byte    %8.0g                 1 bp_meas
-cvd_subgroup1   byte    %8.0g                 1 cvd_subgroup
-value1          float   %8.0g                 1 value
+population1     int     %8.0g                 1 population
+value1          float   %9.0g                 1 value
 rate1           float   %9.0g                 1 rate
 bp_meas2        byte    %8.0g                 2 bp_meas
-cvd_subgroup2   byte    %8.0g                 2 cvd_subgroup
-value2          float   %8.0g                 2 value
+population2     int     %8.0g                 2 population
+value2          float   %9.0g                 2 value
 rate2           float   %9.0g                 2 rate
 bp_meas3        byte    %8.0g                 3 bp_meas
-cvd_subgroup3   byte    %8.0g                 3 cvd_subgroup
-value3          float   %8.0g                 3 value
+population3     int     %8.0g                 3 population
+value3          float   %9.0g                 3 value
 rate3           float   %9.0g                 3 rate
 bp_meas4        byte    %8.0g                 4 bp_meas
-cvd_subgroup4   byte    %8.0g                 4 cvd_subgroup
-value4          float   %8.0g                 4 value
+population4     int     %8.0g                 4 population
+value4          float   %9.0g                 4 value
 rate4           float   %9.0g                 4 rate
 bp_meas5        byte    %8.0g                 5 bp_meas
-cvd_subgroup5   byte    %8.0g                 5 cvd_subgroup
-value5          float   %8.0g                 5 value
+population5     int     %8.0g                 5 population
+value5          float   %9.0g                 5 value
 rate5           float   %9.0g                 5 rate
 -------------------------------------------------------------------------------
 Sorted by: dateA
 (note: file ./output/graphs/line_cvd_bp_ethnic.svg not found)
 (file ./output/graphs/line_cvd_bp_ethnic.svg written in SVG format)
-(5 vars, 300 obs)
-  50
-(50 observations deleted)
+(6 vars, 600 obs)
+  100
+(100 observations deleted)
+
+mh_subgroup |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        250       50.00       50.00
+          1 |        250       50.00      100.00
+------------+-----------------------------------
+      Total |        500      100.00
+(250 observations deleted)
 (2 missing values generated)
 (note: j = 1 2 3 4 5)
 
@@ -143,8 +162,8 @@ j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
                                   value   ->   value1 value2 ... value5
                                    rate   ->   rate1 rate2 ... rate5
-                            mh_subgroup   ->   mh_subgroup1 mh_subgroup2 ... mh
-> _subgroup5
+                             population   ->   population1 population2 ... popu
+> lation5
                                 bp_meas   ->   bp_meas1 bp_meas2 ... bp_meas5
 -----------------------------------------------------------------------------
 
@@ -157,24 +176,24 @@ variable name   type    format     label      variable label
 -------------------------------------------------------------------------------
 dateA           float   %dD/M/Y               
 bp_meas1        byte    %8.0g                 1 bp_meas
-mh_subgroup1    int     %8.0g                 1 mh_subgroup
-value1          float   %8.0g                 1 value
+population1     int     %8.0g                 1 population
+value1          float   %9.0g                 1 value
 rate1           float   %9.0g                 1 rate
 bp_meas2        byte    %8.0g                 2 bp_meas
-mh_subgroup2    int     %8.0g                 2 mh_subgroup
-value2          float   %8.0g                 2 value
+population2     int     %8.0g                 2 population
+value2          float   %9.0g                 2 value
 rate2           float   %9.0g                 2 rate
 bp_meas3        byte    %8.0g                 3 bp_meas
-mh_subgroup3    int     %8.0g                 3 mh_subgroup
-value3          float   %8.0g                 3 value
+population3     int     %8.0g                 3 population
+value3          float   %9.0g                 3 value
 rate3           float   %9.0g                 3 rate
 bp_meas4        byte    %8.0g                 4 bp_meas
-mh_subgroup4    int     %8.0g                 4 mh_subgroup
-value4          float   %8.0g                 4 value
+population4     int     %8.0g                 4 population
+value4          float   %9.0g                 4 value
 rate4           float   %9.0g                 4 rate
 bp_meas5        byte    %8.0g                 5 bp_meas
-mh_subgroup5    int     %8.0g                 5 mh_subgroup
-value5          float   %8.0g                 5 value
+population5     int     %8.0g                 5 population
+value5          float   %9.0g                 5 value
 rate5           float   %9.0g                 5 rate
 -------------------------------------------------------------------------------
 Sorted by: dateA
@@ -341,50 +360,49 @@ Sorted by: dateA
 >  replace
 > 
 > }
-> */
-. * Hospital admissions - primary diagnosis CVD
-. local groups "mi stroke heart_failure vte"
-
-. forvalues i=1/4 {
-  2.     local this_group :word `i' of `groups'
-  3. * Ethnicity
-.     clear 
-  4.     import delimited using ./output/measures/cvd/measure_`this_group'_prim
-> ary_admission_ethnicity_rate.csv, numericcols(4)
-  5.      * Shouldn't be missing on server but is in dummy data
-.     count if ethnicity==.
-  6.     * Drop missings as not required
-.     drop if ethnicity==0 | ethnicity==.
-  7.     * Generate rate per 100,000
-.     gen rate = value*100000 
-  8.     * Format date
-.     gen dateA = date(date, "YMD")
-  9.     drop date
- 10.     format dateA %dD/M/Y
- 11.     tab dateA 
- 12.     * reshape dataset so columns with rates for each ethnicity 
-.     reshape wide value rate `this_group'_primary_admission population, i(date
+> 
+> * Hospital admissions - primary diagnosis CVD
+> local groups "mi stroke heart_failure vte"
+> forvalues i=1/4 {
+>     local this_group :word `i' of `groups'
+> * Ethnicity
+>     clear 
+>     import delimited using ./output/measures/cvd/measure_`this_group'_primary
+> _admission_ethnicity_rate.csv, numericcols(4)
+>      * Shouldn't be missing on server but is in dummy data
+>     count if ethnicity==.
+>     * Drop missings as not required
+>     drop if ethnicity==0 | ethnicity==.
+>     * Generate rate per 100,000
+>     gen rate = value*100000 
+>     * Format date
+>     gen dateA = date(date, "YMD")
+>     drop date
+>     format dateA %dD/M/Y
+>     tab dateA 
+>     * reshape dataset so columns with rates for each ethnicity 
+>     reshape wide value rate `this_group'_primary_admission population, i(date
 > A) j(ethnicity)
- 13.     describe
- 14.     * Labelling ethnicity variables
-.     label var rate1 "White"
- 15.     label var rate2 "Mixed"
- 16.     label var rate3 "Asian"
- 17.     label var rate4 "Black"
- 18.     label var rate5 "Other"
- 19. 
-.     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
+>     describe
+>     * Labelling ethnicity variables
+>     label var rate1 "White"
+>     label var rate2 "Mixed"
+>     label var rate3 "Asian"
+>     label var rate4 "Black"
+>     label var rate5 "Other"
+> 
+>     * Generate line graph
+>     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
 > 0)01Apr2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(#5, labsize(small) ///
 >     angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small
 > ) ///
 >     title("Ethnic categories", size(small))) graphregion(fcolor(white))
- 20. 
-.     graph export ./output/graphs/line_cvd_`this_group'_primary_admission_ethn
+> 
+>     graph export ./output/graphs/line_cvd_`this_group'_primary_admission_ethn
 > icity.svg, as(svg) replace
- 21.     /* IMD
+>     * IMD
 >     clear 
 >     import delimited using ./output/measures/cvd/measure_`this_group'_primary
 > _admission_imd_rate.csv, numericcols(4)
@@ -421,441 +439,8 @@ Sorted by: dateA
 > 
 >     graph export ./output/graphs/line_cvd_`this_group'_primary_admission_imd.
 > svg, as(svg) replace
-> */
-. }
-(5 vars, 300 obs)
-  50
-(50 observations deleted)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2018 |          5        2.00        2.00
-  01apr2018 |          5        2.00        4.00
-  01may2018 |          5        2.00        6.00
-  01jun2018 |          5        2.00        8.00
-  01jul2018 |          5        2.00       10.00
-  01aug2018 |          5        2.00       12.00
-  01sep2018 |          5        2.00       14.00
-  01oct2018 |          5        2.00       16.00
-  01nov2018 |          5        2.00       18.00
-  01dec2018 |          5        2.00       20.00
-  01jan2019 |          5        2.00       22.00
-  01feb2019 |          5        2.00       24.00
-  01mar2019 |          5        2.00       26.00
-  01apr2019 |          5        2.00       28.00
-  01may2019 |          5        2.00       30.00
-  01jun2019 |          5        2.00       32.00
-  01jul2019 |          5        2.00       34.00
-  01aug2019 |          5        2.00       36.00
-  01sep2019 |          5        2.00       38.00
-  01oct2019 |          5        2.00       40.00
-  01nov2019 |          5        2.00       42.00
-  01dec2019 |          5        2.00       44.00
-  01jan2020 |          5        2.00       46.00
-  01feb2020 |          5        2.00       48.00
-  01mar2020 |          5        2.00       50.00
-  01apr2020 |          5        2.00       52.00
-  01may2020 |          5        2.00       54.00
-  01jun2020 |          5        2.00       56.00
-  01jul2020 |          5        2.00       58.00
-  01aug2020 |          5        2.00       60.00
-  01sep2020 |          5        2.00       62.00
-  01oct2020 |          5        2.00       64.00
-  01nov2020 |          5        2.00       66.00
-  01dec2020 |          5        2.00       68.00
-  01jan2021 |          5        2.00       70.00
-  01feb2021 |          5        2.00       72.00
-  01mar2021 |          5        2.00       74.00
-  01apr2021 |          5        2.00       76.00
-  01may2021 |          5        2.00       78.00
-  01jun2021 |          5        2.00       80.00
-  01jul2021 |          5        2.00       82.00
-  01aug2021 |          5        2.00       84.00
-  01sep2021 |          5        2.00       86.00
-  01oct2021 |          5        2.00       88.00
-  01nov2021 |          5        2.00       90.00
-  01dec2021 |          5        2.00       92.00
-  01jan2022 |          5        2.00       94.00
-  01feb2022 |          5        2.00       96.00
-  01mar2022 |          5        2.00       98.00
-  01apr2022 |          5        2.00      100.00
-------------+-----------------------------------
-      Total |        250      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                      250   ->      50
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                   mi_primary_admission   ->   mi_primary_admission1 mi_primary
-> _admission2 ... mi_primary_admission5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:            50                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-mi_primary_ad~1 byte    %8.0g                 1 mi_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-mi_primary_ad~2 byte    %8.0g                 2 mi_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-mi_primary_ad~3 byte    %8.0g                 3 mi_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-mi_primary_ad~4 byte    %8.0g                 4 mi_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-mi_primary_ad~5 byte    %8.0g                 5 mi_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/graphs/line_cvd_mi_primary_admission_ethnicity.svg not fou
-> nd)
-(file ./output/graphs/line_cvd_mi_primary_admission_ethnicity.svg written in SV
-> G format)
-(5 vars, 300 obs)
-  50
-(50 observations deleted)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2018 |          5        2.00        2.00
-  01apr2018 |          5        2.00        4.00
-  01may2018 |          5        2.00        6.00
-  01jun2018 |          5        2.00        8.00
-  01jul2018 |          5        2.00       10.00
-  01aug2018 |          5        2.00       12.00
-  01sep2018 |          5        2.00       14.00
-  01oct2018 |          5        2.00       16.00
-  01nov2018 |          5        2.00       18.00
-  01dec2018 |          5        2.00       20.00
-  01jan2019 |          5        2.00       22.00
-  01feb2019 |          5        2.00       24.00
-  01mar2019 |          5        2.00       26.00
-  01apr2019 |          5        2.00       28.00
-  01may2019 |          5        2.00       30.00
-  01jun2019 |          5        2.00       32.00
-  01jul2019 |          5        2.00       34.00
-  01aug2019 |          5        2.00       36.00
-  01sep2019 |          5        2.00       38.00
-  01oct2019 |          5        2.00       40.00
-  01nov2019 |          5        2.00       42.00
-  01dec2019 |          5        2.00       44.00
-  01jan2020 |          5        2.00       46.00
-  01feb2020 |          5        2.00       48.00
-  01mar2020 |          5        2.00       50.00
-  01apr2020 |          5        2.00       52.00
-  01may2020 |          5        2.00       54.00
-  01jun2020 |          5        2.00       56.00
-  01jul2020 |          5        2.00       58.00
-  01aug2020 |          5        2.00       60.00
-  01sep2020 |          5        2.00       62.00
-  01oct2020 |          5        2.00       64.00
-  01nov2020 |          5        2.00       66.00
-  01dec2020 |          5        2.00       68.00
-  01jan2021 |          5        2.00       70.00
-  01feb2021 |          5        2.00       72.00
-  01mar2021 |          5        2.00       74.00
-  01apr2021 |          5        2.00       76.00
-  01may2021 |          5        2.00       78.00
-  01jun2021 |          5        2.00       80.00
-  01jul2021 |          5        2.00       82.00
-  01aug2021 |          5        2.00       84.00
-  01sep2021 |          5        2.00       86.00
-  01oct2021 |          5        2.00       88.00
-  01nov2021 |          5        2.00       90.00
-  01dec2021 |          5        2.00       92.00
-  01jan2022 |          5        2.00       94.00
-  01feb2022 |          5        2.00       96.00
-  01mar2022 |          5        2.00       98.00
-  01apr2022 |          5        2.00      100.00
-------------+-----------------------------------
-      Total |        250      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                      250   ->      50
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-               stroke_primary_admission   ->   stroke_primary_admission1 stroke
-> _primary_admission2 ... stroke_primary_admission5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:            50                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-stroke_primar~1 byte    %8.0g                 1 stroke_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-stroke_primar~2 byte    %8.0g                 2 stroke_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-stroke_primar~3 byte    %8.0g                 3 stroke_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-stroke_primar~4 byte    %8.0g                 4 stroke_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-stroke_primar~5 byte    %8.0g                 5 stroke_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/graphs/line_cvd_stroke_primary_admission_ethnicity.svg not
->  found)
-(file ./output/graphs/line_cvd_stroke_primary_admission_ethnicity.svg written i
-> n SVG format)
-(5 vars, 300 obs)
-  50
-(50 observations deleted)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2018 |          5        2.00        2.00
-  01apr2018 |          5        2.00        4.00
-  01may2018 |          5        2.00        6.00
-  01jun2018 |          5        2.00        8.00
-  01jul2018 |          5        2.00       10.00
-  01aug2018 |          5        2.00       12.00
-  01sep2018 |          5        2.00       14.00
-  01oct2018 |          5        2.00       16.00
-  01nov2018 |          5        2.00       18.00
-  01dec2018 |          5        2.00       20.00
-  01jan2019 |          5        2.00       22.00
-  01feb2019 |          5        2.00       24.00
-  01mar2019 |          5        2.00       26.00
-  01apr2019 |          5        2.00       28.00
-  01may2019 |          5        2.00       30.00
-  01jun2019 |          5        2.00       32.00
-  01jul2019 |          5        2.00       34.00
-  01aug2019 |          5        2.00       36.00
-  01sep2019 |          5        2.00       38.00
-  01oct2019 |          5        2.00       40.00
-  01nov2019 |          5        2.00       42.00
-  01dec2019 |          5        2.00       44.00
-  01jan2020 |          5        2.00       46.00
-  01feb2020 |          5        2.00       48.00
-  01mar2020 |          5        2.00       50.00
-  01apr2020 |          5        2.00       52.00
-  01may2020 |          5        2.00       54.00
-  01jun2020 |          5        2.00       56.00
-  01jul2020 |          5        2.00       58.00
-  01aug2020 |          5        2.00       60.00
-  01sep2020 |          5        2.00       62.00
-  01oct2020 |          5        2.00       64.00
-  01nov2020 |          5        2.00       66.00
-  01dec2020 |          5        2.00       68.00
-  01jan2021 |          5        2.00       70.00
-  01feb2021 |          5        2.00       72.00
-  01mar2021 |          5        2.00       74.00
-  01apr2021 |          5        2.00       76.00
-  01may2021 |          5        2.00       78.00
-  01jun2021 |          5        2.00       80.00
-  01jul2021 |          5        2.00       82.00
-  01aug2021 |          5        2.00       84.00
-  01sep2021 |          5        2.00       86.00
-  01oct2021 |          5        2.00       88.00
-  01nov2021 |          5        2.00       90.00
-  01dec2021 |          5        2.00       92.00
-  01jan2022 |          5        2.00       94.00
-  01feb2022 |          5        2.00       96.00
-  01mar2022 |          5        2.00       98.00
-  01apr2022 |          5        2.00      100.00
-------------+-----------------------------------
-      Total |        250      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                      250   ->      50
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-        heart_failure_primary_admission   ->   heart_failure_primary_admission1
->  heart_failure_primary_admission2 ... heart_failure_primary_admission5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:            50                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-heart_failure~1 byte    %8.0g                 1 heart_failure_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-heart_failure~2 byte    %8.0g                 2 heart_failure_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-heart_failure~3 byte    %8.0g                 3 heart_failure_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-heart_failure~4 byte    %8.0g                 4 heart_failure_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-heart_failure~5 byte    %8.0g                 5 heart_failure_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/graphs/line_cvd_heart_failure_primary_admission_ethnicity.
-> svg not found)
-(file ./output/graphs/line_cvd_heart_failure_primary_admission_ethnicity.svg wr
-> itten in SVG format)
-(5 vars, 300 obs)
-  50
-(50 observations deleted)
-
-      dateA |      Freq.     Percent        Cum.
-------------+-----------------------------------
-  01mar2018 |          5        2.00        2.00
-  01apr2018 |          5        2.00        4.00
-  01may2018 |          5        2.00        6.00
-  01jun2018 |          5        2.00        8.00
-  01jul2018 |          5        2.00       10.00
-  01aug2018 |          5        2.00       12.00
-  01sep2018 |          5        2.00       14.00
-  01oct2018 |          5        2.00       16.00
-  01nov2018 |          5        2.00       18.00
-  01dec2018 |          5        2.00       20.00
-  01jan2019 |          5        2.00       22.00
-  01feb2019 |          5        2.00       24.00
-  01mar2019 |          5        2.00       26.00
-  01apr2019 |          5        2.00       28.00
-  01may2019 |          5        2.00       30.00
-  01jun2019 |          5        2.00       32.00
-  01jul2019 |          5        2.00       34.00
-  01aug2019 |          5        2.00       36.00
-  01sep2019 |          5        2.00       38.00
-  01oct2019 |          5        2.00       40.00
-  01nov2019 |          5        2.00       42.00
-  01dec2019 |          5        2.00       44.00
-  01jan2020 |          5        2.00       46.00
-  01feb2020 |          5        2.00       48.00
-  01mar2020 |          5        2.00       50.00
-  01apr2020 |          5        2.00       52.00
-  01may2020 |          5        2.00       54.00
-  01jun2020 |          5        2.00       56.00
-  01jul2020 |          5        2.00       58.00
-  01aug2020 |          5        2.00       60.00
-  01sep2020 |          5        2.00       62.00
-  01oct2020 |          5        2.00       64.00
-  01nov2020 |          5        2.00       66.00
-  01dec2020 |          5        2.00       68.00
-  01jan2021 |          5        2.00       70.00
-  01feb2021 |          5        2.00       72.00
-  01mar2021 |          5        2.00       74.00
-  01apr2021 |          5        2.00       76.00
-  01may2021 |          5        2.00       78.00
-  01jun2021 |          5        2.00       80.00
-  01jul2021 |          5        2.00       82.00
-  01aug2021 |          5        2.00       84.00
-  01sep2021 |          5        2.00       86.00
-  01oct2021 |          5        2.00       88.00
-  01nov2021 |          5        2.00       90.00
-  01dec2021 |          5        2.00       92.00
-  01jan2022 |          5        2.00       94.00
-  01feb2022 |          5        2.00       96.00
-  01mar2022 |          5        2.00       98.00
-  01apr2022 |          5        2.00      100.00
-------------+-----------------------------------
-      Total |        250      100.00
-(note: j = 1 2 3 4 5)
-
-Data                               long   ->   wide
------------------------------------------------------------------------------
-Number of obs.                      250   ->      50
-Number of variables                   6   ->      21
-j variable (5 values)         ethnicity   ->   (dropped)
-xij variables:
-                                  value   ->   value1 value2 ... value5
-                                   rate   ->   rate1 rate2 ... rate5
-                  vte_primary_admission   ->   vte_primary_admission1 vte_prima
-> ry_admission2 ... vte_primary_admission5
-                             population   ->   population1 population2 ... popu
-> lation5
------------------------------------------------------------------------------
-
-Contains data
-  obs:            50                          
- vars:            21                          
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-dateA           float   %dD/M/Y               
-vte_primary_a~1 byte    %8.0g                 1 vte_primary_admission
-population1     int     %8.0g                 1 population
-value1          float   %9.0g                 1 value
-rate1           float   %9.0g                 1 rate
-vte_primary_a~2 byte    %8.0g                 2 vte_primary_admission
-population2     int     %8.0g                 2 population
-value2          float   %9.0g                 2 value
-rate2           float   %9.0g                 2 rate
-vte_primary_a~3 byte    %8.0g                 3 vte_primary_admission
-population3     int     %8.0g                 3 population
-value3          float   %9.0g                 3 value
-rate3           float   %9.0g                 3 rate
-vte_primary_a~4 byte    %8.0g                 4 vte_primary_admission
-population4     int     %8.0g                 4 population
-value4          float   %9.0g                 4 value
-rate4           float   %9.0g                 4 rate
-vte_primary_a~5 byte    %8.0g                 5 vte_primary_admission
-population5     int     %8.0g                 5 population
-value5          float   %9.0g                 5 value
-rate5           float   %9.0g                 5 rate
--------------------------------------------------------------------------------
-Sorted by: dateA
-(note: file ./output/graphs/line_cvd_vte_primary_admission_ethnicity.svg not fo
-> und)
-(file ./output/graphs/line_cvd_vte_primary_admission_ethnicity.svg written in S
-> VG format)
-
+> 
+> }*/
 . /* Mental health measures - 3 monthly rates for primary admissions
 > local groups "depression anxiety smi self_harm eating_dis ocd"
 > forvalues i=1/6 {
@@ -1022,9 +607,9 @@ Sorted by: dateA
 >     graph export ./output/graphs/line_`this_group'_emergency_imd.svg, as(svg)
 >  replace
 > 
-> }
-> 
-> /*local outcomes "systolic_bp"
+> }*/
+. 
+. /*local outcomes "systolic_bp"
 > local strata "monitoring exacerbation"
 > local other "review exacerbation"
 > forvalues i=1/2 {
@@ -1099,12 +684,12 @@ Sorted by: dateA
 >     }
 > }
 > */
-> */
+. */
 . */
 . 
 . log close
       name:  <unnamed>
        log:  /workspace/logs/graphs_mh_cvd.log
   log type:  text
- closed on:  19 Sep 2022, 07:14:05
+ closed on:   5 Oct 2022, 14:36:02
 -------------------------------------------------------------------------------

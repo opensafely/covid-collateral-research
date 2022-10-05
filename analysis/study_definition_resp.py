@@ -131,72 +131,72 @@ measures = [
     Measure(
         id="asthma_monitoring_ethnicity_rate",
         numerator="asthma_review",
-        denominator="has_asthma",
-        group_by=["ethnicity"],
+        denominator="population",
+        group_by=["ethnicity", "has_asthma"],
     ),
     # by IMD
     Measure(
         id="asthma_monitoring_imd_rate",
         numerator="asthma_review",
-        denominator="has_asthma",
-        group_by=["imd"],
+        denominator="population",
+        group_by=["imd", "has_asthma"],
     ),
     # Clinical monitoring - COPD review in last 12 months in those with COPD
     # by ethnicity
     Measure(
         id="copd_monitoring_ethnicity_rate",
         numerator="copd_review",
-        denominator="has_copd",
-        group_by=["ethnicity"],
+        denominator="population",
+        group_by=["ethnicity", "has_copd"],
     ),
     # by IMD
     Measure(
         id="copd_monitoring_imd_rate",
         numerator="copd_review",
-        denominator="has_copd",
-        group_by=["imd"],
+        denominator="population",
+        group_by=["imd", "has_copd"],
     ),
     # Hospital admission for asthma in those with asthma
     # by ethnicity
-    Measure(
-        id="asthma_exacerbation_ethnicity_rate",
-        numerator="asthma_exacerbation",
-        denominator="has_asthma",
-        group_by=["ethnicity"],
-    ),
+    #Measure(
+    #    id="asthma_exacerbation_ethnicity_rate",
+    #    numerator="asthma_exacerbation",
+    #    denominator="has_asthma",
+    #    group_by=["ethnicity"],
+    #),
     # by IMD
-    Measure(
-        id="asthma_exacerbation_imd_rate",
-        numerator="asthma_exacerbation",
-        denominator="has_asthma",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="asthma_exacerbation_imd_rate",
+    #    numerator="asthma_exacerbation",
+    #    denominator="has_asthma",
+    #    group_by=["imd"],
+    #),
     # Hospital admission for copd in those with copd
     # by ethnicity
-    Measure(
-        id="copd_exacerbation_ethnicity_rate",
-        numerator="copd_exacerbation",
-        denominator="has_copd",
-        group_by=["ethnicity"],
-    ),
+    #Measure(
+    #    id="copd_exacerbation_ethnicity_rate",
+    #    numerator="copd_exacerbation",
+    #    denominator="has_copd",
+    #    group_by=["ethnicity"],
+    #),
     # by IMD
-    Measure(
-        id="copd_exacerbation_imd_rate",
-        numerator="copd_exacerbation",
-        denominator="has_copd",
-        group_by=["imd"],
-    ),
-    Measure(
-        id="copd_exac_nolrti_ethnicity_rate",
-        numerator="copd_exacerbation_nolrti",
-        denominator="has_copd",
-        group_by=["ethnicity"],
-    ),
+    #Measure(
+    #    id="copd_exacerbation_imd_rate",
+    #    numerator="copd_exacerbation",
+    #    denominator="has_copd",
+    #    group_by=["imd"],
+    #),
+    #Measure(
+    #    id="copd_exac_nolrti_ethnicity_rate",
+    #    numerator="copd_exacerbation_nolrti",
+    #    denominator="has_copd",
+    #    group_by=["ethnicity"],
+    #),
     # by IMD
-    Measure(
-        id="copd_exac_nolrti_imd_rate",
-        numerator="copd_exacerbation_nolrti",
-        denominator="has_copd",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="copd_exac_nolrti_imd_rate",
+    #    numerator="copd_exacerbation_nolrti",
+    #    denominator="has_copd",
+    #    group_by=["imd"],
+    #),
 ]

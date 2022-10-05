@@ -231,182 +231,182 @@ measures = [
     Measure(
         id="bp_meas_mh_ethnicity_rate",
         numerator="bp_meas",
-        denominator="mh_subgroup",
-        group_by=["ethnicity"],
+        denominator="population",
+        group_by=["ethnicity", "mh_subgroup"],
     ),
     Measure(
         id="bp_meas_mh_imd_rate",
         numerator="bp_meas",
-        denominator="mh_subgroup",
-        group_by=["imd"],
+        denominator="population",
+        group_by=["imd", "mh_subgroup"],
     ),
     # Hospital admissions for depression
-    Measure(
-        id="depression_admission_ethnicity_rate",
-        numerator="depression_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="depression_admission_imd_rate",
-        numerator="depression_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="depression_admission_ethnicity_rate",
+    #    numerator="depression_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="depression_admission_imd_rate",
+    #    numerator="depression_admission",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
     # Hospital admissions for anxiety
-    Measure(
-        id="anxiety_admission_ethnicity_rate",
-        numerator="anxiety_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="anxiety_admission_imd_rate",
-        numerator="anxiety_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="anxiety_admission_ethnicity_rate",
+    #    numerator="anxiety_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="anxiety_admission_imd_rate",
+    #    numerator="anxiety_admission",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
     # Hospital admissions for severe mental illness
-    Measure(
-        id="smi_admission_ethnicity_rate",
-        numerator="smi_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="smi_admission_imd_rate",
-        numerator="smi_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="smi_admission_ethnicity_rate",
+    #    numerator="smi_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="smi_admission_imd_rate",
+    #    numerator="smi_admission",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
     # Hospital admissions for self harm
-    Measure(
-        id="self_harm_admission_ethnicity_rate",
-        numerator="self_harm_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="self_harm_admission_imd_rate",
-        numerator="self_harm_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="self_harm_admission_ethnicity_rate",
+    #    numerator="self_harm_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="self_harm_admission_imd_rate",
+    #    numerator="self_harm_admission",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
     # Hospital admissions for eating disorders
-    Measure(
-        id="eating_dis_admission_ethnicity_rate",
-        numerator="eating_dis_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="eating_dis_admission_imd_rate",
-        numerator="eating_dis_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="eating_dis_admission_ethnicity_rate",
+    #    numerator="eating_dis_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="eating_dis_admission_imd_rate",
+    #    numerator="eating_dis_admission",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
     # Hospital admissions for OCD
-    Measure(
-        id="ocd_admission_ethnicity_rate",
-        numerator="ocd_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="ocd_admission_imd_rate",
-        numerator="ocd_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="ocd_admission_ethnicity_rate",
+    #    numerator="ocd_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="ocd_admission_imd_rate",
+    #    numerator="ocd_admission",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
     # Hospital admissions for depression
-    Measure(
-        id="depression_primary_admission_ethnicity_rate",
-        numerator="depression_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="depression_primary_admission_imd_rate",
-        numerator="depression_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="depression_primary_admission_ethnicity_rate",
+    #    numerator="depression_primary_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="depression_primary_admission_imd_rate",
+    #    numerator="depression_primary_admission",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
     # Hospital admissions for anxiety
-    Measure(
-        id="anxiety_primary_admission_ethnicity_rate",
-        numerator="anxiety_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="anxiety_primary_admission_imd_rate",
-        numerator="anxiety_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
-    # Hospital admissions for severe mental illness
-    Measure(
-        id="smi_primary_admission_ethnicity_rate",
-        numerator="smi_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="smi_primary_admission_imd_rate",
-        numerator="smi_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="anxiety_primary_admission_ethnicity_rate",
+    #    numerator="anxiety_primary_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="anxiety_primary_admission_imd_rate",
+    #    numerator="anxiety_primary_admission",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
+    ## Hospital admissions for severe mental illness
+    #Measure(
+    #    id="smi_primary_admission_ethnicity_rate",
+    #    numerator="smi_primary_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="smi_primary_admission_imd_rate",
+    #    numerator="smi_primary_admission",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
     # Hospital admissions for self harm
-    Measure(
-        id="self_harm_primary_admission_ethnicity_rate",
-        numerator="self_harm_primary_admission",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="self_harm_primary_admission_imd_rate",
-        numerator="self_harm_primary_admission",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="self_harm_primary_admission_ethnicity_rate",
+    #    numerator="self_harm_primary_admission",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="self_harm_primary_admission_imd_rate",
+    #    numerator="self_harm_primary_admission",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
     # Emergency admissions for anxiety
-    Measure(
-        id="anxiety_emergency_ethnicity_rate",
-        numerator="anxiety_emergency",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="anxiety_emergency_imd_rate",
-        numerator="anxiety_emergency",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="anxiety_emergency_ethnicity_rate",
+    #    numerator="anxiety_emergency",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="anxiety_emergency_imd_rate",
+    #    numerator="anxiety_emergency",
+    #   denominator="population",
+    #    group_by=["imd"],
+    #),
     # Hospital admissions for severe mental illness
-    Measure(
-        id="smi_emergency_ethnicity_rate",
-        numerator="smi_emergency",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="smi_emergency_imd_rate",
-        numerator="smi_emergency",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="smi_emergency_ethnicity_rate",
+    #    numerator="smi_emergency",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="smi_emergency_imd_rate",
+    #    numerator="smi_emergency",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
     # Hospital admissions for self harm
-    Measure(
-        id="self_harm_emergency_ethnicity_rate",
-        numerator="self_harm_emergency",
-        denominator="population",
-        group_by=["ethnicity"],
-    ),
-    Measure(
-        id="self_harm_emergency_imd_rate",
-        numerator="self_harm_emergency",
-        denominator="population",
-        group_by=["imd"],
-    ),
+    #Measure(
+    #    id="self_harm_emergency_ethnicity_rate",
+    #    numerator="self_harm_emergency",
+    #    denominator="population",
+    #    group_by=["ethnicity"],
+    #),
+    #Measure(
+    #    id="self_harm_emergency_imd_rate",
+    #    numerator="self_harm_emergency",
+    #    denominator="population",
+    #    group_by=["imd"],
+    #),
 ]

@@ -17,6 +17,9 @@ foreach this_group in cvd mh {
         count if ethnicity==.
         * Drop missings as not required
         drop if ethnicity==0 | ethnicity==.
+        tab `this_group'_subgroup 
+        drop if `this_group'_subgroup==0
+        drop `this_group'_subgroup 
         * Generate rate per 100,000
         gen rate = value*100000 
         * Format date
@@ -24,7 +27,7 @@ foreach this_group in cvd mh {
         drop date
         format dateA %dD/M/Y
         * reshape dataset so columns with rates for each ethnicity 
-        reshape wide value rate `this_group'_subgroup bp_meas, i(dateA) j(ethnicity)
+        reshape wide value rate population bp_meas, i(dateA) j(ethnicity)
         describe
         * Labelling ethnicity variables
         label var rate1 "White"
@@ -208,7 +211,7 @@ forvalues i=1/6 {
     graph export ./output/graphs/line_`this_group'_admission_imd.svg, as(svg) replace
 
 }
-*/
+
 * Hospital admissions - primary diagnosis CVD
 local groups "mi stroke heart_failure vte"
 forvalues i=1/4 {
@@ -244,7 +247,7 @@ forvalues i=1/4 {
     title("Ethnic categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_cvd_`this_group'_primary_admission_ethnicity.svg, as(svg) replace
-    /* IMD
+    * IMD
     clear 
     import delimited using ./output/measures/cvd/measure_`this_group'_primary_admission_imd_rate.csv, numericcols(4)
     * IMD should not have missings as . on server but could be in dummy data
@@ -275,8 +278,8 @@ forvalues i=1/4 {
     title("IMD categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_cvd_`this_group'_primary_admission_imd.svg, as(svg) replace
-*/
-}
+
+}*/
 /* Mental health measures - 3 monthly rates for primary admissions
 local groups "depression anxiety smi self_harm eating_dis ocd"
 forvalues i=1/6 {
@@ -414,7 +417,7 @@ forvalues i=1/3 {
 
     graph export ./output/graphs/line_`this_group'_emergency_imd.svg, as(svg) replace
 
-}
+}*/
 
 /*local outcomes "systolic_bp"
 local strata "monitoring exacerbation"
