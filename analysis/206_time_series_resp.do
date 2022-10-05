@@ -10,12 +10,13 @@ Description:    Run time series after model checks
 cap log using ./logs/tsreg_resp.log, replace
 cap mkdir ./output/time_series
 * Time series analysis for asthma monitoring, COPD monitoring and exacerbation by ethnicity & IMD
-foreach var in asthma_monitoring copd_monitoring asthma_exacerbation copd_exacerbation {
+foreach var in asthma/*_monitoring*/ copd/*_monitoring*/ /*asthma_exacerbation copd_exacerbation*/ {
 	foreach strata in ethnicity imd {
-	import delimited ./output/measures/resp/measure_`var'_`strata'_rate.csv, numericcols(4) clear	//get csv
+	import delimited ./output/measures/resp/measure_`var'_monitoring_`strata'_rate.csv, numericcols(4) clear	//get csv
 	putexcel set ./output/time_series/tsreg_tables_resp, sheet(`var'_`strata') modify			//open xlsx
 	* Drop records where ethnicity is missing - no missing IMD
-        drop if `strata'==0
+    drop if `strata'==0 | `strata'==.
+	drop if has_`var'==0
 	*Format time
 	gen temp_date=date(date, "YMD")
 	format temp_date %td

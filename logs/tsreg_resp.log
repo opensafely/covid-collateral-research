@@ -3,89 +3,91 @@
 
 . * Time series analysis for asthma monitoring, COPD monitoring and exacerbatio
 > n by ethnicity & IMD
-. foreach var in asthma_monitoring copd_monitoring asthma_exacerbation copd_exa
-> cerbation {
+. foreach var in asthma/*_monitoring*/ copd/*_monitoring*/ /*asthma_exacerbatio
+> n copd_exacerbation*/ {
   2.         foreach strata in ethnicity imd {
-  3.         import delimited ./output/measures/resp/measure_`var'_`strata'_rat
-> e.csv, numericcols(4) clear   //get csv
+  3.         import delimited ./output/measures/resp/measure_`var'_monitoring_`
+> strata'_rate.csv, numericcols(4) clear        //get csv
   4.         putexcel set ./output/time_series/tsreg_tables_resp, sheet(`var'_`
 > strata') modify                       //open xlsx
   5.         * Drop records where ethnicity is missing - no missing IMD
-.         drop if `strata'==0
-  6.         *Format time
+.     drop if `strata'==0 | `strata'==.
+  6.         drop if has_`var'==0
+  7.         *Format time
 .         gen temp_date=date(date, "YMD")
-  7.         format temp_date %td
-  8.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
-  9.         gen month=mofd(temp_date)
- 10.         format month %tm
- 11.         *Define Seasons
+  8.         format temp_date %td
+  9.         gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
+ 10.         gen month=mofd(temp_date)
+ 11.         format month %tm
+ 12.         *Define Seasons
 .         gen season=4
- 12.         replace season = 1 if inrange(month(temp_date),3,5)
- 13.         replace season = 2 if inrange(month(temp_date),6,8)
- 14.         replace season = 3 if inrange(month(temp_date),9,11)
- 15.         label define seasonlab 1 "Spring" 2 "Summer" 3 "Autumn" 4 "Winter"
- 16.         label values season seasonlab
- 17.         drop temp_date
- 18.         *Value to rate per 100k
+ 13.         replace season = 1 if inrange(month(temp_date),3,5)
+ 14.         replace season = 2 if inrange(month(temp_date),6,8)
+ 15.         replace season = 3 if inrange(month(temp_date),9,11)
+ 16.         label define seasonlab 1 "Spring" 2 "Summer" 3 "Autumn" 4 "Winter"
+ 17.         label values season seasonlab
+ 18.         drop temp_date
+ 19.         *Value to rate per 100k
 .         gen rate = value*100000
- 19.         *Run time series with EWH-robust SE and 1 Lag
+ 20.         *Run time series with EWH-robust SE and 1 Lag
 .         tsset `strata' month
- 20.         newey rate i.`strata'##i.postcovid i.season, lag(1) force
- 21.         *Export results
+ 21.         newey rate i.`strata'##i.postcovid i.season, lag(1) force
+ 22.         *Export results
 .         putexcel E1=("Number of obs") G1=(e(N))
- 22.         putexcel E2=("F") G2=(e(F))
- 23.         putexcel E3=("Prob > F") G3=(Ftail(e(df_m), e(df_r), e(F)))
- 24.         matrix a = r(table)'
- 25.         putexcel A6 = matrix(a), rownames
- 26.         putexcel save
- 27.         quietly margins `strata'##postcovid
- 28.     marginsplot
- 29.     graph export ./output/time_series/margins_resp_`var'_`strata'.svg, as(
+ 23.         putexcel E2=("F") G2=(e(F))
+ 24.         putexcel E3=("Prob > F") G3=(Ftail(e(df_m), e(df_r), e(F)))
+ 25.         matrix a = r(table)'
+ 26.         putexcel A6 = matrix(a), rownames
+ 27.         putexcel save
+ 28.         quietly margins `strata'##postcovid
+ 29.     marginsplot
+ 30.     graph export ./output/time_series/margins_resp_`var'_`strata'.svg, as(
 > svg) replace
- 30.         import excel using ./output/time_series/tsreg_tables_resp.xlsx, sh
+ 31.         import excel using ./output/time_series/tsreg_tables_resp.xlsx, sh
 > eet (`var'_`strata') clear
- 31.     export delimited using ./output/time_series/tsreg_resp_`var'_`strata'.
+ 32.     export delimited using ./output/time_series/tsreg_resp_`var'_`strata'.
 > csv, replace
- 32.         }
- 33. }
-(5 vars, 235 obs)
+ 33.         }
+ 34. }
+(6 vars, 500 obs)
 (0 observations deleted)
-(60 real changes made)
+(250 observations deleted)
+(70 real changes made)
 (60 real changes made)
 (60 real changes made)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2018m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m4
                 delta:  1 month
 
-Regression with Newey-West standard errors      Number of obs     =        235
-maximum lag: 1                                  F( 12,       222) =       0.66
-                                                Prob > F          =     0.7865
+Regression with Newey-West standard errors      Number of obs     =        250
+maximum lag: 1                                  F( 12,       237) =       0.68
+                                                Prob > F          =     0.7699
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |   3546.245   3266.602     1.09   0.279    -2891.273    9983.762
-          3  |   828.7805    3758.35     0.22   0.826    -6577.827    8235.388
-          4  |   1698.872   3250.217     0.52   0.602    -4706.354    8104.099
-          5  |  -1950.519   3278.497    -0.59   0.552    -8411.477    4510.439
+          2  |   29.60392   1540.504     0.02   0.985    -3005.225    3064.433
+          3  |  -1254.149   1388.237    -0.90   0.367    -3989.009    1480.711
+          4  |  -618.8468   1338.037    -0.46   0.644    -3254.811    2017.118
+          5  |  -1063.014   1234.827    -0.86   0.390    -3495.653    1369.626
              |
- 1.postcovid |   1254.175   3267.032     0.38   0.701    -5184.188    7692.539
+ 1.postcovid |  -1040.486   1365.512    -0.76   0.447    -3730.578    1649.606
              |
    ethnicity#|
    postcovid |
-        2 1  |  -1213.137   4373.863    -0.28   0.782    -9832.741    7406.467
-        3 1  |  -4966.968   5065.418    -0.98   0.328    -14949.42    5015.488
-        4 1  |  -3056.036   4541.839    -0.67   0.502    -12006.67      5894.6
-        5 1  |   2488.682    4263.43     0.58   0.560    -5913.292    10890.66
+        2 1  |  -171.2158   1902.517    -0.09   0.928    -3919.221    3576.789
+        3 1  |   3558.678   1892.802     1.88   0.061    -170.1874    7287.544
+        4 1  |   1271.066    1774.16     0.72   0.474    -2224.071    4766.203
+        5 1  |   1404.425   1816.819     0.77   0.440    -2174.751    4983.601
              |
       season |
-     Summer  |   1.937979   2108.493     0.00   0.999    -4153.286    4157.162
-     Autumn  |  -151.9949   1973.694    -0.08   0.939    -4041.569    3737.579
-     Winter  |    270.909   2217.518     0.12   0.903    -4099.171    4640.989
+     Summer  |   519.9925   711.3373     0.73   0.465    -881.3592    1921.344
+     Autumn  |  -295.7569   854.2094    -0.35   0.729     -1978.57    1387.056
+     Winter  |  -176.1435   731.3542    -0.24   0.810    -1616.929    1264.642
              |
-       _cons |    49795.4   2748.308    18.12   0.000     44379.29    55211.51
+       _cons |   10651.63   1151.543     9.25   0.000     8383.064     12920.2
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
@@ -93,52 +95,51 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 
   Variables that uniquely identify margins: ethnicity postcovid
-(note: file ./output/time_series/margins_resp_asthma_monitoring_ethnicity.svg n
-> ot found)
-(file ./output/time_series/margins_resp_asthma_monitoring_ethnicity.svg written
->  in SVG format)
+(note: file ./output/time_series/margins_resp_asthma_ethnicity.svg not found)
+(file ./output/time_series/margins_resp_asthma_ethnicity.svg written in SVG for
+> mat)
 (10 vars, 27 obs)
-(note: file ./output/time_series/tsreg_resp_asthma_monitoring_ethnicity.csv not
->  found)
-file ./output/time_series/tsreg_resp_asthma_monitoring_ethnicity.csv saved
-(5 vars, 282 obs)
-(47 observations deleted)
-(60 real changes made)
+(note: file ./output/time_series/tsreg_resp_asthma_ethnicity.csv not found)
+file ./output/time_series/tsreg_resp_asthma_ethnicity.csv saved
+(6 vars, 600 obs)
+(100 observations deleted)
+(250 observations deleted)
+(70 real changes made)
 (60 real changes made)
 (60 real changes made)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2018m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m4
                 delta:  1 month
 
-Regression with Newey-West standard errors      Number of obs     =        235
-maximum lag: 1                                  F( 12,       222) =       0.99
-                                                Prob > F          =     0.4599
+Regression with Newey-West standard errors      Number of obs     =        250
+maximum lag: 1                                  F( 12,       237) =       0.46
+                                                Prob > F          =     0.9371
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          2  |  -2716.318   3419.509    -0.79   0.428    -9455.169    4022.532
-          3  |  -1742.307   3550.009    -0.49   0.624    -8738.336    5253.723
-          4  |   3740.144   3782.159     0.99   0.324    -3713.384    11193.67
-          5  |   -2653.56   3653.188    -0.73   0.468    -9852.926    4545.805
+          2  |  -187.5882   1199.445    -0.16   0.876    -2550.524    2175.348
+          3  |  -236.1727     1358.4    -0.17   0.862    -2912.254    2439.908
+          4  |  -27.10396   1080.591    -0.03   0.980    -2155.893    2101.686
+          5  |   132.3133   1256.585     0.11   0.916     -2343.19    2607.816
              |
- 1.postcovid |    3562.54   3232.097     1.10   0.272    -2806.978    9932.058
+ 1.postcovid |   590.1464   1322.388     0.45   0.656    -2014.989    3195.282
              |
          imd#|
    postcovid |
-        2 1  |  -2715.045   4682.986    -0.58   0.563    -11943.84    6513.751
-        3 1  |   -1133.66   4434.473    -0.26   0.798    -9872.709     7605.39
-        4 1  |  -10366.77   4823.717    -2.15   0.033    -19872.91   -860.6378
-        5 1  |  -1683.395   4754.227    -0.35   0.724    -11052.58    7685.794
+        2 1  |  -977.2363   1800.576    -0.54   0.588    -4524.413    2569.941
+        3 1  |  -605.5004   1973.185    -0.31   0.759    -4492.721    3281.721
+        4 1  |   322.7878   1644.247     0.20   0.845    -2916.418    3561.994
+        5 1  |  -167.4123   2049.218    -0.08   0.935    -4204.421    3869.597
              |
       season |
-     Summer  |   1768.317   2091.665     0.85   0.399    -2353.743    5890.376
-     Autumn  |   765.5861     1876.5     0.41   0.684    -2932.446    4463.619
-     Winter  |   413.6204   1977.736     0.21   0.835    -3483.919     4311.16
+     Summer  |   621.7707   848.5636     0.73   0.464     -1049.92    2293.461
+     Autumn  |   -450.157   882.2054    -0.51   0.610    -2188.123    1287.809
+     Winter  |  -224.7734   802.1677    -0.28   0.780    -1805.063    1355.516
              |
-       _cons |   50540.57   2914.432    17.34   0.000     44797.08    56284.07
+       _cons |   10224.49   983.0359    10.40   0.000     8287.889     12161.1
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
@@ -146,52 +147,50 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 
   Variables that uniquely identify margins: imd postcovid
-(note: file ./output/time_series/margins_resp_asthma_monitoring_imd.svg not fou
-> nd)
-(file ./output/time_series/margins_resp_asthma_monitoring_imd.svg written in SV
-> G format)
+(note: file ./output/time_series/margins_resp_asthma_imd.svg not found)
+(file ./output/time_series/margins_resp_asthma_imd.svg written in SVG format)
 (10 vars, 27 obs)
-(note: file ./output/time_series/tsreg_resp_asthma_monitoring_imd.csv not found
-> )
-file ./output/time_series/tsreg_resp_asthma_monitoring_imd.csv saved
-(5 vars, 235 obs)
+(note: file ./output/time_series/tsreg_resp_asthma_imd.csv not found)
+file ./output/time_series/tsreg_resp_asthma_imd.csv saved
+(6 vars, 500 obs)
 (0 observations deleted)
-(60 real changes made)
+(250 observations deleted)
+(70 real changes made)
 (60 real changes made)
 (60 real changes made)
        panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2018m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m4
                 delta:  1 month
 
-Regression with Newey-West standard errors      Number of obs     =        235
-maximum lag: 1                                  F( 12,       222) =       0.67
-                                                Prob > F          =     0.7818
+Regression with Newey-West standard errors      Number of obs     =        250
+maximum lag: 1                                  F( 12,       237) =       1.25
+                                                Prob > F          =     0.2490
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
    ethnicity |
-          2  |  -32652.13   36718.78    -0.89   0.375    -105014.1    39709.84
-          3  |  -18555.99   37394.27    -0.50   0.620    -92249.16    55137.18
-          4  |  -51323.57   37017.34    -1.39   0.167    -124273.9    21626.79
-          5  |  -19657.43   37092.29    -0.53   0.597    -92755.48    53440.62
+          2  |  -720.6348   2347.525    -0.31   0.759    -5345.315    3904.046
+          3  |    304.399   2104.714     0.14   0.885    -3841.938    4450.736
+          4  |   2804.157   2382.705     1.18   0.240    -1889.829    7498.143
+          5  |   5289.394   2745.439     1.93   0.055    -119.1869    10697.98
              |
- 1.postcovid |  -50331.13   37783.55    -1.33   0.184    -124791.4    24129.19
+ 1.postcovid |    1541.42   2274.307     0.68   0.499    -2939.019    6021.858
              |
    ethnicity#|
    postcovid |
-        2 1  |   41647.81   41333.01     1.01   0.315    -39807.46    123103.1
-        3 1  |   27375.94   42199.47     0.65   0.517    -55786.87    110538.7
-        4 1  |   88775.42   44320.88     2.00   0.046     1431.929    176118.9
-        5 1  |   48129.35   44356.85     1.09   0.279    -39285.02    135543.7
+        2 1  |   3457.787   3553.354     0.97   0.331    -3542.407    10457.98
+        3 1  |   2346.264   3495.389     0.67   0.503    -4539.737    9232.265
+        4 1  |  -5053.919   3240.057    -1.56   0.120    -11436.91    1329.072
+        5 1  |  -7532.645   3655.177    -2.06   0.040    -14733.43   -331.8589
              |
       season |
-     Summer  |   7784.045   13591.57     0.57   0.567    -19000.97    34569.06
-     Autumn  |   12787.71   17895.49     0.71   0.476    -22479.06    48054.49
-     Winter  |   5355.718   13112.97     0.41   0.683    -20486.11    31197.55
+     Summer  |  -1524.496   1634.958    -0.93   0.352    -4745.403    1696.411
+     Autumn  |  -682.9418   1611.628    -0.42   0.672    -3857.887    2492.004
+     Winter  |    110.878   1792.092     0.06   0.951    -3419.587    3641.343
              |
-       _cons |   239988.5   31847.91     7.54   0.000     177225.6    302751.4
+       _cons |    9337.49   1695.627     5.51   0.000     5997.064    12677.92
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
@@ -199,52 +198,51 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 
   Variables that uniquely identify margins: ethnicity postcovid
-(note: file ./output/time_series/margins_resp_copd_monitoring_ethnicity.svg not
->  found)
-(file ./output/time_series/margins_resp_copd_monitoring_ethnicity.svg written i
-> n SVG format)
+(note: file ./output/time_series/margins_resp_copd_ethnicity.svg not found)
+(file ./output/time_series/margins_resp_copd_ethnicity.svg written in SVG forma
+> t)
 (10 vars, 27 obs)
-(note: file ./output/time_series/tsreg_resp_copd_monitoring_ethnicity.csv not f
-> ound)
-file ./output/time_series/tsreg_resp_copd_monitoring_ethnicity.csv saved
-(5 vars, 282 obs)
-(47 observations deleted)
-(60 real changes made)
+(note: file ./output/time_series/tsreg_resp_copd_ethnicity.csv not found)
+file ./output/time_series/tsreg_resp_copd_ethnicity.csv saved
+(6 vars, 600 obs)
+(100 observations deleted)
+(250 observations deleted)
+(70 real changes made)
 (60 real changes made)
 (60 real changes made)
        panel variable:  imd (strongly balanced)
-        time variable:  month, 2018m3 to 2022m1
+        time variable:  month, 2018m3 to 2022m4
                 delta:  1 month
 
-Regression with Newey-West standard errors      Number of obs     =        235
-maximum lag: 1                                  F( 12,       222) =       1.62
-                                                Prob > F          =     0.0861
+Regression with Newey-West standard errors      Number of obs     =        250
+maximum lag: 1                                  F( 12,       237) =       0.52
+                                                Prob > F          =     0.9004
 
 ------------------------------------------------------------------------------
              |             Newey-West
         rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
 -------------+----------------------------------------------------------------
          imd |
-          2  |  -23972.27    30098.9    -0.80   0.427     -83288.4    35343.86
-          3  |   6951.708   28800.91     0.24   0.809    -49806.45    63709.87
-          4  |  -43272.81   24882.23    -1.74   0.083    -92308.41    5762.794
-          5  |  -14243.73   26820.27    -0.53   0.596    -67098.64    38611.17
+          2  |    321.527   3096.451     0.10   0.917    -5778.556     6421.61
+          3  |  -358.6153   2743.881    -0.13   0.896    -5764.127    5046.896
+          4  |  -1501.556   3036.234    -0.49   0.621     -7483.01    4479.899
+          5  |   935.4962   3144.839     0.30   0.766    -5259.911    7130.904
              |
- 1.postcovid |  -47903.47   23881.68    -2.01   0.046    -94967.28    -839.672
+ 1.postcovid |  -2179.411   2772.943    -0.79   0.433    -7642.176    3283.353
              |
          imd#|
    postcovid |
-        2 1  |    84728.3   41546.42     2.04   0.043     2852.463    166604.1
-        3 1  |   27628.11   35453.07     0.78   0.437    -42239.52    97495.73
-        4 1  |   60583.18   32941.21     1.84   0.067    -4334.293    125500.7
-        5 1  |   63623.29   33813.56     1.88   0.061    -3013.335    130259.9
+        2 1  |  -861.6424   3905.181    -0.22   0.826    -8554.942    6831.657
+        3 1  |   1544.141   3811.462     0.41   0.686     -5964.53    9052.812
+        4 1  |   2900.671    3974.09     0.73   0.466    -4928.382    10729.72
+        5 1  |   692.1983   4083.652     0.17   0.866    -7352.695    8737.092
              |
       season |
-     Summer  |  -14.94838   17762.98    -0.00   0.999    -35020.58    34990.68
-     Autumn  |  -5130.194   17123.28    -0.30   0.765    -38875.17    28614.78
-     Winter  |   1597.646   17984.54     0.09   0.929    -33844.62    37039.91
+     Summer  |  -2468.322    1759.66    -1.40   0.162    -5934.895    998.2509
+     Autumn  |  -1445.814   1868.238    -0.77   0.440    -5126.286    2234.659
+     Winter  |  -87.44886   1909.868    -0.05   0.964    -3849.935    3675.037
              |
-       _cons |   234904.6   25321.35     9.28   0.000     185003.7    284805.6
+       _cons |   11832.33   2481.107     4.77   0.000     6944.493    16720.17
 ------------------------------------------------------------------------------
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
@@ -252,230 +250,16 @@ file ./output/time_series/tsreg_tables_resp.xlsx saved
 file ./output/time_series/tsreg_tables_resp.xlsx saved
 
   Variables that uniquely identify margins: imd postcovid
-(note: file ./output/time_series/margins_resp_copd_monitoring_imd.svg not found
-> )
-(file ./output/time_series/margins_resp_copd_monitoring_imd.svg written in SVG 
-> format)
+(note: file ./output/time_series/margins_resp_copd_imd.svg not found)
+(file ./output/time_series/margins_resp_copd_imd.svg written in SVG format)
 (10 vars, 27 obs)
-(note: file ./output/time_series/tsreg_resp_copd_monitoring_imd.csv not found)
-file ./output/time_series/tsreg_resp_copd_monitoring_imd.csv saved
-(5 vars, 235 obs)
-(0 observations deleted)
-(60 real changes made)
-(60 real changes made)
-(60 real changes made)
-       panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2018m3 to 2022m1
-                delta:  1 month
-
-Regression with Newey-West standard errors      Number of obs     =        235
-maximum lag: 1                                  F( 12,       222) =       1.13
-                                                Prob > F          =     0.3408
-
-------------------------------------------------------------------------------
-             |             Newey-West
-        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-   ethnicity |
-          2  |   797.7482   3832.293     0.21   0.835     -6754.58    8350.077
-          3  |  -318.7713   3568.885    -0.09   0.929        -7352    6714.457
-          4  |    3000.97   3402.896     0.88   0.379    -3705.142    9707.082
-          5  |  -4748.799   3368.835    -1.41   0.160    -11387.79    1890.188
-             |
- 1.postcovid |    808.176   3619.131     0.22   0.824    -6324.073    7940.425
-             |
-   ethnicity#|
-   postcovid |
-        2 1  |  -1862.616   5680.172    -0.33   0.743    -13056.57    9331.341
-        3 1  |   -6456.19   5054.949    -1.28   0.203    -16418.02    3505.635
-        4 1  |  -1049.358   5386.673    -0.19   0.846    -11664.92    9566.198
-        5 1  |    4915.99   4634.749     1.06   0.290    -4217.744    14049.72
-             |
-      season |
-     Summer  |  -1.261591   2282.345    -0.00   1.000    -4499.096    4496.573
-     Autumn  |  -484.0749   2264.619    -0.21   0.831    -4946.976    3978.826
-     Winter  |  -16.37227   2248.075    -0.01   0.994     -4446.67    4413.926
-             |
-       _cons |   51297.28   3071.328    16.70   0.000     45244.59    57349.97
-------------------------------------------------------------------------------
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-
-  Variables that uniquely identify margins: ethnicity postcovid
-(note: file ./output/time_series/margins_resp_asthma_exacerbation_ethnicity.svg
->  not found)
-(file ./output/time_series/margins_resp_asthma_exacerbation_ethnicity.svg writt
-> en in SVG format)
-(10 vars, 27 obs)
-(note: file ./output/time_series/tsreg_resp_asthma_exacerbation_ethnicity.csv n
-> ot found)
-file ./output/time_series/tsreg_resp_asthma_exacerbation_ethnicity.csv saved
-(5 vars, 282 obs)
-(47 observations deleted)
-(60 real changes made)
-(60 real changes made)
-(60 real changes made)
-       panel variable:  imd (strongly balanced)
-        time variable:  month, 2018m3 to 2022m1
-                delta:  1 month
-
-Regression with Newey-West standard errors      Number of obs     =        235
-maximum lag: 1                                  F( 12,       222) =       1.79
-                                                Prob > F          =     0.0505
-
-------------------------------------------------------------------------------
-             |             Newey-West
-        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-         imd |
-          2  |   45.85609   3813.534     0.01   0.990    -7469.503    7561.215
-          3  |  -467.5272   2945.625    -0.16   0.874    -6272.492    5337.438
-          4  |   5449.031   3746.214     1.45   0.147    -1933.661    12831.72
-          5  |   1330.936   3367.603     0.40   0.693    -5305.624    7967.497
-             |
- 1.postcovid |  -924.0174   3208.719    -0.29   0.774    -7247.463    5399.428
-             |
-         imd#|
-   postcovid |
-        2 1  |    3943.71   4802.603     0.82   0.412    -5520.816    13408.23
-        3 1  |   5716.044   4360.796     1.31   0.191    -2877.808     14309.9
-        4 1  |  -8605.553   4640.271    -1.85   0.065    -17750.17    539.0629
-        5 1  |   5297.237   4412.531     1.20   0.231     -3398.57    13993.04
-             |
-      season |
-     Summer  |  -833.2433   2213.031    -0.38   0.707     -5194.48    3527.994
-     Autumn  |  -217.9542   2094.294    -0.10   0.917    -4345.195    3909.287
-     Winter  |  -543.7732   2004.405    -0.27   0.786    -4493.868    3406.322
-             |
-       _cons |   49789.37   2592.734    19.20   0.000     44679.85    54898.89
-------------------------------------------------------------------------------
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-
-  Variables that uniquely identify margins: imd postcovid
-(note: file ./output/time_series/margins_resp_asthma_exacerbation_imd.svg not f
-> ound)
-(file ./output/time_series/margins_resp_asthma_exacerbation_imd.svg written in 
-> SVG format)
-(10 vars, 27 obs)
-(note: file ./output/time_series/tsreg_resp_asthma_exacerbation_imd.csv not fou
-> nd)
-file ./output/time_series/tsreg_resp_asthma_exacerbation_imd.csv saved
-(5 vars, 235 obs)
-(0 observations deleted)
-(60 real changes made)
-(60 real changes made)
-(60 real changes made)
-       panel variable:  ethnicity (strongly balanced)
-        time variable:  month, 2018m3 to 2022m1
-                delta:  1 month
-
-Regression with Newey-West standard errors      Number of obs     =        235
-maximum lag: 1                                  F( 12,       222) =       0.54
-                                                Prob > F          =     0.8893
-
-------------------------------------------------------------------------------
-             |             Newey-West
-        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-   ethnicity |
-          2  |  -16129.32   14180.01    -1.14   0.257    -44073.98    11815.34
-          3  |  -19435.87   13177.59    -1.47   0.142    -45405.05    6533.302
-          4  |  -12378.63   14762.96    -0.84   0.403     -41472.1    16714.85
-          5  |  -10379.13   15236.53    -0.68   0.496    -40405.86    19647.61
-             |
- 1.postcovid |  -24374.55   12797.26    -1.90   0.058     -49594.2    845.1034
-             |
-   ethnicity#|
-   postcovid |
-        2 1  |    26873.7   16296.53     1.65   0.101    -5241.986    58989.38
-        3 1  |   32847.21   16347.15     2.01   0.046     631.7672    65062.66
-        4 1  |    22734.1   17885.74     1.27   0.205    -12513.46    57981.67
-        5 1  |   27132.48   18911.21     1.43   0.153    -10135.97    64400.94
-             |
-      season |
-     Summer  |   490.5525   6973.566     0.07   0.944    -13252.31    14233.41
-     Autumn  |   4775.872   8328.702     0.57   0.567    -11637.56    21189.31
-     Winter  |   1483.125   7233.974     0.21   0.838    -12772.92    15739.17
-             |
-       _cons |   118774.6   11645.88    10.20   0.000     95824.01    141725.2
-------------------------------------------------------------------------------
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-
-  Variables that uniquely identify margins: ethnicity postcovid
-(note: file ./output/time_series/margins_resp_copd_exacerbation_ethnicity.svg n
-> ot found)
-(file ./output/time_series/margins_resp_copd_exacerbation_ethnicity.svg written
->  in SVG format)
-(10 vars, 27 obs)
-(note: file ./output/time_series/tsreg_resp_copd_exacerbation_ethnicity.csv not
->  found)
-file ./output/time_series/tsreg_resp_copd_exacerbation_ethnicity.csv saved
-(5 vars, 282 obs)
-(47 observations deleted)
-(60 real changes made)
-(60 real changes made)
-(60 real changes made)
-       panel variable:  imd (strongly balanced)
-        time variable:  month, 2018m3 to 2022m1
-                delta:  1 month
-
-Regression with Newey-West standard errors      Number of obs     =        235
-maximum lag: 1                                  F( 12,       222) =       0.63
-                                                Prob > F          =     0.8193
-
-------------------------------------------------------------------------------
-             |             Newey-West
-        rate |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-         imd |
-          2  |   -6590.22   19864.19    -0.33   0.740    -45736.73    32556.29
-          3  |  -7960.668    21014.7    -0.38   0.705    -49374.49    33453.15
-          4  |  -16405.58   16718.64    -0.98   0.328    -49353.13    16541.96
-          5  |  -12382.83      18113    -0.68   0.495    -48078.25     23312.6
-             |
- 1.postcovid |   -15091.8    17530.1    -0.86   0.390     -49638.5    19454.91
-             |
-         imd#|
-   postcovid |
-        2 1  |   36464.67   26317.94     1.39   0.167    -15400.28    88329.63
-        3 1  |   6601.081    24692.4     0.27   0.789    -42060.41    55262.57
-        4 1  |   5762.766   20776.74     0.28   0.782     -35182.1    46707.64
-        5 1  |   16756.21    22181.5     0.76   0.451    -26957.03    60469.45
-             |
-      season |
-     Summer  |   5645.695   11568.36     0.49   0.626    -17152.16    28443.55
-     Autumn  |  -808.4734   9552.701    -0.08   0.933    -19634.05    18017.11
-     Winter  |    288.819   9419.833     0.03   0.976    -18274.92    18852.55
-             |
-       _cons |   117669.3   15199.49     7.74   0.000     87715.58    147623.1
-------------------------------------------------------------------------------
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-file ./output/time_series/tsreg_tables_resp.xlsx saved
-
-  Variables that uniquely identify margins: imd postcovid
-(note: file ./output/time_series/margins_resp_copd_exacerbation_imd.svg not fou
-> nd)
-(file ./output/time_series/margins_resp_copd_exacerbation_imd.svg written in SV
-> G format)
-(10 vars, 27 obs)
-(note: file ./output/time_series/tsreg_resp_copd_exacerbation_imd.csv not found
-> )
-file ./output/time_series/tsreg_resp_copd_exacerbation_imd.csv saved
+(note: file ./output/time_series/tsreg_resp_copd_imd.csv not found)
+file ./output/time_series/tsreg_resp_copd_imd.csv saved
 
 . 
 . log close
       name:  <unnamed>
        log:  /workspace/logs/tsreg_resp.log
   log type:  text
- closed on:   7 Jun 2022, 14:59:10
+ closed on:   5 Oct 2022, 16:21:11
 -------------------------------------------------------------------------------

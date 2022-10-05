@@ -13,7 +13,7 @@ cap mkdir ./output/time_series
 * Clinical monitoring: BP measurement
 * Hospital admissions: any code and primary code for MI, stroke, heart failure and vte
 local a "bp_meas_mh depression_admission anxiety_admission smi_admission self_harm_admission eating_dis_admission ocd_admission" 
-forvalues i=1/7 {
+forvalues i=1/1 {
     local c: word `i' of `a' 
 	local b "ethnicity imd"
 	forvalues i=1/2 {
@@ -21,7 +21,8 @@ forvalues i=1/7 {
 		import delimited "./output/measures/mh/measure_`c'_`d'_rate.csv", numericcols(4) clear	//get csv
         putexcel set ./output/time_series/tsreg_tables_mh, sheet(`c'_`d') modify			//open xlsx
         * Drop records where ethnicity is missing - no missing IMD
-        drop if `d'==0
+        drop if `d'==0 | `d'==.
+        drop if mh_subgroup==0
         *Format time
         gen temp_date=date(date, "YMD")
         format temp_date %td
@@ -56,7 +57,7 @@ forvalues i=1/7 {
         }
     }
 
-local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission anxiety_emergency smi_emergency self_harm_emergency"
+/*local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission anxiety_emergency smi_emergency self_harm_emergency"
 local b "depress_pri anxiety_pri smi_pri sh_pri anx_emergency smi_emergency sh_emergency"
 forvalues i=1/7 {
 	local c: word `i' of `a'
@@ -101,4 +102,4 @@ forvalues i=1/7 {
         export delimited using ./output/time_series/tsreg_mh_`d'_`f'.csv, replace
         }
     }
-
+*/
