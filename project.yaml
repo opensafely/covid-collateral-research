@@ -119,7 +119,12 @@ actions:
       moderately_sensitive:
         log: logs/table1_descriptives.log
         output: output/tables/baseline_table_*.csv
-
+  # Generate study population for flowchart
+  generate_study_population_flowchart:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_flowchart --index-date-range "2020-01-01" --output-dir=output/measures/tables --output-format=csv --skip-existing
+    outputs:
+      highly_sensitive:
+        cohort: output/measures/tables/input_flowchart_2020-01-01.csv
   # Generates summary measures for CV 
   calculate_measures:
     run: cohortextractor:latest  generate_measures --study-definition study_definition --output-dir=output/measures/cvd
