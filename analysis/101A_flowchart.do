@@ -24,7 +24,7 @@ drop if died==1
 safecount
 drop if (age<18 | age>110)
 safecount
-drop if sex=="U"
+drop if (sex=="U" | sex=="I")
 safecount
 drop if stp==""
 safecount
