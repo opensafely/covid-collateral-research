@@ -125,6 +125,13 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/measures/tables/input_flowchart_2020-01-01.csv
+  # Generate numbers for flowchart
+  flowchart:
+    run: stata-mp:latest analysis/101A_flowchart.do
+    needs: [generate_study_population_flowchart]
+    outputs:
+      moderately_sensitive:
+        log: logs/flowchart.log
   # Generates summary measures for CV 
   calculate_measures:
     run: cohortextractor:latest  generate_measures --study-definition study_definition --output-dir=output/measures/cvd
