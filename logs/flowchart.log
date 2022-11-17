@@ -32,7 +32,16 @@ Sorted by:
 . * (sex = 'M' OR sex = 'F') AND
 . * (stp != 'missing') AND
 . * (household>=1 AND household<=15) 
-. 
+. table sex
+
+----------------------
+      sex |      Freq.
+----------+-----------
+        F |        484
+        M |        503
+        U |         13
+----------------------
+
 . safecount
   1,000
 
@@ -75,7 +84,7 @@ Sorted by:
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.kxJ8Mi61Vc", write text replace
+. . file open output using "/tmp/tmp.jJVfppEZDa", write text replace
 
 . . file write output "success" 
 

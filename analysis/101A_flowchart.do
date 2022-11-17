@@ -16,7 +16,7 @@ describe
 * (sex = 'M' OR sex = 'F') AND
 * (stp != 'missing') AND
 * (household>=1 AND household<=15) 
-
+table sex
 safecount
 drop if has_follow_up!=1
 safecount
@@ -24,7 +24,7 @@ drop if died==1
 safecount
 drop if (age<18 | age>110)
 safecount
-drop if (sex!="M" | sex!="F")
+drop if sex=="U"
 safecount
 drop if stp==""
 safecount
