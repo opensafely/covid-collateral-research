@@ -1,6 +1,6 @@
 # covid-collateral-research
 
-[View on OpenSAFELY](https://jobs.opensafely.org/repo/https%253A%252F%252Fgithub.com%252F$lshtm%252F$covid-19-collateral)
+[View on OpenSAFELY](https://[jobs.opensafely.org/repo/https%253A%252F%252Fgithub.com%252F$lshtm%252F$covid-19-collateral](https://jobs.opensafely.org/lshtm/covid-19-collateral/))
 
 Details of the purpose and any published outputs from this project can be found at the link above.
 
