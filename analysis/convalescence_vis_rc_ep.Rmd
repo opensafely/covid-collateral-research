@@ -1,0 +1,360 @@
+---
+title: "Time-period specific HRs"
+output: html_document
+---
+
+```{r, warning=FALSE, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+
+## Specify whether to visualise unadjusted, partially adjusted, or fully adjusted models
+model_type = "partial" # select from: partial or full
+
+## Import libraries
+library('here')
+library('tidyverse')
+library('cowplot')
+
+## Import data
+data <- read_csv(here("all_cox_data.csv")) %>%
+  mutate(ref = Ethnicity=="White")
+data$Period = factor(data$Period, levels = unique(data$Period))
+data$Redaction_flag = NA
+data$Redaction_flag[data$Denominator=="redacted"] = "[R]"
+
+## Read in selected HRs and CIs
+if (model_type=="full") {
+  data$HR = data$F_adj_hr
+  data$lowerCI = data$F_adj_lci
+  data$upperCI = data$F_adj_uci
+  data$HR_ratio = data$F_HRR_vs_pre
+} else {
+  data$HR = data$P_adj_hr
+  data$lowerCI = data$P_adj_lci
+  data$upperCI = data$P_adj_uci
+  data$HR_ratio = data$P_HRR_vs_pre
+}
+
+## Set factor levels
+data$Ethnicity = factor(data$Ethnicity, levels = rev(unique(data$Ethnicity)))
+data$Outcome = factor(data$Outcome, levels = unique(data$Outcome))
+```
+
+### Visualisation parameters
+* Pre-pandemic rates used as reference group throughout    
+* Selected HR models: `r model_type`
+* [R] used in HR and IR ratio plots to indicate redacted comparisons    
+<br><br>
+
+
+
+### Absolute and relative risk over time (pre vs pandemic)
+```{r}
+## Function to generate grid of IR/HR plots for pre vs post pandemic
+pre_post_grid_plot = function(selected_group) {
+  
+  ## Select subset of data corresponding to prepandemic and pandemic periods
+  d1 = subset(data, Period=="Pre" | Period=="Pandemic") %>% 
+      ## Arrange with pre-pandemic period last to make sure this point is on top (and therefore visible)
+      arrange(rev(Period)) 
+  
+  ## Select subset of data corresponding to specified outcome group
+  if (selected_group!="All") { d1 = subset(d1, Group==selected_group) }
+
+  ## Create IR plot
+  d1$facet = "IRs over time"
+  p1 = ggplot(d1, aes(y = Rate, x = Ethnicity, colour = Period)) + 
+      geom_point(size = 4, alpha=0.8) +
+      coord_flip() + facet_grid(Outcome~facet) + 
+      theme_bw() + theme(strip.background = element_blank()) + 
+      scale_colour_manual(values = c("Pre" = "#993404", "Pandemic" = "#045a8d")) +
+      ylab("Rate per 100,000 person-months") + xlab("") +
+      theme(axis.title = element_text(size=12), axis.text = element_text(size=12), 
+           strip.text.x = element_text(size=12), strip.text.y = element_blank(), 
+           legend.position = "left", legend.title = element_text(size=12), legend.text = element_text(size=12), 
+           legend.direction = "vertical")
+  
+ ## Create IR plot
+  d1$facet = "IRs over time"
+  p1 = ggplot(d1, aes(y = Rate, x = Ethnicity, colour = Period)) + 
+      geom_point(size = 4, alpha=0.8) +
+      coord_flip() + facet_grid(Outcome~facet) + 
+      theme_bw() + theme(strip.background = element_blank()) + 
+      scale_colour_manual(values = c("Pre" = "#993404", "Pandemic" = "#045a8d")) +
+      ylab("Rate per 100,000 person-months") + xlab("") +
+      theme(axis.title = element_text(size=12), axis.text = element_text(size=12), 
+           strip.text.x = element_text(size=12), strip.text.y = element_blank(), 
+           legend.position = "left", legend.title = element_text(size=12), legend.text = element_text(size=12), 
+           legend.direction = "vertical")
+  
+  ## Create IR ratio plot
+  d1$facet = "Ratio vs\npre-pandemic"
+  p2 = ggplot(d1, aes(y = IRR_vs_pre, x = Ethnicity)) + 
+      geom_bar(stat="identity", fill="#045a8d") +
+      geom_text(aes(y = 0.3, label = Redaction_flag), colour = "#045a8d", show.legend = FALSE) +
+      coord_flip() + facet_grid(Outcome~facet) + 
+      theme_bw() + theme(strip.background = element_blank()) + 
+      geom_hline(yintercept=1, linetype="dotted") + 
+      scale_y_continuous(trans="log10", limits=c(0.3,3), breaks=c(0.5,1,2)) +
+      ylab("IR ratio") + xlab("") +
+      theme(axis.title = element_text(size=12), axis.text = element_text(size=12), 
+             strip.text.x = element_text(size=12), strip.text.y = element_text(size=12), 
+            legend.position = "none", axis.text.y=element_blank())
+  
+  ## Create HR plot
+  d1$facet = "a"
+  p3 = ggplot(d1, aes(y = HR, x = Ethnicity, colour = Period, shape = ref)) + 
+      geom_point(size = 4, alpha=0.8) +
+      geom_errorbar(aes(ymin=as.numeric(lowerCI), ymax=as.numeric(upperCI)), width=0) + 
+      coord_flip() + facet_grid(Outcome~facet) + 
+      theme_bw() + theme(strip.background = element_blank()) + 
+      geom_hline(yintercept=1, linetype="dotted") + 
+      scale_colour_manual(values = c("Pre" = "#993404", "Pandemic" = "#045a8d")) +
+      scale_y_continuous(trans="log10") +
+      scale_shape_manual(values=c(19, 1)) + guides(shape = "none") +
+      ylab("HR vs White") + xlab("") +
+      theme(axis.title = element_text(size=12), axis.text = element_text(size=12), 
+            strip.text.x = element_text(size=12), strip.text.y = element_blank(), 
+           legend.position = "bottom", legend.title = element_text(size=12), legend.text = element_text(size=12), 
+           legend.direction = "vertical")
+  
+  ## Create HR ratio plot
+  d1$facet = "b"
+  p4 = ggplot(d1, aes(y = HR_ratio, x = Ethnicity)) + 
+      geom_bar(stat="identity", fill="#045a8d") +
+      geom_text(aes(y = 0.3, label = Redaction_flag), colour = "#045a8d", show.legend = FALSE) +
+      coord_flip() + facet_grid(Outcome~facet) +    
+      theme_bw() + theme(strip.background = element_blank()) + 
+      geom_hline(yintercept=1, linetype="dotted") + 
+      scale_y_continuous(trans="log10", limits=c(0.3,3), breaks=c(0.5,1,2)) +
+      ylab("HR vs pre-pandemic") + xlab("") +
+      theme(axis.title = element_text(size=12), axis.text = element_text(size=12), 
+             strip.text.x = element_text(size=12), strip.text.y = element_text(size=10), 
+            legend.position = "left", legend.title = element_text(size=12), legend.text = element_text(size=12), 
+           legend.direction = "vertical")
+
+  ## Render grid of plots
+  plot_grid(p3, p4, ncol=4, rel_widths=c(1,0.5,1,0.5), align="h", axis="tb")
+}
+```
+
+
+### Absolute risk over time (wave/easing)
+```{r}
+## Function to generate grid of IR or HR plots for pre vs pandemic, broken down by wave/easing
+pre_wave_easing_grid_plot = function(selected_group, outcome=c("IR", "HR", "IRD")) {
+  
+  ## Select subset of data corresponding to pandemic sub-periods
+  d1 = subset(data, Period!="Pandemic") %>%
+    ## Arrange with pre-pandemic period last to make sure this point is on top (and therefore visible)
+    arrange(rev(Period))
+  
+  ## Select subset of data corresponding to specified outcome group
+  if (selected_group!="All") { d1 = subset(d1, Group==selected_group) }
+  
+  ## Hex palette for wave/easing colours
+  pal = c("#023858", "#045a8d", "#0570b0", "#3690c0", "#74a9cf", "#a6bddb")
+
+  ## Specify plot labels and variables depending on whether IR or HR selected
+  if(outcome=="IR") {
+    d1$facet = "IRs over time"
+    axis_lab_primary = "Rate per 100,000 p-w"
+    d1$selected_y_primary = d1$Rate
+    axis_lab_secondary = "IR ratio"
+    d1$selected_y_secondary = d1$IRR_vs_pre
+    d1$ref = TRUE 
+  } else if(outcome=="IRD") {
+    d1$facet = "IRs over time"
+    axis_lab_primary = "Rate per 100,000 p-w"
+    d1$selected_y_primary = d1$Rate
+    axis_lab_secondary = "IR difference"
+     d1$selected_y_secondary = d1$IRD_vs_pre
+  } else {
+    d1$facet = ""
+    axis_lab_primary = "HR vs White"
+    d1$selected_y_primary = d1$HR
+    axis_lab_secondary = "HR ratio"
+    d1$selected_y_secondary = d1$HR_ratio
+  }
+  
+  ## Create IR/HR plot
+  p1 = ggplot(d1, aes(y = selected_y_primary, x = Ethnicity, colour = Period, shape = ref)) + 
+      geom_point(size = 4, alpha=0.8) +
+      coord_flip() + facet_grid(Outcome~facet) + 
+      theme_bw() + theme(strip.background = element_blank()) + 
+      scale_colour_manual(values = c("#993404", pal[1:6])) +
+      ylab(axis_lab_primary) + xlab("") +
+      scale_shape_manual(values=c(19, 1)) + guides(shape = "none") +
+      theme(axis.title = element_text(size=12), axis.text = element_text(size=12), 
+           strip.text.x = element_text(size=12), strip.text.y = element_blank(), 
+           legend.position = "top", legend.title = element_blank(), legend.text = element_text(size=8), 
+           legend.direction = "horizontal")
+  if (outcome == "HR") {
+    p1 = p1 + geom_hline(yintercept=1, linetype="dotted") 
+  }
+  
+  ## Function to add a consistent set of plotting parameters to each of the ggplots below
+  if (outcome != "IRD") {
+    gg_extras = function(base_plot) {
+      base_plot +  coord_flip() + facet_grid(Outcome~facet) + 
+        theme_bw() + theme(strip.background = element_blank()) + 
+        geom_hline(yintercept=1, linetype="dotted") + 
+        scale_y_continuous(trans="log10", limits=c(0.3,3), breaks=c(0.5,1,2)) +
+        ylab(axis_lab_secondary) + xlab("") +
+        theme(axis.title = element_text(size=12), axis.text = element_text(size=12), 
+               strip.text.x = element_text(size=12), strip.text.y = element_text(size=12), 
+              legend.position = "none", axis.text.y=element_blank())
+    }
+  }
+  else {
+    gg_extras = function(base_plot) {
+      base_plot +  coord_flip() + facet_grid(Outcome~facet) + 
+        theme_bw() + theme(strip.background = element_blank()) + 
+        geom_hline(yintercept=1, linetype="dotted") + 
+        scale_y_continuous(limits=c(-5,5), breaks=c(-4,-2,0,2,4)) +
+        ylab(axis_lab_secondary) + xlab("") +
+        theme(axis.title = element_text(size=12), axis.text = element_text(size=12), 
+               strip.text.x = element_text(size=12), strip.text.y = element_text(size=12), 
+              legend.position = "none", axis.text.y=element_blank())
+    }
+  }
+  
+  ## Wave 1 ratio plot
+  d1$facet = "Wave 1 vs\npre"
+  p2 = gg_extras(ggplot(subset(d1, Period=="Pre" | Period=="Wave 1"), aes(y = selected_y_secondary, x = Ethnicity)) + 
+      geom_text(aes(y = 0.5, label = Redaction_flag), colour = pal[1], show.legend = FALSE) +
+      geom_bar(stat="identity", fill=pal[1])) + theme(strip.text.y = element_blank()) 
+  
+  ## Easing 1 ratio plot
+  d1$facet = "Easing 1 vs\npre"
+  p3 = gg_extras(ggplot(subset(d1, Period=="Pre" | Period=="Easing 1"), aes(y = selected_y_secondary, x = Ethnicity)) + 
+      geom_text(aes(y = 0.5, label = Redaction_flag), colour = pal[1], show.legend = FALSE) +
+      geom_bar(stat="identity", fill=pal[2])) + theme(strip.text.y = element_blank())
+  
+   ## Wave 2 ratio plot
+  d1$facet = "Wave 2 vs\npre"
+  p4 = gg_extras(ggplot(subset(d1, Period=="Pre" | Period=="Wave 2"), aes(y = selected_y_secondary, x = Ethnicity)) + 
+      geom_text(aes(y = 0.5, label = Redaction_flag), colour = pal[1], show.legend = FALSE) +
+      geom_bar(stat="identity", fill=pal[3])) + theme(strip.text.y = element_blank())
+  
+  ## Easing 2 ratio plot
+  d1$facet = "Easing 2 vs\npre"
+  p5 = gg_extras(ggplot(subset(d1, Period=="Pre" | Period=="Easing 2"), aes(y = selected_y_secondary, x = Ethnicity)) + 
+      geom_text(aes(y = 0.5, label = Redaction_flag), colour = pal[1], show.legend = FALSE) +
+      geom_bar(stat="identity", fill=pal[4])) + theme(strip.text.y = element_blank())
+  
+   ## Wave 3 ratio plot
+  d1$facet = "Wave 3 vs\npre"
+  p6 = gg_extras(ggplot(subset(d1, Period=="Pre" | Period=="Wave 3"), aes(y = selected_y_secondary, x = Ethnicity)) + 
+      geom_text(aes(y = 0.5, label = Redaction_flag), colour = pal[1], show.legend = FALSE) +
+      geom_bar(stat="identity", fill=pal[5])) + theme(strip.text.y = element_blank())
+  
+  ## Easing 3 ratio plot
+  d1$facet = "Easing 3 vs\npre"
+  p7 = gg_extras(ggplot(subset(d1, Period=="Pre" | Period=="Easing 3"), aes(y = selected_y_secondary, x = Ethnicity)) + 
+      geom_text(aes(y = 0.5, label = Redaction_flag), colour = pal[1], show.legend = FALSE) +
+      geom_bar(stat="identity", fill=pal[6]))
+  
+  ## Render grid of plots
+  plot_grid(p1, p2, p3, p4, p5, p6, p7, ncol=7, rel_widths=c(1,rep(0.5,5),0.6), align="h", axis="tb")
+}
+```
+
+
+#### Cardiovascular stroke & vte
+```{r, fig.width=16, fig.height=5}
+## Run function for each outcome group
+## N.B. fig.height needs to be adjusted in the specifications for each chunk due to the different number of outcomes in each group
+pre_post_grid_plot("Cardiovascular")
+```
+#### Cardiovascular - stroke & VTE
+```{r, fig.width=14, fig.height=7}
+## Run function for each outcome group
+## N.B. fig.height needs to be adjusted in the specifications for each chunk due to the different number of outcomes in each group
+pre_wave_easing_grid_plot("Cardiovascular", "IR")
+```
+#### Cardiovascular - stroke & VTE
+```{r, fig.width=14, fig.height=7}
+## Run function for each outcome group
+## N.B. fig.height needs to be adjusted in the specifications for each chunk due to the different number of outcomes in each group
+pre_wave_easing_grid_plot("Cardiovascular", "HR")
+```
+
+#### Cardiovascular MI & heart failure
+```{r, fig.width=16, fig.height=5}
+## Run function for each outcome group
+## N.B. fig.height needs to be adjusted in the specifications for each chunk due to the different number of outcomes in each group
+pre_post_grid_plot("Cardiovascular_hfmi")
+```
+#### Cardiovascular - heart failure & MI
+```{r, fig.width=14, fig.height=7}
+## Run function for each outcome group
+## N.B. fig.height needs to be adjusted in the specifications for each chunk due to the different number of outcomes in each group
+pre_wave_easing_grid_plot("Cardiovascular_hfmi", "IR")
+```
+#### Cardiovascular - heart failure & MI
+```{r, fig.width=14, fig.height=7}
+## Run function for each outcome group
+## N.B. fig.height needs to be adjusted in the specifications for each chunk due to the different number of outcomes in each group
+pre_wave_easing_grid_plot("Cardiovascular_hfmi", "HR")
+```
+<br><br>
+#### Diabetes
+```{r, fig.width=16, fig.height=5}
+pre_post_grid_plot("Diabetes")
+```
+#### Diabetes
+```{r, fig.width=12, fig.height=10}
+pre_wave_easing_grid_plot("Diabetes", "IR")
+```
+#### Diabetes
+```{r, fig.width=12, fig.height=10}
+pre_wave_easing_grid_plot("Diabetes", "HR")
+```
+<br><br>
+#### Respiratory
+```{r, fig.width=16, fig.height=5}
+pre_post_grid_plot("Respiratory")
+```
+#### Respiratory
+```{r, fig.width=12, fig.height=7}
+pre_wave_easing_grid_plot("Respiratory", "IR")
+```
+#### Respiratory
+```{r, fig.width=12, fig.height=7}
+pre_wave_easing_grid_plot("Respiratory", "HR")
+```
+<br><br>
+#### Mental Health
+```{r, fig.width=16, fig.height=5}
+pre_post_grid_plot("Mental Health")
+```
+#### Mental Health
+```{r, fig.width=12, fig.height=10}
+pre_wave_easing_grid_plot("Mental Health", "IR")
+```
+#### Mental Health
+```{r, fig.width=12, fig.height=7}
+pre_wave_easing_grid_plot("Mental Health", "HR")
+```
+<br><br>
+#### All
+```{r, fig.width=16, fig.height=10}
+pre_post_grid_plot("All")
+```
+#### All
+```{r, fig.width=16, fig.height=20}
+pre_wave_easing_grid_plot("All", "IR")
+```
+#### All
+```{r, fig.width=16, fig.height=20}
+pre_wave_easing_grid_plot("All", "HR")
+```
+
+
+
+
+#### Session info
+```{r}
+print(sessionInfo())
+```
+
