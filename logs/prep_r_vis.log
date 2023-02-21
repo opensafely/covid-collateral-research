@@ -3,215 +3,216 @@
 
 . cap mkdir ./output/tables
 
-. 
-. import delimited using ./output/tables/anx_cox_models.txt, stringcols(3) clea
-> r
-(19 vars, 8 obs)
-
-. tempfile tempfile
-
-. * Generate risk differences between waves for each ethnic group
-. * count to reorder
-. gen number = _n
-
-. preserve
-
-. * calculate by ethnic group, save as temporary file, then merge back on
-. * First do white then loop through rest
-. keep if ethnic_group=="Other"
-(8 observations deleted)
-
-. * Create variables with rate/HR to compare to
-. foreach var in rate unadj_hr p_adj_hr f_adj_hr {
-  2.         gen `var'_pre = `var' if period=="pre"
-  3.         replace `var'_pre = `var'_pre[_n-1] if `var'_pre==. & `var'_pre[_n
-> -1]!=.
-  4. }
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-
-. * Calculate incidence rate ratio
-. gen IRR_vs_pre = rate/rate_pre if period!="pre"
-
-. * Calculate incident rate difference
-. gen IRD_vs_pre = rate - rate_pre if period!="pre"
-
-. * Calculate hazard rate ratio for each HR
-. gen unadj_HRR_vs_pre = unadj_hr/unadj_hr_pre if period!="pre"
-
-. gen P_HRR_vs_pre = p_adj_hr/p_adj_hr_pre if period!="pre"
-
-. gen F_HRR_vs_pre = f_adj_hr/f_adj_hr_pre if period!="pre"
-
-. keep period ethnic_group IRR_vs_pre-F_HRR_vs_pre number
-
-. save `tempfile', replace
-(note: dataset contains 0 observations)
-(note: file /tmp/St00011.000001 not found)
-file /tmp/St00011.000001 saved
-
-. restore
-
-. 
-. * Other ethnic group 
-. replace ethnic_group = "Asian" if ethnic_group=="South Asian"
-(0 real changes made)
-
-. foreach group in Mixed Black Asian White {
-  2.         * Generate risk differences between waves for each ethnic group
-.         preserve
-  3.         keep if ethnic_group=="`group'"
-  4.         * calculate by ethnic group, save as temporary file, then merge ba
-> ck on
-.         * First do white then loop through rest
-.         foreach var in rate unadj_hr p_adj_hr f_adj_hr {
-  5.                 gen `var'_pre = `var' if period=="pre"
-  6.                 replace `var'_pre = `var'_pre[_n-1] if `var'_pre==. & `var
-> '_pre[_n-1]!=.
-  7.                 }
-  8.         * Calculate incidence rate ratio
-.         gen IRR_vs_pre = rate/rate_pre if period!="pre"
-  9.         * Calculate incident rate difference
-.         gen IRD_vs_pre = rate - rate_pre if period!="pre"
- 10.         * Calculate hazard rate ratio for each HR
-.         gen unadj_HRR_vs_pre = unadj_hr/unadj_hr_pre if period!="pre"
- 11.         gen P_HRR_vs_pre = p_adj_hr/p_adj_hr_pre if period!="pre"
- 12.         gen F_HRR_vs_pre = f_adj_hr/f_adj_hr_pre if period!="pre"
- 13.         keep period ethnic_group IRR_vs_pre-F_HRR_vs_pre number 
- 14.         append using `tempfile'
- 15.         save `tempfile', replace
- 16.         sort number
- 17.         restore
- 18.         }
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.000001 saved
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.000001 saved
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.000001 saved
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.000001 saved
-
-. 
-. merge 1:1 period ethnic_group using `tempfile'
-
-    Result                           # of obs.
-    -----------------------------------------
-    not matched                             8
-        from master                         8  (_merge==1)
-        from using                          0  (_merge==2)
-
-    matched                                 0  (_merge==3)
-    -----------------------------------------
-
-. gen group="Mental Health"
-
-. gen outcome="Anxiety"
-
-. save "./output/tables/all_cox_data", replace
-(note: file ./output/tables/all_cox_data.dta not found)
-file ./output/tables/all_cox_data.dta saved
-
-. 
-. local a "depress asthma copd dm_keto t1dm t2dm hf mi stroke vte"
-
-. local b "MH Respiratory Respiratory Diabetes Diabetes Diabetes Cardiovascular
-> _hfmi Cardiovascular_hfmi Cardiovascular Cardiovascular" 
-
-. forvalues i=1/10 {
-  2.         local outcome: word `i' of `a'
-  3.         local category: word `i' of `b'
-  4. 
-.         import delimited using ./output/tables/`outcome'_cox_models.txt, stri
-> ngcols(3) clear
-  5.         tempfile tempfile
-  6.         * Generate risk differences between waves for each ethnic group
+. * Reviewer comment: putting files together for each ethnic group reference ca
+> tegory 
+. forvalues j=1/5 {
+  2.         import delimited using ./output/tables/anx_`j'_cox_models.txt, str
+> ingcols(3) clear
+  3.         tempfile tempfile
+  4.         * Generate risk differences between waves for each ethnic group
 .         * count to reorder
 .         gen number = _n
-  7.         preserve
-  8.         * calculate by ethnic group, save as temporary file, then merge ba
+  5.         preserve
+  6.         * calculate by ethnic group, save as temporary file, then merge ba
 > ck on
 .         * First do white then loop through rest
 .         keep if ethnic_group=="Other"
-  9.         * Create variable with rate to compare to
+  7.         * Create variables with rate/HR to compare to
 .         foreach var in rate unadj_hr p_adj_hr f_adj_hr {
- 10.                 gen `var'_pre = `var' if period=="pre"
- 11.                 replace `var'_pre = `var'_pre[_n-1] if `var'_pre==. & `var
+  8.                 gen `var'_pre = `var' if period=="pre"
+  9.                 replace `var'_pre = `var'_pre[_n-1] if `var'_pre==. & `var
 > '_pre[_n-1]!=.
- 12.                 }
- 13.         * Calculate incidence rate ratio
+ 10.         }
+ 11.         * Calculate incidence rate ratio
 .         gen IRR_vs_pre = rate/rate_pre if period!="pre"
- 14.         * Calculate incident rate difference
+ 12.         * Calculate incident rate difference
 .         gen IRD_vs_pre = rate - rate_pre if period!="pre"
- 15.         * Calculate hazard rate ratio for each HR
+ 13.         * Calculate hazard rate ratio for each HR
 .         gen unadj_HRR_vs_pre = unadj_hr/unadj_hr_pre if period!="pre"
- 16.         gen P_HRR_vs_pre = p_adj_hr/p_adj_hr_pre if period!="pre"
- 17.         gen F_HRR_vs_pre = f_adj_hr/f_adj_hr_pre if period!="pre"
- 18.         keep period ethnic_group IRR_vs_pre-F_HRR_vs_pre number
- 19.         gen group = "`category'"
- 20.         gen outcome = "`outcome'"
- 21.         save `tempfile', replace
- 22.         restore
- 23. 
+ 14.         gen P_HRR_vs_pre = p_adj_hr/p_adj_hr_pre if period!="pre"
+ 15.         gen F_HRR_vs_pre = f_adj_hr/f_adj_hr_pre if period!="pre"
+ 16.         keep period ethnic_group IRR_vs_pre-F_HRR_vs_pre number
+ 17.         save `tempfile', replace
+ 18.         restore
+ 19. 
 .         * Other ethnic group 
 .         replace ethnic_group = "Asian" if ethnic_group=="South Asian"
- 24.         foreach group in Mixed Black Asian White {
- 25.                 * Generate risk differences between waves for each ethnic 
+ 20.         foreach group in Mixed Black Asian White {
+ 21.                 * Generate risk differences between waves for each ethnic 
 > group
 .                 preserve
- 26.                 * calculate by ethnic group, save as temporary file, then 
+ 22.                 keep if ethnic_group=="`group'"
+ 23.                 * calculate by ethnic group, save as temporary file, then 
 > merge back on
 .                 * First do white then loop through rest
-.                 keep if ethnic_group=="`group'"
- 27.                 foreach var in rate unadj_hr p_adj_hr f_adj_hr {
- 28.                         gen `var'_pre = `var' if period=="pre"
- 29.                         replace `var'_pre = `var'_pre[_n-1] if `var'_pre==
+.                 foreach var in rate unadj_hr p_adj_hr f_adj_hr {
+ 24.                         gen `var'_pre = `var' if period=="pre"
+ 25.                         replace `var'_pre = `var'_pre[_n-1] if `var'_pre==
 > . & `var'_pre[_n-1]!=.
- 30.                         }
- 31.                 * Calculate incidence rate ratio
+ 26.                         }
+ 27.                 * Calculate incidence rate ratio
 .                 gen IRR_vs_pre = rate/rate_pre if period!="pre"
- 32.                 * Calculate incident rate difference
+ 28.                 * Calculate incident rate difference
 .                 gen IRD_vs_pre = rate - rate_pre if period!="pre"
- 33.                 * Calculate hazard rate ratio for each HR
+ 29.                 * Calculate hazard rate ratio for each HR
 .                 gen unadj_HRR_vs_pre = unadj_hr/unadj_hr_pre if period!="pre"
- 34.                 gen P_HRR_vs_pre = p_adj_hr/p_adj_hr_pre if period!="pre"
- 35.                 gen F_HRR_vs_pre = f_adj_hr/f_adj_hr_pre if period!="pre"
- 36.                 keep period ethnic_group IRR_vs_pre-F_HRR_vs_pre number
- 37.                 gen group = "`category'"
- 38.                 gen outcome = "`outcome'"
- 39.                 append using `tempfile'
- 40.                 save `tempfile', replace
- 41.                 sort number
- 42.                 restore
- 43.                 }
- 44. 
+ 30.                 gen P_HRR_vs_pre = p_adj_hr/p_adj_hr_pre if period!="pre"
+ 31.                 gen F_HRR_vs_pre = f_adj_hr/f_adj_hr_pre if period!="pre"
+ 32.                 keep period ethnic_group IRR_vs_pre-F_HRR_vs_pre number 
+ 33.                 append using `tempfile'
+ 34.                 save `tempfile', replace
+ 35.                 sort number
+ 36.                 restore
+ 37.                 }
+ 38. 
 .         merge 1:1 period ethnic_group using `tempfile'
- 45.         append using "./output/tables/all_cox_data"
- 46.         save "./output/tables/all_cox_data", replace    
- 47.         
-. }
+ 39.         gen group="Mental Health"
+ 40.         gen outcome="Anxiety"
+ 41.         save ./output/tables/all_cox_data_`j', replace
+ 42. 
+.         * add mi back in when upload
+.         local a "depress asthma copd dm_keto t1dm t2dm hf stroke vte"
+ 43.         local b "MH Respiratory Respiratory Diabetes Diabetes Diabetes Car
+> diovascular_hfmi Cardiovascular Cardiovascular" 
+ 44.         forvalues i=1/9 {
+ 45.                 local outcome: word `i' of `a'
+ 46.                 local category: word `i' of `b'
+ 47. 
+.                 import delimited using ./output/tables/`outcome'_`j'_cox_mode
+> ls.txt, stringcols(3) clear
+ 48.                 tempfile tempfile
+ 49.                 * Generate risk differences between waves for each ethnic 
+> group
+.                 * count to reorder
+.                 gen number = _n
+ 50.                 preserve
+ 51.                 * calculate by ethnic group, save as temporary file, then 
+> merge back on
+.                 * First do white then loop through rest
+.                 keep if ethnic_group=="Other"
+ 52.                 * Create variable with rate to compare to
+.                 foreach var in rate unadj_hr p_adj_hr f_adj_hr {
+ 53.                         gen `var'_pre = `var' if period=="pre"
+ 54.                         replace `var'_pre = `var'_pre[_n-1] if `var'_pre==
+> . & `var'_pre[_n-1]!=.
+ 55.                         }
+ 56.                 * Calculate incidence rate ratio
+.                 gen IRR_vs_pre = rate/rate_pre if period!="pre"
+ 57.                 * Calculate incident rate difference
+.                 gen IRD_vs_pre = rate - rate_pre if period!="pre"
+ 58.                 * Calculate hazard rate ratio for each HR
+.                 gen unadj_HRR_vs_pre = unadj_hr/unadj_hr_pre if period!="pre"
+ 59.                 gen P_HRR_vs_pre = p_adj_hr/p_adj_hr_pre if period!="pre"
+ 60.                 gen F_HRR_vs_pre = f_adj_hr/f_adj_hr_pre if period!="pre"
+ 61.                 keep period ethnic_group IRR_vs_pre-F_HRR_vs_pre number
+ 62.                 gen group = "`category'"
+ 63.                 gen outcome = "`outcome'"
+ 64.                 save `tempfile', replace
+ 65.                 restore
+ 66. 
+.                 * Other ethnic group 
+.                 replace ethnic_group = "Asian" if ethnic_group=="South Asian"
+ 67.                 foreach group in Mixed Black Asian White {
+ 68.                         * Generate risk differences between waves for each
+>  ethnic group
+.                         preserve
+ 69.                         * calculate by ethnic group, save as temporary fil
+> e, then merge back on
+.                         * First do white then loop through rest
+.                         keep if ethnic_group=="`group'"
+ 70.                         foreach var in rate unadj_hr p_adj_hr f_adj_hr {
+ 71.                                 gen `var'_pre = `var' if period=="pre"
+ 72.                                 replace `var'_pre = `var'_pre[_n-1] if `va
+> r'_pre==. & `var'_pre[_n-1]!=.
+ 73.                                 }
+ 74.                         * Calculate incidence rate ratio
+.                         gen IRR_vs_pre = rate/rate_pre if period!="pre"
+ 75.                         * Calculate incident rate difference
+.                         gen IRD_vs_pre = rate - rate_pre if period!="pre"
+ 76.                         * Calculate hazard rate ratio for each HR
+.                         gen unadj_HRR_vs_pre = unadj_hr/unadj_hr_pre if perio
+> d!="pre"
+ 77.                         gen P_HRR_vs_pre = p_adj_hr/p_adj_hr_pre if period
+> !="pre"
+ 78.                         gen F_HRR_vs_pre = f_adj_hr/f_adj_hr_pre if period
+> !="pre"
+ 79.                         keep period ethnic_group IRR_vs_pre-F_HRR_vs_pre n
+> umber
+ 80.                         gen group = "`category'"
+ 81.                         gen outcome = "`outcome'"
+ 82.                         append using `tempfile'
+ 83.                         save `tempfile', replace
+ 84.                         sort number
+ 85.                         restore
+ 86.                         }
+ 87. 
+.                 merge 1:1 period ethnic_group using `tempfile'
+ 88.                 append using ./output/tables/all_cox_data_`j'
+ 89.                 save ./output/tables/all_cox_data_`j', replace  
+ 90.                 
+.         }
+ 91. 
+.         replace denominator="redacted" if denominator=="redact"
+ 92.         gen ethnic_order = 1 if ethnic_group=="White"
+ 93.         replace ethnic_order=2 if ethnic_group=="Asian"
+ 94.         replace ethnic_order=3 if ethnic_group=="Black"
+ 95.         replace ethnic_order=4 if ethnic_group=="Mixed"
+ 96.         replace ethnic_order=5 if ethnic_group=="Other"
+ 97.         gen time_order=1 if period=="pre"
+ 98.         replace time_order=2 if period=="pandemic"
+ 99.         replace time_order=3 if period=="wave1"
+100.         replace time_order=4 if period=="easing1"
+101.         replace time_order=5 if period=="wave2"
+102.         replace time_order=6 if period=="easing2"
+103.         replace time_order=7 if period=="wave3"
+104.         replace time_order=8 if period=="easing3"
+105.         * Update period variable
+.         gen period_n="Pre" if period=="pre"
+106.         replace period_n="Pandemic" if period=="pandemic"
+107.         replace period_n="Wave 1" if period=="wave1"
+108.         replace period_n="Easing 1" if period=="easing1"
+109.         replace period_n="Wave 2" if period=="wave2"
+110.         replace period_n="Easing 2" if period=="easing2"
+111.         replace period_n="Wave 3" if period=="wave3"
+112.         replace period_n="Easing 3" if period=="easing3"
+113.         drop period
+114.         replace group= "Mental Health" if group == "MH"
+115.         gen outcome_n = "Stroke" if outcome=="stroke"
+116.         replace outcome_n = "VTE" if outcome=="vte"
+117.         replace outcome_n = "Heart failure" if outcome=="hf"
+118.         replace outcome_n = "MI" if outcome=="mi"
+119.         replace outcome_n = "DKA" if outcome=="dm_keto"
+120.         replace outcome_n = "T1 DM" if outcome=="t1dm"
+121.         replace outcome_n = "T2 DM" if outcome=="t2dm"
+122.         replace outcome_n = "Anxiety" if outcome=="Anxiety"
+123.         replace outcome_n = "Depression" if outcome=="depress"
+124.         replace outcome_n = "Asthma" if outcome=="asthma"
+125.         replace outcome_n = "COPD" if outcome=="copd"
+126.         drop outcome
+127.         order group outcome_n period_n ethnic_group
+128.         sort group outcome_n time_order ethnic_order
+129.         drop time_order ethnic_order
+130.         rename ethnic_group Ethnicity
+131.         rename period_n Period
+132.         rename group Group
+133.         rename outcome_n Outcome
+134.         rename denominator Denominator
+135.         rename rate Rate
+136.         rename f_adj_lci F_adj_lci
+137.         rename f_adj_uci F_adj_uci
+138.         rename f_adj_hr F_adj_hr
+139.         rename p_adj_lci P_adj_lci
+140.         rename p_adj_uci P_adj_uci
+141.         rename p_adj_hr P_adj_hr
+142.         drop v* number _merge
+143.         * Export data for table including confidence intervals
+.         export delimited using $savedir\all_cox_data_inc_ci_`j'.csv, replace
+144.         * drop formated confidence intervals
+.         drop unadj_ci p_adj_ci f_adj_ci
+145.         save ./output/tables/all_cox_data_`j', replace
+146.         export delimited using ./output/tables/all_cox_data_`j'.csv, repla
+> ce
+147.         }
 (19 vars, 8 obs)
 (8 observations deleted)
 (0 real changes made)
@@ -219,8 +220,8 @@ file ./output/tables/all_cox_data.dta saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-(note: file /tmp/St00011.000007 not found)
-file /tmp/St00011.000007 saved
+(note: file /tmp/St00015.000001 not found)
+file /tmp/St00015.000001 saved
 (0 real changes made)
 (8 observations deleted)
 (0 real changes made)
@@ -228,28 +229,77 @@ file /tmp/St00011.000007 saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000007 saved
+file /tmp/St00015.000001 saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000007 saved
+file /tmp/St00015.000001 saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000007 saved
+file /tmp/St00015.000001 saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000007 saved
+file /tmp/St00015.000001 saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: file ./output/tables/all_cox_data_1.dta not found)
+file ./output/tables/all_cox_data_1.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000007 not found)
+file /tmp/St00015.000007 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000007 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000007 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000007 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000007 saved
 
     Result                           # of obs.
     -----------------------------------------
@@ -263,7 +313,7 @@ file /tmp/St00011.000007 saved
 (note: variable outcome was str1, now str7 to accommodate using data's
        values)
 (label _merge already defined)
-file ./output/tables/all_cox_data.dta saved
+file ./output/tables/all_cox_data_1.dta saved
 (19 vars, 8 obs)
 (8 observations deleted)
 (0 real changes made)
@@ -271,8 +321,8 @@ file ./output/tables/all_cox_data.dta saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-(note: file /tmp/St00011.00000d not found)
-file /tmp/St00011.00000d saved
+(note: file /tmp/St00015.00000d not found)
+file /tmp/St00015.00000d saved
 (0 real changes made)
 (8 observations deleted)
 (0 real changes made)
@@ -280,80 +330,28 @@ file /tmp/St00011.00000d saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000d saved
+file /tmp/St00015.00000d saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000d saved
+file /tmp/St00015.00000d saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000d saved
+file /tmp/St00015.00000d saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000d saved
-
-    Result                           # of obs.
-    -----------------------------------------
-    not matched                             8
-        from master                         8  (_merge==1)
-        from using                          0  (_merge==2)
-
-    matched                                 0  (_merge==3)
-    -----------------------------------------
-(note: variable group was str1, now str13 to accommodate using data's values)
-(note: variable outcome was str1, now str7 to accommodate using data's
-       values)
-(label _merge already defined)
-file ./output/tables/all_cox_data.dta saved
-(19 vars, 8 obs)
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-(note: file /tmp/St00011.00000j not found)
-file /tmp/St00011.00000j saved
-(0 real changes made)
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.00000j saved
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.00000j saved
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.00000j saved
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.00000j saved
+file /tmp/St00015.00000d saved
 
     Result                           # of obs.
     -----------------------------------------
@@ -369,7 +367,7 @@ file /tmp/St00011.00000j saved
 (note: variable outcome was str1, now str7 to accommodate using data's
        values)
 (label _merge already defined)
-file ./output/tables/all_cox_data.dta saved
+file ./output/tables/all_cox_data_1.dta saved
 (19 vars, 8 obs)
 (8 observations deleted)
 (0 real changes made)
@@ -377,8 +375,8 @@ file ./output/tables/all_cox_data.dta saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-(note: file /tmp/St00011.00000p not found)
-file /tmp/St00011.00000p saved
+(note: file /tmp/St00015.00000j not found)
+file /tmp/St00015.00000j saved
 (0 real changes made)
 (8 observations deleted)
 (0 real changes made)
@@ -386,28 +384,28 @@ file /tmp/St00011.00000p saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000p saved
+file /tmp/St00015.00000j saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000p saved
+file /tmp/St00015.00000j saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000p saved
+file /tmp/St00015.00000j saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000p saved
+file /tmp/St00015.00000j saved
 
     Result                           # of obs.
     -----------------------------------------
@@ -423,7 +421,7 @@ file /tmp/St00011.00000p saved
 (note: variable outcome was str1, now str7 to accommodate using data's
        values)
 (label _merge already defined)
-file ./output/tables/all_cox_data.dta saved
+file ./output/tables/all_cox_data_1.dta saved
 (19 vars, 8 obs)
 (8 observations deleted)
 (0 real changes made)
@@ -431,8 +429,8 @@ file ./output/tables/all_cox_data.dta saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-(note: file /tmp/St00011.00000v not found)
-file /tmp/St00011.00000v saved
+(note: file /tmp/St00015.00000p not found)
+file /tmp/St00015.00000p saved
 (0 real changes made)
 (8 observations deleted)
 (0 real changes made)
@@ -440,28 +438,28 @@ file /tmp/St00011.00000v saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000v saved
+file /tmp/St00015.00000p saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000v saved
+file /tmp/St00015.00000p saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000v saved
+file /tmp/St00015.00000p saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00000v saved
+file /tmp/St00015.00000p saved
 
     Result                           # of obs.
     -----------------------------------------
@@ -477,7 +475,7 @@ file /tmp/St00011.00000v saved
 (note: variable outcome was str1, now str7 to accommodate using data's
        values)
 (label _merge already defined)
-file ./output/tables/all_cox_data.dta saved
+file ./output/tables/all_cox_data_1.dta saved
 (19 vars, 8 obs)
 (8 observations deleted)
 (0 real changes made)
@@ -485,8 +483,8 @@ file ./output/tables/all_cox_data.dta saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-(note: file /tmp/St00011.000013 not found)
-file /tmp/St00011.000013 saved
+(note: file /tmp/St00015.00000v not found)
+file /tmp/St00015.00000v saved
 (0 real changes made)
 (8 observations deleted)
 (0 real changes made)
@@ -494,28 +492,82 @@ file /tmp/St00011.000013 saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000013 saved
+file /tmp/St00015.00000v saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000013 saved
+file /tmp/St00015.00000v saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000013 saved
+file /tmp/St00015.00000v saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000013 saved
+file /tmp/St00015.00000v saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_1.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000013 not found)
+file /tmp/St00015.000013 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000013 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000013 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000013 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000013 saved
 
     Result                           # of obs.
     -----------------------------------------
@@ -529,7 +581,7 @@ file /tmp/St00011.000013 saved
 (note: variable outcome was str1, now str7 to accommodate using data's
        values)
 (label _merge already defined)
-file ./output/tables/all_cox_data.dta saved
+file ./output/tables/all_cox_data_1.dta saved
 (19 vars, 8 obs)
 (8 observations deleted)
 (0 real changes made)
@@ -537,8 +589,8 @@ file ./output/tables/all_cox_data.dta saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-(note: file /tmp/St00011.000019 not found)
-file /tmp/St00011.000019 saved
+(note: file /tmp/St00015.000019 not found)
+file /tmp/St00015.000019 saved
 (0 real changes made)
 (8 observations deleted)
 (0 real changes made)
@@ -546,28 +598,28 @@ file /tmp/St00011.000019 saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000019 saved
+file /tmp/St00015.000019 saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000019 saved
+file /tmp/St00015.000019 saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000019 saved
+file /tmp/St00015.000019 saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.000019 saved
+file /tmp/St00015.000019 saved
 
     Result                           # of obs.
     -----------------------------------------
@@ -581,7 +633,7 @@ file /tmp/St00011.000019 saved
 (note: variable outcome was str1, now str7 to accommodate using data's
        values)
 (label _merge already defined)
-file ./output/tables/all_cox_data.dta saved
+file ./output/tables/all_cox_data_1.dta saved
 (19 vars, 8 obs)
 (8 observations deleted)
 (0 real changes made)
@@ -589,8 +641,8 @@ file ./output/tables/all_cox_data.dta saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-(note: file /tmp/St00011.00001f not found)
-file /tmp/St00011.00001f saved
+(note: file /tmp/St00015.00001f not found)
+file /tmp/St00015.00001f saved
 (0 real changes made)
 (8 observations deleted)
 (0 real changes made)
@@ -598,28 +650,28 @@ file /tmp/St00011.00001f saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00001f saved
+file /tmp/St00015.00001f saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00001f saved
+file /tmp/St00015.00001f saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00001f saved
+file /tmp/St00015.00001f saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00001f saved
+file /tmp/St00015.00001f saved
 
     Result                           # of obs.
     -----------------------------------------
@@ -633,7 +685,7 @@ file /tmp/St00011.00001f saved
 (note: variable outcome was str1, now str7 to accommodate using data's
        values)
 (label _merge already defined)
-file ./output/tables/all_cox_data.dta saved
+file ./output/tables/all_cox_data_1.dta saved
 (19 vars, 8 obs)
 (8 observations deleted)
 (0 real changes made)
@@ -641,8 +693,8 @@ file ./output/tables/all_cox_data.dta saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-(note: file /tmp/St00011.00001l not found)
-file /tmp/St00011.00001l saved
+(note: file /tmp/St00015.00001l not found)
+file /tmp/St00015.00001l saved
 (0 real changes made)
 (8 observations deleted)
 (0 real changes made)
@@ -650,28 +702,28 @@ file /tmp/St00011.00001l saved
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00001l saved
+file /tmp/St00015.00001l saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00001l saved
+file /tmp/St00015.00001l saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00001l saved
+file /tmp/St00015.00001l saved
 (8 observations deleted)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (0 real changes made)
 (note: dataset contains 0 observations)
-file /tmp/St00011.00001l saved
+file /tmp/St00015.00001l saved
 
     Result                           # of obs.
     -----------------------------------------
@@ -685,222 +737,2323 @@ file /tmp/St00011.00001l saved
 (note: variable outcome was str1, now str7 to accommodate using data's
        values)
 (label _merge already defined)
-file ./output/tables/all_cox_data.dta saved
-(19 vars, 8 obs)
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-(note: file /tmp/St00011.00001r not found)
-file /tmp/St00011.00001r saved
-(0 real changes made)
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.00001r saved
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.00001r saved
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.00001r saved
-(8 observations deleted)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(0 real changes made)
-(note: dataset contains 0 observations)
-file /tmp/St00011.00001r saved
-
-    Result                           # of obs.
-    -----------------------------------------
-    not matched                             8
-        from master                         8  (_merge==1)
-        from using                          0  (_merge==2)
-
-    matched                                 0  (_merge==3)
-    -----------------------------------------
-(note: variable group was str1, now str13 to accommodate using data's values)
-(note: variable outcome was str1, now str7 to accommodate using data's
-       values)
-(label _merge already defined)
-file ./output/tables/all_cox_data.dta saved
-
-. 
-. replace denominator="redacted" if denominator=="redact"
+file ./output/tables/all_cox_data_1.dta saved
 variable denominator was str6 now str8
-(16 real changes made)
-
-. gen ethnic_order = 1 if ethnic_group=="White"
-(88 missing values generated)
-
-. replace ethnic_order=2 if ethnic_group=="Asian"
+(12 real changes made)
+(80 missing values generated)
 (0 real changes made)
-
-. replace ethnic_order=3 if ethnic_group=="Black"
 (0 real changes made)
-
-. replace ethnic_order=4 if ethnic_group=="Mixed"
 (0 real changes made)
-
-. replace ethnic_order=5 if ethnic_group=="Other"
 (0 real changes made)
-
-. gen time_order=1 if period=="pre"
-(77 missing values generated)
-
-. replace time_order=2 if period=="pandemic"
-(11 real changes made)
-
-. replace time_order=3 if period=="wave1"
-(11 real changes made)
-
-. replace time_order=4 if period=="easing1"
-(11 real changes made)
-
-. replace time_order=5 if period=="wave2"
-(11 real changes made)
-
-. replace time_order=6 if period=="easing2"
-(11 real changes made)
-
-. replace time_order=7 if period=="wave3"
-(11 real changes made)
-
-. replace time_order=8 if period=="easing3"
-(11 real changes made)
-
-. * Update period variable
-. gen period_n="Pre" if period=="pre"
-(77 missing values generated)
-
-. replace period_n="Pandemic" if period=="pandemic"
+(70 missing values generated)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(70 missing values generated)
 variable period_n was str3 now str8
-(11 real changes made)
-
-. replace period_n="Wave 1" if period=="wave1"
-(11 real changes made)
-
-. replace period_n="Easing 1" if period=="easing1"
-(11 real changes made)
-
-. replace period_n="Wave 2" if period=="wave2"
-(11 real changes made)
-
-. replace period_n="Easing 2" if period=="easing2"
-(11 real changes made)
-
-. replace period_n="Wave 3" if period=="wave3"
-(11 real changes made)
-
-. replace period_n="Easing 3" if period=="easing3"
-(11 real changes made)
-
-. drop period
-
-. replace group= "Mental Health" if group == "MH"
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
 (0 real changes made)
-
-. gen outcome_n = "Stroke" if outcome=="stroke"
-(88 missing values generated)
-
-. replace outcome_n = "VTE" if outcome=="vte"
+(80 missing values generated)
 (0 real changes made)
-
-. replace outcome_n = "Heart failure" if outcome=="hf"
 (0 real changes made)
-
-. replace outcome_n = "MI" if outcome=="mi"
 (0 real changes made)
-
-. replace outcome_n = "DKA" if outcome=="dm_keto"
 (0 real changes made)
-
-. replace outcome_n = "T1 DM" if outcome=="t1dm"
 (0 real changes made)
-
-. replace outcome_n = "T2 DM" if outcome=="t2dm"
 (0 real changes made)
-
-. replace outcome_n = "Anxiety" if outcome=="Anxiety"
 variable outcome_n was str1 now str7
 (8 real changes made)
-
-. replace outcome_n = "Depression" if outcome=="depress"
 (0 real changes made)
-
-. replace outcome_n = "Asthma" if outcome=="asthma"
 (0 real changes made)
-
-. replace outcome_n = "COPD" if outcome=="copd"
 (0 real changes made)
+(note: file \all_cox_data_inc_ci_1.csv not found)
+file \all_cox_data_inc_ci_1.csv saved
+file ./output/tables/all_cox_data_1.dta saved
+(note: file ./output/tables/all_cox_data_1.csv not found)
+file ./output/tables/all_cox_data_1.csv saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00001r not found)
+file /tmp/St00015.00001r saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00001r saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00001r saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00001r saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00001r saved
 
-. drop outcome
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
 
-. order group outcome_n period_n ethnic_group
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: file ./output/tables/all_cox_data_2.dta not found)
+file ./output/tables/all_cox_data_2.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00001x not found)
+file /tmp/St00015.00001x saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00001x saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00001x saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00001x saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00001x saved
 
-. sort group outcome_n time_order ethnic_order
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
 
-. drop time_order ethnic_order
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_2.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000025 not found)
+file /tmp/St00015.000025 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000025 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000025 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000025 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000025 saved
 
-. rename ethnic_group Ethnicity
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
 
-. rename period_n Period
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_2.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00002b not found)
+file /tmp/St00015.00002b saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002b saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002b saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002b saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002b saved
 
-. rename group Group
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
 
-. rename outcome_n Outcome
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_2.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00002h not found)
+file /tmp/St00015.00002h saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002h saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002h saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002h saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002h saved
 
-. rename denominator Denominator
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
 
-. rename rate Rate
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_2.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00002n not found)
+file /tmp/St00015.00002n saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002n saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002n saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002n saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002n saved
 
-. rename f_adj_lci F_adj_lci
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
 
-. rename f_adj_uci F_adj_uci
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_2.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00002t not found)
+file /tmp/St00015.00002t saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002t saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002t saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002t saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00002t saved
 
-. rename f_adj_hr F_adj_hr
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
 
-. rename p_adj_lci P_adj_lci
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_2.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000031 not found)
+file /tmp/St00015.000031 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000031 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000031 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000031 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000031 saved
 
-. rename p_adj_uci P_adj_uci
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
 
-. rename p_adj_hr P_adj_hr
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_2.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000037 not found)
+file /tmp/St00015.000037 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000037 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000037 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000037 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000037 saved
 
-. drop v* number _merge
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
 
-. * Export data for table including confidence intervals
-. export delimited using "$savedir\table_data_20220812.csv", replace
-(note: file \table_data_20220812.csv not found)
-file \table_data_20220812.csv saved
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_2.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00003d not found)
+file /tmp/St00015.00003d saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003d saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003d saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003d saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003d saved
 
-. * drop formated confidence intervals
-. drop unadj_ci p_adj_ci f_adj_ci
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
 
-. save "./output/tables/all_cox_data", replace
-file ./output/tables/all_cox_data.dta saved
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_2.dta saved
+variable denominator was str6 now str8
+(12 real changes made)
+(80 missing values generated)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(70 missing values generated)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(70 missing values generated)
+variable period_n was str3 now str8
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(0 real changes made)
+(80 missing values generated)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+variable outcome_n was str1 now str7
+(8 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: file \all_cox_data_inc_ci_2.csv not found)
+file \all_cox_data_inc_ci_2.csv saved
+file ./output/tables/all_cox_data_2.dta saved
+(note: file ./output/tables/all_cox_data_2.csv not found)
+file ./output/tables/all_cox_data_2.csv saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00003j not found)
+file /tmp/St00015.00003j saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003j saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003j saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003j saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003j saved
 
-. export delimited using "./output/tables/all_cox_data.csv", replace
-(note: file ./output/tables/all_cox_data.csv not found)
-file ./output/tables/all_cox_data.csv saved
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: file ./output/tables/all_cox_data_3.dta not found)
+file ./output/tables/all_cox_data_3.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00003p not found)
+file /tmp/St00015.00003p saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003p saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003p saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003p saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003p saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_3.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00003v not found)
+file /tmp/St00015.00003v saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003v saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003v saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003v saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00003v saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_3.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000043 not found)
+file /tmp/St00015.000043 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000043 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000043 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000043 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000043 saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_3.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000049 not found)
+file /tmp/St00015.000049 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000049 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000049 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000049 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000049 saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_3.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00004f not found)
+file /tmp/St00015.00004f saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004f saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004f saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004f saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004f saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_3.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00004l not found)
+file /tmp/St00015.00004l saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004l saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004l saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004l saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004l saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_3.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00004r not found)
+file /tmp/St00015.00004r saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004r saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004r saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004r saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004r saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_3.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00004x not found)
+file /tmp/St00015.00004x saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004x saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004x saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004x saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00004x saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_3.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000055 not found)
+file /tmp/St00015.000055 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000055 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000055 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000055 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000055 saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_3.dta saved
+variable denominator was str6 now str8
+(12 real changes made)
+(80 missing values generated)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(70 missing values generated)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(70 missing values generated)
+variable period_n was str3 now str8
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(0 real changes made)
+(80 missing values generated)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+variable outcome_n was str1 now str7
+(8 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: file \all_cox_data_inc_ci_3.csv not found)
+file \all_cox_data_inc_ci_3.csv saved
+file ./output/tables/all_cox_data_3.dta saved
+(note: file ./output/tables/all_cox_data_3.csv not found)
+file ./output/tables/all_cox_data_3.csv saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00005b not found)
+file /tmp/St00015.00005b saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005b saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005b saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005b saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005b saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: file ./output/tables/all_cox_data_4.dta not found)
+file ./output/tables/all_cox_data_4.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00005h not found)
+file /tmp/St00015.00005h saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005h saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005h saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005h saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005h saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_4.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00005n not found)
+file /tmp/St00015.00005n saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005n saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005n saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005n saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005n saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_4.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00005t not found)
+file /tmp/St00015.00005t saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005t saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005t saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005t saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00005t saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_4.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000061 not found)
+file /tmp/St00015.000061 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000061 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000061 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000061 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000061 saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_4.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000067 not found)
+file /tmp/St00015.000067 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000067 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000067 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000067 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000067 saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_4.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00006d not found)
+file /tmp/St00015.00006d saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006d saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006d saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006d saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006d saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_4.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00006j not found)
+file /tmp/St00015.00006j saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006j saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006j saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006j saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006j saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_4.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00006p not found)
+file /tmp/St00015.00006p saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006p saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006p saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006p saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006p saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_4.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00006v not found)
+file /tmp/St00015.00006v saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006v saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006v saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006v saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00006v saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_4.dta saved
+variable denominator was str6 now str8
+(12 real changes made)
+(80 missing values generated)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(70 missing values generated)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(70 missing values generated)
+variable period_n was str3 now str8
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(0 real changes made)
+(80 missing values generated)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+variable outcome_n was str1 now str7
+(8 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: file \all_cox_data_inc_ci_4.csv not found)
+file \all_cox_data_inc_ci_4.csv saved
+file ./output/tables/all_cox_data_4.dta saved
+(note: file ./output/tables/all_cox_data_4.csv not found)
+file ./output/tables/all_cox_data_4.csv saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000073 not found)
+file /tmp/St00015.000073 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000073 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000073 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000073 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000073 saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: file ./output/tables/all_cox_data_5.dta not found)
+file ./output/tables/all_cox_data_5.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000079 not found)
+file /tmp/St00015.000079 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000079 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000079 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000079 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000079 saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_5.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00007f not found)
+file /tmp/St00015.00007f saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007f saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007f saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007f saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007f saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_5.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00007l not found)
+file /tmp/St00015.00007l saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007l saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007l saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007l saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007l saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_5.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00007r not found)
+file /tmp/St00015.00007r saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007r saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007r saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007r saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007r saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_5.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00007x not found)
+file /tmp/St00015.00007x saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007x saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007x saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007x saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00007x saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable denominator was str1, now str6 to accommodate using data's
+       values)
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_5.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.000085 not found)
+file /tmp/St00015.000085 saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000085 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000085 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000085 saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.000085 saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_5.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00008b not found)
+file /tmp/St00015.00008b saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008b saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008b saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008b saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008b saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_5.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00008h not found)
+file /tmp/St00015.00008h saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008h saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008h saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008h saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008h saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_5.dta saved
+(19 vars, 8 obs)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+(note: file /tmp/St00015.00008n not found)
+file /tmp/St00015.00008n saved
+(0 real changes made)
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008n saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008n saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008n saved
+(8 observations deleted)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: dataset contains 0 observations)
+file /tmp/St00015.00008n saved
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             8
+        from master                         8  (_merge==1)
+        from using                          0  (_merge==2)
+
+    matched                                 0  (_merge==3)
+    -----------------------------------------
+(note: variable group was str1, now str13 to accommodate using data's values)
+(note: variable outcome was str1, now str7 to accommodate using data's
+       values)
+(label _merge already defined)
+file ./output/tables/all_cox_data_5.dta saved
+variable denominator was str6 now str8
+(12 real changes made)
+(80 missing values generated)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(70 missing values generated)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(70 missing values generated)
+variable period_n was str3 now str8
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(10 real changes made)
+(0 real changes made)
+(80 missing values generated)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+variable outcome_n was str1 now str7
+(8 real changes made)
+(0 real changes made)
+(0 real changes made)
+(0 real changes made)
+(note: file \all_cox_data_inc_ci_5.csv not found)
+file \all_cox_data_inc_ci_5.csv saved
+file ./output/tables/all_cox_data_5.dta saved
+(note: file ./output/tables/all_cox_data_5.csv not found)
+file ./output/tables/all_cox_data_5.csv saved
 
 . 
 end of do-file
 
-. . file open output using "/tmp/tmp.m6vUkCZ8cm", write text replace
+. . file open output using "/tmp/304_prep_r_vis.do.nc36.out", write text replac
+> e
 
 . . file write output "success" 
 

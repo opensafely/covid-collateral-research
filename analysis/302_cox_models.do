@@ -16,7 +16,7 @@ cap mkdir ./output/tables
 di "`outcome'"
 
 * open file to write results to
-* Open loop for each reference category 
+* Reviewer comment response: Open loop over using each ethnic group as the reference category 
 forvalues i=1/5 {
 file open tablecontent using ./output/tables/`outcome'_`i'_cox_models.txt, write text replace
 file write tablecontent ("period") _tab ("ethnic_group") _tab ("denominator") _tab ("events") _tab ("total_person_wks") _tab ("Rate") _tab ("unadj_hr") _tab ///
@@ -47,7 +47,7 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
         stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index_date) origin(index_date) 
         * Kaplan-Meier plot
         sts graph, by(eth5) ylabel(.75(.05)1)
-        graph export ./output/graphs/km_`outcome'_`period'_eth.svg, as(svg) replace
+        graph export ./output/graphs/km_`outcome'_`period'_eth`i'.svg, as(svg) replace
         * Cox model - crude
         stcox ib`i'.eth5, strata(stp)
         estimates save "./output/tempdata/crude_`outcome'_eth", replace 
@@ -135,7 +135,7 @@ else {
     continue
 }
 }
-} //end outcomes
-file close tablecontent
 
+file close tablecontent
+} //end outcomes
 log close
