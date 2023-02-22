@@ -71,8 +71,8 @@ forvalues j=1/5 {
 	save ./output/tables/all_cox_data_`j', replace
 
 	* add mi back in when upload
-	local a "depress asthma copd dm_keto t1dm t2dm hf stroke vte"
-	local b "MH Respiratory Respiratory Diabetes Diabetes Diabetes Cardiovascular_hfmi Cardiovascular Cardiovascular" 
+	local a "depress asthma copd dm_keto t1dm t2dm hf mi stroke vte"
+	local b "MH Respiratory Respiratory Diabetes Diabetes Diabetes Cardiovascular_hfmi Cardiovascular_hfmi Cardiovascular Cardiovascular" 
 	forvalues i=1/9 {
 		local outcome: word `i' of `a'
 		local category: word `i' of `b'

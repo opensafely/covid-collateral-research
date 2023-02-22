@@ -387,7 +387,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_mi.log
         output: output/tables/mi*.txt
-        #graph: output/graphs/km_mi*.svg
+        graph: output/graphs/km_mi*.svg
   
   cox_models_stroke:
     run: stata-mp:latest analysis/302_cox_models.do "stroke"
@@ -396,7 +396,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_stroke.log
         output: output/tables/stroke*.txt
-        #graph: output/graphs/km_stroke*.svg
+        graph: output/graphs/km_stroke*.svg
 
   cox_models_heart_failure:
     run: stata-mp:latest analysis/302_cox_models.do "hf"
@@ -405,7 +405,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_hf.log
         output: output/tables/hf*.txt
-        #graph: output/graphs/km_hf*.svg
+        graph: output/graphs/km_hf*.svg
 
   cox_models_vte:
     run: stata-mp:latest analysis/302_cox_models.do "vte"
@@ -414,7 +414,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_vte.log
         output: output/tables/vte*.txt
-        #graph: output/graphs/km_vte*.svg
+        graph: output/graphs/km_vte*.svg
 
   cox_models_t1dm:
     run: stata-mp:latest analysis/302_cox_models.do "t1dm"
@@ -423,7 +423,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_t1dm.log
         output: output/tables/t1dm*.txt
-        #graph: output/graphs/km_t1dm*.svg
+        graph: output/graphs/km_t1dm*.svg
 
   cox_models_t2dm:
     run: stata-mp:latest analysis/302_cox_models.do "t2dm"
@@ -432,7 +432,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_t2dm.log
         output: output/tables/t2dm*.txt
-        #graph: output/graphs/km_t2dm*.svg
+        graph: output/graphs/km_t2dm*.svg
 
   cox_models_dm_keto:
     run: stata-mp:latest analysis/302_cox_models.do "dm_keto"
@@ -441,7 +441,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_dm_keto.log
         output: output/tables/dm_keto*.txt
-        #graph: output/graphs/km_dm_keto*.svg
+        graph: output/graphs/km_dm_keto*.svg
 
   cox_models_dm:
     run: stata-mp:latest analysis/302_cox_models.do "dm"
@@ -450,7 +450,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_dm.log
         output: output/tables/dm*.txt
-        #graph: output/graphs/km_dm*.svg
+        graph: output/graphs/km_dm*.svg
 
   cox_models_asthma:
     run: stata-mp:latest analysis/302_cox_models.do "asthma"
@@ -459,7 +459,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_asthma.log
         output: output/tables/asthma*.txt
-        #graph: output/graphs/km_asthma*.svg
+        graph: output/graphs/km_asthma*.svg
 
   cox_models_copd:
     run: stata-mp:latest analysis/302_cox_models.do "copd"
@@ -468,7 +468,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_copd.log
         output: output/tables/copd*.txt
-       # graph: output/graphs/km_copd*.svg
+        graph: output/graphs/km_copd*.svg
 
   cox_models_depress:
     run: stata-mp:latest analysis/302_cox_models.do "depress"
@@ -477,7 +477,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_depress.log
         output: output/tables/depress*.txt
-        #graph: output/graphs/km_depress*.svg
+        graph: output/graphs/km_depress*.svg
 
   cox_models_anx:
     run: stata-mp:latest analysis/302_cox_models.do "anx"
@@ -486,7 +486,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_anx.log
         output: output/tables/anx*.txt
-       # graph: output/graphs/km_anx*.svg
+        graph: output/graphs/km_anx*.svg
 
   cox_models_smi:
     run: stata-mp:latest analysis/302_cox_models.do "smi"
@@ -495,7 +495,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_smi.log
         output: output/tables/smi*.txt
-       # graph: output/graphs/km_smi*.svg
+        graph: output/graphs/km_smi*.svg
 
   cox_models_mh:
     run: stata-mp:latest analysis/302_cox_models.do "mh"
@@ -504,7 +504,7 @@ actions:
       moderately_sensitive:
         log: logs/cox_model_mh.log
         output: output/tables/mh*.txt
-        #graph: output/graphs/km_mh*.svg
+        graph: output/graphs/km_mh*.svg
 
   cox_models_graphs:
     run: stata-mp:latest analysis/303_cox_models_graphs.do
