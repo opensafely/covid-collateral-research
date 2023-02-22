@@ -16,7 +16,9 @@ cap mkdir ./output/tables
 di "`outcome'"
 
 * open file to write results to
-file open tablecontent using ./output/tables/`outcome'_cox_models.txt, write text replace
+* Reviewer comment response: Open loop over using each ethnic group as the reference category 
+forvalues i=1/5 {
+file open tablecontent using ./output/tables/`outcome'_`i'_cox_models.txt, write text replace
 file write tablecontent ("period") _tab ("ethnic_group") _tab ("denominator") _tab ("events") _tab ("total_person_wks") _tab ("Rate") _tab ("unadj_hr") _tab ///
 ("unadj_ci") _tab ("unadj_lci") _tab ("unadj_uci") _tab ("p_adj_hr") _tab ("p_adj_ci") _tab ("p_adj_lci") _tab ("p_adj_uci") _tab ("f_adj_hr") _tab ("f_adj_ci") _tab ("f_adj_lci") _tab ("f_adj_uci") _tab  _n
 
@@ -45,26 +47,26 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
         stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index_date) origin(index_date) 
         * Kaplan-Meier plot
         sts graph, by(eth5) ylabel(.75(.05)1)
-        graph export ./output/graphs/km_`outcome'_`period'_eth.svg, as(svg) replace
+        graph export ./output/graphs/km_`outcome'_`period'_eth`i'.svg, as(svg) replace
         * Cox model - crude
-        stcox i.eth5, strata(stp)
+        stcox ib`i'.eth5, strata(stp)
         estimates save "./output/tempdata/crude_`outcome'_eth", replace 
         eststo model1
         parmest, label eform format(estimate p lb ub) saving("./output/tempdata/surv_crude_`outcome'_eth", replace) idstr("crude_`outcome'_eth") 
         *estat phtest, detail
         * Cox model - age and gender adjusted
-        stcox i.eth5 i.age_cat i.male, strata(stp)
+        stcox ib`i'.eth5 i.age_cat i.male, strata(stp)
         estimates save "./output/tempdata/model1_`outcome'_eth", replace 
         eststo model2
         parmest, label eform format(estimate p lb ub) saving("./output/tempdata/surv_model1_`outcome'_eth", replace) idstr("model1_`outcome'_eth") 
         *estat phtest, detail
         * Cox model - fully adjusted
-        stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp)
+        stcox ib`i'.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp)
         estimates save "./output/tempdata/model2_`outcome'_eth", replace 
         eststo model3
         parmest, label eform format(estimate p lb ub) saving("./output/tempdata/surv_model2_`outcome'_eth", replace) idstr("model2_`outcome'_eth") 
         *estat phtest, detail
-        esttab model1 model2 model3 using "./output/tables/`outcome'_estout_table_eth_`period'.txt", b(a2) ci(2) label wide compress eform ///
+        esttab model1 model2 model3 using "./output/tables/`outcome'_`i'_estout_table_eth_`period'.txt", b(a2) ci(2) label wide compress eform ///
         title ("`outcome'") ///
         varlabels(`e(labels)') ///
         stats(N_outcome) ///
@@ -132,7 +134,8 @@ else {
     file write tablecontent ("`period'") _tab ("redact") _n
     continue
 }
-} //end outcomes
-file close tablecontent
+}
 
+file close tablecontent
+} //end outcomes
 log close

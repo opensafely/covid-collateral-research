@@ -14,15 +14,17 @@ cap mkdir ./output/time_series
 * Clinical monitoring: BP measurement
 * Hospital admissions: any code and primary code for depression, anxiety, smi, self harm, eating disorders, OCD
 * Likely to need to update file paths as ethnicity 3-monthly
-local a "bp_meas_mh depression_admission anxiety_admission smi_admission self_harm_admission eating_dis_admission ocd_admission" 
-local z "bp_mh depress_admit anx_admit smi_admit sh_admit eat_dis_admit ocd_admit"
-forvalues i=1/7 {
+local a "bp_meas_mh /*depression_admission anxiety_admission smi_admission self_harm_admission eating_dis_admission ocd_admission*/" 
+local z "bp_mh /*depress_admit anx_admit smi_admit sh_admit eat_dis_admit ocd_admit*/"
+forvalues i=1/1 {
     local c: word `i' of `a' 
 	local e: word `i' of `z'
 	local b "ethnicity imd"
 	forvalues i=1/2 {
     	local d: word `i' of `b'
 		import delimited "./output/measures/mh/measure_`c'_`d'_rate.csv", numericcols(4) clear	//get csv
+		drop if `d'==0 | `d'==.
+        drop if mh_subgroup==0
 		gen temp_date=date(date, "YMD")
 		format temp_date %td
 		gen postcovid=(temp_date>=date("23/03/2020", "DMY"))
@@ -62,7 +64,7 @@ forvalues i=1/7 {
 		}
 	}
 
-* Primary and emergency admissions by ethnicity
+/* Primary and emergency admissions by ethnicity
 local a "depression_primary_admission anxiety_primary_admission smi_primary_admission self_harm_primary_admission anxiety_emergency smi_emergency self_harm_emergency"
 local b "depress anxiety smi sh anx_emergency smi_emergency sh_emergency"
 forvalues i=1/7 {
@@ -151,6 +153,6 @@ forvalues i=1/7 {
 	graph combine pac_imd_1_`d' pac_imd_2_`d' pac_imd_3_`d' pac_imd_4_`d' pac_imd_5_`d', altshrink
 	graph export ./output/time_series/mh_pac_`c'_imd.svg, as(svg) replace
 	}
-
+*/
 
 log close
