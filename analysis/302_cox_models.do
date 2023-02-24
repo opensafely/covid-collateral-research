@@ -86,9 +86,9 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
         qui safecount if eth5==1
         local denominator = r(N)
         qui safecount if eth5 == 1 & `outcome'_admit == 1
-        local event = r(N)
+        local event = r(N)*/
         bysort eth5: egen total_follow_up = total(_t)
-        qui su total_follow_up if eth5 == 1
+        /*qui su total_follow_up if eth5 == 1
         local person_mth = r(mean)/30
         local rate = 100000*(`event'/`person_mth')
         if `event'>10 & `event'!=. {
