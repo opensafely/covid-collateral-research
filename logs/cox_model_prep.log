@@ -100,11 +100,11 @@
  61. 
 .     * Reorder ethnicity - white, asian, black, mixed, other
 .     *re-order ethnicity
-.     gen eth5=1 if ethnicity=="1"
- 62.     replace eth5=2 if ethnicity=="3"
- 63.     replace eth5=3 if ethnicity=="4"
- 64.     replace eth5=4 if ethnicity=="2"
- 65.     replace eth5=5 if ethnicity=="5"
+.     gen eth5=1 if ethnicity==1
+ 62.     replace eth5=2 if ethnicity==3
+ 63.     replace eth5=3 if ethnicity==4
+ 64.     replace eth5=4 if ethnicity==2
+ 65.     replace eth5=5 if ethnicity==5
  66.     replace eth5=. if ethnicity==.
  67. 
 .     label define eth5                   1 "White"                            
@@ -211,7 +211,7 @@ anxiety_prima~n str10   %10s
 smi_primary_a~n str10   %10s                  
 self_harm_pri~n str10   %10s                  
 stp             str4    %9s                   
-age             str3    %9s                   
+age             str2    %9s                   
 sex             str1    %9s                   
 eth             str1    %9s                   
 ethnicity_sus   str1    %9s                   
@@ -239,59 +239,59 @@ Sorted by:
      Note: Dataset has changed since last saved.
 (950 missing values generated)
 number of missing values
+  976
+(976 missing values generated)
+number of missing values
+  980
+(980 missing values generated)
+number of missing values
+  977
+(977 missing values generated)
+number of missing values
+  977
+(977 missing values generated)
+number of missing values
   982
 (982 missing values generated)
-number of missing values
-  979
-(979 missing values generated)
-number of missing values
-  976
-(976 missing values generated)
-number of missing values
-  976
-(976 missing values generated)
-number of missing values
-  971
-(971 missing values generated)
-number of missing values
-  975
-(975 missing values generated)
-number of missing values
-  970
-(970 missing values generated)
-number of missing values
-  971
-(971 missing values generated)
-number of missing values
-  976
-(976 missing values generated)
-number of missing values
-  979
-(979 missing values generated)
 number of missing values
   978
 (978 missing values generated)
 number of missing values
-  916
-(916 missing values generated)
+  981
+(981 missing values generated)
 number of missing values
-  921
-(921 missing values generated)
+  986
+(986 missing values generated)
 number of missing values
-  959
-(959 missing values generated)
-number of missing values
-  908
-(908 missing values generated)
-number of missing values
-  950
-(950 missing values generated)
+  984
+(984 missing values generated)
 number of missing values
   979
 (979 missing values generated)
 number of missing values
-  977
-(977 missing values generated)
+  980
+(980 missing values generated)
+number of missing values
+  914
+(914 missing values generated)
+number of missing values
+  942
+(942 missing values generated)
+number of missing values
+  958
+(958 missing values generated)
+number of missing values
+  923
+(923 missing values generated)
+number of missing values
+  950
+(950 missing values generated)
+number of missing values
+  978
+(978 missing values generated)
+number of missing values
+  985
+(985 missing values generated)
 
   lrti_copd |      Freq.     Percent        Cum.
 ------------+-----------------------------------
@@ -321,11 +321,6 @@ number of missing values
      +------------+
 Number where end date is prior to index
   0
-(790 missing values generated)
-(198 real changes made)
-(195 real changes made)
-(173 real changes made)
-(224 real changes made)
 type mismatch
 r(109);
 

@@ -82,7 +82,7 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
         local lab5: label eth5 5
         /* counts */
         
-        * First row, eth16 = 1 (White British) reference cat
+        /* First row, eth16 = 1 (White British) reference cat - section no longer correct loop through 1-5 below
         qui safecount if eth5==1
         local denominator = r(N)
         qui safecount if eth5 == 1 & `outcome'_admit == 1
@@ -98,9 +98,9 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
         else {
             file write tablecontent ("`period'") _tab ("`lab`eth''") _tab ("redact") _n
             continue
-        }
-    * outcomesequent ethnic groups
-        forvalues eth=2/5 {
+        }*/
+    * outcomes all ethnic groups
+        forvalues eth=1/5 {
             qui safecount if eth5==`eth'
             local denominator = r(N)
             qui safecount if eth5 == `eth' & `outcome'_admit == 1
