@@ -42,8 +42,9 @@ foreach v in hba1c systolic_bp bp_meas {
 
     * Reviewer comments plotting first derivative i.e. difference between current rate and previous months rate
     forvalues i=1/5 {
+        sort dateA
         gen first_derivative`i' = rate`i' - rate`i'[_n-1]
-    }
+        }
     * Label variables 
     label var first_derivative1 "White"
     label var first_derivative2 "Mixed"
