@@ -43,6 +43,25 @@ foreach this_group in cvd mh {
         title("Ethnic categories", size(small))) graphregion(fcolor(white))
 
         graph export ./output/graphs/line_`this_group'_bp_ethnic.svg, as(svg) replace
+
+        * Reviewer comments plotting first derivative i.e. difference between current rate and previous months rate
+        forvalues i=1/5 {
+            gen first_derivative`i' = rate`i' - rate`i'[_n-1]
+        }
+        * Label variables 
+        label var first_derivative1 "White"
+        label var first_derivative2 "Mixed"
+        label var first_derivative3 "Asian"
+        label var first_derivative4 "Black"
+        label var first_derivative5 "Other"
+        * Plot this
+        graph twoway line first_derivative1 first_derivative2 first_derivative3 first_derivative4 first_derivative5 date, tlabel(01Jan2018(120)01Apr2022, angle(45) ///
+        format(%dM-CY) labsize(small)) ytitle("Difference per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
+        angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) ///
+        title("Ethnic categories", size(small))) graphregion(fcolor(white))
+
+        graph export ./output/graphs/line_`this_group'_bp_diff_ethnic.svg, as(svg) replace
+
     /* IMD
     clear 
     import delimited using ./output/measures/`this_group'/measure_bp_meas_`this_group'_imd_rate.csv, numericcols(4)

@@ -38,8 +38,26 @@ foreach v in hba1c systolic_bp bp_meas {
     title("Ethnic categories", size(small))) graphregion(fcolor(white))
  
 
-    graph export ./output/graphs/line_dm_ethnic_`v'.svg, as(svg) replace
-    * IMD
+    graph export ./output/graphs/line_dm_ethnic_`v'.svg, as(svg) replace 
+
+    * Reviewer comments plotting first derivative i.e. difference between current rate and previous months rate
+    forvalues i=1/5 {
+        gen first_derivative`i' = rate`i' - rate`i'[_n-1]
+    }
+    * Label variables 
+    label var first_derivative1 "White"
+    label var first_derivative2 "Mixed"
+    label var first_derivative3 "Asian"
+    label var first_derivative4 "Black"
+    label var first_derivative5 "Other"
+    * Plot this
+    graph twoway line first_derivative1 first_derivative2 first_derivative3 first_derivative4 first_derivative5 date, tlabel(01Jan2018(120)01Apr2022, angle(45) ///
+    format(%dM-CY) labsize(small)) ytitle("Difference per 100,000") xtitle("Date") ylabel(#5, labsize(small) ///
+    angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small) ///
+    title("Ethnic categories", size(small))) graphregion(fcolor(white))
+
+    graph export ./output/graphs/line_dm_`v'_diff_ethnic.svg, as(svg) replace
+    /* IMD
     clear 
     import delimited using ./output/measures/dm/measure_dm_`v'_imd_rate.csv, numericcols(4)
     * Generate rate per 100,000
@@ -67,7 +85,7 @@ foreach v in hba1c systolic_bp bp_meas {
 
 
     graph export ./output/graphs/line_dm_imd_`v'.svg, as(svg) replace
-
+    */
 }
 /* Generates graphs for DM hospital admissions
 foreach v in primary any /*emergency*/ {
@@ -226,7 +244,7 @@ foreach v in primary any /*emergency*/ {
  
 
     graph export ./output/graphs/line_dm_ethnic_keto_`v'.svg, as(svg) replace
-    */
+    
     * IMD - type 1 DM
     clear 
     import delimited using ./output/measures/dm/measure_dm_keto_`v'_imd_rate.csv
@@ -256,5 +274,5 @@ foreach v in primary any /*emergency*/ {
     graph export ./output/graphs/line_dm_imd_keto_`v'.svg, as(svg) replace
 
 }
-
+*/
 log close
