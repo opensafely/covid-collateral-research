@@ -28,16 +28,40 @@
  15.     label var rate5 "Other"
  16. 
 .     * Generate line graph
-.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
-> 0)01Jan2022, angle(45) ///
+.     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
+> 0)01Apr2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
-> ylabel(, labsize(small) ///
+> ylabel(#5, labsize(small) ///
 >     angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small
-> ) title("Ethnic categories", size(small)))
+> ) ///
+>     title("Ethnic categories", size(small))) graphregion(fcolor(white))
  17.  
 . 
-.     graph export ./output/graphs/line_dm_ethnic_`v'.svg, as(svg) replace
- 18.     /* IMD
+.     graph export ./output/graphs/line_dm_ethnic_`v'.svg, as(svg) replace 
+ 18. 
+.     * Reviewer comments plotting first derivative i.e. difference between cur
+> rent rate and previous months rate
+.     forvalues i=1/5 {
+ 19.         gen first_derivative`i' = rate`i' - rate`i'[_n-1]
+ 20.     }
+ 21.     * Label variables 
+.     label var first_derivative1 "White"
+ 22.     label var first_derivative2 "Mixed"
+ 23.     label var first_derivative3 "Asian"
+ 24.     label var first_derivative4 "Black"
+ 25.     label var first_derivative5 "Other"
+ 26.     * Plot this
+.     graph twoway line first_derivative1 first_derivative2 first_derivative3 f
+> irst_derivative4 first_derivative5 date, tlabel(01Jan2018(120)01Apr2022, angl
+> e(45) ///
+>     format(%dM-CY) labsize(small)) ytitle("Difference per 100,000") xtitle("D
+> ate") ylabel(#5, labsize(small) ///
+>     angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small
+> ) ///
+>     title("Ethnic categories", size(small))) graphregion(fcolor(white))
+ 27. 
+.     graph export ./output/graphs/line_dm_`v'_diff_ethnic.svg, as(svg) replace
+ 28.     /* IMD
 >     clear 
 >     import delimited using ./output/measures/dm/measure_dm_`v'_imd_rate.csv, 
 > numericcols(4)
@@ -59,75 +83,79 @@
 >     label var rate5 "IMD - 5"
 > 
 >     * Generate line graph
->     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
-> 0)01Jan2022, angle(45) ///
+>     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
+> 0)01Apr2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
-> ylabel(, labsize(small) ///
->     angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) tit
-> le("IMD categories", size(small)))
+> ylabel(#5, labsize(small) ///
+>     angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small
+> ) title("IMD categories", size(small))) ///
+>     graphregion(fcolor(white))
 > 
 > 
 >     graph export ./output/graphs/line_dm_imd_`v'.svg, as(svg) replace
-> */
+>     */
 . }
-(5 vars, 235 obs)
+(5 vars, 250 obs)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-  01mar2018 |          5        2.13        2.13
-  01apr2018 |          5        2.13        4.26
-  01may2018 |          5        2.13        6.38
-  01jun2018 |          5        2.13        8.51
-  01jul2018 |          5        2.13       10.64
-  01aug2018 |          5        2.13       12.77
-  01sep2018 |          5        2.13       14.89
-  01oct2018 |          5        2.13       17.02
-  01nov2018 |          5        2.13       19.15
-  01dec2018 |          5        2.13       21.28
-  01jan2019 |          5        2.13       23.40
-  01feb2019 |          5        2.13       25.53
-  01mar2019 |          5        2.13       27.66
-  01apr2019 |          5        2.13       29.79
-  01may2019 |          5        2.13       31.91
-  01jun2019 |          5        2.13       34.04
-  01jul2019 |          5        2.13       36.17
-  01aug2019 |          5        2.13       38.30
-  01sep2019 |          5        2.13       40.43
-  01oct2019 |          5        2.13       42.55
-  01nov2019 |          5        2.13       44.68
-  01dec2019 |          5        2.13       46.81
-  01jan2020 |          5        2.13       48.94
-  01feb2020 |          5        2.13       51.06
-  01mar2020 |          5        2.13       53.19
-  01apr2020 |          5        2.13       55.32
-  01may2020 |          5        2.13       57.45
-  01jun2020 |          5        2.13       59.57
-  01jul2020 |          5        2.13       61.70
-  01aug2020 |          5        2.13       63.83
-  01sep2020 |          5        2.13       65.96
-  01oct2020 |          5        2.13       68.09
-  01nov2020 |          5        2.13       70.21
-  01dec2020 |          5        2.13       72.34
-  01jan2021 |          5        2.13       74.47
-  01feb2021 |          5        2.13       76.60
-  01mar2021 |          5        2.13       78.72
-  01apr2021 |          5        2.13       80.85
-  01may2021 |          5        2.13       82.98
-  01jun2021 |          5        2.13       85.11
-  01jul2021 |          5        2.13       87.23
-  01aug2021 |          5        2.13       89.36
-  01sep2021 |          5        2.13       91.49
-  01oct2021 |          5        2.13       93.62
-  01nov2021 |          5        2.13       95.74
-  01dec2021 |          5        2.13       97.87
-  01jan2022 |          5        2.13      100.00
+  01mar2018 |          5        2.00        2.00
+  01apr2018 |          5        2.00        4.00
+  01may2018 |          5        2.00        6.00
+  01jun2018 |          5        2.00        8.00
+  01jul2018 |          5        2.00       10.00
+  01aug2018 |          5        2.00       12.00
+  01sep2018 |          5        2.00       14.00
+  01oct2018 |          5        2.00       16.00
+  01nov2018 |          5        2.00       18.00
+  01dec2018 |          5        2.00       20.00
+  01jan2019 |          5        2.00       22.00
+  01feb2019 |          5        2.00       24.00
+  01mar2019 |          5        2.00       26.00
+  01apr2019 |          5        2.00       28.00
+  01may2019 |          5        2.00       30.00
+  01jun2019 |          5        2.00       32.00
+  01jul2019 |          5        2.00       34.00
+  01aug2019 |          5        2.00       36.00
+  01sep2019 |          5        2.00       38.00
+  01oct2019 |          5        2.00       40.00
+  01nov2019 |          5        2.00       42.00
+  01dec2019 |          5        2.00       44.00
+  01jan2020 |          5        2.00       46.00
+  01feb2020 |          5        2.00       48.00
+  01mar2020 |          5        2.00       50.00
+  01apr2020 |          5        2.00       52.00
+  01may2020 |          5        2.00       54.00
+  01jun2020 |          5        2.00       56.00
+  01jul2020 |          5        2.00       58.00
+  01aug2020 |          5        2.00       60.00
+  01sep2020 |          5        2.00       62.00
+  01oct2020 |          5        2.00       64.00
+  01nov2020 |          5        2.00       66.00
+  01dec2020 |          5        2.00       68.00
+  01jan2021 |          5        2.00       70.00
+  01feb2021 |          5        2.00       72.00
+  01mar2021 |          5        2.00       74.00
+  01apr2021 |          5        2.00       76.00
+  01may2021 |          5        2.00       78.00
+  01jun2021 |          5        2.00       80.00
+  01jul2021 |          5        2.00       82.00
+  01aug2021 |          5        2.00       84.00
+  01sep2021 |          5        2.00       86.00
+  01oct2021 |          5        2.00       88.00
+  01nov2021 |          5        2.00       90.00
+  01dec2021 |          5        2.00       92.00
+  01jan2022 |          5        2.00       94.00
+  01feb2022 |          5        2.00       96.00
+  01mar2022 |          5        2.00       98.00
+  01apr2022 |          5        2.00      100.00
 ------------+-----------------------------------
-      Total |        235      100.00
+      Total |        250      100.00
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                      235   ->      47
+Number of obs.                      250   ->      50
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -139,7 +167,7 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:            47                          
+  obs:            50                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
@@ -170,64 +198,74 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/graphs/line_dm_ethnic_hba1c.svg not found)
 (file ./output/graphs/line_dm_ethnic_hba1c.svg written in SVG format)
-(5 vars, 235 obs)
+(1 missing value generated)
+(1 missing value generated)
+(1 missing value generated)
+(1 missing value generated)
+(1 missing value generated)
+(note: file ./output/graphs/line_dm_hba1c_diff_ethnic.svg not found)
+(file ./output/graphs/line_dm_hba1c_diff_ethnic.svg written in SVG format)
+(5 vars, 250 obs)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-  01mar2018 |          5        2.13        2.13
-  01apr2018 |          5        2.13        4.26
-  01may2018 |          5        2.13        6.38
-  01jun2018 |          5        2.13        8.51
-  01jul2018 |          5        2.13       10.64
-  01aug2018 |          5        2.13       12.77
-  01sep2018 |          5        2.13       14.89
-  01oct2018 |          5        2.13       17.02
-  01nov2018 |          5        2.13       19.15
-  01dec2018 |          5        2.13       21.28
-  01jan2019 |          5        2.13       23.40
-  01feb2019 |          5        2.13       25.53
-  01mar2019 |          5        2.13       27.66
-  01apr2019 |          5        2.13       29.79
-  01may2019 |          5        2.13       31.91
-  01jun2019 |          5        2.13       34.04
-  01jul2019 |          5        2.13       36.17
-  01aug2019 |          5        2.13       38.30
-  01sep2019 |          5        2.13       40.43
-  01oct2019 |          5        2.13       42.55
-  01nov2019 |          5        2.13       44.68
-  01dec2019 |          5        2.13       46.81
-  01jan2020 |          5        2.13       48.94
-  01feb2020 |          5        2.13       51.06
-  01mar2020 |          5        2.13       53.19
-  01apr2020 |          5        2.13       55.32
-  01may2020 |          5        2.13       57.45
-  01jun2020 |          5        2.13       59.57
-  01jul2020 |          5        2.13       61.70
-  01aug2020 |          5        2.13       63.83
-  01sep2020 |          5        2.13       65.96
-  01oct2020 |          5        2.13       68.09
-  01nov2020 |          5        2.13       70.21
-  01dec2020 |          5        2.13       72.34
-  01jan2021 |          5        2.13       74.47
-  01feb2021 |          5        2.13       76.60
-  01mar2021 |          5        2.13       78.72
-  01apr2021 |          5        2.13       80.85
-  01may2021 |          5        2.13       82.98
-  01jun2021 |          5        2.13       85.11
-  01jul2021 |          5        2.13       87.23
-  01aug2021 |          5        2.13       89.36
-  01sep2021 |          5        2.13       91.49
-  01oct2021 |          5        2.13       93.62
-  01nov2021 |          5        2.13       95.74
-  01dec2021 |          5        2.13       97.87
-  01jan2022 |          5        2.13      100.00
+  01mar2018 |          5        2.00        2.00
+  01apr2018 |          5        2.00        4.00
+  01may2018 |          5        2.00        6.00
+  01jun2018 |          5        2.00        8.00
+  01jul2018 |          5        2.00       10.00
+  01aug2018 |          5        2.00       12.00
+  01sep2018 |          5        2.00       14.00
+  01oct2018 |          5        2.00       16.00
+  01nov2018 |          5        2.00       18.00
+  01dec2018 |          5        2.00       20.00
+  01jan2019 |          5        2.00       22.00
+  01feb2019 |          5        2.00       24.00
+  01mar2019 |          5        2.00       26.00
+  01apr2019 |          5        2.00       28.00
+  01may2019 |          5        2.00       30.00
+  01jun2019 |          5        2.00       32.00
+  01jul2019 |          5        2.00       34.00
+  01aug2019 |          5        2.00       36.00
+  01sep2019 |          5        2.00       38.00
+  01oct2019 |          5        2.00       40.00
+  01nov2019 |          5        2.00       42.00
+  01dec2019 |          5        2.00       44.00
+  01jan2020 |          5        2.00       46.00
+  01feb2020 |          5        2.00       48.00
+  01mar2020 |          5        2.00       50.00
+  01apr2020 |          5        2.00       52.00
+  01may2020 |          5        2.00       54.00
+  01jun2020 |          5        2.00       56.00
+  01jul2020 |          5        2.00       58.00
+  01aug2020 |          5        2.00       60.00
+  01sep2020 |          5        2.00       62.00
+  01oct2020 |          5        2.00       64.00
+  01nov2020 |          5        2.00       66.00
+  01dec2020 |          5        2.00       68.00
+  01jan2021 |          5        2.00       70.00
+  01feb2021 |          5        2.00       72.00
+  01mar2021 |          5        2.00       74.00
+  01apr2021 |          5        2.00       76.00
+  01may2021 |          5        2.00       78.00
+  01jun2021 |          5        2.00       80.00
+  01jul2021 |          5        2.00       82.00
+  01aug2021 |          5        2.00       84.00
+  01sep2021 |          5        2.00       86.00
+  01oct2021 |          5        2.00       88.00
+  01nov2021 |          5        2.00       90.00
+  01dec2021 |          5        2.00       92.00
+  01jan2022 |          5        2.00       94.00
+  01feb2022 |          5        2.00       96.00
+  01mar2022 |          5        2.00       98.00
+  01apr2022 |          5        2.00      100.00
 ------------+-----------------------------------
-      Total |        235      100.00
+      Total |        250      100.00
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                      235   ->      47
+Number of obs.                      250   ->      50
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -240,7 +278,7 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:            47                          
+  obs:            50                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
@@ -271,64 +309,75 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/graphs/line_dm_ethnic_systolic_bp.svg not found)
 (file ./output/graphs/line_dm_ethnic_systolic_bp.svg written in SVG format)
-(5 vars, 235 obs)
+(1 missing value generated)
+(1 missing value generated)
+(1 missing value generated)
+(1 missing value generated)
+(1 missing value generated)
+(note: file ./output/graphs/line_dm_systolic_bp_diff_ethnic.svg not found)
+(file ./output/graphs/line_dm_systolic_bp_diff_ethnic.svg written in SVG format
+> )
+(5 vars, 250 obs)
 
       dateA |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-  01mar2018 |          5        2.13        2.13
-  01apr2018 |          5        2.13        4.26
-  01may2018 |          5        2.13        6.38
-  01jun2018 |          5        2.13        8.51
-  01jul2018 |          5        2.13       10.64
-  01aug2018 |          5        2.13       12.77
-  01sep2018 |          5        2.13       14.89
-  01oct2018 |          5        2.13       17.02
-  01nov2018 |          5        2.13       19.15
-  01dec2018 |          5        2.13       21.28
-  01jan2019 |          5        2.13       23.40
-  01feb2019 |          5        2.13       25.53
-  01mar2019 |          5        2.13       27.66
-  01apr2019 |          5        2.13       29.79
-  01may2019 |          5        2.13       31.91
-  01jun2019 |          5        2.13       34.04
-  01jul2019 |          5        2.13       36.17
-  01aug2019 |          5        2.13       38.30
-  01sep2019 |          5        2.13       40.43
-  01oct2019 |          5        2.13       42.55
-  01nov2019 |          5        2.13       44.68
-  01dec2019 |          5        2.13       46.81
-  01jan2020 |          5        2.13       48.94
-  01feb2020 |          5        2.13       51.06
-  01mar2020 |          5        2.13       53.19
-  01apr2020 |          5        2.13       55.32
-  01may2020 |          5        2.13       57.45
-  01jun2020 |          5        2.13       59.57
-  01jul2020 |          5        2.13       61.70
-  01aug2020 |          5        2.13       63.83
-  01sep2020 |          5        2.13       65.96
-  01oct2020 |          5        2.13       68.09
-  01nov2020 |          5        2.13       70.21
-  01dec2020 |          5        2.13       72.34
-  01jan2021 |          5        2.13       74.47
-  01feb2021 |          5        2.13       76.60
-  01mar2021 |          5        2.13       78.72
-  01apr2021 |          5        2.13       80.85
-  01may2021 |          5        2.13       82.98
-  01jun2021 |          5        2.13       85.11
-  01jul2021 |          5        2.13       87.23
-  01aug2021 |          5        2.13       89.36
-  01sep2021 |          5        2.13       91.49
-  01oct2021 |          5        2.13       93.62
-  01nov2021 |          5        2.13       95.74
-  01dec2021 |          5        2.13       97.87
-  01jan2022 |          5        2.13      100.00
+  01mar2018 |          5        2.00        2.00
+  01apr2018 |          5        2.00        4.00
+  01may2018 |          5        2.00        6.00
+  01jun2018 |          5        2.00        8.00
+  01jul2018 |          5        2.00       10.00
+  01aug2018 |          5        2.00       12.00
+  01sep2018 |          5        2.00       14.00
+  01oct2018 |          5        2.00       16.00
+  01nov2018 |          5        2.00       18.00
+  01dec2018 |          5        2.00       20.00
+  01jan2019 |          5        2.00       22.00
+  01feb2019 |          5        2.00       24.00
+  01mar2019 |          5        2.00       26.00
+  01apr2019 |          5        2.00       28.00
+  01may2019 |          5        2.00       30.00
+  01jun2019 |          5        2.00       32.00
+  01jul2019 |          5        2.00       34.00
+  01aug2019 |          5        2.00       36.00
+  01sep2019 |          5        2.00       38.00
+  01oct2019 |          5        2.00       40.00
+  01nov2019 |          5        2.00       42.00
+  01dec2019 |          5        2.00       44.00
+  01jan2020 |          5        2.00       46.00
+  01feb2020 |          5        2.00       48.00
+  01mar2020 |          5        2.00       50.00
+  01apr2020 |          5        2.00       52.00
+  01may2020 |          5        2.00       54.00
+  01jun2020 |          5        2.00       56.00
+  01jul2020 |          5        2.00       58.00
+  01aug2020 |          5        2.00       60.00
+  01sep2020 |          5        2.00       62.00
+  01oct2020 |          5        2.00       64.00
+  01nov2020 |          5        2.00       66.00
+  01dec2020 |          5        2.00       68.00
+  01jan2021 |          5        2.00       70.00
+  01feb2021 |          5        2.00       72.00
+  01mar2021 |          5        2.00       74.00
+  01apr2021 |          5        2.00       76.00
+  01may2021 |          5        2.00       78.00
+  01jun2021 |          5        2.00       80.00
+  01jul2021 |          5        2.00       82.00
+  01aug2021 |          5        2.00       84.00
+  01sep2021 |          5        2.00       86.00
+  01oct2021 |          5        2.00       88.00
+  01nov2021 |          5        2.00       90.00
+  01dec2021 |          5        2.00       92.00
+  01jan2022 |          5        2.00       94.00
+  01feb2022 |          5        2.00       96.00
+  01mar2022 |          5        2.00       98.00
+  01apr2022 |          5        2.00      100.00
 ------------+-----------------------------------
-      Total |        235      100.00
+      Total |        250      100.00
 (note: j = 1 2 3 4 5)
 
 Data                               long   ->   wide
 -----------------------------------------------------------------------------
-Number of obs.                      235   ->      47
+Number of obs.                      250   ->      50
 Number of variables                   6   ->      21
 j variable (5 values)         ethnicity   ->   (dropped)
 xij variables:
@@ -340,7 +389,7 @@ xij variables:
 -----------------------------------------------------------------------------
 
 Contains data
-  obs:            47                          
+  obs:            50                          
  vars:            21                          
 -------------------------------------------------------------------------------
               storage   display    value
@@ -371,6 +420,13 @@ rate5           float   %9.0g                 5 rate
 Sorted by: dateA
 (note: file ./output/graphs/line_dm_ethnic_bp_meas.svg not found)
 (file ./output/graphs/line_dm_ethnic_bp_meas.svg written in SVG format)
+(1 missing value generated)
+(1 missing value generated)
+(1 missing value generated)
+(1 missing value generated)
+(1 missing value generated)
+(note: file ./output/graphs/line_dm_bp_meas_diff_ethnic.svg not found)
+(file ./output/graphs/line_dm_bp_meas_diff_ethnic.svg written in SVG format)
 
 . /* Generates graphs for DM hospital admissions
 > foreach v in primary any /*emergency*/ {
@@ -405,12 +461,12 @@ Sorted by: dateA
 >     label var rate5 "Other"
 > 
 >     * Generate line graph
->     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
-> 0)01Jan2022, angle(45) ///
+>     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
+> 0)01Apr2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
->     angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) tit
-> le("Ethnic categories", size(small)))
+>     angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small
+> ) title("Ethnic categories", size(small)))
 > 
 > 
 >     graph export ./output/graphs/line_dm_ethnic_t1_`v'.svg, as(svg) replace
@@ -438,8 +494,8 @@ Sorted by: dateA
 >     label var rate5 "IMD - 5"
 > 
 >     * Generate line graph
->     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
-> 0)01Jan2022, angle(45) ///
+>     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
+> 0)01Apr2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
 >     angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) tit
@@ -479,8 +535,8 @@ Sorted by: dateA
 >     label var rate5 "Other"
 > 
 >     * Generate line graph
->     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
-> 0)01Jan2022, angle(45) ///
+>     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
+> 0)01Apr2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
 >     angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) tit
@@ -511,8 +567,8 @@ Sorted by: dateA
 >     label var rate5 "IMD - 5"
 > 
 >     * Generate line graph
->     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
-> 0)01Jan2022, angle(45) ///
+>     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
+> 0)01Apr2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
 >     angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) tit
@@ -551,8 +607,8 @@ Sorted by: dateA
 >     label var rate5 "Other"
 > 
 >     * Generate line graph
->     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
-> 0)01Jan2022, angle(45) ///
+>     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
+> 0)01Apr2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
 >     angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) tit
@@ -560,7 +616,7 @@ Sorted by: dateA
 >  
 > 
 >     graph export ./output/graphs/line_dm_ethnic_keto_`v'.svg, as(svg) replace
->     */
+>     
 >     * IMD - type 1 DM
 >     clear 
 >     import delimited using ./output/measures/dm/measure_dm_keto_`v'_imd_rate.
@@ -583,8 +639,8 @@ Sorted by: dateA
 >     label var rate5 "IMD - 5"
 > 
 >     * Generate line graph
->     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(18
-> 0)01Jan2022, angle(45) ///
+>     graph twoway line rate1 rate2 rate3 rate4 rate5 date, tlabel(01Jan2018(12
+> 0)01Apr2022, angle(45) ///
 >     format(%dM-CY) labsize(small)) ytitle("Rate per 100,000") xtitle("Date") 
 > ylabel(, labsize(small) ///
 >     angle(0)) yscale(titlegap(*10)) xmtick(##6) legend(row(1) size(small) tit
@@ -594,12 +650,12 @@ Sorted by: dateA
 >     graph export ./output/graphs/line_dm_imd_keto_`v'.svg, as(svg) replace
 > 
 > }
-> 
+> */
 > log close
 
 end of do-file
 
-. . file open output using "/tmp/tmp.yT09eOVHIU", write text replace
+. . file open output using "/tmp/103_graphs_dm.do.BaNW.out", write text replace
 
 . . file write output "success" 
 
