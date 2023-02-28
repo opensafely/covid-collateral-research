@@ -47,15 +47,16 @@
 .         * Reviewer comments plotting first derivative i.e. difference between
 >  current rate and previous months rate
 .         forvalues i=1/5 {
- 22.             gen first_derivative`i' = rate`i' - rate`i'[_n-1]
- 23.         }
- 24.         * Label variables 
+ 22.             sort dateA
+ 23.             gen first_derivative`i' = rate`i' - rate`i'[_n-1]
+ 24.             }
+ 25.         * Label variables 
 .         label var first_derivative1 "White"
- 25.         label var first_derivative2 "Mixed"
- 26.         label var first_derivative3 "Asian"
- 27.         label var first_derivative4 "Black"
- 28.         label var first_derivative5 "Other"
- 29.         * Plot this
+ 26.         label var first_derivative2 "Mixed"
+ 27.         label var first_derivative3 "Asian"
+ 28.         label var first_derivative4 "Black"
+ 29.         label var first_derivative5 "Other"
+ 30.         * Plot this
 .         graph twoway line first_derivative1 first_derivative2 first_derivativ
 > e3 first_derivative4 first_derivative5 date, tlabel(01Jan2018(120)01Apr2022, 
 > angle(45) ///
@@ -64,11 +65,12 @@
 >         angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(s
 > mall) ///
 >         title("Ethnic categories", size(small))) graphregion(fcolor(white))
- 30. 
+ 31. 
 .         graph export ./output/graphs/line_`this_group'_bp_diff_ethnic.svg, as
 > (svg) replace
- 31. 
-.     /* IMD
+ 32.         export delimited using ./output/graphs/line_data_`this_group'_bp_d
+> iff_ethnic.csv
+ 33.     /* IMD
 >     clear 
 >     import delimited using ./output/measures/`this_group'/measure_bp_meas_`th
 > is_group'_imd_rate.csv, numericcols(4)
@@ -172,6 +174,7 @@ Sorted by: dateA
 (24 missing values generated)
 (note: file ./output/graphs/line_cvd_bp_diff_ethnic.svg not found)
 (file ./output/graphs/line_cvd_bp_diff_ethnic.svg written in SVG format)
+file ./output/graphs/line_data_cvd_bp_diff_ethnic.csv saved
 (6 vars, 600 obs)
   100
 (100 observations deleted)
@@ -238,6 +241,7 @@ Sorted by: dateA
 (1 missing value generated)
 (note: file ./output/graphs/line_mh_bp_diff_ethnic.svg not found)
 (file ./output/graphs/line_mh_bp_diff_ethnic.svg written in SVG format)
+file ./output/graphs/line_data_mh_bp_diff_ethnic.csv saved
 
 . 
 . /* Hospital admission graphs
@@ -730,5 +734,5 @@ Sorted by: dateA
       name:  <unnamed>
        log:  /workspace/logs/graphs_mh_cvd.log
   log type:  text
- closed on:  27 Feb 2023, 08:27:29
+ closed on:  28 Feb 2023, 14:28:14
 -------------------------------------------------------------------------------

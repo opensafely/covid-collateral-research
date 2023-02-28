@@ -58,15 +58,16 @@
 .     * Reviewer comments plotting first derivative i.e. difference between cur
 > rent rate and previous months rate
 .     forvalues i=1/5 {
- 26.         gen first_derivative`i' = rate`i' - rate`i'[_n-1]
- 27.     }
- 28.     * Label variables 
+ 26.         sort dateA
+ 27.         gen first_derivative`i' = rate`i' - rate`i'[_n-1]
+ 28.     }
+ 29.     * Label variables 
 .     label var first_derivative1 "White"
- 29.     label var first_derivative2 "Mixed"
- 30.     label var first_derivative3 "Asian"
- 31.     label var first_derivative4 "Black"
- 32.     label var first_derivative5 "Other"
- 33.     * Plot this
+ 30.     label var first_derivative2 "Mixed"
+ 31.     label var first_derivative3 "Asian"
+ 32.     label var first_derivative4 "Black"
+ 33.     label var first_derivative5 "Other"
+ 34.     * Plot this
 .     graph twoway line first_derivative1 first_derivative2 first_derivative3 f
 > irst_derivative4 first_derivative5 date, tlabel(01Jan2018(120)01Apr2022, angl
 > e(45) ///
@@ -75,11 +76,13 @@
 >     angle(0)) yscale(r(0) titlegap(*10)) xmtick(##6) legend(row(1) size(small
 > ) ///
 >     title("Ethnic categories", size(small))) graphregion(fcolor(white))
- 34. 
+ 35. 
 .     graph export ./output/graphs/line_resp_ethnic_`this_outcome'_`this_strata
 > '_diff.svg, as(svg) replace
- 35.     
-.     /* IMD
+ 36.     * Export data file for output checking 
+.     export delimited using ./output/graphs/line_data_resp_`this_outcome'_`thi
+> s_strata'_ethnic.csv
+ 37.     /* IMD
 >     clear 
 >     import delimited using "./output/measures/resp/measure_`this_outcome'_`th
 > is_strata'_imd_rate.csv", numericcols(4)
@@ -119,7 +122,7 @@
 > vg, as(svg) replace
 >     */
 .     }
- 36. }
+ 38. }
 (6 vars, 500 obs)
 
  has_asthma |      Freq.     Percent        Cum.
@@ -242,6 +245,7 @@ Sorted by: dateA
 > nd)
 (file ./output/graphs/line_resp_ethnic_asthma_monitoring_diff.svg written in SV
 > G format)
+file ./output/graphs/line_data_resp_asthma_monitoring_ethnic.csv saved
 (6 vars, 500 obs)
 
    has_copd |      Freq.     Percent        Cum.
@@ -364,6 +368,7 @@ Sorted by: dateA
 > )
 (file ./output/graphs/line_resp_ethnic_copd_monitoring_diff.svg written in SVG 
 > format)
+file ./output/graphs/line_data_resp_copd_monitoring_ethnic.csv saved
 
 . 
 . /* Adding three monthly intervals for asthma exacerbation for ethnicity
@@ -407,7 +412,7 @@ Sorted by: dateA
 
 end of do-file
 
-. . file open output using "/tmp/104_graphs_resp.do.oOiy.out", write text repla
+. . file open output using "/tmp/104_graphs_resp.do.5R6R.out", write text repla
 > ce
 
 . . file write output "success" 

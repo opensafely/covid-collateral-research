@@ -69,7 +69,8 @@ forvalues i=1/2 {
     title("Ethnic categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_resp_ethnic_`this_outcome'_`this_strata'_diff.svg, as(svg) replace
-    
+    * Export data file for output checking 
+    export delimited using ./output/graphs/line_data_resp_`this_outcome'_`this_strata'_ethnic.csv
     /* IMD
     clear 
     import delimited using "./output/measures/resp/measure_`this_outcome'_`this_strata'_imd_rate.csv", numericcols(4)

@@ -58,6 +58,8 @@ foreach v in hba1c systolic_bp bp_meas {
     title("Ethnic categories", size(small))) graphregion(fcolor(white))
 
     graph export ./output/graphs/line_dm_`v'_diff_ethnic.svg, as(svg) replace
+    * Export data file for output checking 
+    export delimited using ./output/graphs/line_data_dm_`v'_ethnic.csv
     /* IMD
     clear 
     import delimited using ./output/measures/dm/measure_dm_`v'_imd_rate.csv, numericcols(4)

@@ -188,6 +188,7 @@ actions:
       moderately_sensitive:
         log: logs/graphs_dm.log
         output: output/graphs/line_dm_*.svg
+        output2: output/graphs/line_data_dm*.csv
     
   # Generate graphs for respiratory outcomes
   graphs_resp:
@@ -197,6 +198,7 @@ actions:
       moderately_sensitive:
         log: logs/graphs_resp.log
         output: output/graphs/line_resp_*.svg
+        output2: output/graphs/line_data_resp*.csv
 
   # Generate graphs for mortality
   graphs_mortality:
