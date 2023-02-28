@@ -62,7 +62,7 @@ foreach this_group in cvd mh {
         title("Ethnic categories", size(small))) graphregion(fcolor(white))
 
         graph export ./output/graphs/line_`this_group'_bp_diff_ethnic.svg, as(svg) replace
-
+        export delimited using ./output/graphs/line_data_`this_group'_bp_diff_ethnic.csv
     /* IMD
     clear 
     import delimited using ./output/measures/`this_group'/measure_bp_meas_`this_group'_imd_rate.csv, numericcols(4)

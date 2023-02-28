@@ -39,7 +39,7 @@ foreach v in hba1c systolic_bp bp_meas {
  
 
     graph export ./output/graphs/line_dm_ethnic_`v'.svg, as(svg) replace 
-
+    
     * Reviewer comments plotting first derivative i.e. difference between current rate and previous months rate
     forvalues i=1/5 {
         sort dateA

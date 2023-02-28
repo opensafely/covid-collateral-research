@@ -178,6 +178,7 @@ actions:
       moderately_sensitive:
         log: logs/graphs_mh_cvd.log
         output: output/graphs/line_*.svg
+        output2: output/graphs/line_data*.csv
      
   # Generates graphs for diabetes outcomes
   graphs_dm:
