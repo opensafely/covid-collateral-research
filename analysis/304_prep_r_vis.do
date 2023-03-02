@@ -73,7 +73,7 @@ forvalues j=1/5 {
 	* add mi back in when upload
 	local a "depress asthma copd dm_keto t1dm t2dm hf mi stroke vte"
 	local b "MH Respiratory Respiratory Diabetes Diabetes Diabetes Cardiovascular_hfmi Cardiovascular_hfmi Cardiovascular Cardiovascular" 
-	forvalues i=1/9 {
+	forvalues i=1/10 {
 		local outcome: word `i' of `a'
 		local category: word `i' of `b'
 
