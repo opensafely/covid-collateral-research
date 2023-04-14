@@ -14,6 +14,7 @@ describe
 * (age >=18 AND age <= 110) AND
 * (NOT died) AND
 * (sex = 'M' OR sex = 'F') AND
+  (imd != 0) AND
 * (stp != 'missing') AND
 * (household>=1 AND household<=15) 
 table sex
@@ -26,6 +27,8 @@ drop if (age<18 | age>110)
 safecount
 drop if (sex=="U" | sex=="I")
 safecount
+drop if imd==0
+safecount 
 drop if stp==""
 safecount
 drop if (household==0 | household>15)
