@@ -14,7 +14,7 @@ describe
 * (age >=18 AND age <= 110) AND
 * (NOT died) AND
 * (sex = 'M' OR sex = 'F') AND
-  (imd != 0) AND
+* (imd != 0) AND
 * (stp != 'missing') AND
 * (household>=1 AND household<=15) 
 table sex
