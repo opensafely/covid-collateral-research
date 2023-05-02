@@ -46,7 +46,7 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
 
         stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index_date) origin(index_date) 
         * Kaplan-Meier plot
-        sts graph, by(eth5) ylabel(.75(.05)1)
+        sts graph, by(eth5) ylabel(.95(.01)1)
         graph export ./output/graphs/km_`outcome'_`period'_eth`i'.svg, as(svg) replace
         * Cox model - crude
         stcox ib`i'.eth5, strata(stp)
