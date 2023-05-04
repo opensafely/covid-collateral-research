@@ -519,8 +519,16 @@ actions:
       
   cox_outputs:
     run: stata-mp:latest analysis/304_prep_r_vis.do
-    needs: [cox_models_anx, cox_models_depress, cox_models_asthma, cox_models_copd, cox_models_dm_keto, cox_models_t1dm, cox_models_t2dm, cox_models_heart_failure, cox_models_stroke, cox_models_vte, cox_models_mi]
+    needs: [cox_model_prep]
     outputs:
       moderately_sensitive:
         log: logs/prep_r_vis.log
         output: output/tables/all_cox_data*.csv
+
+  cox_ph:
+    run: stata-mp:latest analysis/305_cox_ph.do
+    needs: [cox_model_prep]
+    outputs:
+      moderately_sensitive:
+        log: logs/cox_model_ph.log
+        output: output/graphs/km*.svg
