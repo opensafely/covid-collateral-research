@@ -2,39 +2,46 @@
 . cap mkdir ./output/graphs
 
 . 
-. 
+. * For outcomes where axis 0.95
 . foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
-  2.     foreach outcome in stroke mi hf vte {
-  3.         use ./output/prep_survival_`period', clear
-  4.         describe
+  2.     use ./output/prep_survival_`period', clear
+  3.     describe
+  4.     foreach outcome in stroke mi hf vte t2dm dm_keto depress anx asthma {
   5.         * Drop events that occur on index date
 .         drop if `outcome'_admit_date==index_date
   6. 
 .         * Update study population for diabetes and respiratory outcomes
-.         /*drop if has_t1_diabetes==0 & "`outcome'"== "t1dm"
->         drop if has_t2_diabetes==0 & "`outcome'"== "t2dm"
->         drop if diabetes_subgroup==0 & "`outcome'"== "dm_keto"
->         drop if has_asthma==0 & "`outcome'"== "asthma"
->         drop if has_copd==0 & "`outcome'"== "copd"*/
-. 
+.         drop if has_t2_diabetes==0 & "`outcome'"== "t2dm"
+  7.         drop if diabetes_subgroup==0 & "`outcome'"== "dm_keto"
+  8.         drop if has_asthma==0 & "`outcome'"== "asthma"
+  9. 
 .         * Cox model for each outcome category
 .         * Generate flags and end dates for each outcome
 .         gen `outcome'_admit=(`outcome'_admit_date!=.)
-  7.         tab `outcome'_admit
-  8.         count if `outcome'_admit_date!=.
-  9.         if r(N) > 10 {
- 10.                 gen `outcome'_end = end_date
- 11.                 replace `outcome'_end = `outcome'_admit_date if `outcome'_
+ 10.         tab `outcome'_admit
+ 11.         count if `outcome'_admit_date!=.
+ 12.         if r(N) > 10 {
+ 13.                 gen `outcome'_end = end_date
+ 14.                 replace `outcome'_end = `outcome'_admit_date if `outcome'_
 > admit==1
- 12. 
+ 15. 
 .                 stset `outcome'_end, fail(`outcome'_admit) id(patient_id) ent
 > er(index_date) origin(index_date) 
- 13.                 * Kaplan-Meier plot
-.                 sts graph, by(eth5) ylabel(.95(.01)1) saving(`period'_`outcom
-> e', replace) title("`period'") graphregion(fcolor(white))
- 14.         }
- 15.     } 
- 16. }
+ 16.                 * Kaplan-Meier plot
+.                 sts graph, by(eth5) ylabel(.95(.01)1) title("`period'") graph
+> region(fcolor(white))
+ 17.                 graph export ./output/graphs/km_`outcome'_`period'.svg, as
+> (svg) replace
+ 18.                 qui stcox eth5, strata(stp)
+ 19.                 estat phtest 
+ 20.                 qui stcox eth5 i.age_cat i.male, strata(stp)
+ 21.                 estat phtest 
+ 22.                 qui stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.
+> shielded, strata(stp)
+ 23.                 estat phtest
+ 24.         }
+ 25.     } 
+ 26. }
 
 Contains data from ./output/prep_survival_pre.dta
   obs:         1,000                          
@@ -93,6 +100,9 @@ urban_rural_bin float   %9.0g      urban_rural_bin
 age_cat         float   %13.0g     age        
 -------------------------------------------------------------------------------
 Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
 stroke_admi |
@@ -130,66 +140,38 @@ obs. time interval:  (stroke_end[_n-1], stroke_end]
              origin:  time index_date
   enter on or after:  time index_date
                  id:  patient_id
-(note: file pre_stroke.gph not found)
-(file pre_stroke.gph saved)
+(note: file ./output/graphs/km_stroke_pre.svg not found)
+(file ./output/graphs/km_stroke_pre.svg written in SVG format)
 
-Contains data from ./output/prep_survival_pre.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
    mi_admit |      Freq.     Percent        Cum.
@@ -226,66 +208,38 @@ obs. time interval:  (mi_end[_n-1], mi_end]
              origin:  time index_date
   enter on or after:  time index_date
                  id:  patient_id
-(note: file pre_mi.gph not found)
-(file pre_mi.gph saved)
+(note: file ./output/graphs/km_mi_pre.svg not found)
+(file ./output/graphs/km_mi_pre.svg written in SVG format)
 
-Contains data from ./output/prep_survival_pre.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                      0.35        1         0.5547
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        2             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        9             .
+      ----------------------------------------------------------------
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
    hf_admit |      Freq.     Percent        Cum.
@@ -322,66 +276,38 @@ obs. time interval:  (hf_end[_n-1], hf_end]
              origin:  time index_date
   enter on or after:  time index_date
                  id:  patient_id
-(note: file pre_hf.gph not found)
-(file pre_hf.gph saved)
+(note: file ./output/graphs/km_hf_pre.svg not found)
+(file ./output/graphs/km_hf_pre.svg written in SVG format)
 
-Contains data from ./output/prep_survival_pre.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        1             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
   vte_admit |      Freq.     Percent        Cum.
@@ -418,8 +344,152 @@ obs. time interval:  (vte_end[_n-1], vte_end]
              origin:  time index_date
   enter on or after:  time index_date
                  id:  patient_id
-(note: file pre_vte.gph not found)
-(file pre_vte.gph saved)
+(note: file ./output/graphs/km_vte_pre.svg not found)
+(file ./output/graphs/km_vte_pre.svg written in SVG format)
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+(0 observations deleted)
+(199 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        785       98.00       98.00
+          1 |         16        2.00      100.00
+------------+-----------------------------------
+      Total |        801      100.00
+  16
+(16 real changes made)
+
+                id:  patient_id
+     failure event:  t2dm_admit != 0 & t2dm_admit < .
+obs. time interval:  (t2dm_end[_n-1], t2dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+        801  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+        801  observations remaining, representing
+        801  subjects
+         16  failures in single-failure-per-subject data
+    595,965  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_t2dm_pre.svg not found)
+(file ./output/graphs/km_t2dm_pre.svg written in SVG format)
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+(0 observations deleted)
+(0 observations deleted)
+(770 observations deleted)
+(0 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         30       96.77       96.77
+          1 |          1        3.23      100.00
+------------+-----------------------------------
+      Total |         31      100.00
+  1
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         31      100.00      100.00
+------------+-----------------------------------
+      Total |         31      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         30       96.77       96.77
+          1 |          1        3.23      100.00
+------------+-----------------------------------
+      Total |         31      100.00
+  1
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(25 observations deleted)
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |          6      100.00      100.00
+------------+-----------------------------------
+      Total |          6      100.00
+  0
 
 Contains data from ./output/prep_survival_pandemic.dta
   obs:         1,000                          
@@ -478,6 +548,9 @@ urban_rural_bin float   %9.0g      urban_rural_bin
 age_cat         float   %13.0g     age        
 -------------------------------------------------------------------------------
 Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
 stroke_admi |
@@ -515,66 +588,38 @@ obs. time interval:  (stroke_end[_n-1], stroke_end]
              origin:  time index_date
   enter on or after:  time index_date
                  id:  patient_id
-(note: file pandemic_stroke.gph not found)
-(file pandemic_stroke.gph saved)
+(note: file ./output/graphs/km_stroke_pandemic.svg not found)
+(file ./output/graphs/km_stroke_pandemic.svg written in SVG format)
 
-Contains data from ./output/prep_survival_pandemic.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                      0.15        1         0.6996
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        4             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        8             .
+      ----------------------------------------------------------------
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
    mi_admit |      Freq.     Percent        Cum.
@@ -611,66 +656,38 @@ obs. time interval:  (mi_end[_n-1], mi_end]
              origin:  time index_date
   enter on or after:  time index_date
                  id:  patient_id
-(note: file pandemic_mi.gph not found)
-(file pandemic_mi.gph saved)
+(note: file ./output/graphs/km_mi_pandemic.svg not found)
+(file ./output/graphs/km_mi_pandemic.svg written in SVG format)
 
-Contains data from ./output/prep_survival_pandemic.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
    hf_admit |      Freq.     Percent        Cum.
@@ -707,66 +724,38 @@ obs. time interval:  (hf_end[_n-1], hf_end]
              origin:  time index_date
   enter on or after:  time index_date
                  id:  patient_id
-(note: file pandemic_hf.gph not found)
-(file pandemic_hf.gph saved)
+(note: file ./output/graphs/km_hf_pandemic.svg not found)
+(file ./output/graphs/km_hf_pandemic.svg written in SVG format)
 
-Contains data from ./output/prep_survival_pandemic.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                      0.95        1         0.3295
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        4             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        7             .
+      ----------------------------------------------------------------
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
   vte_admit |      Freq.     Percent        Cum.
@@ -803,8 +792,151 @@ obs. time interval:  (vte_end[_n-1], vte_end]
              origin:  time index_date
   enter on or after:  time index_date
                  id:  patient_id
-(note: file pandemic_vte.gph not found)
-(file pandemic_vte.gph saved)
+(note: file ./output/graphs/km_vte_pandemic.svg not found)
+(file ./output/graphs/km_vte_pandemic.svg written in SVG format)
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                      0.00        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        5             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        8             .
+      ----------------------------------------------------------------
+(0 observations deleted)
+(199 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        787       98.25       98.25
+          1 |         14        1.75      100.00
+------------+-----------------------------------
+      Total |        801      100.00
+  14
+(14 real changes made)
+
+                id:  patient_id
+     failure event:  t2dm_admit != 0 & t2dm_admit < .
+obs. time interval:  (t2dm_end[_n-1], t2dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+        801  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+        801  observations remaining, representing
+        801  subjects
+         14  failures in single-failure-per-subject data
+    591,373  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_t2dm_pandemic.svg not found)
+(file ./output/graphs/km_t2dm_pandemic.svg written in SVG format)
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        1             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        5             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        8             .
+      ----------------------------------------------------------------
+(0 observations deleted)
+(0 observations deleted)
+(758 observations deleted)
+(0 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         43      100.00      100.00
+------------+-----------------------------------
+      Total |         43      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         41       95.35       95.35
+          1 |          2        4.65      100.00
+------------+-----------------------------------
+      Total |         43      100.00
+  2
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         43      100.00      100.00
+------------+-----------------------------------
+      Total |         43      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(30 observations deleted)
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         13      100.00      100.00
+------------+-----------------------------------
+      Total |         13      100.00
+  0
 
 Contains data from ./output/prep_survival_wave1.dta
   obs:         1,000                          
@@ -863,6 +995,9 @@ urban_rural_bin float   %9.0g      urban_rural_bin
 age_cat         float   %13.0g     age        
 -------------------------------------------------------------------------------
 Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
 stroke_admi |
@@ -873,64 +1008,9 @@ stroke_admi |
 ------------+-----------------------------------
       Total |      1,000      100.00
   1
-
-Contains data from ./output/prep_survival_wave1.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             byte    %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
    mi_admit |      Freq.     Percent        Cum.
@@ -940,64 +1020,9 @@ Sorted by:
 ------------+-----------------------------------
       Total |      1,000      100.00
   2
-
-Contains data from ./output/prep_survival_wave1.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             byte    %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
    hf_admit |      Freq.     Percent        Cum.
@@ -1007,64 +1032,9 @@ Sorted by:
 ------------+-----------------------------------
       Total |      1,000      100.00
   3
-
-Contains data from ./output/prep_survival_wave1.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             byte    %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
   vte_admit |      Freq.     Percent        Cum.
@@ -1074,6 +1044,65 @@ Sorted by:
 ------------+-----------------------------------
       Total |      1,000      100.00
   5
+(0 observations deleted)
+(199 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        799       99.75       99.75
+          1 |          2        0.25      100.00
+------------+-----------------------------------
+      Total |        801      100.00
+  2
+(0 observations deleted)
+(0 observations deleted)
+(759 observations deleted)
+(0 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         42      100.00      100.00
+------------+-----------------------------------
+      Total |         42      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         42      100.00      100.00
+------------+-----------------------------------
+      Total |         42      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         42      100.00      100.00
+------------+-----------------------------------
+      Total |         42      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(34 observations deleted)
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |          8      100.00      100.00
+------------+-----------------------------------
+      Total |          8      100.00
+  0
 
 Contains data from ./output/prep_survival_easing1.dta
   obs:         1,000                          
@@ -1132,6 +1161,9 @@ urban_rural_bin float   %9.0g      urban_rural_bin
 age_cat         float   %13.0g     age        
 -------------------------------------------------------------------------------
 Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
 stroke_admi |
@@ -1142,64 +1174,9 @@ stroke_admi |
 ------------+-----------------------------------
       Total |      1,000      100.00
   2
-
-Contains data from ./output/prep_survival_easing1.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             byte    %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
    mi_admit |      Freq.     Percent        Cum.
@@ -1209,64 +1186,9 @@ Sorted by:
 ------------+-----------------------------------
       Total |      1,000      100.00
   5
-
-Contains data from ./output/prep_survival_easing1.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             byte    %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
    hf_admit |      Freq.     Percent        Cum.
@@ -1276,64 +1198,9 @@ Sorted by:
 ------------+-----------------------------------
       Total |      1,000      100.00
   4
-
-Contains data from ./output/prep_survival_easing1.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             byte    %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
   vte_admit |      Freq.     Percent        Cum.
@@ -1343,6 +1210,65 @@ Sorted by:
 ------------+-----------------------------------
       Total |      1,000      100.00
   2
+(0 observations deleted)
+(199 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        800       99.88       99.88
+          1 |          1        0.12      100.00
+------------+-----------------------------------
+      Total |        801      100.00
+  1
+(0 observations deleted)
+(0 observations deleted)
+(758 observations deleted)
+(0 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         43      100.00      100.00
+------------+-----------------------------------
+      Total |         43      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         43      100.00      100.00
+------------+-----------------------------------
+      Total |         43      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         43      100.00      100.00
+------------+-----------------------------------
+      Total |         43      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(35 observations deleted)
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |          8      100.00      100.00
+------------+-----------------------------------
+      Total |          8      100.00
+  0
 
 Contains data from ./output/prep_survival_wave2.dta
   obs:         1,000                          
@@ -1401,6 +1327,9 @@ urban_rural_bin float   %9.0g      urban_rural_bin
 age_cat         float   %13.0g     age        
 -------------------------------------------------------------------------------
 Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
 stroke_admi |
@@ -1438,66 +1367,38 @@ obs. time interval:  (stroke_end[_n-1], stroke_end]
              origin:  time index_date
   enter on or after:  time index_date
                  id:  patient_id
-(note: file wave2_stroke.gph not found)
-(file wave2_stroke.gph saved)
+(note: file ./output/graphs/km_stroke_wave2.svg not found)
+(file ./output/graphs/km_stroke_wave2.svg written in SVG format)
 
-Contains data from ./output/prep_survival_wave2.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             byte    %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+
+      Test of proportional-hazards assumption
+
+      Time:  Time
+      ----------------------------------------------------------------
+                  |                      chi2       df       Prob>chi2
+      ------------+---------------------------------------------------
+      global test |                         .        0             .
+      ----------------------------------------------------------------
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
    mi_admit |      Freq.     Percent        Cum.
@@ -1507,64 +1408,9 @@ Sorted by:
 ------------+-----------------------------------
       Total |      1,000      100.00
   6
-
-Contains data from ./output/prep_survival_wave2.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             byte    %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
 (0 observations deleted)
 
    hf_admit |      Freq.     Percent        Cum.
@@ -1574,6 +1420,880 @@ Sorted by:
 ------------+-----------------------------------
       Total |      1,000      100.00
   8
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  vte_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        991       99.10       99.10
+          1 |          9        0.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  9
+(0 observations deleted)
+(199 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        795       99.25       99.25
+          1 |          6        0.75      100.00
+------------+-----------------------------------
+      Total |        801      100.00
+  6
+(0 observations deleted)
+(0 observations deleted)
+(764 observations deleted)
+(0 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         37      100.00      100.00
+------------+-----------------------------------
+      Total |         37      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         37      100.00      100.00
+------------+-----------------------------------
+      Total |         37      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         37      100.00      100.00
+------------+-----------------------------------
+      Total |         37      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(30 observations deleted)
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |          7      100.00      100.00
+------------+-----------------------------------
+      Total |          7      100.00
+  0
+
+Contains data from ./output/prep_survival_easing2.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,000      100.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+   mi_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        998       99.80       99.80
+          1 |          2        0.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  2
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+   hf_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        999       99.90       99.90
+          1 |          1        0.10      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  1
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  vte_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      1,000      100.00      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  0
+(0 observations deleted)
+(199 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        801      100.00      100.00
+------------+-----------------------------------
+      Total |        801      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(762 observations deleted)
+(0 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         39      100.00      100.00
+------------+-----------------------------------
+      Total |         39      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         39      100.00      100.00
+------------+-----------------------------------
+      Total |         39      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         39      100.00      100.00
+------------+-----------------------------------
+      Total |         39      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(31 observations deleted)
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |          8      100.00      100.00
+------------+-----------------------------------
+      Total |          8      100.00
+  0
+
+Contains data from ./output/prep_survival_wave3.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        993       99.30       99.30
+          1 |          7        0.70      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  7
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+   mi_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        991       99.10       99.10
+          1 |          9        0.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  9
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+   hf_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        993       99.30       99.30
+          1 |          7        0.70      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  7
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  vte_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        996       99.60       99.60
+          1 |          4        0.40      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  4
+(0 observations deleted)
+(199 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        794       99.13       99.13
+          1 |          7        0.87      100.00
+------------+-----------------------------------
+      Total |        801      100.00
+  7
+(0 observations deleted)
+(0 observations deleted)
+(761 observations deleted)
+(0 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         39       97.50       97.50
+          1 |          1        2.50      100.00
+------------+-----------------------------------
+      Total |         40      100.00
+  1
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         40      100.00      100.00
+------------+-----------------------------------
+      Total |         40      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         40      100.00      100.00
+------------+-----------------------------------
+      Total |         40      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(27 observations deleted)
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         13      100.00      100.00
+------------+-----------------------------------
+      Total |         13      100.00
+  0
+
+Contains data from ./output/prep_survival_easing3.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:41
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        997       99.70       99.70
+          1 |          3        0.30      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  3
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+   mi_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        996       99.60       99.60
+          1 |          4        0.40      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  4
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+   hf_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        998       99.80       99.80
+          1 |          2        0.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  2
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  vte_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        997       99.70       99.70
+          1 |          3        0.30      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  3
+(0 observations deleted)
+(199 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        799       99.75       99.75
+          1 |          2        0.25      100.00
+------------+-----------------------------------
+      Total |        801      100.00
+  2
+(0 observations deleted)
+(0 observations deleted)
+(757 observations deleted)
+(0 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         44      100.00      100.00
+------------+-----------------------------------
+      Total |         44      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         44      100.00      100.00
+------------+-----------------------------------
+      Total |         44      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         44      100.00      100.00
+------------+-----------------------------------
+      Total |         44      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+(0 observations deleted)
+(34 observations deleted)
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         10      100.00      100.00
+------------+-----------------------------------
+      Total |         10      100.00
+  0
+
+. 
+. * T1 DM plots 
+. foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
+  2.     use ./output/prep_survival_`period', clear
+  3.     describe
+  4.     * Drop events that occur on index date
+.     drop if t1dm_admit_date==index_date
+  5. 
+.     * Update study population for diabetes and respiratory outcomes
+.     drop if has_t1_diabetes==0
+  6. 
+.     * Cox model for each outcome category
+.     * Generate flags and end dates for each outcome
+.     gen t1dm_admit=(t1dm_admit_date!=.)
+  7.     tab t1dm_admit
+  8.     count if t1dm_admit_date!=.
+  9.     if r(N) > 10 {
+ 10.             gen t1dm_end = end_date
+ 11.             replace t1dm_end = t1dm_admit_date if t1dm_admit==1
+ 12. 
+.             stset t1dm_end, fail(t1dm_admit) id(patient_id) enter(index_date)
+>  origin(index_date) 
+ 13.             * Kaplan-Meier plot
+.             sts graph, by(eth5) ylabel(.80(.05)1) title("`period'") graphregi
+> on(fcolor(white))
+ 14.             graph export ./output/graphs/km_t1dm_`period'.svg, as(svg) rep
+> lace
+ 15.             qui stcox eth5, strata(stp)
+ 16.             estat phtest 
+ 17.             qui stcox eth5 i.age_cat i.male, strata(stp)
+ 18.             estat phtest 
+ 19.             qui stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shie
+> lded, strata(stp)
+ 20.             estat phtest
+ 21.     }
+ 22. } 
+
+Contains data from ./output/prep_survival_pre.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(800 observations deleted)
+
+ t1dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        198       99.00       99.00
+          1 |          2        1.00      100.00
+------------+-----------------------------------
+      Total |        200      100.00
+  2
+
+Contains data from ./output/prep_survival_pandemic.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(800 observations deleted)
+
+ t1dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        194       97.00       97.00
+          1 |          6        3.00      100.00
+------------+-----------------------------------
+      Total |        200      100.00
+  6
+
+Contains data from ./output/prep_survival_wave1.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(800 observations deleted)
+
+ t1dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        200      100.00      100.00
+------------+-----------------------------------
+      Total |        200      100.00
+  0
+
+Contains data from ./output/prep_survival_easing1.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(800 observations deleted)
+
+ t1dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        200      100.00      100.00
+------------+-----------------------------------
+      Total |        200      100.00
+  0
 
 Contains data from ./output/prep_survival_wave2.dta
   obs:         1,000                          
@@ -1633,147 +2353,14 @@ age_cat         float   %13.0g     age
 -------------------------------------------------------------------------------
 Sorted by: 
 (0 observations deleted)
+(800 observations deleted)
 
-  vte_admit |      Freq.     Percent        Cum.
+ t1dm_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        991       99.10       99.10
-          1 |          9        0.90      100.00
+          0 |        198       99.00       99.00
+          1 |          2        1.00      100.00
 ------------+-----------------------------------
-      Total |      1,000      100.00
-  9
-
-Contains data from ./output/prep_survival_easing2.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
-(0 observations deleted)
-
-stroke_admi |
-          t |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |      1,000      100.00      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  0
-
-Contains data from ./output/prep_survival_easing2.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
-(0 observations deleted)
-
-   mi_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        998       99.80       99.80
-          1 |          2        0.20      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
+      Total |        200      100.00
   2
 
 Contains data from ./output/prep_survival_easing2.dta
@@ -1834,15 +2421,524 @@ age_cat         float   %13.0g     age
 -------------------------------------------------------------------------------
 Sorted by: 
 (0 observations deleted)
+(800 observations deleted)
 
-   hf_admit |      Freq.     Percent        Cum.
+ t1dm_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        999       99.90       99.90
-          1 |          1        0.10      100.00
+          0 |        200      100.00      100.00
 ------------+-----------------------------------
-      Total |      1,000      100.00
+      Total |        200      100.00
+  0
+
+Contains data from ./output/prep_survival_wave3.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(800 observations deleted)
+
+ t1dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        200      100.00      100.00
+------------+-----------------------------------
+      Total |        200      100.00
+  0
+
+Contains data from ./output/prep_survival_easing3.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:41
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(800 observations deleted)
+
+ t1dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        199       99.50       99.50
+          1 |          1        0.50      100.00
+------------+-----------------------------------
+      Total |        200      100.00
   1
 
+. 
+. * COPD plots
+. foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
+  2.     use ./output/prep_survival_`period', clear
+  3.     describe
+  4.     * Drop events that occur on index date
+.     drop if copd_admit_date==index_date
+  5. 
+.     * Update study population for diabetes and respiratory outcomes
+.     drop if has_copd==0
+  6. 
+.     * Cox model for each outcome category
+.     * Generate flags and end dates for each outcome
+.     gen copd_admit=(copd_admit_date!=.)
+  7.     tab copd_admit
+  8.     count if copd_admit_date!=.
+  9.     if r(N) > 10 {
+ 10.             gen copd_end = end_date
+ 11.             replace copd_end = copd_admit_date if copd_admit==1
+ 12. 
+.             stset copd_end, fail(copd_admit) id(patient_id) enter(index_date)
+>  origin(index_date) 
+ 13.             * Kaplan-Meier plot
+.             sts graph, by(eth5) ylabel(.90(.02)1) title("`period'") graphregi
+> on(fcolor(white))
+ 14.             graph export ./output/graphs/km_copd_`period'.svg, as(svg) rep
+> lace
+ 15.             qui stcox eth5, strata(stp)
+ 16.             estat phtest 
+ 17.             qui stcox eth5 i.age_cat i.male, strata(stp)
+ 18.             estat phtest 
+ 19.             qui stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shie
+> lded, strata(stp)
+ 20.             estat phtest
+ 21.     }
+ 22. } 
+
+Contains data from ./output/prep_survival_pre.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(950 observations deleted)
+
+ copd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         48       96.00       96.00
+          1 |          2        4.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  2
+
+Contains data from ./output/prep_survival_pandemic.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(950 observations deleted)
+
+ copd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         49       98.00       98.00
+          1 |          1        2.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  1
+
+Contains data from ./output/prep_survival_wave1.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(950 observations deleted)
+
+ copd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         50      100.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  0
+
+Contains data from ./output/prep_survival_easing1.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(950 observations deleted)
+
+ copd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         50      100.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  0
+
+Contains data from ./output/prep_survival_wave2.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             byte    %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(950 observations deleted)
+
+ copd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         50      100.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  0
+
 Contains data from ./output/prep_survival_easing2.dta
   obs:         1,000                          
  vars:            46                          4 May 2023 10:40
@@ -1901,12 +2997,13 @@ age_cat         float   %13.0g     age
 -------------------------------------------------------------------------------
 Sorted by: 
 (0 observations deleted)
+(950 observations deleted)
 
-  vte_admit |      Freq.     Percent        Cum.
+ copd_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |      1,000      100.00      100.00
+          0 |         50      100.00      100.00
 ------------+-----------------------------------
-      Total |      1,000      100.00
+      Total |         50      100.00
   0
 
 Contains data from ./output/prep_survival_wave3.dta
@@ -1967,216 +3064,15 @@ age_cat         float   %13.0g     age
 -------------------------------------------------------------------------------
 Sorted by: 
 (0 observations deleted)
+(950 observations deleted)
 
-stroke_admi |
-          t |      Freq.     Percent        Cum.
+ copd_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        993       99.30       99.30
-          1 |          7        0.70      100.00
+          0 |         49       98.00       98.00
+          1 |          1        2.00      100.00
 ------------+-----------------------------------
-      Total |      1,000      100.00
-  7
-
-Contains data from ./output/prep_survival_wave3.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             byte    %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
-(0 observations deleted)
-
-   mi_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        991       99.10       99.10
-          1 |          9        0.90      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  9
-
-Contains data from ./output/prep_survival_wave3.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             byte    %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
-(0 observations deleted)
-
-   hf_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        993       99.30       99.30
-          1 |          7        0.70      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  7
-
-Contains data from ./output/prep_survival_wave3.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             byte    %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
-(0 observations deleted)
-
-  vte_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        996       99.60       99.60
-          1 |          4        0.40      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  4
+      Total |         50      100.00
+  1
 
 Contains data from ./output/prep_survival_easing3.dta
   obs:         1,000                          
@@ -2236,238 +3132,21 @@ age_cat         float   %13.0g     age
 -------------------------------------------------------------------------------
 Sorted by: 
 (0 observations deleted)
+(950 observations deleted)
 
-stroke_admi |
-          t |      Freq.     Percent        Cum.
+ copd_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        997       99.70       99.70
-          1 |          3        0.30      100.00
+          0 |         49       98.00       98.00
+          1 |          1        2.00      100.00
 ------------+-----------------------------------
-      Total |      1,000      100.00
-  3
-
-Contains data from ./output/prep_survival_easing3.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:41
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
-(0 observations deleted)
-
-   mi_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        996       99.60       99.60
-          1 |          4        0.40      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  4
-
-Contains data from ./output/prep_survival_easing3.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:41
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
-(0 observations deleted)
-
-   hf_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        998       99.80       99.80
-          1 |          2        0.20      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  2
-
-Contains data from ./output/prep_survival_easing3.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:41
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
-(0 observations deleted)
-
-  vte_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        997       99.70       99.70
-          1 |          3        0.30      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  3
+      Total |         50      100.00
+  1
 
 . 
-. foreach outcome in stroke mi hf vte {
-  2.     graph combine "pre_`outcome'" "pandemic_`outcome'" /*"wave1_`outcome'"
->  "easing1_`outcome'" "wave2_`outcome'" "easing2_`outcome'" "wave3_`outcome'" 
-> "easing3_`outcome'"*/, graphregion(fcolor(white))
-  3.     graph export ./output/graphs/km_`outcome'_combined.svg, as(svg) replac
-> e    
-  4. }
-(note: file ./output/graphs/km_stroke_combined.svg not found)
-(file ./output/graphs/km_stroke_combined.svg written in SVG format)
-(note: file ./output/graphs/km_mi_combined.svg not found)
-(file ./output/graphs/km_mi_combined.svg written in SVG format)
-(note: file ./output/graphs/km_hf_combined.svg not found)
-(file ./output/graphs/km_hf_combined.svg written in SVG format)
-(note: file ./output/graphs/km_vte_combined.svg not found)
-(file ./output/graphs/km_vte_combined.svg written in SVG format)
-
 . 
 end of do-file
 
-. . file open output using "/tmp/305_cox_ph.do.ojs4.out", write text replace
+. . file open output using "/tmp/305_cox_ph.do.QoVA.out", write text replace
 
 . . file write output "success" 
 
