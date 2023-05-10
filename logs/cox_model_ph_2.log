@@ -7,12 +7,580 @@
 > {
   2.     use ./output/prep_survival_`period', clear
   3.     describe
-  4.     foreach outcome in stroke mi hf vte dm_keto depress anx asthma {
+  4.     foreach outcome in stroke mi hf vte dm_keto depress anx {
   5.         * Drop events that occur on index date
 .         drop if `outcome'_admit_date==index_date
   6. 
 .         * Update study population for diabetes and respiratory outcomes
 .         drop if diabetes_subgroup==0 & "`outcome'"== "dm_keto"
+  7.         
+.         * Cox model for each outcome category
+.         * Generate flags and end dates for each outcome
+.         gen `outcome'_admit=(`outcome'_admit_date!=.)
+  8.         tab `outcome'_admit
+  9.         count if `outcome'_admit_date!=.
+ 10.         if r(N) > 10 {
+ 11.                 gen `outcome'_end = end_date
+ 12.                 replace `outcome'_end = `outcome'_admit_date if `outcome'_
+> admit==1
+ 13. 
+.                 stset `outcome'_end, fail(`outcome'_admit) id(patient_id) ent
+> er(index_date) origin(index_date) 
+ 14.                 * Kaplan-Meier plot
+.                 sts graph, by(eth5) ylabel(.99(0.01)1) title("`period'") grap
+> hregion(fcolor(white))
+ 15.                 graph export ./output/graphs/km_`outcome'_`period'.svg, as
+> (svg) replace
+ 16.                 /*qui stcox eth5, strata(stp)
+>                 estat phtest 
+>                 qui stcox eth5 i.age_cat i.male, strata(stp)
+>                 estat phtest 
+>                 qui stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shi
+> elded, strata(stp)
+>                 estat phtest*/
+.         }
+ 17.     } 
+ 18. }
+
+Contains data from ./output/prep_survival_pre.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        975       97.50       97.50
+          1 |         25        2.50      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  25
+(25 real changes made)
+
+                id:  patient_id
+     failure event:  stroke_admit != 0 & stroke_admit < .
+obs. time interval:  (stroke_end[_n-1], stroke_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         25  failures in single-failure-per-subject data
+    742,364  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_stroke_pre.svg not found)
+(file ./output/graphs/km_stroke_pre.svg written in SVG format)
+(0 observations deleted)
+(0 observations deleted)
+
+   mi_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        978       97.80       97.80
+          1 |         22        2.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  22
+(22 real changes made)
+
+                id:  patient_id
+     failure event:  mi_admit != 0 & mi_admit < .
+obs. time interval:  (mi_end[_n-1], mi_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         22  failures in single-failure-per-subject data
+    743,435  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  mi_admit
+   analysis time _t:  (mi_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_mi_pre.svg not found)
+(file ./output/graphs/km_mi_pre.svg written in SVG format)
+(0 observations deleted)
+(0 observations deleted)
+
+   hf_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        986       98.60       98.60
+          1 |         14        1.40      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  14
+(14 real changes made)
+
+                id:  patient_id
+     failure event:  hf_admit != 0 & hf_admit < .
+obs. time interval:  (hf_end[_n-1], hf_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         14  failures in single-failure-per-subject data
+    746,347  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  hf_admit
+   analysis time _t:  (hf_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_hf_pre.svg not found)
+(file ./output/graphs/km_hf_pre.svg written in SVG format)
+(0 observations deleted)
+(0 observations deleted)
+
+  vte_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        981       98.10       98.10
+          1 |         19        1.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  19
+(19 real changes made)
+
+                id:  patient_id
+     failure event:  vte_admit != 0 & vte_admit < .
+obs. time interval:  (vte_end[_n-1], vte_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         19  failures in single-failure-per-subject data
+    745,672  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  vte_admit
+   analysis time _t:  (vte_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_vte_pre.svg not found)
+(file ./output/graphs/km_vte_pre.svg written in SVG format)
+(0 observations deleted)
+(950 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         49       98.00       98.00
+          1 |          1        2.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  1
+(0 observations deleted)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         50      100.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         49       98.00       98.00
+          1 |          1        2.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  1
+
+Contains data from ./output/prep_survival_pandemic.dta
+  obs:         1,000                          
+ vars:            46                          4 May 2023 10:40
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 observations deleted)
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        981       98.10       98.10
+          1 |         19        1.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  19
+(19 real changes made)
+
+                id:  patient_id
+     failure event:  stroke_admit != 0 & stroke_admit < .
+obs. time interval:  (stroke_end[_n-1], stroke_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         19  failures in single-failure-per-subject data
+    737,792  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_stroke_pandemic.svg not found)
+(file ./output/graphs/km_stroke_pandemic.svg written in SVG format)
+(0 observations deleted)
+(0 observations deleted)
+
+   mi_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        987       98.70       98.70
+          1 |         13        1.30      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  13
+(13 real changes made)
+
+                id:  patient_id
+     failure event:  mi_admit != 0 & mi_admit < .
+obs. time interval:  (mi_end[_n-1], mi_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         13  failures in single-failure-per-subject data
+    738,277  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  mi_admit
+   analysis time _t:  (mi_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_mi_pandemic.svg not found)
+(file ./output/graphs/km_mi_pandemic.svg written in SVG format)
+(0 observations deleted)
+(0 observations deleted)
+
+   hf_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        983       98.30       98.30
+          1 |         17        1.70      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  17
+(17 real changes made)
+
+                id:  patient_id
+     failure event:  hf_admit != 0 & hf_admit < .
+obs. time interval:  (hf_end[_n-1], hf_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         17  failures in single-failure-per-subject data
+    736,202  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  hf_admit
+   analysis time _t:  (hf_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_hf_pandemic.svg not found)
+(file ./output/graphs/km_hf_pandemic.svg written in SVG format)
+(0 observations deleted)
+(0 observations deleted)
+
+  vte_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        978       97.80       97.80
+          1 |         22        2.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  22
+(22 real changes made)
+
+                id:  patient_id
+     failure event:  vte_admit != 0 & vte_admit < .
+obs. time interval:  (vte_end[_n-1], vte_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         22  failures in single-failure-per-subject data
+    737,536  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  vte_admit
+   analysis time _t:  (vte_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+(note: file ./output/graphs/km_vte_pandemic.svg not found)
+(file ./output/graphs/km_vte_pandemic.svg written in SVG format)
+(0 observations deleted)
+(950 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         50      100.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  0
+(0 observations deleted)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         47       94.00       94.00
+          1 |          3        6.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  3
+(0 observations deleted)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         50      100.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  0
+
+. 
+. /* T1 DM plots 
+> foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
+>     use ./output/prep_survival_`period', clear
+>     describe
+>     * Drop events that occur on index date
+>     drop if t1dm_admit_date==index_date
+> 
+>     * Update study population for diabetes and respiratory outcomes
+>     drop if has_t1_diabetes==0
+> 
+>     * Cox model for each outcome category
+>     * Generate flags and end dates for each outcome
+>     gen t1dm_admit=(t1dm_admit_date!=.)
+>     tab t1dm_admit
+>     count if t1dm_admit_date!=.
+>     if r(N) > 10 {
+>             gen t1dm_end = end_date
+>             replace t1dm_end = t1dm_admit_date if t1dm_admit==1
+> 
+>             stset t1dm_end, fail(t1dm_admit) id(patient_id) enter(index_date)
+>  origin(index_date) 
+>             * Kaplan-Meier plot
+>             sts graph, by(eth5) ylabel(.80(.05)1) title("`period'") graphregi
+> on(fcolor(white))
+>             graph export ./output/graphs/km_t1dm_`period'.svg, as(svg) replac
+> e
+>             qui stcox eth5, strata(stp)
+>             estat phtest 
+>             qui stcox eth5 i.age_cat i.male, strata(stp)
+>             estat phtest 
+>             qui stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielde
+> d, strata(stp)
+>             estat phtest
+>     }
+> } */
+. 
+. * T2 DM and asthma plots 
+. foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ 
+> {
+  2.     use ./output/prep_survival_`period', clear
+  3.     describe
+  4.     foreach outcome in asthma t2dm {
+  5.     * Drop events that occur on index date
+.         drop if `outcome'_admit_date==index_date 
+  6. 
+.         * Update study population for diabetes and respiratory outcomes
+.         drop if has_t2_diabetes==0 & "`outcome'"== "t2dm"
   7.         drop if has_asthma==0 & "`outcome'"== "asthma"
   8. 
 .         * Cox model for each outcome category
@@ -28,8 +596,8 @@
 .                 stset `outcome'_end, fail(`outcome'_admit) id(patient_id) ent
 > er(index_date) origin(index_date) 
  15.                 * Kaplan-Meier plot
-.                 sts graph, by(eth5) ylabel(.99(.002)1) title("`period'") grap
-> hregion(fcolor(white))
+.                 sts graph, by(eth5) ylabel(.95(.01)1) title("`period'") graph
+> region(fcolor(white))
  16.                 graph export ./output/graphs/km_`outcome'_`period'.svg, as
 > (svg) replace
  17.                 /*qui stcox eth5, strata(stp)
@@ -102,210 +670,27 @@ age_cat         float   %13.0g     age
 Sorted by: 
 (0 observations deleted)
 (0 observations deleted)
-(0 observations deleted)
-
-stroke_admi |
-          t |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        975       97.50       97.50
-          1 |         25        2.50      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  25
-(25 real changes made)
-
-                id:  patient_id
-     failure event:  stroke_admit != 0 & stroke_admit < .
-obs. time interval:  (stroke_end[_n-1], stroke_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-      1,000  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-      1,000  observations remaining, representing
-      1,000  subjects
-         25  failures in single-failure-per-subject data
-    742,364  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       752
-
-         failure _d:  stroke_admit
-   analysis time _t:  (stroke_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_stroke_pre.svg not found)
-(file ./output/graphs/km_stroke_pre.svg written in SVG format)
-(0 observations deleted)
-(0 observations deleted)
-(0 observations deleted)
-
-   mi_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        978       97.80       97.80
-          1 |         22        2.20      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  22
-(22 real changes made)
-
-                id:  patient_id
-     failure event:  mi_admit != 0 & mi_admit < .
-obs. time interval:  (mi_end[_n-1], mi_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-      1,000  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-      1,000  observations remaining, representing
-      1,000  subjects
-         22  failures in single-failure-per-subject data
-    743,435  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       752
-
-         failure _d:  mi_admit
-   analysis time _t:  (mi_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_mi_pre.svg not found)
-(file ./output/graphs/km_mi_pre.svg written in SVG format)
-(0 observations deleted)
-(0 observations deleted)
-(0 observations deleted)
-
-   hf_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        986       98.60       98.60
-          1 |         14        1.40      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  14
-(14 real changes made)
-
-                id:  patient_id
-     failure event:  hf_admit != 0 & hf_admit < .
-obs. time interval:  (hf_end[_n-1], hf_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-      1,000  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-      1,000  observations remaining, representing
-      1,000  subjects
-         14  failures in single-failure-per-subject data
-    746,347  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       752
-
-         failure _d:  hf_admit
-   analysis time _t:  (hf_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_hf_pre.svg not found)
-(file ./output/graphs/km_hf_pre.svg written in SVG format)
-(0 observations deleted)
-(0 observations deleted)
-(0 observations deleted)
-
-  vte_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        981       98.10       98.10
-          1 |         19        1.90      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  19
-(19 real changes made)
-
-                id:  patient_id
-     failure event:  vte_admit != 0 & vte_admit < .
-obs. time interval:  (vte_end[_n-1], vte_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-      1,000  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-      1,000  observations remaining, representing
-      1,000  subjects
-         19  failures in single-failure-per-subject data
-    745,672  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       752
-
-         failure _d:  vte_admit
-   analysis time _t:  (vte_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_vte_pre.svg not found)
-(file ./output/graphs/km_vte_pre.svg written in SVG format)
-(0 observations deleted)
-(950 observations deleted)
-(0 observations deleted)
-
-dm_keto_adm |
-         it |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |         49       98.00       98.00
-          1 |          1        2.00      100.00
-------------+-----------------------------------
-      Total |         50      100.00
-  1
-(0 observations deleted)
-(0 observations deleted)
-(0 observations deleted)
-
-depress_adm |
-         it |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |         50      100.00      100.00
-------------+-----------------------------------
-      Total |         50      100.00
-  0
-(0 observations deleted)
-(0 observations deleted)
-(0 observations deleted)
-
-  anx_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |         49       98.00       98.00
-          1 |          1        2.00      100.00
-------------+-----------------------------------
-      Total |         50      100.00
-  1
-(0 observations deleted)
-(0 observations deleted)
-(41 observations deleted)
+(800 observations deleted)
 
 asthma_admi |
           t |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |          9      100.00      100.00
+          0 |        194       97.00       97.00
+          1 |          6        3.00      100.00
 ------------+-----------------------------------
-      Total |          9      100.00
-  0
+      Total |        200      100.00
+  6
+(0 observations deleted)
+(38 observations deleted)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        156       96.30       96.30
+          1 |          6        3.70      100.00
+------------+-----------------------------------
+      Total |        162      100.00
+  6
 
 Contains data from ./output/prep_survival_pandemic.dta
   obs:         1,000                          
@@ -366,477 +751,27 @@ age_cat         float   %13.0g     age
 Sorted by: 
 (0 observations deleted)
 (0 observations deleted)
-(0 observations deleted)
-
-stroke_admi |
-          t |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        981       98.10       98.10
-          1 |         19        1.90      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  19
-(19 real changes made)
-
-                id:  patient_id
-     failure event:  stroke_admit != 0 & stroke_admit < .
-obs. time interval:  (stroke_end[_n-1], stroke_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-      1,000  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-      1,000  observations remaining, representing
-      1,000  subjects
-         19  failures in single-failure-per-subject data
-    737,792  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       768
-
-         failure _d:  stroke_admit
-   analysis time _t:  (stroke_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_stroke_pandemic.svg not found)
-(file ./output/graphs/km_stroke_pandemic.svg written in SVG format)
-(0 observations deleted)
-(0 observations deleted)
-(0 observations deleted)
-
-   mi_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        987       98.70       98.70
-          1 |         13        1.30      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  13
-(13 real changes made)
-
-                id:  patient_id
-     failure event:  mi_admit != 0 & mi_admit < .
-obs. time interval:  (mi_end[_n-1], mi_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-      1,000  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-      1,000  observations remaining, representing
-      1,000  subjects
-         13  failures in single-failure-per-subject data
-    738,277  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       768
-
-         failure _d:  mi_admit
-   analysis time _t:  (mi_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_mi_pandemic.svg not found)
-(file ./output/graphs/km_mi_pandemic.svg written in SVG format)
-(0 observations deleted)
-(0 observations deleted)
-(0 observations deleted)
-
-   hf_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        983       98.30       98.30
-          1 |         17        1.70      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  17
-(17 real changes made)
-
-                id:  patient_id
-     failure event:  hf_admit != 0 & hf_admit < .
-obs. time interval:  (hf_end[_n-1], hf_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-      1,000  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-      1,000  observations remaining, representing
-      1,000  subjects
-         17  failures in single-failure-per-subject data
-    736,202  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       768
-
-         failure _d:  hf_admit
-   analysis time _t:  (hf_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_hf_pandemic.svg not found)
-(file ./output/graphs/km_hf_pandemic.svg written in SVG format)
-(0 observations deleted)
-(0 observations deleted)
-(0 observations deleted)
-
-  vte_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        978       97.80       97.80
-          1 |         22        2.20      100.00
-------------+-----------------------------------
-      Total |      1,000      100.00
-  22
-(22 real changes made)
-
-                id:  patient_id
-     failure event:  vte_admit != 0 & vte_admit < .
-obs. time interval:  (vte_end[_n-1], vte_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-      1,000  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-      1,000  observations remaining, representing
-      1,000  subjects
-         22  failures in single-failure-per-subject data
-    737,536  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       768
-
-         failure _d:  vte_admit
-   analysis time _t:  (vte_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_vte_pandemic.svg not found)
-(file ./output/graphs/km_vte_pandemic.svg written in SVG format)
-(0 observations deleted)
-(950 observations deleted)
-(0 observations deleted)
-
-dm_keto_adm |
-         it |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |         50      100.00      100.00
-------------+-----------------------------------
-      Total |         50      100.00
-  0
-(0 observations deleted)
-(0 observations deleted)
-(0 observations deleted)
-
-depress_adm |
-         it |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |         47       94.00       94.00
-          1 |          3        6.00      100.00
-------------+-----------------------------------
-      Total |         50      100.00
-  3
-(0 observations deleted)
-(0 observations deleted)
-(0 observations deleted)
-
-  anx_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |         50      100.00      100.00
-------------+-----------------------------------
-      Total |         50      100.00
-  0
-(0 observations deleted)
-(0 observations deleted)
-(35 observations deleted)
+(800 observations deleted)
 
 asthma_admi |
           t |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |         15      100.00      100.00
+          0 |        196       98.00       98.00
+          1 |          4        2.00      100.00
 ------------+-----------------------------------
-      Total |         15      100.00
-  0
-
-. 
-. /* T1 DM plots 
-> foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
->     use ./output/prep_survival_`period', clear
->     describe
->     * Drop events that occur on index date
->     drop if t1dm_admit_date==index_date
-> 
->     * Update study population for diabetes and respiratory outcomes
->     drop if has_t1_diabetes==0
-> 
->     * Cox model for each outcome category
->     * Generate flags and end dates for each outcome
->     gen t1dm_admit=(t1dm_admit_date!=.)
->     tab t1dm_admit
->     count if t1dm_admit_date!=.
->     if r(N) > 10 {
->             gen t1dm_end = end_date
->             replace t1dm_end = t1dm_admit_date if t1dm_admit==1
-> 
->             stset t1dm_end, fail(t1dm_admit) id(patient_id) enter(index_date)
->  origin(index_date) 
->             * Kaplan-Meier plot
->             sts graph, by(eth5) ylabel(.80(.05)1) title("`period'") graphregi
-> on(fcolor(white))
->             graph export ./output/graphs/km_t1dm_`period'.svg, as(svg) replac
-> e
->             qui stcox eth5, strata(stp)
->             estat phtest 
->             qui stcox eth5 i.age_cat i.male, strata(stp)
->             estat phtest 
->             qui stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielde
-> d, strata(stp)
->             estat phtest
->     }
-> } */
-. 
-. * T2 DM plots 
-. foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ 
-> {
-  2.     use ./output/prep_survival_`period', clear
-  3.     describe
-  4.     * Drop events that occur on index date
-.     drop if t2dm_admit_date==index_date
-  5. 
-.     * Update study population for diabetes and respiratory outcomes
-.     drop if has_t2_diabetes==0
-  6. 
-.     * Cox model for each outcome category
-.     * Generate flags and end dates for each outcome
-.     gen t2dm_admit=(t2dm_admit_date!=.)
-  7.     tab t2dm_admit
-  8.     count if t2dm_admit_date!=.
-  9.     if r(N) > 10 {
- 10.             gen t2dm_end = end_date
- 11.             replace t2dm_end = t2dm_admit_date if t2dm_admit==1
- 12. 
-.             stset t2dm_end, fail(t2dm_admit) id(patient_id) enter(index_date)
->  origin(index_date) 
- 13.             * Kaplan-Meier plot
-.             sts graph, by(eth5) ylabel(.95(.01)1) title("`period'") graphregi
-> on(fcolor(white))
- 14.             graph export ./output/graphs/km_t2dm_`period'.svg, as(svg) rep
-> lace
- 15.             /*qui stcox eth5, strata(stp)
->             estat phtest 
->             qui stcox eth5 i.age_cat i.male, strata(stp)
->             estat phtest 
->             qui stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielde
-> d, strata(stp)
->             estat phtest*/
-.     }
- 16. } 
-
-Contains data from ./output/prep_survival_pre.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
+      Total |        200      100.00
+  4
 (0 observations deleted)
-(199 observations deleted)
+(44 observations deleted)
+(0 observations deleted)
 
  t2dm_admit |      Freq.     Percent        Cum.
 ------------+-----------------------------------
-          0 |        785       98.00       98.00
-          1 |         16        2.00      100.00
+          0 |        155       99.36       99.36
+          1 |          1        0.64      100.00
 ------------+-----------------------------------
-      Total |        801      100.00
-  16
-(16 real changes made)
-
-                id:  patient_id
-     failure event:  t2dm_admit != 0 & t2dm_admit < .
-obs. time interval:  (t2dm_end[_n-1], t2dm_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-        801  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-        801  observations remaining, representing
-        801  subjects
-         16  failures in single-failure-per-subject data
-    595,965  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       752
-
-         failure _d:  t2dm_admit
-   analysis time _t:  (t2dm_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_t2dm_pre.svg not found)
-(file ./output/graphs/km_t2dm_pre.svg written in SVG format)
-
-Contains data from ./output/prep_survival_pandemic.dta
-  obs:         1,000                          
- vars:            46                          4 May 2023 10:40
--------------------------------------------------------------------------------
-              storage   display    value
-variable name   type    format     label      variable label
--------------------------------------------------------------------------------
-self_harm_pri~n str10   %10s                  
-stp             str4    %9s                   
-age             int     %8.0g                 
-ethnicity       byte    %8.0g                 
-has_msoa        byte    %8.0g                 
-imd             byte    %8.0g                 
-shielded        byte    %8.0g                 
-has_t1_diabetes byte    %8.0g                 
-has_t2_diabetes byte    %8.0g                 
-diabetes_subg~p byte    %8.0g                 
-cvd_subgroup    byte    %8.0g                 
-has_asthma      byte    %8.0g                 
-has_copd        byte    %8.0g                 
-resp_subgroup   byte    %8.0g                 
-mh_subgroup     byte    %8.0g                 
-urban_rural     byte    %8.0g                 
-patient_id      int     %8.0g                 
-dereg_dateA     float   %dD/N/CY              
-mi_admit_date   float   %dD/N/CY              
-stroke_admit_~e float   %dD/N/CY              
-hf_admit_date   float   %dD/N/CY              
-vte_admit_date  float   %dD/N/CY              
-t1dm_admit_date float   %dD/N/CY              
-t2dm_admit_date float   %dD/N/CY              
-dm_keto_admit~e float   %dD/N/CY              
-asthma_admit_~e float   %dD/N/CY              
-depress_admit~e float   %dD/N/CY              
-anx_admit_date  float   %dD/N/CY              
-smi_admit_date  float   %dD/N/CY              
-cvd_admit_date  float   %dD/N/CY              
-dm_admit_date   float   %dD/N/CY              
-copd_admit_date float   %dD/N/CY              
-mh_admit_date   float   %dD/N/CY              
-date_died       float   %dD/N/CY              
-lrti_admit_date float   %dD/N/CY              
-copd_any_date   float   %dD/N/CY              
-lrti_copd       float   %9.0g                 
-index_date      float   %dD/N/CY              
-end_study       float   %dD/N/CY              
-end_date        float   %dD/N/CY              
-eth5            float   %11.0g     eth5       
-male            float   %9.0g      male       
-region          float   %24.0g     region     region of England
-urban_rural_5   float   %27.0g     urban_rural_5
-                                              Rural Urban in five categories
-urban_rural_bin float   %9.0g      urban_rural_bin
-                                              Rural-Urban
-age_cat         float   %13.0g     age        
--------------------------------------------------------------------------------
-Sorted by: 
-(0 observations deleted)
-(199 observations deleted)
-
- t2dm_admit |      Freq.     Percent        Cum.
-------------+-----------------------------------
-          0 |        787       98.25       98.25
-          1 |         14        1.75      100.00
-------------+-----------------------------------
-      Total |        801      100.00
-  14
-(14 real changes made)
-
-                id:  patient_id
-     failure event:  t2dm_admit != 0 & t2dm_admit < .
-obs. time interval:  (t2dm_end[_n-1], t2dm_end]
- enter on or after:  time index_date
- exit on or before:  failure
-    t for analysis:  (time-origin)
-            origin:  time index_date
-
-------------------------------------------------------------------------------
-        801  total observations
-          0  exclusions
-------------------------------------------------------------------------------
-        801  observations remaining, representing
-        801  subjects
-         14  failures in single-failure-per-subject data
-    591,373  total analysis time at risk and under observation
-                                                at risk from t =         0
-                                     earliest observed entry t =         0
-                                          last observed exit t =       768
-
-         failure _d:  t2dm_admit
-   analysis time _t:  (t2dm_end-origin)
-             origin:  time index_date
-  enter on or after:  time index_date
-                 id:  patient_id
-(note: file ./output/graphs/km_t2dm_pandemic.svg not found)
-(file ./output/graphs/km_t2dm_pandemic.svg written in SVG format)
+      Total |        156      100.00
+  1
 
 . 
 . /* COPD plots
@@ -878,7 +813,7 @@ obs. time interval:  (t2dm_end[_n-1], t2dm_end]
 . 
 end of do-file
 
-. . file open output using "/tmp/305_cox_ph.do.0b2B.out", write text replace
+. . file open output using "/tmp/305_cox_ph.do.uMkk.out", write text replace
 
 . . file write output "success" 
 
