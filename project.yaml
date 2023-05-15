@@ -531,4 +531,4 @@ actions:
     outputs:
       moderately_sensitive:
         log: logs/cox_model_ph_2.log
-        output: output/graphs/km*.svg
+        output: output/graphs/km_*.svg
