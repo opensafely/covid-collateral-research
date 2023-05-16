@@ -10,7 +10,7 @@ Description:    Plots proportional hazards and runs Cox models
 adopath + ./analysis/ado 
 cap log using ./logs/cox_model_prep.log, replace
 
-* Prepare datasets
+* Prepare datasets stringcols 24 in real data and 18 in dummy data 
 foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
     import delimited using ./output/survival/input_survival_`period'.csv, clear stringcols(2/24)
     describe

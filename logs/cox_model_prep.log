@@ -1,6 +1,6 @@
 
 . 
-. * Prepare datasets
+. * Prepare datasets stringcols 24 in real data 
 . foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
   2.     import delimited using ./output/survival/input_survival_`period'.csv, 
 > clear stringcols(2/18)
@@ -96,17 +96,17 @@
  57.         egen end_date = rowmin(dereg_dateA end_study date_died)
  58.         format %dD/N/CY end_date
  59.         di "Number where end date is prior to index"
- 60.         *count if end_date<index_date
-. 
+ 60.         count if end_date<index_date
+ 61. 
 .     * Reorder ethnicity - white, asian, black, mixed, other
 .     *re-order ethnicity
 .     gen eth5=1 if ethnicity==1
- 61.     replace eth5=2 if ethnicity==3
- 62.     replace eth5=3 if ethnicity==4
- 63.     replace eth5=4 if ethnicity==2
- 64.     replace eth5=5 if ethnicity==5
- 65.     replace eth5=. if ethnicity==.
- 66. 
+ 62.     replace eth5=2 if ethnicity==3
+ 63.     replace eth5=3 if ethnicity==4
+ 64.     replace eth5=4 if ethnicity==2
+ 65.     replace eth5=5 if ethnicity==5
+ 66.     replace eth5=. if ethnicity==.
+ 67. 
 .     label define eth5                   1 "White"                            
 >            ///
 >                                 2 "South Asian"                         ///  
@@ -117,72 +117,72 @@
 >    ///
 >                                 5 "Other"                                    
 >    
- 67.                         
+ 68.                         
 . 
 .     label values eth5 eth5
- 68.     safetab eth5, m
- 69. 
+ 69.     safetab eth5, m
+ 70. 
 .     * Make gender numeric
 .     gen male = 1 if sex == "M"
- 70.     replace male = 0 if sex == "F"
- 71.     label define male 0"Female" 1"Male"
- 72.     label values male male
- 73.     safetab male, miss
- 74.     drop sex
- 75. 
+ 71.     replace male = 0 if sex == "F"
+ 72.     label define male 0"Female" 1"Male"
+ 73.     label values male male
+ 74.     safetab male, miss
+ 75.     drop sex
+ 76. 
 .     * Make region numeric
 .     generate region2=.
- 76.     replace region2=0 if region=="East"
- 77.     replace region2=1 if region=="East Midlands"
- 78.     replace region2=2 if region=="London"
- 79.     replace region2=3 if region=="North East"
- 80.     replace region2=4 if region=="North West"
- 81.     replace region2=5 if region=="South East"
- 82.     replace region2=6 if region=="South West"
- 83.     replace region2=7 if region=="West Midlands"
- 84.     replace region2=8 if region=="Yorkshire and The Humber"
- 85.     drop region
- 86.     rename region2 region
- 87.     label var region "region of England"
- 88.     label define region 0 "East" 1 "East Midlands"  2 "London" 3 "North Ea
+ 77.     replace region2=0 if region=="East"
+ 78.     replace region2=1 if region=="East Midlands"
+ 79.     replace region2=2 if region=="London"
+ 80.     replace region2=3 if region=="North East"
+ 81.     replace region2=4 if region=="North West"
+ 82.     replace region2=5 if region=="South East"
+ 83.     replace region2=6 if region=="South West"
+ 84.     replace region2=7 if region=="West Midlands"
+ 85.     replace region2=8 if region=="Yorkshire and The Humber"
+ 86.     drop region
+ 87.     rename region2 region
+ 88.     label var region "region of England"
+ 89.     label define region 0 "East" 1 "East Midlands"  2 "London" 3 "North Ea
 > st" 4 "North West" 5 "South East" 6 "South West" 7 "West Midlands" 8 "Yorkshi
 > re and The Humber"
- 89.     label values region region
- 90.     safetab region, miss
- 91. 
+ 90.     label values region region
+ 91.     safetab region, miss
+ 92. 
 .     *create a 4 category rural urban variable 
 .     generate urban_rural_5=.
- 92.     la var urban_rural_5 "Rural Urban in five categories"
- 93.     replace urban_rural_5=1 if urban_rural==1
- 94.     replace urban_rural_5=2 if urban_rural==2
- 95.     replace urban_rural_5=3 if urban_rural==3|urban_rural==4
- 96.     replace urban_rural_5=4 if urban_rural==5|urban_rural==6
- 97.     replace urban_rural_5=5 if urban_rural==7|urban_rural==8
- 98.     label define urban_rural_5 1 "Urban major conurbation" 2 "Urban minor 
+ 93.     la var urban_rural_5 "Rural Urban in five categories"
+ 94.     replace urban_rural_5=1 if urban_rural==1
+ 95.     replace urban_rural_5=2 if urban_rural==2
+ 96.     replace urban_rural_5=3 if urban_rural==3|urban_rural==4
+ 97.     replace urban_rural_5=4 if urban_rural==5|urban_rural==6
+ 98.     replace urban_rural_5=5 if urban_rural==7|urban_rural==8
+ 99.     label define urban_rural_5 1 "Urban major conurbation" 2 "Urban minor 
 > conurbation" 3 "Urban city and town" 4 "Rural town and fringe" 5 "Rural villa
 > ge and dispersed"
- 99.     label values urban_rural_5 urban_rural_5
-100.     safetab urban_rural_5, miss
-101. 
+100.     label values urban_rural_5 urban_rural_5
+101.     safetab urban_rural_5, miss
+102. 
 .     *generate a binary rural urban (with missing assigned to urban)
 .     generate urban_rural_bin=.
-102.     replace urban_rural_bin=1 if urban_rural<=4|urban_rural==.
-103.     replace urban_rural_bin=0 if urban_rural>4 & urban_rural!=.
-104.     label define urban_rural_bin 0 "Rural" 1 "Urban"
-105.     label values urban_rural_bin urban_rural_bin
-106.     safetab urban_rural_bin urban_rural, miss
-107.     label var urban_rural_bin "Rural-Urban"
-108. 
+103.     replace urban_rural_bin=1 if urban_rural<=4|urban_rural==.
+104.     replace urban_rural_bin=0 if urban_rural>4 & urban_rural!=.
+105.     label define urban_rural_bin 0 "Rural" 1 "Urban"
+106.     label values urban_rural_bin urban_rural_bin
+107.     safetab urban_rural_bin urban_rural, miss
+108.     label var urban_rural_bin "Rural-Urban"
+109. 
 .     * Define age categories
 .     * Create age categories
 .     egen age_cat = cut(age), at(18, 40, 60, 80, 120) icodes
-109.     label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years"
+110.     label define age 0 "18 - 40 years" 1 "41 - 60 years" 2 "61 - 80 years"
 >  3 ">80 years"
-110.     label values age_cat age
-111.     safetab age_cat, miss
-112. 
+111.     label values age_cat age
+112.     safetab age_cat, miss
+113. 
 .     save "./output/prep_survival_`period'", replace
-113. }
+114. }
 (42 vars, 1,000 obs)
 
 Contains data
@@ -320,6 +320,7 @@ number of missing values
   5. | 22/03/2020 |
      +------------+
 Number where end date is prior to index
+  0
 (856 missing values generated)
 (209 real changes made)
 (203 real changes made)
@@ -562,6 +563,7 @@ number of missing values
   5. | 30/04/2022 |
      +------------+
 Number where end date is prior to index
+  0
 (854 missing values generated)
 (223 real changes made)
 (189 real changes made)
@@ -804,6 +806,7 @@ number of missing values
   5. | 30/05/2020 |
      +------------+
 Number where end date is prior to index
+  0
 (840 missing values generated)
 (197 real changes made)
 (191 real changes made)
@@ -1046,6 +1049,7 @@ number of missing values
   5. | 06/09/2020 |
      +------------+
 Number where end date is prior to index
+  0
 (851 missing values generated)
 (224 real changes made)
 (197 real changes made)
@@ -1288,6 +1292,7 @@ number of missing values
   5. | 24/04/2021 |
      +------------+
 Number where end date is prior to index
+  0
 (830 missing values generated)
 (180 real changes made)
 (183 real changes made)
@@ -1530,6 +1535,7 @@ number of missing values
   5. | 27/05/2021 |
      +------------+
 Number where end date is prior to index
+  0
 (837 missing values generated)
 (212 real changes made)
 (183 real changes made)
@@ -1772,6 +1778,7 @@ number of missing values
   5. | 14/12/2021 |
      +------------+
 Number where end date is prior to index
+  0
 (833 missing values generated)
 (190 real changes made)
 (194 real changes made)
@@ -2014,6 +2021,7 @@ number of missing values
   5. | 30/04/2022 |
      +------------+
 Number where end date is prior to index
+  0
 (852 missing values generated)
 (181 real changes made)
 (209 real changes made)
@@ -2125,5 +2133,5 @@ file ./output/prep_survival_easing3.dta saved
       name:  <unnamed>
        log:  /workspace/logs/cox_model_prep.log
   log type:  text
- closed on:   4 May 2023, 10:41:00
+ closed on:  16 May 2023, 10:11:33
 -------------------------------------------------------------------------------

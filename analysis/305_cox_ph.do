@@ -32,17 +32,21 @@ foreach period in pre pandemic {
         tab `outcome'_admit
         gen `outcome'_end = end_date
         replace `outcome'_end = `outcome'_admit_date if `outcome'_admit==1
-        gen `outcome'_days = `outcome'_end - index_date
+
+        stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index_date) origin(index_date) 
+        keep patient_id _t _d _t0 
+
     }
     save ./output/survival/survival__`period'.dta, replace
 }
 */
-
+* Page on time_varying splitting: https://stats.stackexchange.com/questions/112555/what-s-wrong-with-this-way-of-fitting-time-dependent-coefficients-in-a-cox-regre 
 * For outcomes where axis 0.99
 foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     use ./output/prep_survival_`period', clear
     describe
     foreach outcome in stroke mi hf vte dm_keto depress anx {
+        preserve
         * Drop events that occur on index date
         drop if `outcome'_admit_date==index_date
 
@@ -60,15 +64,18 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
 
                 stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index_date) origin(index_date) 
                 * Kaplan-Meier plot
-                sts graph, by(eth5) ylabel(.99(0.01)1) title("`period'") graphregion(fcolor(white))
-                graph export ./output/graphs/km_`outcome'_`period'.svg, as(svg) replace
-                /*qui stcox eth5, strata(stp)
-                estat phtest 
-                qui stcox eth5 i.age_cat i.male, strata(stp)
-                estat phtest 
-                qui stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp)
-                estat phtest*/
+                *sts graph, by(eth5) ylabel(.99(0.01)1) title("`period'") graphregion(fcolor(white))
+                *graph export ./output/graphs/km_`outcome'_`period'.svg, as(svg) replace
+                *stcox eth5, strata(stp)
+                *estat phtest 
+                stcox eth5 i.age_cat i.male, strata(stp) nolog
+                estat phtest, d 
+                stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
+                stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
+                estat phtest
+                stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
         }
+    restore
     } 
 }
 
@@ -95,12 +102,14 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
             * Kaplan-Meier plot
             sts graph, by(eth5) ylabel(.80(.05)1) title("`period'") graphregion(fcolor(white))
             graph export ./output/graphs/km_t1dm_`period'.svg, as(svg) replace
-            /*qui stcox eth5, strata(stp)
-            estat phtest 
-            qui stcox eth5 i.age_cat i.male, strata(stp)
-            estat phtest 
-            qui stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp)
-            estat phtest*/
+            *qui stcox eth5, strata(stp)
+            *estat phtest 
+            stcox eth5 i.age_cat i.male, strata(stp) nolog
+            estat phtest, d 
+            stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
+            stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
+            estat phtest
+            stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
     }
 } 
 
@@ -109,6 +118,7 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     use ./output/prep_survival_`period', clear
     describe
     foreach outcome in asthma t2dm {
+    preserve
     * Drop events that occur on index date
         drop if `outcome'_admit_date==index_date 
 
@@ -129,13 +139,16 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                 * Kaplan-Meier plot
                 sts graph, by(eth5) ylabel(.95(.01)1) title("`period'") graphregion(fcolor(white))
                 graph export ./output/graphs/km_`outcome'_`period'.svg, as(svg) replace
-                /*qui stcox eth5, strata(stp)
-                estat phtest 
-                qui stcox eth5 i.age_cat i.male, strata(stp)
-                estat phtest 
-                qui stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp)
-                estat phtest*/
+                *qui stcox eth5, strata(stp)
+                *estat phtest 
+                stcox eth5 i.age_cat i.male, strata(stp) nolog
+                estat phtest, d 
+                stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
+                stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
+                estat phtest
+                stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
         }
+    restore
     } 
 }
 
@@ -162,12 +175,14 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
             * Kaplan-Meier plot
             sts graph, by(eth5) ylabel(.90(.02)1) title("`period'") graphregion(fcolor(white))
             graph export ./output/graphs/km_copd_`period'.svg, as(svg) replace
-            /*qui stcox eth5, strata(stp)
-            estat phtest 
-            qui stcox eth5 i.age_cat i.male, strata(stp)
-            estat phtest 
-            qui stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp)
-            estat phtest*/
+            *qui stcox eth5, strata(stp)
+            *estat phtest 
+            stcox eth5 i.age_cat i.male, strata(stp) nolog
+            estat phtest, d 
+            stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
+            stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
+            estat phtest
+            stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
     }
 } 
 
