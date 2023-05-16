@@ -64,8 +64,8 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
 
                 stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index_date) origin(index_date) 
                 * Kaplan-Meier plot
-                *sts graph, by(eth5) ylabel(.99(0.01)1) title("`period'") graphregion(fcolor(white))
-                *graph export ./output/graphs/km_`outcome'_`period'.svg, as(svg) replace
+                sts graph, by(eth5) ylabel(.99(0.01)1) title("`period'") graphregion(fcolor(white))
+                graph export ./output/graphs/km_`outcome'_`period'.svg, as(svg) replace
                 *stcox eth5, strata(stp)
                 *estat phtest 
                 stcox eth5 i.age_cat i.male, strata(stp) nolog
@@ -100,8 +100,8 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
 
             stset t1dm_end, fail(t1dm_admit) id(patient_id) enter(index_date) origin(index_date) 
             * Kaplan-Meier plot
-            sts graph, by(eth5) ylabel(.80(.05)1) title("`period'") graphregion(fcolor(white))
-            graph export ./output/graphs/km_t1dm_`period'.svg, as(svg) replace
+            *sts graph, by(eth5) ylabel(.80(.05)1) title("`period'") graphregion(fcolor(white))
+            *graph export ./output/graphs/km_t1dm_`period'.svg, as(svg) replace
             *qui stcox eth5, strata(stp)
             *estat phtest 
             stcox eth5 i.age_cat i.male, strata(stp) nolog
