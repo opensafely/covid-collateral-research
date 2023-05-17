@@ -40,7 +40,7 @@ foreach period in pre pandemic {
     save ./output/survival/survival__`period'.dta, replace
 }
 */
-* Page on time_varying splitting: https://stats.stackexchange.com/questions/112555/what-s-wrong-with-this-way-of-fitting-time-dependent-coefficients-in-a-cox-regre 
+/* Page on time_varying splitting: https://stats.stackexchange.com/questions/112555/what-s-wrong-with-this-way-of-fitting-time-dependent-coefficients-in-a-cox-regre 
 * For outcomes where axis 0.99
 foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     use ./output/prep_survival_`period', clear
@@ -48,7 +48,7 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     foreach outcome in stroke mi hf vte dm_keto depress anx {
         preserve
         * Drop events that occur on index date
-        drop if `outcome'_admit_date==index_date
+        replace `outcome'_admit_date=. if `outcome'_admit_date==index_date
 
         * Update study population for diabetes and respiratory outcomes
         drop if diabetes_subgroup==0 & "`outcome'"== "dm_keto"
@@ -84,7 +84,7 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
     use ./output/prep_survival_`period', clear
     describe
     * Drop events that occur on index date
-    drop if t1dm_admit_date==index_date
+    replace t1dm_admit_date=. if t1dm_admit_date==index_date
 
     * Update study population for diabetes and respiratory outcomes
     drop if has_t1_diabetes==0
@@ -120,7 +120,7 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     foreach outcome in asthma t2dm {
     preserve
     * Drop events that occur on index date
-        drop if `outcome'_admit_date==index_date 
+        replace `outcome'_admit_date=. if `outcome'_admit_date==index_date 
 
         * Update study population for diabetes and respiratory outcomes
         drop if has_t2_diabetes==0 & "`outcome'"== "t2dm"
@@ -157,7 +157,7 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
     use ./output/prep_survival_`period', clear
     describe
     * Drop events that occur on index date
-    drop if copd_admit_date==index_date
+     replace copd_admit_date=. if copd_admit_date==index_date
 
     * Update study population for diabetes and respiratory outcomes
     drop if has_copd==0
@@ -184,5 +184,56 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
             estat phtest
             stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
     }
-} 
+} */
+foreach period in pre pandemic {
+use ./output/prep_survival_`period', clear
+    describe
+    * Drop events that occur on index date
+    replace t1dm_admit_date=. if t1dm_admit_date==index_date
 
+    * Update study population for diabetes outcomes
+    preserve
+    drop if has_t1_diabetes==0
+
+    * Cox model for each outcome category
+    * Generate flags and end dates for each outcome
+    gen t1dm_admit=(t1dm_admit_date!=.)
+    tab t1dm_admit
+    count if t1dm_admit_date!=.
+    
+    gen t1dm_end = end_date
+    replace t1dm_end = t1dm_admit_date if t1dm_admit==1
+
+    stset t1dm_end, fail(t1dm_admit) id(patient_id) enter(index_date) origin(index_date) 
+
+    bys t1dm_end eth5: egen t1dm_tot_events_date = total(_d)
+    bys t1dm_end eth5: gen t1dm_tot_end = _N 
+
+    bys eth5: sum t1dm_tot_events_date, d
+    bys eth5: sum t1dm_tot_end, d
+    count if t1dm_tot_events_date<=5
+    count if t1dm_tot_end<=5
+
+    restore 
+
+    replace anx_admit_date=. if anx_admit_date==index_date
+
+        
+    * Cox model for each outcome category
+    * Generate flags and end dates for each outcome
+    gen anx_admit=(anx_admit_date!=.)
+    tab anx_admit
+    count if `outcome'_admit_date!=.
+    gen anx_end = end_date
+    replace anx_end = anx_admit_date if anx_admit==1
+    stset anx_end, fail(anx_admit) id(patient_id) enter(index_date) origin(index_date) 
+            
+    bys anx_end eth5: egen anx_tot_events_date = total(_d)
+    bys anx_end eth5: gen anx_tot_end = _N 
+
+    bys eth5: sum anx_tot_events_date, d
+    bys eth5: sum anx_tot_end, d
+    count if anx_tot_events_date<=5
+    count if anx_tot_end<=5
+
+}
