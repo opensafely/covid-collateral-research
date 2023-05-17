@@ -1,5 +1,5 @@
 /* ===========================================================================
-Do file name:   cox_models.do
+Do file name:   cox_models_graphs.do
 Project:        COVID Collateral
 Date:           17/05/2022
 Author:         Ruth Costello
@@ -11,7 +11,7 @@ adopath + ./analysis/ado
 cap log using ./logs/cox_model_graphs.log, replace
 cap mkdir ./output/survival
 cap mkdir ./output/tempdata
-* Pre-pandemic
+/* Pre-pandemic
 import delimited using ./output/survival/input_survival_pre.csv, clear
 * First preparing dataset
 * Drop variables that make up COPD hospitalisation as not required
@@ -261,4 +261,58 @@ forvalues i=1/16 {
     graph combine `sub'_pre `sub'_pan, graphregion(color(white)) title(`name')
     graph export ./output/survival/estimates_combine_`sub'.svg, as(svg) replace
 }
+*/
+foreach period in pre pandemic {
+use ./output/prep_survival_`period', clear
+    describe
+    * Drop events that occur on index date
+    replace t1dm_admit_date=. if t1dm_admit_date==index_date
+
+    * Update study population for diabetes outcomes
+    preserve
+    drop if has_t1_diabetes==0
+
+    * Cox model for each outcome category
+    * Generate flags and end dates for each outcome
+    gen t1dm_admit=(t1dm_admit_date!=.)
+    tab t1dm_admit
+    count if t1dm_admit_date!=.
+    
+    gen t1dm_end = end_date
+    replace t1dm_end = t1dm_admit_date if t1dm_admit==1
+
+    stset t1dm_end, fail(t1dm_admit) id(patient_id) enter(index_date) origin(index_date) 
+
+    bys t1dm_end eth5: egen t1dm_tot_events_date = total(_d)
+    bys t1dm_end eth5: gen t1dm_tot_end = _N 
+
+    bys eth5: sum t1dm_tot_events_date, d
+    bys eth5: sum t1dm_tot_end, d
+    count if t1dm_tot_events_date<=5
+    count if t1dm_tot_end<=5
+
+    restore 
+
+    replace anx_admit_date=. if anx_admit_date==index_date
+
+        
+    * Cox model for each outcome category
+    * Generate flags and end dates for each outcome
+    gen anx_admit=(anx_admit_date!=.)
+    tab anx_admit
+    count if `outcome'_admit_date!=.
+    gen anx_end = end_date
+    replace anx_end = anx_admit_date if anx_admit==1
+    stset anx_end, fail(anx_admit) id(patient_id) enter(index_date) origin(index_date) 
+            
+    bys anx_end eth5: egen anx_tot_events_date = total(_d)
+    bys anx_end eth5: gen anx_tot_end = _N 
+
+    bys eth5: sum anx_tot_events_date, d
+    bys eth5: sum anx_tot_end, d
+    count if anx_tot_events_date<=5
+    count if anx_tot_end<=5
+
+}
+
 log close
