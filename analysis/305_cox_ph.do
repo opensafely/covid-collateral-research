@@ -12,7 +12,7 @@ cap log using ./logs/cox_model_ph_2.log, replace
 cap mkdir ./output/graphs
 
     describe
-/* Page on time_varying splitting: https://stats.stackexchange.com/questions/112555/what-s-wrong-with-this-way-of-fitting-time-dependent-coefficients-in-a-cox-regre 
+* Page on time_varying splitting: https://stats.stackexchange.com/questions/112555/what-s-wrong-with-this-way-of-fitting-time-dependent-coefficients-in-a-cox-regre 
 * For outcomes where axis 0.99
 foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     use ./output/prep_survival_`period', clear
@@ -40,7 +40,9 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                 *sts graph, by(eth5) ylabel(.99(0.01)1) title("`period'") graphregion(fcolor(white))
                 *graph export ./output/graphs/km_`outcome'_`period'.svg, as(svg) replace
                 stcox i.eth5, strata(stp) nolog
+                local cats "White Asian Black Mixed Other"
                 forvalues z=2/5 {
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -51,14 +53,15 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(uni_plot_`period'_`outcome'_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(uni_plot_`period'_`outcome'_`z') ///
+                        note("")
                     }
-                graph combine uni_plot_`period'_`outcome'_2 uni_plot_`period'_`outcome'_3 uni_plot_`period'_`outcome'_4 uni_plot_`period'_`outcome'_5
+                graph combine uni_plot_`period'_`outcome'_2 uni_plot_`period'_`outcome'_3 uni_plot_`period'_`outcome'_4 uni_plot_`period'_`outcome'_5, graphregion(fcolor(white)) title(Univariate "`outcome'" "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_uni_`outcome'_`period'.svg, as(svg) replace 
                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
                 forvalues z=2/5 {
-                    di `title'
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -69,14 +72,16 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(age_sex_plot_`period'_`outcome'_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(age_sex_plot_`period'_`outcome'_`z') ///
+                        note("")
                     }
-                graph combine age_sex_plot_`period'_`outcome'_2 age_sex_plot_`period'_`outcome'_3 age_sex_plot_`period'_`outcome'_4 age_sex_plot_`period'_`outcome'_5
+                graph combine age_sex_plot_`period'_`outcome'_2 age_sex_plot_`period'_`outcome'_3 age_sex_plot_`period'_`outcome'_4 age_sex_plot_`period'_`outcome'_5, graphregion(fcolor(white)) title(Age and sex adjusted "`outcome'" "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_age_sex_`outcome'_`period'.svg, as(svg) replace 
                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
                 forvalues z=2/5 {
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -87,17 +92,18 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(multi_plot_`period'_`outcome'_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(multi_plot_`period'_`outcome'_`z') ///
+                        note("")
                     }
-                graph combine multi_plot_`period'_`outcome'_2 multi_plot_`period'_`outcome'_3 multi_plot_`period'_`outcome'_4 multi_plot_`period'_`outcome'_5
+                graph combine multi_plot_`period'_`outcome'_2 multi_plot_`period'_`outcome'_3 multi_plot_`period'_`outcome'_4 multi_plot_`period'_`outcome'_5, graphregion(fcolor(white)) title(Multivariate "`outcome'" "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_multi_`outcome'_`period'.svg, as(svg) replace 
                 *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
         }
     restore
     } 
 }
-*/
+
 * T1 DM plots 
 foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     use ./output/prep_survival_`period', clear
@@ -122,7 +128,9 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
             *sts graph, by(eth5) ylabel(.80(.05)1) title("`period'") graphregion(fcolor(white))
             *graph export ./output/graphs/km_t1dm_`period'.svg, as(svg) replace
             stcox i.eth5, strata(stp) nolog
+            local cats "White Asian Black Mixed Other"
                 forvalues z=2/5 {
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -133,13 +141,15 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(uni_plot_t1dm_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(uni_plot_t1dm_`z') ///
+                        note("")
                     }
-                graph combine uni_plot_t1dm_2 uni_plot_t1dm_3 uni_plot_t1dm_4 uni_plot_t1dm_5
+                graph combine uni_plot_t1dm_2 uni_plot_t1dm_3 uni_plot_t1dm_4 uni_plot_t1dm_5, graphregion(fcolor(white)) title(Univariate T1DM "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_uni_t1dm_`period'.svg, as(svg) replace 
                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
                 forvalues z=2/5 {
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -150,14 +160,16 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(age_sex_plot_t1dm_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(age_sex_plot_t1dm_`z') ///
+                        note("")
                     }
-                graph combine age_sex_plot_t1dm_2 age_sex_plot_t1dm_3 age_sex_plot_t1dm_4 age_sex_plot_t1dm_5
+                graph combine age_sex_plot_t1dm_2 age_sex_plot_t1dm_3 age_sex_plot_t1dm_4 age_sex_plot_t1dm_5, graphregion(fcolor(white)) title(Age and sex adjusted T1DM "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_age_sex_t1dm_`period'.svg, as(svg) replace 
                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
                 forvalues z=2/5 {
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -168,16 +180,17 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(multi_plot_t1dm_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(multi_plot_t1dm_`z') ///
+                        note("")
                     }
-                graph combine multi_plot_t1dm_2 multi_plot_t1dm_3 multi_plot_t1dm_4 multi_plot_t1dm_5
+                graph combine multi_plot_t1dm_2 multi_plot_t1dm_3 multi_plot_t1dm_4 multi_plot_t1dm_5, graphregion(fcolor(white)) title(Multivariate T1DM "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_multi_t1dm_`period'.svg, as(svg) replace 
             *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
     }
 } 
 
-/* T2 DM and asthma plots 
+* T2 DM and asthma plots 
 foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     use ./output/prep_survival_`period', clear
     describe
@@ -204,7 +217,9 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                 *sts graph, by(eth5) ylabel(.95(.01)1) title("`period'") graphregion(fcolor(white))
                 *graph export ./output/graphs/km_`outcome'_`period'.svg, as(svg) replace
                 stcox i.eth5, strata(stp) nolog
+                local cats "White Asian Black Mixed Other"
                 forvalues z=2/5 {
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -215,13 +230,15 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(uni_plot_`period'_`outcome'_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(uni_plot_`period'_`outcome'_`z') ///
+                        note("")
                     }
-                graph combine uni_plot_`period'_`outcome'_2 uni_plot_`period'_`outcome'_3 uni_plot_`period'_`outcome'_4 uni_plot_`period'_`outcome'_5
+                graph combine uni_plot_`period'_`outcome'_2 uni_plot_`period'_`outcome'_3 uni_plot_`period'_`outcome'_4 uni_plot_`period'_`outcome'_5, graphregion(fcolor(white)) title(Univariate "`outcome'" "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_uni_`outcome'_`period'.svg, as(svg) replace 
                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
                 forvalues z=2/5 {
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -232,14 +249,16 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(age_sex_plot_`period'_`outcome'_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(age_sex_plot_`period'_`outcome'_`z') ///
+                        note("")
                     }
-                graph combine age_sex_plot_`period'_`outcome'_2 age_sex_plot_`period'_`outcome'_3 age_sex_plot_`period'_`outcome'_4 age_sex_plot_`period'_`outcome'_5
+                graph combine age_sex_plot_`period'_`outcome'_2 age_sex_plot_`period'_`outcome'_3 age_sex_plot_`period'_`outcome'_4 age_sex_plot_`period'_`outcome'_5, graphregion(fcolor(white)) title(Age and sex adjusted "`outcome'" "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_age_sex_`outcome'_`period'.svg, as(svg) replace 
                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
                 forvalues z=2/5 {
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -250,10 +269,11 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(multi_plot_`period'_`outcome'_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(multi_plot_`period'_`outcome'_`z') ///
+                        note("")
                     }
-                graph combine multi_plot_`period'_`outcome'_2 multi_plot_`period'_`outcome'_3 multi_plot_`period'_`outcome'_4 multi_plot_`period'_`outcome'_5
+                graph combine multi_plot_`period'_`outcome'_2 multi_plot_`period'_`outcome'_3 multi_plot_`period'_`outcome'_4 multi_plot_`period'_`outcome'_5, graphregion(fcolor(white)) title(Multivariate "`outcome'" "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_multi_`outcome'_`period'.svg, as(svg) replace 
                 *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
         }
@@ -285,7 +305,9 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
             sts graph, by(eth5) ylabel(.90(.02)1) title("`period'") graphregion(fcolor(white))
             graph export ./output/graphs/km_copd_`period'.svg, as(svg) replace
             stcox i.eth5, strata(stp) nolog
+            local cats "White Asian Black Mixed Other"
                 forvalues z=2/5 {
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -296,13 +318,15 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(uni_plot_copd_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(uni_plot_copd_`z') ///
+                        note("")
                     }
-                graph combine uni_plot_copd_2 uni_plot_copd_3 uni_plot_copd_4 uni_plot_copd_5
+                graph combine uni_plot_copd_2 uni_plot_copd_3 uni_plot_copd_4 uni_plot_copd_5, graphregion(fcolor(white)) title(Univariate COPD "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_uni_copd_`period'.svg, as(svg) replace 
                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
                 forvalues z=2/5 {
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -313,14 +337,16 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(age_sex_plot_copd_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(age_sex_plot_copd_`z') ///
+                        note("")
                     }
-                graph combine age_sex_plot_copd_2 age_sex_plot_copd_3 age_sex_plot_copd_4 age_sex_plot_copd_5
+                graph combine age_sex_plot_copd_2 age_sex_plot_copd_3 age_sex_plot_copd_4 age_sex_plot_copd_5, graphregion(fcolor(white)) title(Age and sex adjusted COPD "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_age_sex_copd.svg, as(svg) replace 
                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
                 forvalues z=2/5 {
+                    local title: word `z' of `cats'
                     estat phtest, plot(`z'.eth5) ///
                         graphregion(fcolor(white)) ///
                         ylabel(, nogrid labsize(small)) ///
@@ -331,10 +357,11 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         mcolor(gs6) ///
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
-                        title ("`z'", position(11) size(medsmall)) ///
-                        name(multi_plot_copd_`z')
+                        title ("`title'", position(11) size(medsmall)) ///
+                        name(multi_plot_copd_`z') ///
+                        note("")
                     }
-                graph combine multi_plot_copd_2 multi_plot_copd_3 multi_plot_copd_4 multi_plot_copd_5
+                graph combine multi_plot_copd_2 multi_plot_copd_3 multi_plot_copd_4 multi_plot_copd_5, graphregion(fcolor(white)) title(Multivariate COPD "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_multi_copd_`period'.svg, as(svg) replace 
             stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
     }

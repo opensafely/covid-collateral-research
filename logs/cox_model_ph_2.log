@@ -2,43 +2,52 @@
 . cap mkdir ./output/graphs
 
 . 
-. /* Page on time_varying splitting: https://stats.stackexchange.com/questions/
-> 112555/what-s-wrong-with-this-way-of-fitting-time-dependent-coefficients-in-a
-> -cox-regre 
-> * For outcomes where axis 0.99
-> foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ 
+.     describe
+
+Contains data
+  obs:             0                          
+ vars:             0                          
+Sorted by: 
+
+. * Page on time_varying splitting: https://stats.stackexchange.com/questions/1
+> 12555/what-s-wrong-with-this-way-of-fitting-time-dependent-coefficients-in-a-
+> cox-regre 
+. * For outcomes where axis 0.99
+. foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ 
 > {
->     use ./output/prep_survival_`period', clear
->     describe
->     foreach outcome in stroke mi hf vte dm_keto depress anx {
->         preserve
->         * Drop events that occur on index date
->         replace `outcome'_admit_date=. if `outcome'_admit_date==index_date
-> 
->         * Update study population for diabetes and respiratory outcomes
->         drop if diabetes_subgroup==0 & "`outcome'"== "dm_keto"
->         
->         * Cox model for each outcome category
->         * Generate flags and end dates for each outcome
->         gen `outcome'_admit=(`outcome'_admit_date!=.)
->         tab `outcome'_admit
->         count if `outcome'_admit_date!=.
->         if r(N) > 10 {
->                 gen `outcome'_end = end_date
->                 replace `outcome'_end = `outcome'_admit_date if `outcome'_adm
-> it==1
-> 
->                 stset `outcome'_end, fail(`outcome'_admit) id(patient_id) ent
+  2.     use ./output/prep_survival_`period', clear
+  3.     describe
+  4.     foreach outcome in stroke mi hf vte dm_keto depress anx {
+  5.         preserve
+  6.         * Drop events that occur on index date
+.         replace `outcome'_admit_date=. if `outcome'_admit_date==index_date
+  7. 
+.         * Update study population for diabetes and respiratory outcomes
+.         drop if diabetes_subgroup==0 & "`outcome'"== "dm_keto"
+  8.         
+.         * Cox model for each outcome category
+.         * Generate flags and end dates for each outcome
+.         gen `outcome'_admit=(`outcome'_admit_date!=.)
+  9.         tab `outcome'_admit
+ 10.         count if `outcome'_admit_date!=.
+ 11.         if r(N) > 10 {
+ 12.                 gen `outcome'_end = end_date
+ 13.                 replace `outcome'_end = `outcome'_admit_date if `outcome'_
+> admit==1
+ 14. 
+.                 stset `outcome'_end, fail(`outcome'_admit) id(patient_id) ent
 > er(index_date) origin(index_date) 
-> 
->                 * Kaplan-Meier plot
->                 *sts graph, by(eth5) ylabel(.99(0.01)1) title("`period'") gra
+ 15. 
+.                 * Kaplan-Meier plot
+.                 *sts graph, by(eth5) ylabel(.99(0.01)1) title("`period'") gra
 > phregion(fcolor(white))
->                 *graph export ./output/graphs/km_`outcome'_`period'.svg, as(s
+.                 *graph export ./output/graphs/km_`outcome'_`period'.svg, as(s
 > vg) replace
->                 stcox i.eth5, strata(stp) nolog
->                 forvalues z=2/5 {
->                     estat phtest, plot(`z'.eth5) ///
+.                 stcox i.eth5, strata(stp) nolog
+ 16.                 local cats "White Asian Black Mixed Other"
+ 17.                 forvalues z=2/5 {
+ 18.                     local title: word `z' of `cats'
+ 19.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -49,17 +58,20 @@
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(uni_plot_`period'_`outcome'_`z')
->                     }
->                 graph combine uni_plot_`period'_`outcome'_2 uni_plot_`period'
-> _`outcome'_3 uni_plot_`period'_`outcome'_4 uni_plot_`period'_`outcome'_5
->                 graph export ./output/graphs/schoenplot_uni_`outcome'_`period
-> '.svg, as(svg) replace 
->                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
->                 forvalues z=2/5 {
->                     di `title'
->                     estat phtest, plot(`z'.eth5) ///
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(uni_plot_`period'_`outcome'_`z') ///
+>                         note("")
+ 20.                     }
+ 21.                 graph combine uni_plot_`period'_`outcome'_2 uni_plot_`peri
+> od'_`outcome'_3 uni_plot_`period'_`outcome'_4 uni_plot_`period'_`outcome'_5, 
+> graphregion(fcolor(white)) title(Univariate "`outcome'" "`period'", position(
+> 11) size(small))
+ 22.                 graph export ./output/graphs/schoenplot_uni_`outcome'_`per
+> iod'.svg, as(svg) replace 
+ 23.                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
+ 24.                 forvalues z=2/5 {
+ 25.                     local title: word `z' of `cats'
+ 26.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -70,20 +82,23 @@
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(age_sex_plot_`period'_`outcome'_`z')
->                     }
->                 graph combine age_sex_plot_`period'_`outcome'_2 age_sex_plot_
-> `period'_`outcome'_3 age_sex_plot_`period'_`outcome'_4 age_sex_plot_`period'_
-> `outcome'_5
->                 graph export ./output/graphs/schoenplot_age_sex_`outcome'_`pe
-> riod'.svg, as(svg) replace 
->                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.mal
-> e) texp(_t) nolog
->                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shiel
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(age_sex_plot_`period'_`outcome'_`z') ///
+>                         note("")
+ 27.                     }
+ 28.                 graph combine age_sex_plot_`period'_`outcome'_2 age_sex_pl
+> ot_`period'_`outcome'_3 age_sex_plot_`period'_`outcome'_4 age_sex_plot_`perio
+> d'_`outcome'_5, graphregion(fcolor(white)) title(Age and sex adjusted "`outco
+> me'" "`period'", position(11) size(small))
+ 29.                 graph export ./output/graphs/schoenplot_age_sex_`outcome'_
+> `period'.svg, as(svg) replace 
+ 30.                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.
+> male) texp(_t) nolog
+.                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shiel
 > ded, strata(stp) nolog
->                 forvalues z=2/5 {
->                     estat phtest, plot(`z'.eth5) ///
+ 31.                 forvalues z=2/5 {
+ 32.                     local title: word `z' of `cats'
+ 33.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -94,22 +109,1865 @@
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(multi_plot_`period'_`outcome'_`z')
->                     }
->                 graph combine multi_plot_`period'_`outcome'_2 multi_plot_`per
-> iod'_`outcome'_3 multi_plot_`period'_`outcome'_4 multi_plot_`period'_`outcome
-> '_5
->                 graph export ./output/graphs/schoenplot_multi_`outcome'_`peri
-> od'.svg, as(svg) replace 
->                 *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shield
-> ed, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp
-> (_t)
->         }
->     restore
->     } 
-> }
-> */
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(multi_plot_`period'_`outcome'_`z') ///
+>                         note("")
+ 34.                     }
+ 35.                 graph combine multi_plot_`period'_`outcome'_2 multi_plot_`
+> period'_`outcome'_3 multi_plot_`period'_`outcome'_4 multi_plot_`period'_`outc
+> ome'_5, graphregion(fcolor(white)) title(Multivariate "`outcome'" "`period'",
+>  position(11) size(small))
+ 36.                 graph export ./output/graphs/schoenplot_multi_`outcome'_`p
+> eriod'.svg, as(svg) replace 
+ 37.                 *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shi
+> elded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) t
+> exp(_t)
+.         }
+ 38.     restore
+ 39.     } 
+ 40. }
+
+Contains data from ./output/prep_survival_pre.dta
+  obs:         1,000                          
+ vars:            46                          16 May 2023 10:11
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 real changes made)
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        975       97.50       97.50
+          1 |         25        2.50      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  25
+(25 real changes made)
+
+                id:  patient_id
+     failure event:  stroke_admit != 0 & stroke_admit < .
+obs. time interval:  (stroke_end[_n-1], stroke_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         25  failures in single-failure-per-subject data
+    742,364  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          947                  Number of obs    =          48
+No. of failures =           23
+Time at risk    =       702985
+                                                LR chi2(4)       =        2.02
+Log likelihood  =   -1.3862944                  Prob > chi2      =      0.7315
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1   1.42e+08    -0.00   1.000            0           .
+      Black  |          1   1.68e+08    -0.00   1.000            0           .
+      Mixed  |          1   1.68e+08    -0.00   1.000            0           .
+      Other  |   3.98e+15   4.40e+23     0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_stroke_pre.svg not found)
+(file ./output/graphs/schoenplot_uni_stroke_pre.svg written in SVG format)
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           15
+Time at risk    =       557180
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_stroke_pre.svg not found)
+(file ./output/graphs/schoenplot_age_sex_stroke_pre.svg written in SVG format)
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           15
+Time at risk    =       557180
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+             |
+urban_rura~n |
+      Urban  |          1  (omitted)
+             |
+         imd |
+          1  |          1  (omitted)
+          2  |          1  (omitted)
+          3  |          1  (omitted)
+          4  |          1  (omitted)
+          5  |          1  (omitted)
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_stroke_pre.svg not found)
+(file ./output/graphs/schoenplot_multi_stroke_pre.svg written in SVG format)
+(0 real changes made)
+(0 observations deleted)
+
+   mi_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        978       97.80       97.80
+          1 |         22        2.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  22
+(22 real changes made)
+
+                id:  patient_id
+     failure event:  mi_admit != 0 & mi_admit < .
+obs. time interval:  (mi_end[_n-1], mi_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         22  failures in single-failure-per-subject data
+    743,435  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  mi_admit
+   analysis time _t:  (mi_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          947                  Number of obs    =          48
+No. of failures =           22
+Time at risk    =       703579
+                                                LR chi2(3)       =        3.22
+Log likelihood  =    -4.188643                  Prob > chi2      =      0.3588
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   2.06e-06   163.8611    -0.00   1.000            0           .
+      Black  |   5.75e+09          .        .       .            .           .
+      Mixed  |   1.08e+10   1.60e+10    15.56   0.000     5.87e+08    1.97e+11
+      Other  |   2.26e-06   127.3325    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_mi_pre.svg not found)
+(file ./output/graphs/schoenplot_uni_mi_pre.svg written in SVG format)
+
+         failure _d:  mi_admit
+   analysis time _t:  (mi_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           17
+Time at risk    =       555394
+                                                LR chi2(6)       =        5.55
+Log likelihood  =            0                  Prob > chi2      =      0.4760
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .8826387   1.76e+08    -0.00   1.000            0           .
+      Black  |   4.927433          .        .       .            .           .
+      Mixed  |   4.79e-15   1.54e-07    -0.00   1.000            0           .
+      Other  |   1.266603   2.68e+08     0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |   .4390656   7.84e+07    -0.00   1.000            0           .
+61 - 80 y..  |   1.74e+16   1.52e+24     0.00   1.000            0           .
+  >80 years  |   1.55e+14   5.46e+22     0.00   1.000            0           .
+             |
+        male |
+       Male  |   .9918059          .        .       .            .           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_mi_pre.svg not found)
+(file ./output/graphs/schoenplot_age_sex_mi_pre.svg written in SVG format)
+
+         failure _d:  mi_admit
+   analysis time _t:  (mi_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           17
+Time at risk    =       555394
+                                                LR chi2(12)      =        5.55
+Log likelihood  =            0                  Prob > chi2      =      0.9373
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.328625   4.37e+08     0.00   1.000            0           .
+      Black  |    2.08008   1.05e+09     0.00   1.000            0           .
+      Mixed  |   2.08e-14   6.11e-06    -0.00   1.000            0           .
+      Other  |   .0776427   3.95e+07    -0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |   7.061854   2.86e+09     0.00   1.000            0           .
+61 - 80 y..  |   1.94e+15   1.30e+23     0.00   1.000            0           .
+  >80 years  |   1.36e+15   9.09e+23     0.00   1.000            0           .
+             |
+        male |
+       Male  |   1.599053          .        .       .            .           .
+             |
+urban_rura~n |
+      Urban  |   .1521463   5.36e+07    -0.00   1.000            0           .
+             |
+         imd |
+          1  |   .0973582   5.20e+07    -0.00   1.000            0           .
+          2  |   4.069436   2.14e+09     0.00   1.000            0           .
+          3  |   2.055739   1.20e+09     0.00   1.000            0           .
+          4  |   .2965296   6.91e+07    -0.00   1.000            0           .
+          5  |   8.308661          .        .       .            .           .
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_mi_pre.svg not found)
+(file ./output/graphs/schoenplot_multi_mi_pre.svg written in SVG format)
+(0 real changes made)
+(0 observations deleted)
+
+   hf_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        986       98.60       98.60
+          1 |         14        1.40      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  14
+(14 real changes made)
+
+                id:  patient_id
+     failure event:  hf_admit != 0 & hf_admit < .
+obs. time interval:  (hf_end[_n-1], hf_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         14  failures in single-failure-per-subject data
+    746,347  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  hf_admit
+   analysis time _t:  (hf_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          947                  Number of obs    =          48
+No. of failures =           14
+Time at risk    =       706491
+                                                LR chi2(4)       =        4.03
+Log likelihood  =   -.69314718                  Prob > chi2      =      0.4020
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1   2.12e+08    -0.00   1.000            0           .
+      Black  |          1   1.08e+08    -0.00   1.000            0           .
+      Mixed  |   1.94e+16   1.53e+24     0.00   1.000            0           .
+      Other  |          1   1.38e+08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_hf_pre.svg not found)
+(file ./output/graphs/schoenplot_uni_hf_pre.svg written in SVG format)
+
+         failure _d:  hf_admit
+   analysis time _t:  (hf_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           12
+Time at risk    =       557770
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_hf_pre.svg not found)
+(file ./output/graphs/schoenplot_age_sex_hf_pre.svg written in SVG format)
+
+         failure _d:  hf_admit
+   analysis time _t:  (hf_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           12
+Time at risk    =       557770
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+             |
+urban_rura~n |
+      Urban  |          1  (omitted)
+             |
+         imd |
+          1  |          1  (omitted)
+          2  |          1  (omitted)
+          3  |          1  (omitted)
+          4  |          1  (omitted)
+          5  |          1  (omitted)
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_hf_pre.svg not found)
+(file ./output/graphs/schoenplot_multi_hf_pre.svg written in SVG format)
+(0 real changes made)
+(0 observations deleted)
+
+  vte_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        981       98.10       98.10
+          1 |         19        1.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  19
+(19 real changes made)
+
+                id:  patient_id
+     failure event:  vte_admit != 0 & vte_admit < .
+obs. time interval:  (vte_end[_n-1], vte_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         19  failures in single-failure-per-subject data
+    745,672  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  vte_admit
+   analysis time _t:  (vte_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          947                  Number of obs    =          48
+No. of failures =           18
+Time at risk    =       706522
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_vte_pre.svg not found)
+(file ./output/graphs/schoenplot_uni_vte_pre.svg written in SVG format)
+
+         failure _d:  vte_admit
+   analysis time _t:  (vte_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           13
+Time at risk    =       558588
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_vte_pre.svg not found)
+(file ./output/graphs/schoenplot_age_sex_vte_pre.svg written in SVG format)
+
+         failure _d:  vte_admit
+   analysis time _t:  (vte_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           13
+Time at risk    =       558588
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+             |
+urban_rura~n |
+      Urban  |          1  (omitted)
+             |
+         imd |
+          1  |          1  (omitted)
+          2  |          1  (omitted)
+          3  |          1  (omitted)
+          4  |          1  (omitted)
+          5  |          1  (omitted)
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_vte_pre.svg not found)
+(file ./output/graphs/schoenplot_multi_vte_pre.svg written in SVG format)
+(0 real changes made)
+(950 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         49       98.00       98.00
+          1 |          1        2.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  1
+(0 real changes made)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        981       98.10       98.10
+          1 |         19        1.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  19
+(19 real changes made)
+
+                id:  patient_id
+     failure event:  depress_admit != 0 & depress_admit < .
+obs. time interval:  (depress_end[_n-1], depress_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         19  failures in single-failure-per-subject data
+    746,447  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  depress_admit
+   analysis time _t:  (depress_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          947                  Number of obs    =          48
+No. of failures =           19
+Time at risk    =       706591
+                                                LR chi2(4)       =        3.41
+Log likelihood  =   -1.3862944                  Prob > chi2      =      0.4918
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   6.81e-18   2.61e-09    -0.00   1.000            0           .
+      Black  |   6.81e-18   2.61e-09    -0.00   1.000            0           .
+      Mixed  |   6.81e-18   2.61e-09    -0.00   1.000            0           .
+      Other  |   6.81e-18   2.13e-09    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_depress_pre.svg not found)
+(file ./output/graphs/schoenplot_uni_depress_pre.svg written in SVG format)
+
+         failure _d:  depress_admit
+   analysis time _t:  (depress_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           14
+Time at risk    =       558519
+                                                LR chi2(7)       =        4.16
+Log likelihood  =   -.69314718                  Prob > chi2      =      0.7613
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   3.00e-19   3.52e-10    -0.00   1.000            0           .
+      Black  |   9.92e-19   9.61e-10    -0.00   1.000            0           .
+      Mixed  |   5.54e-19   9.15e-10    -0.00   1.000            0           .
+      Other  |   2.64e-18   2.30e-09    -0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |   1.46e-17   5.40e-09    -0.00   1.000            0           .
+61 - 80 y..  |   .5590818   9.94e+08    -0.00   1.000            0           .
+  >80 years  |    .751218   2.06e+09    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   .3504389          .        .       .            .           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_depress_pre.svg not found)
+(file ./output/graphs/schoenplot_age_sex_depress_pre.svg written in SVG format)
+
+         failure _d:  depress_admit
+   analysis time _t:  (depress_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           14
+Time at risk    =       558519
+                                                LR chi2(14)      =        5.55
+Log likelihood  =            0                  Prob > chi2      =      0.9767
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .3140896   4.78e+07    -0.00   1.000            0           .
+      Black  |   .4676164   4.38e+07    -0.00   1.000            0           .
+      Mixed  |   7.92e-17   8.27e-09    -0.00   1.000            0           .
+      Other  |   .6628114   1.29e+08    -0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |   .2538956   5.19e+07    -0.00   1.000            0           .
+61 - 80 y..  |   1.122392   1.49e+08     0.00   1.000            0           .
+  >80 years  |   1.15e+15   3.52e+23     0.00   1.000            0           .
+             |
+        male |
+       Male  |   2.42e+15   4.15e+23     0.00   1.000            0           .
+             |
+urban_rura~n |
+      Urban  |   3.274164   9.46e+08     0.00   1.000            0           .
+             |
+         imd |
+          1  |   .4393188   1.05e+08    -0.00   1.000            0           .
+          2  |   4.55e+14   1.74e+23     0.00   1.000            0           .
+          3  |   .1237189   6.44e+07    -0.00   1.000            0           .
+          4  |   .2384058   4.31e+07    -0.00   1.000            0           .
+          5  |   .2323095   6.36e+07    -0.00   1.000            0           .
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_depress_pre.svg not found)
+(file ./output/graphs/schoenplot_multi_depress_pre.svg written in SVG format)
+(0 real changes made)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        982       98.20       98.20
+          1 |         18        1.80      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  18
+(18 real changes made)
+
+                id:  patient_id
+     failure event:  anx_admit != 0 & anx_admit < .
+obs. time interval:  (anx_end[_n-1], anx_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         18  failures in single-failure-per-subject data
+    744,309  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  anx_admit
+   analysis time _t:  (anx_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          947                  Number of obs    =          48
+No. of failures =           18
+Time at risk    =       704453
+                                                LR chi2(4)       =        1.52
+Log likelihood  =   -1.9459101                  Prob > chi2      =      0.8223
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1   1.47e+08    -0.00   1.000            0           .
+      Black  |   2.24e+15   1.71e+23     0.00   1.000            0           .
+      Mixed  |          1   1.17e+08    -0.00   1.000            0           .
+      Other  |          1   1.05e+08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_anx_pre.svg not found)
+(file ./output/graphs/schoenplot_uni_anx_pre.svg written in SVG format)
+
+         failure _d:  anx_admit
+   analysis time _t:  (anx_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           12
+Time at risk    =       557865
+                                                LR chi2(7)       =        4.80
+Log likelihood  =            0                  Prob > chi2      =      0.6849
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1.17e+16   1.79e+24     0.00   1.000            0           .
+      Black  |   1.17e+16   1.33e+24     0.00   1.000            0           .
+      Mixed  |   1.17e+16   2.05e+24     0.00   1.000            0           .
+      Other  |   .9999998   1.37e+08    -0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |   8.53e-17   6.53e-09    -0.00   1.000            0           .
+61 - 80 y..  |   .9999999   1.14e+08    -0.00   1.000            0           .
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |   8.53e-17   8.14e-09    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_anx_pre.svg not found)
+(file ./output/graphs/schoenplot_age_sex_anx_pre.svg written in SVG format)
+
+         failure _d:  anx_admit
+   analysis time _t:  (anx_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          748                  Number of obs    =          37
+No. of failures =           12
+Time at risk    =       557865
+                                                LR chi2(10)      =        4.80
+Log likelihood  =            0                  Prob > chi2      =      0.9044
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   1775.709   1.64e+12     0.00   1.000            0           .
+      Black  |    5926994          .        .       .            .           .
+      Mixed  |    5160773   1.26e+15     0.00   1.000            0           .
+      Other  |   5197.228          .        .       .            .           .
+             |
+     age_cat |
+41 - 60 y..  |   2.70e-17   5.19e-09    -0.00   1.000            0           .
+61 - 80 y..  |   1.25e-10   .0395495    -0.00   1.000            0           .
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |   .0006033   533477.8    -0.00   1.000            0           .
+             |
+urban_rura~n |
+      Urban  |     647463   5.58e+14     0.00   1.000            0           .
+             |
+         imd |
+          1  |    3226970   2.90e+15     0.00   1.000            0           .
+          2  |   5.124028   1.88e+09     0.00   1.000            0           .
+          3  |   3.727603          .        .       .            .           .
+          4  |   1243.603   5.05e+11     0.00   1.000            0           .
+          5  |   1.03e-07          .        .       .            .           .
+             |
+  1.shielded |   1.63e-08   15.52757    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_anx_pre.svg not found)
+(file ./output/graphs/schoenplot_multi_anx_pre.svg written in SVG format)
+
+Contains data from ./output/prep_survival_pandemic.dta
+  obs:         1,000                          
+ vars:            46                          16 May 2023 10:11
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 real changes made)
+(0 observations deleted)
+
+stroke_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        981       98.10       98.10
+          1 |         19        1.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  19
+(19 real changes made)
+
+                id:  patient_id
+     failure event:  stroke_admit != 0 & stroke_admit < .
+obs. time interval:  (stroke_end[_n-1], stroke_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         19  failures in single-failure-per-subject data
+    737,792  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          951                  Number of obs    =          47
+No. of failures =           19
+Time at risk    =       702393
+                                                LR chi2(4)       =        5.84
+Log likelihood  =   -2.6390573                  Prob > chi2      =      0.2112
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |    .954935   1.20e+08    -0.00   1.000            0           .
+      Black  |   .9148913   1.26e+08    -0.00   1.000            0           .
+      Mixed  |   6.10e+15   7.13e+23     0.00   1.000            0           .
+      Other  |   1.069627   1.41e+08     0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_stroke_pandemic.svg not found)
+(file ./output/graphs/schoenplot_uni_stroke_pandemic.svg written in SVG format)
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           14
+Time at risk    =       545124
+                                                LR chi2(7)       =        6.09
+Log likelihood  =            0                  Prob > chi2      =      0.5294
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   2.234785   9.86e+08     0.00   1.000            0           .
+      Black  |   3.20e+12   1.21e+21     0.00   1.000            0           .
+      Mixed  |   9.83e+13          .        .       .            .           .
+      Other  |   8.60e+12   1.83e+21     0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |   .0007079   257877.2    -0.00   1.000            0           .
+61 - 80 y..  |   2.06e-17   4.14e-09    -0.00   1.000            0           .
+  >80 years  |    .003107    3755474    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   2.21e-16   1.47e-08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_stroke_pandemic.svg not found)
+(file ./output/graphs/schoenplot_age_sex_stroke_pandemic.svg written in SVG for
+> mat)
+
+         failure _d:  stroke_admit
+   analysis time _t:  (stroke_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+note: 1.imd omitted because of collinearity
+note: 1.shielded omitted because of collinearity
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           14
+Time at risk    =       545124
+                                                LR chi2(9)       =        6.09
+Log likelihood  =            0                  Prob > chi2      =      0.7310
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .9744108          .        .       .            .           .
+      Black  |   1.60e+12          .        .       .            .           .
+      Mixed  |   7.48e+13   3.43e+22     0.00   1.000            0           .
+      Other  |   .5819183   2.46e+08    -0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |   .0194552    8013678    -0.00   1.000            0           .
+61 - 80 y..  |   .0093171          .        .       .            .           .
+  >80 years  |   5.92e-13   .0004394    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   .0033977   804373.3    -0.00   1.000            0           .
+             |
+urban_rura~n |
+      Urban  |   3.94e-13   .0001873    -0.00   1.000            0           .
+             |
+         imd |
+          1  |          1  (omitted)
+          2  |   469.0689   2.28e+11     0.00   1.000            0           .
+          3  |   37.76584   6.77e+09     0.00   1.000            0           .
+          4  |   638.3504   3.27e+11     0.00   1.000            0           .
+          5  |    434.306          .        .       .            .           .
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_stroke_pandemic.svg not found)
+(file ./output/graphs/schoenplot_multi_stroke_pandemic.svg written in SVG forma
+> t)
+(0 real changes made)
+(0 observations deleted)
+
+   mi_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        987       98.70       98.70
+          1 |         13        1.30      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  13
+(13 real changes made)
+
+                id:  patient_id
+     failure event:  mi_admit != 0 & mi_admit < .
+obs. time interval:  (mi_end[_n-1], mi_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         13  failures in single-failure-per-subject data
+    738,277  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  mi_admit
+   analysis time _t:  (mi_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          951                  Number of obs    =          47
+No. of failures =           13
+Time at risk    =       702878
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_mi_pandemic.svg not found)
+(file ./output/graphs/schoenplot_uni_mi_pandemic.svg written in SVG format)
+
+         failure _d:  mi_admit
+   analysis time _t:  (mi_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           11
+Time at risk    =       544650
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_mi_pandemic.svg not found)
+(file ./output/graphs/schoenplot_age_sex_mi_pandemic.svg written in SVG format)
+
+         failure _d:  mi_admit
+   analysis time _t:  (mi_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+note: 1.imd omitted because of collinearity
+note: 1.shielded omitted because of collinearity
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           11
+Time at risk    =       544650
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+             |
+urban_rura~n |
+      Urban  |          1  (omitted)
+             |
+         imd |
+          1  |          1  (omitted)
+          2  |          1  (omitted)
+          3  |          1  (omitted)
+          4  |          1  (omitted)
+          5  |          1  (omitted)
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_mi_pandemic.svg not found)
+(file ./output/graphs/schoenplot_multi_mi_pandemic.svg written in SVG format)
+(0 real changes made)
+(0 observations deleted)
+
+   hf_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        983       98.30       98.30
+          1 |         17        1.70      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  17
+(17 real changes made)
+
+                id:  patient_id
+     failure event:  hf_admit != 0 & hf_admit < .
+obs. time interval:  (hf_end[_n-1], hf_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         17  failures in single-failure-per-subject data
+    736,202  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  hf_admit
+   analysis time _t:  (hf_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          951                  Number of obs    =          47
+No. of failures =           16
+Time at risk    =       701345
+                                                LR chi2(3)       =        2.55
+Log likelihood  =   -5.2025241                  Prob > chi2      =      0.4665
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   3.80e+09   5.37e+09    15.59   0.000     2.37e+08    6.08e+10
+      Black  |   8.32e-07   105.0989    -0.00   1.000            0           .
+      Mixed  |   4.10e+09          .        .       .            .           .
+      Other  |   8.32e-07   56.17772    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_hf_pandemic.svg not found)
+(file ./output/graphs/schoenplot_uni_hf_pandemic.svg written in SVG format)
+
+         failure _d:  hf_admit
+   analysis time _t:  (hf_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           11
+Time at risk    =       543329
+                                                LR chi2(8)       =        6.09
+Log likelihood  =            0                  Prob > chi2      =      0.6373
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |    .805601   1.11e+08    -0.00   1.000            0           .
+      Black  |   5.53e+14   1.29e+23     0.00   1.000            0           .
+      Mixed  |   9.47e+15   8.86e+23     0.00   1.000            0           .
+      Other  |   .5902042   6.94e+07    -0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |    7.10265   8.52e+08     0.00   1.000            0           .
+61 - 80 y..  |   4.85e+15   3.03e+23     0.00   1.000            0           .
+  >80 years  |   .1653812   6.16e+07    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   .2328868   2.76e+07    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_hf_pandemic.svg not found)
+(file ./output/graphs/schoenplot_age_sex_hf_pandemic.svg written in SVG format)
+
+         failure _d:  hf_admit
+   analysis time _t:  (hf_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+note: 1.imd omitted because of collinearity
+note: 1.shielded omitted because of collinearity
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           11
+Time at risk    =       543329
+                                                LR chi2(10)      =        6.09
+Log likelihood  =   -8.882e-16                  Prob > chi2      =      0.8077
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .1395633   3.05e+07    -0.00   1.000            0           .
+      Black  |     1.4583   5.04e+08     0.00   1.000            0           .
+      Mixed  |   .1748833   1.82e+07    -0.00   1.000            0           .
+      Other  |   .0989127   1.49e+07    -0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |   .1413646          .        .       .            .           .
+61 - 80 y..  |   .2021053   3.47e+07    -0.00   1.000            0           .
+  >80 years  |   1.02e-18   5.12e-10    -0.00   1.000            0           .
+             |
+        male |
+       Male  |    .095275          .        .       .            .           .
+             |
+urban_rura~n |
+      Urban  |   .1129252   2.26e+07    -0.00   1.000            0           .
+             |
+         imd |
+          1  |          1  (omitted)
+          2  |   2.09e-18   3.13e-10    -0.00   1.000            0           .
+          3  |   3.18e-18   5.03e-10    -0.00   1.000            0           .
+          4  |   2.10e-17          .        .       .            .           .
+          5  |   2.94e-18   5.28e-10    -0.00   1.000            0           .
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_hf_pandemic.svg not found)
+(file ./output/graphs/schoenplot_multi_hf_pandemic.svg written in SVG format)
+(0 real changes made)
+(0 observations deleted)
+
+  vte_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        978       97.80       97.80
+          1 |         22        2.20      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  22
+(22 real changes made)
+
+                id:  patient_id
+     failure event:  vte_admit != 0 & vte_admit < .
+obs. time interval:  (vte_end[_n-1], vte_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         22  failures in single-failure-per-subject data
+    737,536  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  vte_admit
+   analysis time _t:  (vte_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          951                  Number of obs    =          47
+No. of failures =           21
+Time at risk    =       702368
+                                                LR chi2(4)       =        5.48
+Log likelihood  =   -3.7376696                  Prob > chi2      =      0.2416
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   .9999999   1.96e+08    -0.00   1.000            0           .
+      Black  |   .9999999   2.28e+08    -0.00   1.000            0           .
+      Mixed  |   .9999999   1.96e+08    -0.00   1.000            0           .
+      Other  |   1.20e+16   2.17e+24     0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_vte_pandemic.svg not found)
+(file ./output/graphs/schoenplot_uni_vte_pandemic.svg written in SVG format)
+
+         failure _d:  vte_admit
+   analysis time _t:  (vte_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           15
+Time at risk    =       544352
+                                                LR chi2(7)       =        6.09
+Log likelihood  =            0                  Prob > chi2      =      0.5294
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   4.73e-15          .        .       .            .           .
+      Black  |   .3886194   8.97e+07    -0.00   1.000            0           .
+      Mixed  |   .9222592   1.08e+08    -0.00   1.000            0           .
+      Other  |   8.073127   3.48e+08     0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |   1.337051   1.18e+08     0.00   1.000            0           .
+61 - 80 y..  |   5.57e+15   3.94e+23     0.00   1.000            0           .
+  >80 years  |   .4874569   1.65e+08    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   5.79e+15   2.47e+23     0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_vte_pandemic.svg not found)
+(file ./output/graphs/schoenplot_age_sex_vte_pandemic.svg written in SVG format
+> )
+
+         failure _d:  vte_admit
+   analysis time _t:  (vte_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+note: 1.imd omitted because of collinearity
+note: 1.shielded omitted because of collinearity
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           15
+Time at risk    =       544352
+                                                LR chi2(10)      =        6.09
+Log likelihood  =            0                  Prob > chi2      =      0.8077
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |    .509159   1.29e+08    -0.00   1.000            0           .
+      Black  |   3.64e+12   9.41e+20     0.00   1.000            0           .
+      Mixed  |   8.42e+12   1.89e+21     0.00   1.000            0           .
+      Other  |   1.724338          .        .       .            .           .
+             |
+     age_cat |
+41 - 60 y..  |   3.807809   2.77e+08     0.00   1.000            0           .
+61 - 80 y..  |   3.95e+15   2.32e+23     0.00   1.000            0           .
+  >80 years  |   5.53e-12          .        .       .            .           .
+             |
+        male |
+       Male  |   2.77e+14   6.53e+22     0.00   1.000            0           .
+             |
+urban_rura~n |
+      Urban  |   3.18e-14   7.07e-06    -0.00   1.000            0           .
+             |
+         imd |
+          1  |          1  (omitted)
+          2  |   200.7906   2.79e+10     0.00   1.000            0           .
+          3  |   21.70278   3.21e+09     0.00   1.000            0           .
+          4  |   1165.426   3.37e+11     0.00   1.000            0           .
+          5  |   20.53496          .        .       .            .           .
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_vte_pandemic.svg not found)
+(file ./output/graphs/schoenplot_multi_vte_pandemic.svg written in SVG format)
+(0 real changes made)
+(950 observations deleted)
+
+dm_keto_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         50      100.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  0
+(0 real changes made)
+(0 observations deleted)
+
+depress_adm |
+         it |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        975       97.50       97.50
+          1 |         25        2.50      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  25
+(25 real changes made)
+
+                id:  patient_id
+     failure event:  depress_admit != 0 & depress_admit < .
+obs. time interval:  (depress_end[_n-1], depress_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         25  failures in single-failure-per-subject data
+    734,798  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  depress_admit
+   analysis time _t:  (depress_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          951                  Number of obs    =          47
+No. of failures =           25
+Time at risk    =       699399
+                                                LR chi2(3)       =        5.05
+Log likelihood  =   -3.9497611                  Prob > chi2      =      0.1679
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   2.26e-06    121.606    -0.00   1.000            0           .
+      Black  |   2.29e+10   3.24e+10    16.86   0.000     1.43e+09    3.67e+11
+      Mixed  |   7.07e+09          .        .       .            .           .
+      Other  |   2.26e-06    121.606    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_depress_pandemic.svg not found)
+(file ./output/graphs/schoenplot_uni_depress_pandemic.svg written in SVG format
+> )
+
+         failure _d:  depress_admit
+   analysis time _t:  (depress_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           20
+Time at risk    =       541159
+                                                LR chi2(7)       =        6.13
+Log likelihood  =   -2.9769909                  Prob > chi2      =      0.5251
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   4.03e-07   48.57741    -0.00   1.000            0           .
+      Black  |   4.45e+09   6.34e+09    15.58   0.000     2.72e+08    7.27e+10
+      Mixed  |   3.69e+09          .        .       .            .           .
+      Other  |   3.72e-07   35.54228    -0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |   .8294835   1.182501    -0.13   0.896     .0507394    13.56032
+61 - 80 y..  |   .7711119   7.00e+07    -0.00   1.000            0           .
+  >80 years  |   1.90e-17   6.47e-09    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   2.91e+15   1.86e+23     0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_depress_pandemic.svg not found)
+(file ./output/graphs/schoenplot_age_sex_depress_pandemic.svg written in SVG fo
+> rmat)
+
+         failure _d:  depress_admit
+   analysis time _t:  (depress_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+note: 1.imd omitted because of collinearity
+note: 1.shielded omitted because of collinearity
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           20
+Time at risk    =       541159
+                                                LR chi2(12)      =       12.08
+Log likelihood  =            0                  Prob > chi2      =      0.4392
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   491302.7   6.95e+13     0.00   1.000            0           .
+      Black  |   2.39e+28   3.51e+36     0.00   1.000            0           .
+      Mixed  |   1.38e+28   1.87e+36     0.00   1.000            0           .
+      Other  |   874436.1   1.24e+14     0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |   4.91e+14   2.01e+22     0.00   1.000            0           .
+61 - 80 y..  |    3383529   2.13e+14     0.00   1.000            0           .
+  >80 years  |   2.43e+26   5.25e+34     0.00   1.000            0           .
+             |
+        male |
+       Male  |   1.15e-14   1.50e-06    -0.00   1.000            0           .
+             |
+urban_rura~n |
+      Urban  |    9148823   4.57e+14     0.00   1.000            0           .
+             |
+         imd |
+          1  |          1  (omitted)
+          2  |   1.94e+13          .        .       .            .           .
+          3  |   2.75e+20   3.90e+28     0.00   1.000            0           .
+          4  |     768322   1.05e+14     0.00   1.000            0           .
+          5  |   4.09e+35   5.32e+43     0.00   1.000            0           .
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_depress_pandemic.svg not found)
+(file ./output/graphs/schoenplot_multi_depress_pandemic.svg written in SVG form
+> at)
+(0 real changes made)
+(0 observations deleted)
+
+  anx_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        981       98.10       98.10
+          1 |         19        1.90      100.00
+------------+-----------------------------------
+      Total |      1,000      100.00
+  19
+(19 real changes made)
+
+                id:  patient_id
+     failure event:  anx_admit != 0 & anx_admit < .
+obs. time interval:  (anx_end[_n-1], anx_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+      1,000  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+      1,000  observations remaining, representing
+      1,000  subjects
+         19  failures in single-failure-per-subject data
+    736,264  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  anx_admit
+   analysis time _t:  (anx_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          951                  Number of obs    =          47
+No. of failures =           19
+Time at risk    =       700865
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_anx_pandemic.svg not found)
+(file ./output/graphs/schoenplot_uni_anx_pandemic.svg written in SVG format)
+
+         failure _d:  anx_admit
+   analysis time _t:  (anx_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           16
+Time at risk    =       541860
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_anx_pandemic.svg not found)
+(file ./output/graphs/schoenplot_age_sex_anx_pandemic.svg written in SVG format
+> )
+
+         failure _d:  anx_admit
+   analysis time _t:  (anx_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+note: 1.imd omitted because of collinearity
+note: 1.shielded omitted because of collinearity
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          738                  Number of obs    =          37
+No. of failures =           16
+Time at risk    =       541860
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+             |
+urban_rura~n |
+      Urban  |          1  (omitted)
+             |
+         imd |
+          1  |          1  (omitted)
+          2  |          1  (omitted)
+          3  |          1  (omitted)
+          4  |          1  (omitted)
+          5  |          1  (omitted)
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_anx_pandemic.svg not found)
+(file ./output/graphs/schoenplot_multi_anx_pandemic.svg written in SVG format)
+
+. 
 . * T1 DM plots 
 . foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ 
 > {
@@ -138,8 +1996,10 @@
 .             *graph export ./output/graphs/km_t1dm_`period'.svg, as(svg) repla
 > ce
 .             stcox i.eth5, strata(stp) nolog
- 14.                 forvalues z=2/5 {
- 15.                     estat phtest, plot(`z'.eth5) ///
+ 14.             local cats "White Asian Black Mixed Other"
+ 15.                 forvalues z=2/5 {
+ 16.                     local title: word `z' of `cats'
+ 17.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -150,16 +2010,19 @@
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(uni_plot_t1dm_`z')
- 16.                     }
- 17.                 graph combine uni_plot_t1dm_2 uni_plot_t1dm_3 uni_plot_t1d
-> m_4 uni_plot_t1dm_5
- 18.                 graph export ./output/graphs/schoenplot_uni_t1dm_`period'.
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(uni_plot_t1dm_`z') ///
+>                         note("")
+ 18.                     }
+ 19.                 graph combine uni_plot_t1dm_2 uni_plot_t1dm_3 uni_plot_t1d
+> m_4 uni_plot_t1dm_5, graphregion(fcolor(white)) title(Univariate T1DM "`perio
+> d'", position(11) size(small))
+ 20.                 graph export ./output/graphs/schoenplot_uni_t1dm_`period'.
 > svg, as(svg) replace 
- 19.                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
- 20.                 forvalues z=2/5 {
- 21.                     estat phtest, plot(`z'.eth5) ///
+ 21.                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
+ 22.                 forvalues z=2/5 {
+ 23.                     local title: word `z' of `cats'
+ 24.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -170,19 +2033,22 @@
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(age_sex_plot_t1dm_`z')
- 22.                     }
- 23.                 graph combine age_sex_plot_t1dm_2 age_sex_plot_t1dm_3 age_
-> sex_plot_t1dm_4 age_sex_plot_t1dm_5
- 24.                 graph export ./output/graphs/schoenplot_age_sex_t1dm_`peri
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(age_sex_plot_t1dm_`z') ///
+>                         note("")
+ 25.                     }
+ 26.                 graph combine age_sex_plot_t1dm_2 age_sex_plot_t1dm_3 age_
+> sex_plot_t1dm_4 age_sex_plot_t1dm_5, graphregion(fcolor(white)) title(Age and
+>  sex adjusted T1DM "`period'", position(11) size(small))
+ 27.                 graph export ./output/graphs/schoenplot_age_sex_t1dm_`peri
 > od'.svg, as(svg) replace 
- 25.                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.
+ 28.                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.
 > male) texp(_t) nolog
 .                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shiel
 > ded, strata(stp) nolog
- 26.                 forvalues z=2/5 {
- 27.                     estat phtest, plot(`z'.eth5) ///
+ 29.                 forvalues z=2/5 {
+ 30.                     local title: word `z' of `cats'
+ 31.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -193,18 +2059,20 @@
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(multi_plot_t1dm_`z')
- 28.                     }
- 29.                 graph combine multi_plot_t1dm_2 multi_plot_t1dm_3 multi_pl
-> ot_t1dm_4 multi_plot_t1dm_5
- 30.                 graph export ./output/graphs/schoenplot_multi_t1dm_`period
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(multi_plot_t1dm_`z') ///
+>                         note("")
+ 32.                     }
+ 33.                 graph combine multi_plot_t1dm_2 multi_plot_t1dm_3 multi_pl
+> ot_t1dm_4 multi_plot_t1dm_5, graphregion(fcolor(white)) title(Multivariate T1
+> DM "`period'", position(11) size(small))
+ 34.                 graph export ./output/graphs/schoenplot_multi_t1dm_`period
 > '.svg, as(svg) replace 
- 31.             *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielde
+ 35.             *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielde
 > d, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(
 > _t)
 .     }
- 32. } 
+ 36. } 
 
 Contains data from ./output/prep_survival_pre.dta
   obs:         1,000                          
@@ -343,40 +2211,42 @@ Sorted by:
   6
 
 . 
-. /* T2 DM and asthma plots 
-> foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ 
+. * T2 DM and asthma plots 
+. foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ 
 > {
->     use ./output/prep_survival_`period', clear
->     describe
->     foreach outcome in asthma t2dm {
->     preserve
->     * Drop events that occur on index date
->         replace `outcome'_admit_date=. if `outcome'_admit_date==index_date 
-> 
->         * Update study population for diabetes and respiratory outcomes
->         drop if has_t2_diabetes==0 & "`outcome'"== "t2dm"
->         drop if has_asthma==0 & "`outcome'"== "asthma"
-> 
->         * Cox model for each outcome category
->         * Generate flags and end dates for each outcome
->         gen `outcome'_admit=(`outcome'_admit_date!=.)
->         tab `outcome'_admit
->         count if `outcome'_admit_date!=.
->         if r(N) > 10 {
->                 gen `outcome'_end = end_date
->                 replace `outcome'_end = `outcome'_admit_date if `outcome'_adm
-> it==1
-> 
->                 stset `outcome'_end, fail(`outcome'_admit) id(patient_id) ent
+  2.     use ./output/prep_survival_`period', clear
+  3.     describe
+  4.     foreach outcome in asthma t2dm {
+  5.     preserve
+  6.     * Drop events that occur on index date
+.         replace `outcome'_admit_date=. if `outcome'_admit_date==index_date 
+  7. 
+.         * Update study population for diabetes and respiratory outcomes
+.         drop if has_t2_diabetes==0 & "`outcome'"== "t2dm"
+  8.         drop if has_asthma==0 & "`outcome'"== "asthma"
+  9. 
+.         * Cox model for each outcome category
+.         * Generate flags and end dates for each outcome
+.         gen `outcome'_admit=(`outcome'_admit_date!=.)
+ 10.         tab `outcome'_admit
+ 11.         count if `outcome'_admit_date!=.
+ 12.         if r(N) > 10 {
+ 13.                 gen `outcome'_end = end_date
+ 14.                 replace `outcome'_end = `outcome'_admit_date if `outcome'_
+> admit==1
+ 15. 
+.                 stset `outcome'_end, fail(`outcome'_admit) id(patient_id) ent
 > er(index_date) origin(index_date) 
->                 * Kaplan-Meier plot
->                 *sts graph, by(eth5) ylabel(.95(.01)1) title("`period'") grap
+ 16.                 * Kaplan-Meier plot
+.                 *sts graph, by(eth5) ylabel(.95(.01)1) title("`period'") grap
 > hregion(fcolor(white))
->                 *graph export ./output/graphs/km_`outcome'_`period'.svg, as(s
+.                 *graph export ./output/graphs/km_`outcome'_`period'.svg, as(s
 > vg) replace
->                 stcox i.eth5, strata(stp) nolog
->                 forvalues z=2/5 {
->                     estat phtest, plot(`z'.eth5) ///
+.                 stcox i.eth5, strata(stp) nolog
+ 17.                 local cats "White Asian Black Mixed Other"
+ 18.                 forvalues z=2/5 {
+ 19.                     local title: word `z' of `cats'
+ 20.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -387,16 +2257,20 @@ Sorted by:
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(uni_plot_`period'_`outcome'_`z')
->                     }
->                 graph combine uni_plot_`period'_`outcome'_2 uni_plot_`period'
-> _`outcome'_3 uni_plot_`period'_`outcome'_4 uni_plot_`period'_`outcome'_5
->                 graph export ./output/graphs/schoenplot_uni_`outcome'_`period
-> '.svg, as(svg) replace 
->                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
->                 forvalues z=2/5 {
->                     estat phtest, plot(`z'.eth5) ///
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(uni_plot_`period'_`outcome'_`z') ///
+>                         note("")
+ 21.                     }
+ 22.                 graph combine uni_plot_`period'_`outcome'_2 uni_plot_`peri
+> od'_`outcome'_3 uni_plot_`period'_`outcome'_4 uni_plot_`period'_`outcome'_5, 
+> graphregion(fcolor(white)) title(Univariate "`outcome'" "`period'", position(
+> 11) size(small))
+ 23.                 graph export ./output/graphs/schoenplot_uni_`outcome'_`per
+> iod'.svg, as(svg) replace 
+ 24.                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
+ 25.                 forvalues z=2/5 {
+ 26.                     local title: word `z' of `cats'
+ 27.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -407,20 +2281,23 @@ Sorted by:
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(age_sex_plot_`period'_`outcome'_`z')
->                     }
->                 graph combine age_sex_plot_`period'_`outcome'_2 age_sex_plot_
-> `period'_`outcome'_3 age_sex_plot_`period'_`outcome'_4 age_sex_plot_`period'_
-> `outcome'_5
->                 graph export ./output/graphs/schoenplot_age_sex_`outcome'_`pe
-> riod'.svg, as(svg) replace 
->                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.mal
-> e) texp(_t) nolog
->                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shiel
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(age_sex_plot_`period'_`outcome'_`z') ///
+>                         note("")
+ 28.                     }
+ 29.                 graph combine age_sex_plot_`period'_`outcome'_2 age_sex_pl
+> ot_`period'_`outcome'_3 age_sex_plot_`period'_`outcome'_4 age_sex_plot_`perio
+> d'_`outcome'_5, graphregion(fcolor(white)) title(Age and sex adjusted "`outco
+> me'" "`period'", position(11) size(small))
+ 30.                 graph export ./output/graphs/schoenplot_age_sex_`outcome'_
+> `period'.svg, as(svg) replace 
+ 31.                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.
+> male) texp(_t) nolog
+.                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shiel
 > ded, strata(stp) nolog
->                 forvalues z=2/5 {
->                     estat phtest, plot(`z'.eth5) ///
+ 32.                 forvalues z=2/5 {
+ 33.                     local title: word `z' of `cats'
+ 34.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -431,52 +2308,483 @@ Sorted by:
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(multi_plot_`period'_`outcome'_`z')
->                     }
->                 graph combine multi_plot_`period'_`outcome'_2 multi_plot_`per
-> iod'_`outcome'_3 multi_plot_`period'_`outcome'_4 multi_plot_`period'_`outcome
-> '_5
->                 graph export ./output/graphs/schoenplot_multi_`outcome'_`peri
-> od'.svg, as(svg) replace 
->                 *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shield
-> ed, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp
-> (_t)
->         }
->     restore
->     } 
-> }
-> 
-> * COPD plots
-> foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ 
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(multi_plot_`period'_`outcome'_`z') ///
+>                         note("")
+ 35.                     }
+ 36.                 graph combine multi_plot_`period'_`outcome'_2 multi_plot_`
+> period'_`outcome'_3 multi_plot_`period'_`outcome'_4 multi_plot_`period'_`outc
+> ome'_5, graphregion(fcolor(white)) title(Multivariate "`outcome'" "`period'",
+>  position(11) size(small))
+ 37.                 graph export ./output/graphs/schoenplot_multi_`outcome'_`p
+> eriod'.svg, as(svg) replace 
+ 38.                 *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shi
+> elded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) t
+> exp(_t)
+.         }
+ 39.     restore
+ 40.     } 
+ 41. }
+
+Contains data from ./output/prep_survival_pre.dta
+  obs:         1,000                          
+ vars:            46                          16 May 2023 10:11
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 real changes made)
+(0 observations deleted)
+(800 observations deleted)
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        194       97.00       97.00
+          1 |          6        3.00      100.00
+------------+-----------------------------------
+      Total |        200      100.00
+  6
+(0 real changes made)
+(199 observations deleted)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        785       98.00       98.00
+          1 |         16        2.00      100.00
+------------+-----------------------------------
+      Total |        801      100.00
+  16
+(16 real changes made)
+
+                id:  patient_id
+     failure event:  t2dm_admit != 0 & t2dm_admit < .
+obs. time interval:  (t2dm_end[_n-1], t2dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+        801  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+        801  observations remaining, representing
+        801  subjects
+         16  failures in single-failure-per-subject data
+    595,965  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       752
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          761                  Number of obs    =          36
+No. of failures =           16
+Time at risk    =       565885
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_t2dm_pre.svg not found)
+(file ./output/graphs/schoenplot_uni_t2dm_pre.svg written in SVG format)
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          601                  Number of obs    =          27
+No. of failures =           16
+Time at risk    =       445565
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_t2dm_pre.svg not found)
+(file ./output/graphs/schoenplot_age_sex_t2dm_pre.svg written in SVG format)
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+note: 1.shielded omitted because of collinearity
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          601                  Number of obs    =          27
+No. of failures =           16
+Time at risk    =       445565
+                                                LR chi2(0)       =        0.00
+Log likelihood  =            0                  Prob > chi2      =           .
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |          1  (omitted)
+      Black  |          1  (omitted)
+      Mixed  |          1  (omitted)
+      Other  |          1  (omitted)
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |          1  (omitted)
+  >80 years  |          1  (omitted)
+             |
+        male |
+       Male  |          1  (omitted)
+             |
+urban_rura~n |
+      Urban  |          1  (omitted)
+             |
+         imd |
+          1  |          1  (omitted)
+          2  |          1  (omitted)
+          3  |          1  (omitted)
+          4  |          1  (omitted)
+          5  |          1  (omitted)
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_t2dm_pre.svg not found)
+(file ./output/graphs/schoenplot_multi_t2dm_pre.svg written in SVG format)
+
+Contains data from ./output/prep_survival_pandemic.dta
+  obs:         1,000                          
+ vars:            46                          16 May 2023 10:11
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 real changes made)
+(0 observations deleted)
+(800 observations deleted)
+
+asthma_admi |
+          t |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        196       98.00       98.00
+          1 |          4        2.00      100.00
+------------+-----------------------------------
+      Total |        200      100.00
+  4
+(0 real changes made)
+(199 observations deleted)
+(0 observations deleted)
+
+ t2dm_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |        787       98.25       98.25
+          1 |         14        1.75      100.00
+------------+-----------------------------------
+      Total |        801      100.00
+  14
+(14 real changes made)
+
+                id:  patient_id
+     failure event:  t2dm_admit != 0 & t2dm_admit < .
+obs. time interval:  (t2dm_end[_n-1], t2dm_end]
+ enter on or after:  time index_date
+ exit on or before:  failure
+    t for analysis:  (time-origin)
+            origin:  time index_date
+
+------------------------------------------------------------------------------
+        801  total observations
+          0  exclusions
+------------------------------------------------------------------------------
+        801  observations remaining, representing
+        801  subjects
+         14  failures in single-failure-per-subject data
+    591,373  total analysis time at risk and under observation
+                                                at risk from t =         0
+                                     earliest observed entry t =         0
+                                          last observed exit t =       768
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          764                  Number of obs    =          36
+No. of failures =           11
+Time at risk    =       566222
+                                                LR chi2(4)       =        4.61
+Log likelihood  =            0                  Prob > chi2      =      0.3303
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   4.25e-18   1.03e-09    -0.00   1.000            0           .
+      Black  |   4.25e-18   1.46e-09    -0.00   1.000            0           .
+      Mixed  |   4.25e-18   1.46e-09    -0.00   1.000            0           .
+      Other  |   4.25e-18   2.06e-09    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_uni_t2dm_pandemic.svg not found)
+(file ./output/graphs/schoenplot_uni_t2dm_pandemic.svg written in SVG format)
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          588                  Number of obs    =          28
+No. of failures =           11
+Time at risk    =       434896
+                                                LR chi2(6)       =        4.16
+Log likelihood  =            0                  Prob > chi2      =      0.6552
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   4.90e-17   1.03e-08    -0.00   1.000            0           .
+      Black  |   5.91e-09     1.0128    -0.00   1.000            0           .
+      Mixed  |   5.91e-09    .640551    -0.00   1.000            0           .
+      Other  |   8.50e-17   9.22e-09    -0.00   1.000            0           .
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |   6.95e+07          .        .       .            .           .
+  >80 years  |   2.00e+08   3.31e+16     0.00   1.000            0           .
+             |
+        male |
+       Male  |          1   1.53e+08    -0.00   1.000            0           .
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_age_sex_t2dm_pandemic.svg not found)
+(file ./output/graphs/schoenplot_age_sex_t2dm_pandemic.svg written in SVG forma
+> t)
+
+         failure _d:  t2dm_admit
+   analysis time _t:  (t2dm_end-origin)
+             origin:  time index_date
+  enter on or after:  time index_date
+                 id:  patient_id
+note: 1.imd omitted because of collinearity
+note: 1.shielded omitted because of collinearity
+
+Stratified Cox regr. -- no ties
+
+No. of subjects =          588                  Number of obs    =          28
+No. of failures =           11
+Time at risk    =       434896
+                                                LR chi2(6)       =        4.16
+Log likelihood  =            0                  Prob > chi2      =      0.6552
+
+------------------------------------------------------------------------------
+          _t | Haz. Ratio   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        eth5 |
+South Asian  |   4.24e+08   1.10e+17     0.00   1.000            0           .
+      Black  |          1  (omitted)
+      Mixed  |   6.25e-13    .000112    -0.00   1.000            0           .
+      Other  |   1.368895          .        .       .            .           .
+             |
+     age_cat |
+41 - 60 y..  |          1  (omitted)
+61 - 80 y..  |   5.31e-09   .6965272    -0.00   1.000            0           .
+  >80 years  |   .0000478   13635.09    -0.00   1.000            0           .
+             |
+        male |
+       Male  |   7.24e-13   .0001561    -0.00   1.000            0           .
+             |
+urban_rura~n |
+      Urban  |   2.134222          .        .       .            .           .
+             |
+         imd |
+          1  |          1  (omitted)
+          2  |          1  (omitted)
+          3  |   8614.021          .        .       .            .           .
+          4  |   8.65e+16   1.66e+25     0.00   1.000            0           .
+          5  |          1  (omitted)
+             |
+  1.shielded |          1  (omitted)
+------------------------------------------------------------------------------
+                                                             Stratified by stp
+(note: file ./output/graphs/schoenplot_multi_t2dm_pandemic.svg not found)
+(file ./output/graphs/schoenplot_multi_t2dm_pandemic.svg written in SVG format)
+
+. 
+. * COPD plots
+. foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ 
 > {
->     use ./output/prep_survival_`period', clear
->     describe
->     * Drop events that occur on index date
->      replace copd_admit_date=. if copd_admit_date==index_date
-> 
->     * Update study population for diabetes and respiratory outcomes
->     drop if has_copd==0
-> 
->     * Cox model for each outcome category
->     * Generate flags and end dates for each outcome
->     gen copd_admit=(copd_admit_date!=.)
->     tab copd_admit
->     count if copd_admit_date!=.
->     if r(N) > 10 {
->             gen copd_end = end_date
->             replace copd_end = copd_admit_date if copd_admit==1
-> 
->             stset copd_end, fail(copd_admit) id(patient_id) enter(index_date)
+  2.     use ./output/prep_survival_`period', clear
+  3.     describe
+  4.     * Drop events that occur on index date
+.      replace copd_admit_date=. if copd_admit_date==index_date
+  5. 
+.     * Update study population for diabetes and respiratory outcomes
+.     drop if has_copd==0
+  6. 
+.     * Cox model for each outcome category
+.     * Generate flags and end dates for each outcome
+.     gen copd_admit=(copd_admit_date!=.)
+  7.     tab copd_admit
+  8.     count if copd_admit_date!=.
+  9.     if r(N) > 10 {
+ 10.             gen copd_end = end_date
+ 11.             replace copd_end = copd_admit_date if copd_admit==1
+ 12. 
+.             stset copd_end, fail(copd_admit) id(patient_id) enter(index_date)
 >  origin(index_date) 
->             * Kaplan-Meier plot
->             sts graph, by(eth5) ylabel(.90(.02)1) title("`period'") graphregi
+ 13.             * Kaplan-Meier plot
+.             sts graph, by(eth5) ylabel(.90(.02)1) title("`period'") graphregi
 > on(fcolor(white))
->             graph export ./output/graphs/km_copd_`period'.svg, as(svg) replac
-> e
->             stcox i.eth5, strata(stp) nolog
->                 forvalues z=2/5 {
->                     estat phtest, plot(`z'.eth5) ///
+ 14.             graph export ./output/graphs/km_copd_`period'.svg, as(svg) rep
+> lace
+ 15.             stcox i.eth5, strata(stp) nolog
+ 16.             local cats "White Asian Black Mixed Other"
+ 17.                 forvalues z=2/5 {
+ 18.                     local title: word `z' of `cats'
+ 19.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -487,16 +2795,19 @@ Sorted by:
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(uni_plot_copd_`z')
->                     }
->                 graph combine uni_plot_copd_2 uni_plot_copd_3 uni_plot_copd_4
->  uni_plot_copd_5
->                 graph export ./output/graphs/schoenplot_uni_copd_`period'.svg
-> , as(svg) replace 
->                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
->                 forvalues z=2/5 {
->                     estat phtest, plot(`z'.eth5) ///
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(uni_plot_copd_`z') ///
+>                         note("")
+ 20.                     }
+ 21.                 graph combine uni_plot_copd_2 uni_plot_copd_3 uni_plot_cop
+> d_4 uni_plot_copd_5, graphregion(fcolor(white)) title(Univariate COPD "`perio
+> d'", position(11) size(small))
+ 22.                 graph export ./output/graphs/schoenplot_uni_copd_`period'.
+> svg, as(svg) replace 
+ 23.                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
+ 24.                 forvalues z=2/5 {
+ 25.                     local title: word `z' of `cats'
+ 26.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -507,19 +2818,22 @@ Sorted by:
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(age_sex_plot_copd_`z')
->                     }
->                 graph combine age_sex_plot_copd_2 age_sex_plot_copd_3 age_sex
-> _plot_copd_4 age_sex_plot_copd_5
->                 graph export ./output/graphs/schoenplot_age_sex_copd.svg, as(
-> svg) replace 
->                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.mal
-> e) texp(_t) nolog
->                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shiel
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(age_sex_plot_copd_`z') ///
+>                         note("")
+ 27.                     }
+ 28.                 graph combine age_sex_plot_copd_2 age_sex_plot_copd_3 age_
+> sex_plot_copd_4 age_sex_plot_copd_5, graphregion(fcolor(white)) title(Age and
+>  sex adjusted COPD "`period'", position(11) size(small))
+ 29.                 graph export ./output/graphs/schoenplot_age_sex_copd.svg, 
+> as(svg) replace 
+ 30.                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.
+> male) texp(_t) nolog
+.                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shiel
 > ded, strata(stp) nolog
->                 forvalues z=2/5 {
->                     estat phtest, plot(`z'.eth5) ///
+ 31.                 forvalues z=2/5 {
+ 32.                     local title: word `z' of `cats'
+ 33.                     estat phtest, plot(`z'.eth5) ///
 >                         graphregion(fcolor(white)) ///
 >                         ylabel(, nogrid labsize(small)) ///
 >                         xlabel(, labsize(small)) ///
@@ -530,18 +2844,158 @@ Sorted by:
 >                         mcolor(gs6) ///
 >                         msymbol(circle_hollow) ///
 >                         scheme(s1mono) ///
->                         title ("`z'", position(11) size(medsmall)) ///
->                         name(multi_plot_copd_`z')
->                     }
->                 graph combine multi_plot_copd_2 multi_plot_copd_3 multi_plot_
-> copd_4 multi_plot_copd_5
->                 graph export ./output/graphs/schoenplot_multi_copd_`period'.s
-> vg, as(svg) replace 
->             stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, s
-> trata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
->     }
-> } 
-> /*foreach period in pre pandemic {
+>                         title ("`title'", position(11) size(medsmall)) ///
+>                         name(multi_plot_copd_`z') ///
+>                         note("")
+ 34.                     }
+ 35.                 graph combine multi_plot_copd_2 multi_plot_copd_3 multi_pl
+> ot_copd_4 multi_plot_copd_5, graphregion(fcolor(white)) title(Multivariate CO
+> PD "`period'", position(11) size(small))
+ 36.                 graph export ./output/graphs/schoenplot_multi_copd_`period
+> '.svg, as(svg) replace 
+ 37.             stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded
+> , strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_
+> t)
+ 38.     }
+ 39. } 
+
+Contains data from ./output/prep_survival_pre.dta
+  obs:         1,000                          
+ vars:            46                          16 May 2023 10:11
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 real changes made)
+(950 observations deleted)
+
+ copd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         48       96.00       96.00
+          1 |          2        4.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  2
+
+Contains data from ./output/prep_survival_pandemic.dta
+  obs:         1,000                          
+ vars:            46                          16 May 2023 10:11
+-------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+-------------------------------------------------------------------------------
+self_harm_pri~n str10   %10s                  
+stp             str4    %9s                   
+age             int     %8.0g                 
+ethnicity       byte    %8.0g                 
+has_msoa        byte    %8.0g                 
+imd             byte    %8.0g                 
+shielded        byte    %8.0g                 
+has_t1_diabetes byte    %8.0g                 
+has_t2_diabetes byte    %8.0g                 
+diabetes_subg~p byte    %8.0g                 
+cvd_subgroup    byte    %8.0g                 
+has_asthma      byte    %8.0g                 
+has_copd        byte    %8.0g                 
+resp_subgroup   byte    %8.0g                 
+mh_subgroup     byte    %8.0g                 
+urban_rural     byte    %8.0g                 
+patient_id      int     %8.0g                 
+dereg_dateA     float   %dD/N/CY              
+mi_admit_date   float   %dD/N/CY              
+stroke_admit_~e float   %dD/N/CY              
+hf_admit_date   float   %dD/N/CY              
+vte_admit_date  float   %dD/N/CY              
+t1dm_admit_date float   %dD/N/CY              
+t2dm_admit_date float   %dD/N/CY              
+dm_keto_admit~e float   %dD/N/CY              
+asthma_admit_~e float   %dD/N/CY              
+depress_admit~e float   %dD/N/CY              
+anx_admit_date  float   %dD/N/CY              
+smi_admit_date  float   %dD/N/CY              
+cvd_admit_date  float   %dD/N/CY              
+dm_admit_date   float   %dD/N/CY              
+copd_admit_date float   %dD/N/CY              
+mh_admit_date   float   %dD/N/CY              
+date_died       float   %dD/N/CY              
+lrti_admit_date float   %dD/N/CY              
+copd_any_date   float   %dD/N/CY              
+lrti_copd       float   %9.0g                 
+index_date      float   %dD/N/CY              
+end_study       float   %dD/N/CY              
+end_date        float   %dD/N/CY              
+eth5            float   %11.0g     eth5       
+male            float   %9.0g      male       
+region          float   %24.0g     region     region of England
+urban_rural_5   float   %27.0g     urban_rural_5
+                                              Rural Urban in five categories
+urban_rural_bin float   %9.0g      urban_rural_bin
+                                              Rural-Urban
+age_cat         float   %13.0g     age        
+-------------------------------------------------------------------------------
+Sorted by: 
+(0 real changes made)
+(950 observations deleted)
+
+ copd_admit |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         49       98.00       98.00
+          1 |          1        2.00      100.00
+------------+-----------------------------------
+      Total |         50      100.00
+  1
+
+. /*foreach period in pre pandemic {
 > use ./output/prep_survival_`period', clear
 >     describe
 >     * Drop events that occur on index date
@@ -595,10 +3049,10 @@ Sorted by:
 >     count if anx_tot_end<=5
 > 
 > }*/
-
+. 
 end of do-file
 
-. . file open output using "/tmp/305_cox_ph.do.cQZk.out", write text replace
+. . file open output using "/tmp/305_cox_ph.do.WVPC.out", write text replace
 
 . . file write output "success" 
 
