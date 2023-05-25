@@ -11,35 +11,7 @@ adopath + ./analysis/ado
 cap log using ./logs/cox_model_ph_2.log, replace
 cap mkdir ./output/graphs
 
-/* Creating files for R survival curves plotting 5+ event steps
-foreach period in pre pandemic {
-    use ./output/prep_survival_`period', clear
     describe
-    foreach outcome in stroke mi hf vte dm_keto t1dm t2dm depress anx copd asthma {
-        * Drop events that occur on index date
-        replace `outcome'_admit_date=. if `outcome'_admit_date==index_date
-
-        /* Update study population for diabetes and respiratory outcomes
-        drop if diabetes_subgroup==0 & "`outcome'"== "dm_keto"
-        drop if has_t1_diabetes==0 & "`outcome'"=="t1dm"
-        drop if has_t2_diabetes==0 & "`outcome'"== "t2dm"
-        drop if has_asthma==0 & "`outcome'"== "asthma"
-        drop if has_copd==0 & "`outcome'"=="copd"*/
-        
-        * Cox model for each outcome category
-        * Generate flags and end dates for each outcome
-        gen `outcome'_admit=(`outcome'_admit_date!=.)
-        tab `outcome'_admit
-        gen `outcome'_end = end_date
-        replace `outcome'_end = `outcome'_admit_date if `outcome'_admit==1
-
-        stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index_date) origin(index_date) 
-        keep patient_id _t _d _t0 
-
-    }
-    save ./output/survival/survival__`period'.dta, replace
-}
-*/
 /* Page on time_varying splitting: https://stats.stackexchange.com/questions/112555/what-s-wrong-with-this-way-of-fitting-time-dependent-coefficients-in-a-cox-regre 
 * For outcomes where axis 0.99
 foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
@@ -63,24 +35,71 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                 replace `outcome'_end = `outcome'_admit_date if `outcome'_admit==1
 
                 stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index_date) origin(index_date) 
+
                 * Kaplan-Meier plot
-                sts graph, by(eth5) ylabel(.99(0.01)1) title("`period'") graphregion(fcolor(white))
-                graph export ./output/graphs/km_`outcome'_`period'.svg, as(svg) replace
-                *stcox eth5, strata(stp)
-                *estat phtest 
-                stcox eth5 i.age_cat i.male, strata(stp) nolog
-                estat phtest, d 
-                stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
-                stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
-                estat phtest
-                stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
+                *sts graph, by(eth5) ylabel(.99(0.01)1) title("`period'") graphregion(fcolor(white))
+                *graph export ./output/graphs/km_`outcome'_`period'.svg, as(svg) replace
+                stcox i.eth5, strata(stp) nolog
+                forvalues z=2/5 {
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(uni_plot_`period'_`outcome'_`z')
+                    }
+                graph combine uni_plot_`period'_`outcome'_2 uni_plot_`period'_`outcome'_3 uni_plot_`period'_`outcome'_4 uni_plot_`period'_`outcome'_5
+                graph export ./output/graphs/schoenplot_uni_`outcome'_`period'.svg, as(svg) replace 
+                stcox i.eth5 i.age_cat i.male, strata(stp) nolog
+                forvalues z=2/5 {
+                    di `title'
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(age_sex_plot_`period'_`outcome'_`z')
+                    }
+                graph combine age_sex_plot_`period'_`outcome'_2 age_sex_plot_`period'_`outcome'_3 age_sex_plot_`period'_`outcome'_4 age_sex_plot_`period'_`outcome'_5
+                graph export ./output/graphs/schoenplot_age_sex_`outcome'_`period'.svg, as(svg) replace 
+                *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
+                stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
+                forvalues z=2/5 {
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(multi_plot_`period'_`outcome'_`z')
+                    }
+                graph combine multi_plot_`period'_`outcome'_2 multi_plot_`period'_`outcome'_3 multi_plot_`period'_`outcome'_4 multi_plot_`period'_`outcome'_5
+                graph export ./output/graphs/schoenplot_multi_`outcome'_`period'.svg, as(svg) replace 
+                *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
         }
     restore
     } 
 }
-
+*/
 * T1 DM plots 
-foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
+foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     use ./output/prep_survival_`period', clear
     describe
     * Drop events that occur on index date
@@ -102,18 +121,63 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
             * Kaplan-Meier plot
             *sts graph, by(eth5) ylabel(.80(.05)1) title("`period'") graphregion(fcolor(white))
             *graph export ./output/graphs/km_t1dm_`period'.svg, as(svg) replace
-            *qui stcox eth5, strata(stp)
-            *estat phtest 
-            stcox eth5 i.age_cat i.male, strata(stp) nolog
-            estat phtest, d 
-            stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
-            stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
-            estat phtest
-            stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
+            stcox i.eth5, strata(stp) nolog
+                forvalues z=2/5 {
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(uni_plot_t1dm_`z')
+                    }
+                graph combine uni_plot_t1dm_2 uni_plot_t1dm_3 uni_plot_t1dm_4 uni_plot_t1dm_5
+                graph export ./output/graphs/schoenplot_uni_t1dm_`period'.svg, as(svg) replace 
+                stcox i.eth5 i.age_cat i.male, strata(stp) nolog
+                forvalues z=2/5 {
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(age_sex_plot_t1dm_`z')
+                    }
+                graph combine age_sex_plot_t1dm_2 age_sex_plot_t1dm_3 age_sex_plot_t1dm_4 age_sex_plot_t1dm_5
+                graph export ./output/graphs/schoenplot_age_sex_t1dm_`period'.svg, as(svg) replace 
+                *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
+                stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
+                forvalues z=2/5 {
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(multi_plot_t1dm_`z')
+                    }
+                graph combine multi_plot_t1dm_2 multi_plot_t1dm_3 multi_plot_t1dm_4 multi_plot_t1dm_5
+                graph export ./output/graphs/schoenplot_multi_t1dm_`period'.svg, as(svg) replace 
+            *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
     }
 } 
 
-* T2 DM and asthma plots 
+/* T2 DM and asthma plots 
 foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     use ./output/prep_survival_`period', clear
     describe
@@ -137,23 +201,68 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
 
                 stset `outcome'_end, fail(`outcome'_admit) id(patient_id) enter(index_date) origin(index_date) 
                 * Kaplan-Meier plot
-                sts graph, by(eth5) ylabel(.95(.01)1) title("`period'") graphregion(fcolor(white))
-                graph export ./output/graphs/km_`outcome'_`period'.svg, as(svg) replace
-                *qui stcox eth5, strata(stp)
-                *estat phtest 
-                stcox eth5 i.age_cat i.male, strata(stp) nolog
-                estat phtest, d 
-                stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
-                stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
-                estat phtest
-                stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
+                *sts graph, by(eth5) ylabel(.95(.01)1) title("`period'") graphregion(fcolor(white))
+                *graph export ./output/graphs/km_`outcome'_`period'.svg, as(svg) replace
+                stcox i.eth5, strata(stp) nolog
+                forvalues z=2/5 {
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(uni_plot_`period'_`outcome'_`z')
+                    }
+                graph combine uni_plot_`period'_`outcome'_2 uni_plot_`period'_`outcome'_3 uni_plot_`period'_`outcome'_4 uni_plot_`period'_`outcome'_5
+                graph export ./output/graphs/schoenplot_uni_`outcome'_`period'.svg, as(svg) replace 
+                stcox i.eth5 i.age_cat i.male, strata(stp) nolog
+                forvalues z=2/5 {
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(age_sex_plot_`period'_`outcome'_`z')
+                    }
+                graph combine age_sex_plot_`period'_`outcome'_2 age_sex_plot_`period'_`outcome'_3 age_sex_plot_`period'_`outcome'_4 age_sex_plot_`period'_`outcome'_5
+                graph export ./output/graphs/schoenplot_age_sex_`outcome'_`period'.svg, as(svg) replace 
+                *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
+                stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
+                forvalues z=2/5 {
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(multi_plot_`period'_`outcome'_`z')
+                    }
+                graph combine multi_plot_`period'_`outcome'_2 multi_plot_`period'_`outcome'_3 multi_plot_`period'_`outcome'_4 multi_plot_`period'_`outcome'_5
+                graph export ./output/graphs/schoenplot_multi_`outcome'_`period'.svg, as(svg) replace 
+                *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
         }
     restore
     } 
 }
 
 * COPD plots
-foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
+foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     use ./output/prep_survival_`period', clear
     describe
     * Drop events that occur on index date
@@ -175,17 +284,62 @@ foreach period in pre pandemic wave1 easing1 wave2 easing2 wave3 easing3 {
             * Kaplan-Meier plot
             sts graph, by(eth5) ylabel(.90(.02)1) title("`period'") graphregion(fcolor(white))
             graph export ./output/graphs/km_copd_`period'.svg, as(svg) replace
-            *qui stcox eth5, strata(stp)
-            *estat phtest 
-            stcox eth5 i.age_cat i.male, strata(stp) nolog
-            estat phtest, d 
-            stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
-            stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
-            estat phtest
+            stcox i.eth5, strata(stp) nolog
+                forvalues z=2/5 {
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(uni_plot_copd_`z')
+                    }
+                graph combine uni_plot_copd_2 uni_plot_copd_3 uni_plot_copd_4 uni_plot_copd_5
+                graph export ./output/graphs/schoenplot_uni_copd_`period'.svg, as(svg) replace 
+                stcox i.eth5 i.age_cat i.male, strata(stp) nolog
+                forvalues z=2/5 {
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(age_sex_plot_copd_`z')
+                    }
+                graph combine age_sex_plot_copd_2 age_sex_plot_copd_3 age_sex_plot_copd_4 age_sex_plot_copd_5
+                graph export ./output/graphs/schoenplot_age_sex_copd.svg, as(svg) replace 
+                *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
+                stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
+                forvalues z=2/5 {
+                    estat phtest, plot(`z'.eth5) ///
+                        graphregion(fcolor(white)) ///
+                        ylabel(, nogrid labsize(small)) ///
+                        xlabel(, labsize(small)) ///
+                        xtitle("Time", size(small)) ///
+                        ytitle("Scaled Schoenfeld Residuals", size(small)) ///
+                        msize(small) ///
+                        mcolor(gs6) ///
+                        msymbol(circle_hollow) ///
+                        scheme(s1mono) ///
+                        title ("`z'", position(11) size(medsmall)) ///
+                        name(multi_plot_copd_`z')
+                    }
+                graph combine multi_plot_copd_2 multi_plot_copd_3 multi_plot_copd_4 multi_plot_copd_5
+                graph export ./output/graphs/schoenplot_multi_copd_`period'.svg, as(svg) replace 
             stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
     }
-} */
-foreach period in pre pandemic {
+} 
+/*foreach period in pre pandemic {
 use ./output/prep_survival_`period', clear
     describe
     * Drop events that occur on index date
@@ -236,4 +390,4 @@ use ./output/prep_survival_`period', clear
     count if anx_tot_events_date<=5
     count if anx_tot_end<=5
 
-}
+}*/
