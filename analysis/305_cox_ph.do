@@ -12,7 +12,7 @@ cap log using ./logs/cox_model_ph_2.log, replace
 cap mkdir ./output/graphs
 
     describe
-* Page on time_varying splitting: https://stats.stackexchange.com/questions/112555/what-s-wrong-with-this-way-of-fitting-time-dependent-coefficients-in-a-cox-regre 
+/* Page on time_varying splitting: https://stats.stackexchange.com/questions/112555/what-s-wrong-with-this-way-of-fitting-time-dependent-coefficients-in-a-cox-regre 
 * For outcomes where axis 0.99
 foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     use ./output/prep_survival_`period', clear
@@ -103,7 +103,7 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     restore
     } 
 }
-
+*/
 * T1 DM plots 
 foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
     use ./output/prep_survival_`period', clear
@@ -142,10 +142,10 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
                         title ("`title'", position(11) size(medsmall)) ///
-                        name(uni_plot_t1dm_`z') ///
+                        name(uni_plot_t1dm_`period'_`z') ///
                         note("")
                     }
-                graph combine uni_plot_t1dm_2 uni_plot_t1dm_3 uni_plot_t1dm_4 uni_plot_t1dm_5, graphregion(fcolor(white)) title(Univariate T1DM "`period'", position(11) size(small))
+                graph combine uni_plot_t1dm_`period'_2 uni_plot_t1dm_`period'_3 uni_plot_t1dm_`period'_4 uni_plot_t1dm_`period'_5, graphregion(fcolor(white)) title(Univariate T1DM "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_uni_t1dm_`period'.svg, as(svg) replace 
                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
                 forvalues z=2/5 {
@@ -161,10 +161,10 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
                         title ("`title'", position(11) size(medsmall)) ///
-                        name(age_sex_plot_t1dm_`z') ///
+                        name(age_sex_plot_t1dm_`period'_`z') ///
                         note("")
                     }
-                graph combine age_sex_plot_t1dm_2 age_sex_plot_t1dm_3 age_sex_plot_t1dm_4 age_sex_plot_t1dm_5, graphregion(fcolor(white)) title(Age and sex adjusted T1DM "`period'", position(11) size(small))
+                graph combine age_sex_plot_t1dm_`period'_2 age_sex_plot_t1dm_`period'_3 age_sex_plot_t1dm_`period'_4 age_sex_plot_t1dm_`period'_5, graphregion(fcolor(white)) title(Age and sex adjusted T1DM "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_age_sex_t1dm_`period'.svg, as(svg) replace 
                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
@@ -181,10 +181,10 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
                         title ("`title'", position(11) size(medsmall)) ///
-                        name(multi_plot_t1dm_`z') ///
+                        name(multi_plot_t1dm_`period'_`z') ///
                         note("")
                     }
-                graph combine multi_plot_t1dm_2 multi_plot_t1dm_3 multi_plot_t1dm_4 multi_plot_t1dm_5, graphregion(fcolor(white)) title(Multivariate T1DM "`period'", position(11) size(small))
+                graph combine multi_plot_t1dm_`period'_2 multi_plot_t1dm_`period'_3 multi_plot_t1dm_`period'_4 multi_plot_t1dm_`period'_5, graphregion(fcolor(white)) title(Multivariate T1DM "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_multi_t1dm_`period'.svg, as(svg) replace 
             *stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
     }
@@ -319,10 +319,10 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
                         title ("`title'", position(11) size(medsmall)) ///
-                        name(uni_plot_copd_`z') ///
+                        name(uni_plot_copd_`period'_`z') ///
                         note("")
                     }
-                graph combine uni_plot_copd_2 uni_plot_copd_3 uni_plot_copd_4 uni_plot_copd_5, graphregion(fcolor(white)) title(Univariate COPD "`period'", position(11) size(small))
+                graph combine uni_plot_copd_`period'_2 uni_plot_copd_`period'_3 uni_plot_copd_`period'_4 uni_plot_copd_`period'_5, graphregion(fcolor(white)) title(Univariate COPD "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_uni_copd_`period'.svg, as(svg) replace 
                 stcox i.eth5 i.age_cat i.male, strata(stp) nolog
                 forvalues z=2/5 {
@@ -338,11 +338,11 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
                         title ("`title'", position(11) size(medsmall)) ///
-                        name(age_sex_plot_copd_`z') ///
+                        name(age_sex_plot_copd_`period'_`z') ///
                         note("")
                     }
-                graph combine age_sex_plot_copd_2 age_sex_plot_copd_3 age_sex_plot_copd_4 age_sex_plot_copd_5, graphregion(fcolor(white)) title(Age and sex adjusted COPD "`period'", position(11) size(small))
-                graph export ./output/graphs/schoenplot_age_sex_copd.svg, as(svg) replace 
+                graph combine age_sex_plot_copd_`period'_2 age_sex_plot_copd_`period'_3 age_sex_plot_copd_`period'_4 age_sex_plot_copd_`period'_5, graphregion(fcolor(white)) title(Age and sex adjusted COPD "`period'", position(11) size(small))
+                graph export ./output/graphs/schoenplot_age_sex_copd_`period'.svg, as(svg) replace 
                 *stcox eth5 i.age_cat i.male, strata(stp) tvc(i.age_cat i.male) texp(_t) nolog
                 stcox i.eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) nolog
                 forvalues z=2/5 {
@@ -358,10 +358,10 @@ foreach period in pre pandemic /*wave1 easing1 wave2 easing2 wave3 easing3*/ {
                         msymbol(circle_hollow) ///
                         scheme(s1mono) ///
                         title ("`title'", position(11) size(medsmall)) ///
-                        name(multi_plot_copd_`z') ///
+                        name(multi_plot_copd_`period'_`z') ///
                         note("")
                     }
-                graph combine multi_plot_copd_2 multi_plot_copd_3 multi_plot_copd_4 multi_plot_copd_5, graphregion(fcolor(white)) title(Multivariate COPD "`period'", position(11) size(small))
+                graph combine multi_plot_copd_`period'_2 multi_plot_copd_`period'_3 multi_plot_copd_`period'_4 multi_plot_copd_`period'_5, graphregion(fcolor(white)) title(Multivariate COPD "`period'", position(11) size(small))
                 graph export ./output/graphs/schoenplot_multi_copd_`period'.svg, as(svg) replace 
             stcox eth5 i.age_cat i.male i.urban_rural_bin i.imd i.shielded, strata(stp) tvc(i.age_cat i.male i.urban_rural_bin i.imd i.shielded) texp(_t)
     }
